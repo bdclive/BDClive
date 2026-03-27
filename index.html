@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Stats Dashboard v1.1.6</title>
+    <title>Live Stats Dashboard v1.1.7</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     
     <style>
@@ -43,9 +43,9 @@
 
         .counter-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
             gap: 20px;
-            max-width: 1300px;
+            max-width: 1400px;
             width: 100%;
             justify-items: center;
         }
@@ -53,37 +53,34 @@
         .counter-item {
             background: #161b22;
             border-radius: 12px;
-            width: 310px; 
-            /* THE FIX: Increased height from 90px to 110px to show labels */
-            height: 110px; 
+            width: 340px; /* Widened for better fit */
+            height: 115px; /* Slightly taller for label clearance */
             overflow: hidden; 
             border: 1px solid #30363d;
             position: relative;
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
 
-        /* settings for Twitter, Twitch, YT, TikTok */
+        /* Settings for Twitter, Twitch, YT, TikTok (livecounts.io) */
         .counter-item iframe {
             filter: invert(1) hue-rotate(180deg);
             border: 0;
-            width: 480px; 
+            width: 500px; 
             height: 200px;
             position: absolute;
-            
-            /* ADJUSTED CROP VALUES TO RESTORE ALIGNMENT */
-            top: -10px;   /* Lowered to show labels like "Followers" */
-            left: -86px;  /* Kept hidden profile pic */
+            top: -5px;    /* Lowered to bring the label into view */
+            left: -88px;  /* Nudged to hide profile pic completely */
             transform: scale(1.1); 
             transform-origin: top left;
         }
 
-        /* settings for Instagram (nl provider) */
+        /* Settings for Instagram (livecounts.nl) */
         .instagram-fix iframe {
             filter: invert(1) hue-rotate(180deg);
-            width: 380px; 
-            height: 300px;
-            top: -45px;   /* Adjusted to show numbers and labels */
-            left: -40px;  
+            width: 400px; 
+            height: 350px;
+            top: -40px;   /* Adjusted to show numbers and "Followers" */
+            left: -42px;  
             transform: scale(1.0);
         }
 
@@ -113,7 +110,7 @@
         </div>
     </div>
 
-    <div class="version-tag">v1.1.6-stable (Label Restore Fix)</div>
+    <div class="version-tag">v1.1.7-stable (Wide-View Fix)</div>
 
     <script>
         function refreshCounters() {
