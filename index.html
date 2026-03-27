@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Stats Dashboard v1.1.0</title>
+    <title>Live Stats Dashboard v1.1.2</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     
     <style>
@@ -53,7 +53,7 @@
         .counter-item {
             background: #161b22;
             border-radius: 12px;
-            width: 310px;  /* Wider to prevent the number from cutting off */
+            width: 310px; 
             height: 110px; 
             overflow: hidden; 
             border: 1px solid #30363d;
@@ -67,12 +67,17 @@
             width: 480px; 
             height: 200px;
             position: absolute;
-            
-            /* PIXEL PERFECT ADJUSTMENTS */
-            top: -10px;   /* Lowered slightly so the top text isn't cut off */
-            left: -86px;  /* Nudged just 4 more pixels left to bury the profile pic */
+            top: -10px;   
+            left: -86px;  
             transform: scale(1.1); 
             transform-origin: top left;
+        }
+
+        /* Specific tweak for the new Instagram provider if needed */
+        .instagram-fix iframe {
+            /* If the Instagram text looks off, we can adjust these two numbers specifically */
+            top: -10px; 
+            left: -86px; 
         }
 
         #last-updated { margin-top: 15px; font-size: 14px; color: #8b949e; }
@@ -95,10 +100,13 @@
         <div class="counter-item"><iframe scrolling="no" src="https://livecounts.io/embed/twitch-live-follower-counter/briandivacox"></iframe></div>
         <div class="counter-item"><iframe scrolling="no" src="https://livecounts.io/embed/youtube-live-subscriber-counter/UCMuv7PfbLVm8IZsd6Bgqqzg"></iframe></div>
         <div class="counter-item"><iframe scrolling="no" src="https://livecounts.io/embed/tiktok-live-follower-counter/briandivacox"></iframe></div>
-        <div class="counter-item"><iframe scrolling="yes" src="https://livecounts.nl/instagram-realtime/embed/?u=briandivacox"></iframe></div>
+        
+        <div class="counter-item instagram-fix">
+            <iframe scrolling="no" src="https://livecounts.nl/instagram-realtime/embed/?u=briandivacox"></iframe>
+        </div>
     </div>
 
-    <div class="version-tag">v1.1.0-stable (Pixel Perfect)</div>
+    <div class="version-tag">v1.1.2-stable (Instagram Source Updated)</div>
 
     <script>
         function refreshCounters() {
