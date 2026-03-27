@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Stats Dashboard v1.0.8</title>
+    <title>Live Stats Dashboard v1.0.9</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     
     <style>
@@ -33,6 +33,7 @@
             align-items: center;
             gap: 10px;
             transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
 
         .btn-loading { background-color: #0969da !important; pointer-events: none; }
@@ -53,7 +54,7 @@
             background: #161b22;
             border-radius: 12px;
             width: 300px; 
-            height: 110px; 
+            height: 115px; /* Added 5px more height */
             overflow: hidden; 
             border: 1px solid #30363d;
             position: relative;
@@ -64,13 +65,13 @@
             filter: invert(1) hue-rotate(180deg);
             border: 0;
             width: 450px; 
-            height: 180px;
+            height: 200px;
             position: absolute;
             
-            /* THE GOLDILOCKS SETTINGS */
-            top: -20px;   
-            left: -75px;  /* Balanced: hides pic but keeps numbers */
-            transform: scale(1.1); /* Slight zoom to make numbers pop */
+            /* UPDATED POSITIONING */
+            top: -15px;   /* Lifted slightly to keep numbers away from bottom */
+            left: -82px;  /* Nudged 7px further left to hide the last of the pics */
+            transform: scale(1.1); 
             transform-origin: top left;
         }
 
@@ -97,7 +98,7 @@
         <div class="counter-item"><iframe scrolling="no" src="https://livecounts.io/embed/instagram-live-follower-counter/briandivacox"></iframe></div>
     </div>
 
-    <div class="version-tag">v1.0.8-stable (The Goldilocks Mix)</div>
+    <div class="version-tag">v1.0.9-stable (Final Alignment)</div>
 
     <script>
         function refreshCounters() {
