@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Stats Dashboard v1.1.4</title>
+    <title>Live Stats Dashboard v1.1.5</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     
     <style>
@@ -13,77 +13,76 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 50px 20px;
+            padding: 40px 20px;
             margin: 0;
             color: white;
         }
 
-        .header-section { text-align: center; margin-bottom: 40px; }
+        .header-section { text-align: center; margin-bottom: 30px; }
 
         #refresh-btn {
             background-color: #238636;
             color: white;
             border: none;
-            padding: 12px 24px;
+            padding: 10px 20px;
             border-radius: 8px;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: bold;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             transition: all 0.3s ease;
         }
 
         .btn-loading { background-color: #0969da !important; pointer-events: none; }
         .btn-loading span { animation: spin 1s linear infinite; }
-
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
         .counter-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
-            gap: 20px;
-            max-width: 1300px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+            max-width: 1200px;
             width: 100%;
             justify-items: center;
         }
 
         .counter-item {
             background: #161b22;
-            border-radius: 12px;
-            width: 310px; 
-            height: 110px; 
+            border-radius: 10px;
+            width: 280px; 
+            height: 90px; /* SHRUNK: Removed dead space */
             overflow: hidden; 
             border: 1px solid #30363d;
             position: relative;
         }
 
-        /* Default settings for livecounts.io boxes */
+        /* Settings for Twitter, Twitch, YT, TikTok */
         .counter-item iframe {
             filter: invert(1) hue-rotate(180deg);
             border: 0;
-            width: 450px; 
-            height: 200px;
+            width: 400px; 
+            height: 180px;
             position: absolute;
-            top: -5px;    /* Moved down slightly to show "Followers" label */
-            left: -84px;  /* Kept hidden profile pic */
-            transform: scale(1.05); /* Reduced scale slightly for better fit */
+            top: -22px;   /* PULLED UP: Kills dead space at top */
+            left: -75px;  
+            transform: scale(1.1); 
             transform-origin: top left;
         }
 
-        /* CUSTOM SETTINGS FOR INSTAGRAM (livecounts.nl) */
+        /* Settings for Instagram (nl provider) */
         .instagram-fix iframe {
-            filter: invert(1) hue-rotate(180deg); /* Added missing invert */
-            width: 400px; 
-            height: 350px;
-            top: -35px;   /* Lowered significantly from -70px to show text */
-            left: -45px;  /* Nudged left to center numbers */
-            transform: scale(0.9); /* Shrunk slightly to fit the taller layout */
+            filter: invert(1) hue-rotate(180deg);
+            width: 380px; 
+            height: 300px;
+            top: -55px;   /* AGGRESSIVE PULL: Kills the nl provider's dead space */
+            left: -40px;  
+            transform: scale(1.0);
         }
 
-        #last-updated { margin-top: 15px; font-size: 14px; color: #8b949e; }
-        .version-tag { margin-top: 50px; font-size: 12px; color: #484f58; }
+        #last-updated { margin-top: 15px; font-size: 13px; color: #8b949e; }
+        .version-tag { margin-top: 40px; font-size: 11px; color: #484f58; }
     </style>
 </head>
 <body>
@@ -108,7 +107,7 @@
         </div>
     </div>
 
-    <div class="version-tag">v1.1.4-stable (Label Visibility Fix)</div>
+    <div class="version-tag">v1.1.5-stable (Compact Mode)</div>
 
     <script>
         function refreshCounters() {
