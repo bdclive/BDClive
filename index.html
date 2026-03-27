@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Stats Dashboard v1.2.3</title>
+    <title>Live Stats Dashboard v1.2.4</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
@@ -38,7 +38,7 @@
         .counter-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 25px;
+            gap: 20px;
             max-width: 1400px;
             width: 100%;
             justify-items: center;
@@ -46,20 +46,21 @@
 
         .counter-item {
             background: #161b22;
-            border-radius: 16px;
+            border-radius: 12px;
             width: 320px; 
-            height: 180px; /* Increased height to make room for logos + numbers */
+            height: 160px; 
             overflow: hidden; 
             border: 1px solid #30363d;
             position: relative;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
 
+        /* Floating logos that don't push the iframe */
         .box-logo {
             position: absolute;
             top: 15px;
             left: 15px;
-            font-size: 24px;
+            font-size: 22px;
             z-index: 100;
             pointer-events: none;
         }
@@ -70,17 +71,24 @@
         .fa-tiktok { color: #00f2ea; }
         .fa-x-twitter { color: #ffffff; }
 
+        /* REVERTED TO WORKING SETTINGS: Twitter, Twitch, YT, TikTok */
         .counter-item iframe {
             filter: invert(1) hue-rotate(180deg);
             border: 0;
-            width: 450px; 
+            width: 500px; 
             height: 250px;
             position: absolute;
-            /* DEEP ZOOM AND SHIFT */
-            top: -20px;   /* Pulls the iframe up more to kill dead space */
-            left: -80px;  /* Nudges left to hide profile pic */
-            transform: scale(1.4); /* Makes everything bigger to fill the box */
+            top: 5px;     
+            left: -88px;  
+            transform: scale(1.1); 
             transform-origin: top left;
+        }
+
+        /* INDIVIDUAL TWEAK FOR INSTAGRAM BOX ONLY */
+        .instagram-fix iframe {
+            top: -25px;   /* Pushing IG up higher independently */
+            left: -88px;
+            transform: scale(1.2); /* Slightly more zoom just for IG */
         }
 
         #last-updated { margin-top: 15px; font-size: 14px; color: #8b949e; }
@@ -115,13 +123,13 @@
             <i class="fa-brands fa-tiktok box-logo"></i>
             <iframe scrolling="no" src="https://livecounts.io/embed/tiktok-live-follower-counter/briandivacox"></iframe>
         </div>
-        <div class="counter-item">
+        <div class="counter-item instagram-fix">
             <i class="fa-brands fa-instagram box-logo"></i>
             <iframe scrolling="no" src="https://livecounts.io/embed/instagram-live-follower-counter/briandivacox"></iframe>
         </div>
     </div>
 
-    <div class="version-tag">v1.2.3-stable (Pin & Zoom)</div>
+    <div class="version-tag">v1.2.4-stable (Isolated IG Fix)</div>
 
     <script>
         function refreshCounters() {
