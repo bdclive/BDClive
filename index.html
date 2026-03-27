@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Stats Dashboard v1.0.6</title>
+    <title>Live Stats Dashboard v1.0.7</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     
     <style>
@@ -42,32 +42,34 @@
 
         .counter-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-            max-width: 1200px;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            max-width: 1400px;
             width: 100%;
             justify-items: center;
         }
 
         .counter-item {
             background: #161b22;
-            border-radius: 12px;
-            width: 280px; /* Made slightly wider */
-            height: 100px; /* Made taller */
+            border-radius: 16px;
+            width: 320px;  /* Wider box */
+            height: 140px; /* Taller box to ensure numbers aren't cut off */
             overflow: hidden; 
             border: 1px solid #30363d;
             position: relative;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
         }
 
         .counter-item iframe {
             filter: invert(1) hue-rotate(180deg);
             border: 0;
-            width: 450px; 
-            height: 150px;
+            width: 500px; /* Excessively wide to allow for deep cropping */
+            height: 200px;
             position: absolute;
-            /* ADJUSTMENTS MADE HERE */
-            top: -10px;   /* Lowered the iframe so numbers show */
-            left: -55px;  /* Less aggressive nudge so numbers stay on screen */
+            
+            /* ADJUSTED CROP VALUES */
+            top: -25px;   /* Pulls the iframe up to center the big number */
+            left: -100px; /* Pulls the iframe left to hide the profile pic */
         }
 
         #last-updated { margin-top: 15px; font-size: 14px; color: #8b949e; }
@@ -89,11 +91,11 @@
         <div class="counter-item"><iframe scrolling="no" src="https://livecounts.io/embed/twitter-live-follower-counter/briandivacox"></iframe></div>
         <div class="counter-item"><iframe scrolling="no" src="https://livecounts.io/embed/twitch-live-follower-counter/briandivacox"></iframe></div>
         <div class="counter-item"><iframe scrolling="no" src="https://livecounts.io/embed/youtube-live-subscriber-counter/briandivacox"></iframe></div>
-        <div class="counter-item"><iframe scrolling="no" src="https://livecounts.io/embed/tiktok-live-follower-counter/@briandivacox"></iframe></div>
+        <div class="counter-item"><iframe scrolling="no" src="https://livecounts.io/embed/tiktok-live-follower-counter/briandivacox"></iframe></div>
         <div class="counter-item"><iframe scrolling="no" src="https://livecounts.io/embed/instagram-live-follower-counter/briandivacox"></iframe></div>
     </div>
 
-    <div class="version-tag">v1.0.6-stable (Layout Fixed)</div>
+    <div class="version-tag">v1.0.7-stable (Deep Crop Fix)</div>
 
     <script>
         function refreshCounters() {
