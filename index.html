@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Stats Dashboard v1.1.8</title>
+    <title>Live Stats Dashboard v1.1.9</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     
     <style>
@@ -38,7 +38,6 @@
 
         .btn-loading { background-color: #0969da !important; pointer-events: none; }
         .btn-loading span { animation: spin 1s linear infinite; }
-
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
         .counter-grid {
@@ -54,7 +53,6 @@
             background: #161b22;
             border-radius: 12px;
             width: 320px; 
-            /* THE BIG FIX: Massive height increase for visibility */
             height: 160px; 
             overflow: hidden; 
             border: 1px solid #30363d;
@@ -62,27 +60,29 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
 
-        /* Default settings for livecounts.io */
+        /* PERFECTION FOR: Twitter, Twitch, YT, TikTok */
         .counter-item iframe {
             filter: invert(1) hue-rotate(180deg);
             border: 0;
             width: 500px; 
             height: 250px;
             position: absolute;
-            top: 5px;     /* Lowered down to bring labels into the clear */
-            left: -88px;  /* Kept hidden profile pic */
+            top: 5px;     
+            left: -88px;  
             transform: scale(1.1); 
             transform-origin: top left;
         }
 
-        /* Custom settings for Instagram (nl provider) */
+        /* THE FINAL TWEAK FOR INSTAGRAM (.nl provider) */
         .instagram-fix iframe {
             filter: invert(1) hue-rotate(180deg);
-            width: 400px; 
-            height: 400px;
-            top: -20px;   /* Significantly lower than before to show bottom labels */
-            left: -42px;  
-            transform: scale(1.0);
+            width: 600px; 
+            height: 500px;
+            /* Shifting much further left and higher to hide the header and profile pic */
+            top: -125px;   
+            left: -140px;  
+            transform: scale(1.2); /* Zooming in to make the number big and clear */
+            transform-origin: top left;
         }
 
         #last-updated { margin-top: 15px; font-size: 14px; color: #8b949e; }
@@ -111,7 +111,7 @@
         </div>
     </div>
 
-    <div class="version-tag">v1.1.8-stable (Vertical Breathing Room)</div>
+    <div class="version-tag">v1.1.9-stable (Instagram Solo Tweak)</div>
 
     <script>
         function refreshCounters() {
