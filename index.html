@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Stats Dashboard v1.3.4</title>
+    <title>Live Stats Dashboard v1.3.5</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
@@ -55,16 +55,15 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
 
+        /* Pinned to Top-Right */
         .box-logo {
             position: absolute !important;
-            top: 10px !important;
-            right: 10px !important;
-            font-size: 22px;
-            z-index: 999; 
+            top: 12px !important;
+            right: 12px !important;
+            font-size: 20px;
+            z-index: 100; 
             pointer-events: none;
-            padding: 5px;
-            border-radius: 6px;
-            background: rgba(22, 27, 34, 0.6);
+            opacity: 0.8;
         }
         
         .fa-instagram { color: #E1306C; }
@@ -73,7 +72,7 @@
         .fa-tiktok { color: #00f2ea; }
         .fa-x-twitter { color: #ffffff; }
 
-        /* Stable Settings for Twitter, Twitch, YT, TikTok */
+        /* THE WORKING 4 (Twitter, Twitch, YT, TikTok) */
         .counter-item iframe {
             filter: invert(1) hue-rotate(180deg);
             border: 0;
@@ -86,17 +85,16 @@
             transform-origin: top left;
         }
 
-        /* FINAL ADJUSTMENT: Lowered IG significantly to match others */
+        /* THE INSTAGRAM BOX (livecounts.nl) */
         .instagram-fix iframe {
             width: 400px; 
             height: 400px;
-            top: 28px;    /* Dropped significantly to bury top edge and center number */
-            left: -20px;  /* Nudged right for centering */
+            top: 20px;    /* Dropped to align with others */
+            left: -25px;  
             transform: scale(1.0); 
         }
 
         #last-updated { margin-top: 15px; font-size: 14px; color: #8b949e; }
-        .version-tag { margin-top: 50px; font-size: 12px; color: #484f58; }
     </style>
 </head>
 <body>
@@ -111,3 +109,30 @@
     </div>
 
     <div class="counter-grid">
+        <div class="counter-item">
+            <i class="fa-brands fa-x-twitter box-logo"></i>
+            <iframe scrolling="no" src="https://livecounts.io/embed/twitter-live-follower-counter/briandivacox"></iframe>
+        </div>
+        <div class="counter-item">
+            <i class="fa-brands fa-twitch box-logo"></i>
+            <iframe scrolling="no" src="https://livecounts.io/embed/twitch-live-follower-counter/briandivacox"></iframe>
+        </div>
+        <div class="counter-item">
+            <i class="fa-brands fa-youtube box-logo"></i>
+            <iframe scrolling="no" src="https://livecounts.io/embed/youtube-live-subscriber-counter/UCMuv7PfbLVm8IZsd6Bgqqzg"></iframe>
+        </div>
+        <div class="counter-item">
+            <i class="fa-brands fa-tiktok box-logo"></i>
+            <iframe scrolling="no" src="https://livecounts.io/embed/tiktok-live-follower-counter/briandivacox"></iframe>
+        </div>
+        <div class="counter-item instagram-fix">
+            <i class="fa-brands fa-instagram box-logo"></i>
+            <iframe scrolling="no" src="https://livecounts.nl/instagram-realtime/embed/?u=briandivacox"></iframe>
+        </div>
+    </div>
+
+    <script>
+        function refreshCounters() {
+            const timeDisplay = document.getElementById('last-updated');
+            const iframes = document.querySelectorAll('iframe');
+            iframes.forEach(iframe => {
