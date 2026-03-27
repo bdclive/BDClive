@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Stats Dashboard</title>
+    <title>Live Stats Dashboard v1.0.4</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     
     <style>
@@ -49,12 +49,10 @@
             animation: spin 1s linear infinite;
         }
 
-        /* Timestamp Styling */
         #last-updated {
             margin-top: 15px;
             font-size: 14px;
             color: #8b949e;
-            font-style: italic;
         }
 
         @keyframes spin {
@@ -64,27 +62,38 @@
 
         .counter-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            max-width: 1000px;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            max-width: 1100px;
             width: 100%;
             justify-items: center;
         }
 
         .counter-item {
             background: #161b22;
-            border-radius: 10px;
-            width: 300px;
-            height: 80px;
+            border-radius: 12px;
+            width: 320px;
+            /* Height increased to 120px to show numbers without scrolling */
+            height: 120px; 
             overflow: hidden;
             border: 1px solid #30363d;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .counter-item iframe {
             filter: invert(1) hue-rotate(180deg);
             border: 0;
             width: 300px;
-            height: 80px;
+            height: 120px; /* Matched height */
+        }
+
+        /* Version Tag */
+        .version-tag {
+            margin-top: 50px;
+            font-size: 12px;
+            color: #484f58;
         }
     </style>
 </head>
@@ -100,12 +109,14 @@
     </div>
 
     <div class="counter-grid">
-        <div class="counter-item"><iframe src="https://livecounts.io/embed/twitter-live-follower-counter/briandivacox"></iframe></div>
-        <div class="counter-item"><iframe src="https://livecounts.io/embed/twitch-live-follower-counter/briandivacox"></iframe></div>
-        <div class="counter-item"><iframe src="https://livecounts.io/embed/youtube-live-subscriber-counter/briandivacox"></iframe></div>
-        <div class="counter-item"><iframe src="https://livecounts.io/embed/tiktok-live-follower-counter/briandivacox"></iframe></div>
-        <div class="counter-item"><iframe src="https://livecounts.io/embed/instagram-live-follower-counter/briandivacox"></iframe></div>
+        <div class="counter-item"><iframe scrolling="no" src="https://livecounts.io/embed/twitter-live-follower-counter/briandivacox"></iframe></div>
+        <div class="counter-item"><iframe scrolling="no" src="https://livecounts.io/embed/twitch-live-follower-counter/briandivacox"></iframe></div>
+        <div class="counter-item"><iframe scrolling="no" src="https://livecounts.io/embed/youtube-live-subscriber-counter/briandivacox"></iframe></div>
+        <div class="counter-item"><iframe scrolling="no" src="https://livecounts.io/embed/tiktok-live-follower-counter/briandivacox"></iframe></div>
+        <div class="counter-item"><iframe scrolling="no" src="https://livecounts.io/embed/instagram-live-follower-counter/briandivacox"></iframe></div>
     </div>
+
+    <div class="version-tag">v1.0.4-stable</div>
 
     <script>
         function refreshCounters() {
@@ -119,7 +130,6 @@
                 iframe.src = iframe.src;
             });
 
-            // Update the time
             const now = new Date();
             const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
             timeDisplay.innerText = "Last updated at: " + timeString;
