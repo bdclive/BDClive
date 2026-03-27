@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Stats Dashboard v1.0.5</title>
+    <title>Live Stats Dashboard v1.0.6</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     
     <style>
@@ -42,33 +42,32 @@
 
         .counter-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 20px;
             max-width: 1200px;
             width: 100%;
             justify-items: center;
         }
 
-        /* THE FIX: The outer item */
         .counter-item {
             background: #161b22;
             border-radius: 12px;
-            width: 260px; /* Narrower to hide the side content */
-            height: 90px;
-            overflow: hidden; /* This clips the "extra" iframe parts */
+            width: 280px; /* Made slightly wider */
+            height: 100px; /* Made taller */
+            overflow: hidden; 
             border: 1px solid #30363d;
             position: relative;
         }
 
-        /* Moving the iframe inside the box */
         .counter-item iframe {
             filter: invert(1) hue-rotate(180deg);
             border: 0;
-            width: 400px; /* Make iframe wider than container */
-            height: 120px;
+            width: 450px; 
+            height: 150px;
             position: absolute;
-            top: -15px; /* Nudge up to center the number */
-            left: -85px; /* NUDGE LEFT: This hides the profile pic! */
+            /* ADJUSTMENTS MADE HERE */
+            top: -10px;   /* Lowered the iframe so numbers show */
+            left: -55px;  /* Less aggressive nudge so numbers stay on screen */
         }
 
         #last-updated { margin-top: 15px; font-size: 14px; color: #8b949e; }
@@ -89,12 +88,12 @@
     <div class="counter-grid">
         <div class="counter-item"><iframe scrolling="no" src="https://livecounts.io/embed/twitter-live-follower-counter/briandivacox"></iframe></div>
         <div class="counter-item"><iframe scrolling="no" src="https://livecounts.io/embed/twitch-live-follower-counter/briandivacox"></iframe></div>
-        <div class="counter-item"><iframe scrolling="no" src="https://livecounts.io/embed/youtube-live-subscriber-counter/UCMuv7PfbLVm8IZsd6Bgqqzg"></iframe></div>
-        <div class="counter-item"><iframe scrolling="no" src="https://livecounts.io/embed/tiktok-live-follower-counter/briandivacox"></iframe></div>
-        <div class="counter-item"><iframe scrolling="no" src="https://livecounts.nl/instagram-realtime/embed/?u=briandivacox"></iframe></div>
+        <div class="counter-item"><iframe scrolling="no" src="https://livecounts.io/embed/youtube-live-subscriber-counter/briandivacox"></iframe></div>
+        <div class="counter-item"><iframe scrolling="no" src="https://livecounts.io/embed/tiktok-live-follower-counter/@briandivacox"></iframe></div>
+        <div class="counter-item"><iframe scrolling="no" src="https://livecounts.io/embed/instagram-live-follower-counter/briandivacox"></iframe></div>
     </div>
 
-    <div class="version-tag">v1.0.6-stable (Profile Clip Hack)</div>
+    <div class="version-tag">v1.0.6-stable (Layout Fixed)</div>
 
     <script>
         function refreshCounters() {
