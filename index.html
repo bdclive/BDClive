@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Stats Dashboard v1.1.9</title>
+    <title>Live Stats Dashboard v1.2.0</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     
     <style>
@@ -33,7 +33,6 @@
             align-items: center;
             gap: 10px;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
 
         .btn-loading { background-color: #0969da !important; pointer-events: none; }
@@ -60,7 +59,7 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
 
-        /* PERFECTION FOR: Twitter, Twitch, YT, TikTok */
+        /* Standardized settings for all livecounts.io boxes */
         .counter-item iframe {
             filter: invert(1) hue-rotate(180deg);
             border: 0;
@@ -70,18 +69,6 @@
             top: 5px;     
             left: -88px;  
             transform: scale(1.1); 
-            transform-origin: top left;
-        }
-
-        /* THE FINAL TWEAK FOR INSTAGRAM (.nl provider) */
-        .instagram-fix iframe {
-            filter: invert(1) hue-rotate(180deg);
-            width: 600px; 
-            height: 500px;
-            /* Shifting much further left and higher to hide the header and profile pic */
-            top: -125px;   
-            left: -140px;  
-            transform: scale(1.2); /* Zooming in to make the number big and clear */
             transform-origin: top left;
         }
 
@@ -105,13 +92,10 @@
         <div class="counter-item"><iframe scrolling="no" src="https://livecounts.io/embed/twitch-live-follower-counter/briandivacox"></iframe></div>
         <div class="counter-item"><iframe scrolling="no" src="https://livecounts.io/embed/youtube-live-subscriber-counter/UCMuv7PfbLVm8IZsd6Bgqqzg"></iframe></div>
         <div class="counter-item"><iframe scrolling="no" src="https://livecounts.io/embed/tiktok-live-follower-counter/briandivacox"></iframe></div>
-        
-        <div class="counter-item instagram-fix">
-            <iframe scrolling="no" src="https://livecounts.nl/instagram-realtime/embed/?u=briandivacox"></iframe>
-        </div>
+        <div class="counter-item"><iframe scrolling="no" src="https://livecounts.io/embed/instagram-live-follower-counter/briandivacox"></iframe></div>
     </div>
 
-    <div class="version-tag">v1.1.9-stable (Instagram Solo Tweak)</div>
+    <div class="version-tag">v1.2.0-stable (Provider Sync)</div>
 
     <script>
         function refreshCounters() {
