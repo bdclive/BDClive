@@ -2,69 +2,80 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Threads API Laboratory v3.4.0</title>
+    <title>Threads Master Laboratory v4.0.0</title>
     <style>
-        :root { --bg: #0d1117; --card: #161b22; --border: #30363d; --green: #238636; --text: #ffffff; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; width: 100%; max-width: 900px; margin-bottom: 20px; }
-        .lab-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 25px; text-align: center; border-top: 5px solid var(--green); }
-        .number { font-size: 4.5rem; font-weight: 900; margin: 10px 0; color: var(--text); }
-        .label { font-size: 11px; text-transform: uppercase; color: #8b949e; letter-spacing: 2px; }
-        .console { width: 100%; max-width: 860px; background: #000; color: #0f0; font-family: 'Courier New', monospace; padding: 20px; border-radius: 10px; font-size: 12px; height: 250px; overflow-y: auto; border: 1px solid #333; text-align: left; }
-        .controls { background: #090c10; padding: 15px; border-radius: 10px; width: 100%; max-width: 830px; margin-bottom: 20px; display: flex; gap: 10px; align-items: center; border: 1px solid var(--border); }
-        input { background: #000; border: 1px solid #444; color: #0f0; padding: 8px; border-radius: 5px; width: 80px; text-align: center; }
-        button { background: var(--green); color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-weight: bold; flex-grow: 1; }
+        :root { --bg: #0d1117; --card: #161b22; --border: #30363d; --green: #238636; --blue: #1f6feb; --text: #ffffff; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 40px; display: flex; flex-direction: column; align-items: center; }
+        
+        /* Dashboard Grid */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; width: 100%; max-width: 900px; margin-top: 30px; }
+        
+        .lab-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 35px; text-align: center; position: relative; transition: 0.3s; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .lab-card:hover { transform: translateY(-5px); border-color: #58a6ff; }
+        
+        .followers-box { border-top: 5px solid var(--green); }
+        .views-box { border-top: 5px solid var(--blue); }
+        
+        .number { font-size: 4.5rem; font-weight: 900; margin: 15px 0; color: var(--text); text-shadow: 0 0 20px rgba(255,255,255,0.1); }
+        .label { font-size: 12px; text-transform: uppercase; color: #8b949e; letter-spacing: 3px; font-weight: bold; }
+        
+        /* Admin Panel */
+        .admin-panel { background: #090c10; border: 1px solid var(--border); border-radius: 12px; padding: 20px; width: 100%; max-width: 860px; margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 15px; align-items: center; justify-content: center; }
+        .admin-input { background: #000; border: 1px solid #444; color: #0f0; padding: 10px; border-radius: 6px; width: 140px; text-align: center; font-family: monospace; }
+        .update-btn { background: var(--green); color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        .update-btn:hover { filter: brightness(1.2); }
+        
+        .status-tag { font-size: 10px; color: #8b949e; margin-top: 10px; font-style: italic; }
     </style>
 </head>
 <body>
 
-    <h2 style="margin-bottom: 20px;">THREADS GLOBAL SYNC v3.4.0</h2>
+    <h2 style="margin-bottom: 10px; font-weight: 900; letter-spacing: -1px;">THREADS OPERATIONAL COMMAND</h2>
+    <div style="color: #8b949e; margin-bottom: 30px; font-size: 14px;">Manual Data Override Enabled • v4.0.0</div>
 
-    <div class="controls">
-        <div style="font-size: 12px; color: #8b949e;">WEB SYNC MULTIPLIER:</div>
-        <input type="number" id="multiplier" value="4000" step="100">
-        <button onclick="runSync()">SYNC WITH WEB DATA</button>
+    <div class="admin-panel">
+        <div>
+            <span style="font-size: 11px; color: #8b949e; display: block;">SET FOLLOWERS:</span>
+            <input type="text" id="in-followers" class="admin-input" value="330">
+        </div>
+        <div>
+            <span style="font-size: 11px; color: #8b949e; display: block;">SET TOTAL VIEWS:</span>
+            <input type="text" id="in-views" class="admin-input" value="1,200,000">
+        </div>
+        <button class="update-btn" onclick="updateDashboard()">SYNC DASHBOARD</button>
     </div>
 
     <div class="grid">
-        <div class="lab-card">
-            <div class="label">Total Global Impressions</div>
-            <div id="display-num" class="number">0</div>
-            <div style="font-size: 10px; color: #8b949e;">(Aggregating API + Federated Multiplier)</div>
+        <div class="lab-card followers-box">
+            <div class="label">Total Followers</div>
+            <div id="disp-followers" class="number">330</div>
+            <div class="status-tag">Verified Threads Account</div>
+        </div>
+
+        <div class="lab-card views-box">
+            <div class="label">Lifetime Content Views</div>
+            <div id="disp-views" class="number">1.2M</div>
+            <div class="status-tag">Aggregated Global Reach</div>
         </div>
     </div>
 
-    <div class="console" id="log-window">> Lab v3.4.0 Ready... <br>> Note: Meta 'Impressions' field deprecated in API; using View Aggregation.</div>
-
     <script>
-        const T_ID = "26231664763158295";
-        const T_TOKEN = "THAAg36cTPHF1BUVNENF9FUkYyNzlwQktTck9faWhYS01rWVlwVk45QW94bDVwNEZAQWVlHSTlfZAU1XTXMtQ2ZA4QzRHbHdodENzRUQ4VU9WOURDSmwzUFlxMWo2QVdVSlVsZATBFNXdjeFJLZAnZAuWmtMeU9TNnFsTVJVMXhCRExiR0FGQQZDZD";
-
-        function log(msg, color = "#0f0") {
-            const win = document.getElementById('log-window');
-            win.innerHTML += `<br><span style="color:${color}">> ${msg}</span>`;
-            win.scrollTop = win.scrollHeight;
-        }
-
-        async function runSync() {
-            log("--- CALCULATING GLOBAL AGGREGATE ---", "yellow");
-            const mult = parseFloat(document.getElementById('multiplier').value);
+        function updateDashboard() {
+            const followers = document.getElementById('in-followers').value;
+            const views = document.getElementById('in-views').value;
             
-            try {
-                // Fetching the processed 'views' (The only metric Meta releases to the public API now)
-                const res = await fetch(`https://graph.threads.net/v1.0/${T_ID}/threads_insights?metric=views&access_token=${T_TOKEN}`);
-                const data = await res.json();
-                
-                if (data.data && data.data[0]) {
-                    const apiViews = data.data[0].values[0].value;
-                    // Multiply the native views by your specific reach factor to match the website
-                    const globalTotal = Math.round(apiViews * mult);
-                    
-                    document.getElementById('display-num').innerText = globalTotal.toLocaleString();
-                    log(`API Views: ${apiViews} | Multiplier: x${mult}`, "cyan");
-                    log(`SYNC SUCCESS: Calculated ${globalTotal.toLocaleString()} total impressions.`, "#238636");
-                }
-            } catch(e) { log("Sync Failed.", "red"); }
+            // Update the display numbers
+            document.getElementById('disp-followers').innerText = followers;
+            document.getElementById('disp-views').innerText = views;
+            
+            // Add a little flash effect to show it updated
+            const cards = document.querySelectorAll('.lab-card');
+            cards.forEach(card => {
+                card.style.backgroundColor = "#1c2128";
+                setTimeout(() => { card.style.backgroundColor = "#161b22"; }, 200);
+            });
+            
+            console.log("Dashboard Synced with Manual Data.");
         }
     </script>
 </body>
