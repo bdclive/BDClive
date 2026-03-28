@@ -2,34 +2,33 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Threads API Laboratory v3.2.0</title>
+    <title>Threads API Laboratory v3.3.0</title>
     <style>
-        :root { --bg: #0d1117; --card: #161b22; --border: #30363d; --green: #238636; --red: #f85149; --text: #ffffff; }
+        :root { --bg: #0d1117; --card: #161b22; --border: #30363d; --green: #238636; --text: #ffffff; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; width: 100%; max-width: 900px; margin-bottom: 25px; }
-        .lab-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 30px; text-align: center; border-top: 5px solid var(--green); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .number { font-size: 4.5rem; font-weight: 900; margin: 15px 0; color: var(--text); text-shadow: 0 0 20px rgba(35, 134, 54, 0.3); }
-        .label { font-size: 12px; text-transform: uppercase; color: #8b949e; letter-spacing: 3px; font-weight: bold; }
-        .console { width: 100%; max-width: 860px; background: #000; color: #0f0; font-family: 'Courier New', monospace; padding: 20px; border-radius: 12px; font-size: 13px; height: 300px; overflow-y: auto; border: 1px solid #333; }
-        button { background: var(--green); color: white; border: none; padding: 18px 40px; border-radius: 10px; cursor: pointer; font-weight: 900; width: 100%; max-width: 860px; font-size: 18px; margin-bottom: 20px; transition: 0.2s; }
-        button:hover { filter: brightness(1.2); transform: scale(1.02); }
+        .lab-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 30px; text-align: center; border-top: 5px solid var(--green); }
+        .number { font-size: 4.5rem; font-weight: 900; margin: 15px 0; color: var(--text); }
+        .label { font-size: 12px; text-transform: uppercase; color: #8b949e; letter-spacing: 3px; }
+        .console { width: 100%; max-width: 860px; background: #000; color: #0f0; font-family: 'Courier New', monospace; padding: 20px; border-radius: 12px; font-size: 13px; height: 300px; overflow-y: auto; border: 1px solid #333; text-align: left; }
+        button { background: var(--green); color: white; border: none; padding: 18px 40px; border-radius: 10px; cursor: pointer; font-weight: 900; width: 100%; max-width: 860px; font-size: 18px; margin-bottom: 20px; }
     </style>
 </head>
 <body>
 
-    <h2 style="margin-bottom: 20px; letter-spacing: -1px;">GLOBAL REACH AGGREGATOR v3.2.0</h2>
+    <h2 style="margin-bottom: 20px;">IMPRESSION HUNTER v3.3.0</h2>
     
-    <button onclick="runGlobalSync()">SYNC GLOBAL AGGREGATE</button>
+    <button onclick="runImpressionScan()">SCAN FOR TOTAL IMPRESSIONS</button>
 
     <div class="grid">
         <div class="lab-card">
-            <div class="label">Total Global Reach</div>
-            <div id="global-total" class="number">0</div>
-            <div style="font-size: 11px; color: #8b949e;">(Aggregating Fediverse + Native Views)</div>
+            <div class="label">Total impressions (Web Sync)</div>
+            <div id="big-number" class="number">0</div>
+            <div style="font-size: 11px; color: #8b949e;">(Targeting Graph Edge: impressions)</div>
         </div>
     </div>
 
-    <div class="console" id="log-window">> Lab v3.2.0 Active... <br>> Attempting Global Aggregate Scan (Bypassing Native-Only limits).</div>
+    <div class="console" id="log-window">> Lab v3.3.0 Active... <br>> Attempting to unlock 'impressions' node for millions-scale data.</div>
 
     <script>
         const T_ID = "26231664763158295";
@@ -41,31 +40,29 @@
             win.scrollTop = win.scrollHeight;
         }
 
-        async function runGlobalSync() {
-            log("--- INITIATING GLOBAL AGGREGATE SCAN ---", "yellow");
+        async function runImpressionScan() {
+            log("--- SEARCHING FOR IMPRESSIONS ---", "yellow");
             
             try {
-                // In 2026, 'reach' with a 'total' type includes cross-platform federated views
-                const url = `https://graph.threads.net/v1.0/${T_ID}/threads_insights?metric=reach&breakdown=total&access_token=${T_TOKEN}`;
+                // Testing the 'impressions' metric which tracks total views across all Meta surfaces
+                const url = `https://graph.threads.net/v1.0/${T_ID}/threads_insights?metric=impressions&access_token=${T_TOKEN}`;
                 const res = await fetch(url);
                 const data = await res.json();
                 
                 if (data.data && data.data[0]) {
                     const val = data.data[0].values[0].value;
-                    document.getElementById('global-total').innerText = val.toLocaleString();
-                    log(`GLOBAL SYNC SUCCESS: ${val.toLocaleString()} units found.`, "#238636");
+                    document.getElementById('big-number').innerText = val.toLocaleString();
+                    log(`DATA FOUND: ${val.toLocaleString()} total impressions.`, "#238636");
                 } else {
-                    log("GLOBAL NODE REJECTED. Falling back to manual multiplier calculation...", "orange");
-                    // If the API won't give us the big number, we fetch the native and calculate the probable total
-                    const vRes = await fetch(`https://graph.threads.net/v1.0/${T_ID}/threads_insights?metric=views&access_token=${T_TOKEN}`);
-                    const vData = await vRes.json();
-                    if(vData.data) {
-                        const native = vData.data[0].values[0].value;
-                        document.getElementById('global-total').innerText = (native).toLocaleString();
-                        log(`NATIVE VIEWS: ${native.toLocaleString()}. Global data currently proprietary to Meta Business Suite.`, "red");
+                    log("IMPRESSIONS NODE LOCKED. Trying fallback 'reach' with total breakdown...", "orange");
+                    const rUrl = `https://graph.threads.net/v1.0/${T_ID}/threads_insights?metric=reach&breakdown=total&access_token=${T_TOKEN}`;
+                    const rRes = await fetch(rUrl);
+                    const rData = await rRes.json();
+                    if(rData.data) {
+                        document.getElementById('big-number').innerText = rData.data[0].values[0].value.toLocaleString();
                     }
                 }
-            } catch(e) { log("Sync Critical Failure.", "red"); }
+            } catch(e) { log("Critical scan failure.", "red"); }
         }
     </script>
 </body>
