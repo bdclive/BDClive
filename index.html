@@ -2,84 +2,172 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <title>Brian's Command Center v5.2.0</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Stats Dashboard v1.8.0</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
     <style>
-        :root { --bg: #0d1117; --card: #161b22; --border: #30363d; --green: #238636; --text: #ffffff; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
-        
-        /* FIXED GRID: 3 columns on desktop, 1 on mobile. Stops the "cloning" of empty boxes. */
-        .grid { 
-            display: grid; 
-            grid-template-columns: repeat(3, 1fr); 
-            gap: 20px; 
-            width: 100%; 
-            max-width: 1100px; 
-            margin-top: 20px; 
+        :root {
+            --bg-color: #0d1117;
+            --card-bg: #161b22;
+            --border-color: #30363d;
+            --bsky-blue: #0085ff;
+            --text-main: #ffffff;
+            --text-dim: #8b949e;
+            --accent-green: #238636;
         }
 
-        @media (max-width: 900px) { .grid { grid-template-columns: repeat(2, 1fr); } }
-        @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 50px 20px;
+            margin: 0;
+        }
 
-        .box { background: var(--card); border: 1px solid var(--border); border-radius: 18px; height: 180px; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: center; padding-left: 30px; }
-        .box iframe { position: absolute; top: -50px; left: -90px; width: 600px; height: 300px; filter: invert(1) hue-rotate(180deg); transform: scale(0.9); pointer-events: none; }
-        .stat-label { font-size: 11px; color: #8b949e; text-transform: uppercase; margin-bottom: 5px; display: flex; align-items: center; gap: 8px; font-weight: 700; }
-        .stat-num { font-size: 4.5rem; font-weight: 800; line-height: 1; margin: 0; }
-        .dot { width: 10px; height: 10px; background: #333; border-radius: 50%; }
-        .active { background: var(--green); box-shadow: 0 0 12px var(--green); animation: pulse 2s infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
-        .logo-icon { position: absolute; top: 20px; right: 20px; font-size: 22px; opacity: 0.3; }
+        .header-section { text-align: center; margin-bottom: 40px; }
+        .version-badge { 
+            font-size: 12px; 
+            color: var(--text-dim); 
+            background: #21262d; 
+            padding: 2px 10px; 
+            border-radius: 20px; 
+            border: 1px solid var(--border-color);
+            display: inline-block;
+            margin-top: -5px;
+            margin-bottom: 15px;
+        }
+
+        #refresh-btn {
+            background-color: var(--accent-green);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .counter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+            max-width: 1400px;
+            width: 100%;
+            margin-bottom: 50px;
+        }
+
+        .counter-item {
+            background: var(--card-bg);
+            border-radius: 12px;
+            width: 100%;
+            height: 160px; 
+            overflow: hidden; 
+            border: 1px solid var(--border-color);
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+
+        /* Fixed Mini Logos for corner */
+        .box-logo {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 20px;
+            height: 20px;
+            z-index: 100;
+        }
+        
+        /* FontAwesome color classes for existing iframes */
+        .fa-twitch { color: #9146FF; }
+        .fa-youtube { color: #FF0000; }
+        .fa-tiktok { color: #00f2ea; }
+        .fa-instagram { color: #E1306C; }
+
+        .counter-item iframe {
+            filter: invert(1) hue-rotate(180deg);
+            border: 0;
+            width: 500px; 
+            height: 250px;
+            position: absolute;
+            top: 5px;      
+            left: -88px;  
+            transform: scale(1.1); 
+            transform-origin: top left;
+        }
+
+        /* Native Card (Bluesky) */
+        .native-card { display: flex; flex-direction: column; justify-content: center; padding-left: 25px; }
+        .label-group { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+        .live-status { font-size: 11px; text-transform: uppercase; color: var(--text-dim); letter-spacing: 1px; }
+        .live-dot {
+            height: 8px; width: 8px;
+            background-color: var(--accent-green);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--accent-green);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+        .main-number { font-size: 4.5rem; font-weight: 700; line-height: 1; margin: 0; }
+
+        /* Updates Section */
+        .updates-container { max-width: 800px; width: 100%; background: #090c10; border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; }
+        summary { cursor: pointer; color: var(--text-dim); display: flex; align-items: center; gap: 10px; font-weight: bold; }
+        .version-log { margin-top: 15px; border-left: 2px solid var(--border-color); padding-left: 20px; }
+        .version-entry { margin-bottom: 20px; }
+        .version-tag { background: #1f6feb; font-size: 11px; padding: 2px 8px; border-radius: 10px; font-family: monospace; }
+        .version-entry ul { margin: 8px 0; padding-left: 20px; color: #c9d1d9; font-size: 14px; }
+
+        #last-updated { margin-top: 15px; font-size: 14px; color: var(--text-dim); }
+        .instagram-fix iframe { top: 35px; left: -80px; transform: scale(1.0); }
     </style>
 </head>
 <body>
 
-    <h1 style="font-weight: 900; letter-spacing: -1px;">Social Command Center</h1>
-
-    <div class="grid">
-        <div class="box"><iframe src="https://livecounts.io/embed/twitter-live-follower-counter/briandivacox"></iframe></div>
-        <div class="box"><iframe src="https://livecounts.io/embed/twitch-live-follower-counter/briandivacox"></iframe></div>
-        <div class="box"><iframe src="https://livecounts.io/embed/youtube-live-subscriber-counter/UCMuv7PfbLVm8IZsd6Bgqqzg"></iframe></div>
-        <div class="box"><iframe src="https://livecounts.io/embed/tiktok-live-follower-counter/briandivacox"></iframe></div>
-        
-        <div class="box">
-            <i class="fa-solid fa-cloud logo-icon" style="color:#0085ff; opacity: 0.6;"></i>
-            <div class="stat-label"><div id="b-dot" class="dot"></div> Bluesky Live</div>
-            <div class="stat-num" id="bsky-count">--</div>
-        </div>
-
-        <div class="box">
-            <i class="fa-brands fa-threads logo-icon" style="opacity: 0.6;"></i>
-            <div class="stat-label"><div id="t-dot" class="dot"></div> Threads API</div>
-            <div class="stat-num" id="threads-count">--</div>
-        </div>
+    <div class="header-section">
+        <h2>Live Social Statistics</h2>
+        <div class="version-badge">v1.8.0</div>
+        <br>
+        <button id="refresh-btn" onclick="refreshCounters()">
+            <span class="material-symbols-outlined">refresh</span>
+            Update All Stats
+        </button>
+        <div id="last-updated">Never updated</div>
     </div>
 
-    <script>
-        const B_ID = "briandivacox.bsky.social";
-        const T_ID = "26231664763158295"; 
-        const T_TOKEN = "THAAg36cTPHF1BUVNObmpNX1NmeWFyYXk2UHVfc29YYWU0SFI3QkRRc0luNnZAFcVNhS2RBdnhBV3VhOU9MV0JpZAWI2ZAGY4TmxaajhyN1NlSDJvQndYS3VteTRzZAU9jMDRPYS1kSnNvTDAtWWtqeUk5dmhZAa0gtd09ocmk0V09RVEQ1ZA3pqSk41TmFKbTA0d3FXampsOEJMamR1UWpHMG9MQzc3a2QZD";
+    <div class="counter-grid">
+        <div class="counter-item">
+            <svg class="box-logo" viewBox="0 0 24 24" fill="white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.045 4.126H5.078z"/></svg>
+            <iframe scrolling="no" src="https://livecounts.io/embed/twitter-live-follower-counter/briandivacox"></iframe>
+        </div>
 
-        async function updateStats() {
-            try {
-                const bRes = await fetch(`https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=${B_ID}`);
-                const bData = await bRes.json();
-                document.getElementById('bsky-count').innerText = bData.followersCount.toLocaleString();
-                document.getElementById('b-dot').classList.add('active');
-            } catch(e) {}
+        <div class="counter-item">
+            <i class="fa-brands fa-twitch box-logo" style="color:#9146FF; font-size:20px;"></i>
+            <iframe scrolling="no" src="https://livecounts.io/embed/twitch-live-follower-counter/briandivacox"></iframe>
+        </div>
 
-            try {
-                const tRes = await fetch(`https://graph.threads.net/v1.0/${T_ID}?fields=follower_count&access_token=${T_TOKEN}`);
-                const tData = await tRes.json();
-                if (tData.follower_count !== undefined) {
-                    document.getElementById('threads-count').innerText = tData.follower_count.toLocaleString();
-                    document.getElementById('t-dot').classList.add('active');
-                }
-            } catch(e) {}
-        }
+        <div class="counter-item">
+            <i class="fa-brands fa-youtube box-logo" style="color:#FF0000; font-size:20px;"></i>
+            <iframe scrolling="no" src="https://livecounts.io/embed/youtube-live-subscriber-counter/UCMuv7PfbLVm8IZsd6Bgqqzg"></iframe>
+        </div>
 
-        updateStats();
-        setInterval(updateStats, 45000);
-    </script>
-</body>
-</html>
+        <div class="counter-item">
+            <i class="fa-brands fa-tiktok box-logo" style="color:#00f2ea; font-size:20px;"></i>
+            <iframe scrolling="no" src="https://livecounts.io/embed/tiktok-live-follower-counter/briandivacox"></iframe>
+        </div>
+
+        <div class="counter-item instagram-fix">
+            <i class="fa-brands fa-instagram box-logo" style="color:#E1306C; font-size:20px;"></i>
+            <iframe scrolling="no" src="https://livecounts.nl/instagram-realtime/embed/?u=briandivacox"></iframe>
+        </div>
+
+        <div class="counter-item native-card">
+            <svg class="box-logo" viewBox="0 0 566 500" fill="#0085ff"><path d="M121.2 35.6C191.6 86.9 282.9 178.1 282.9 178.1S374.2 86.9 444.7 35.6C502.9-6.8 566 -20.3 566 49.3c0 19.3-11.2 121.1-17.8 144.6-21 75
