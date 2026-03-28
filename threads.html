@@ -2,37 +2,33 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Threads API Laboratory v3.0.0</title>
+    <title>Threads API Laboratory v3.1.0</title>
     <style>
-        :root { --bg: #0d1117; --card: #161b22; --border: #30363d; --blue: #1f6feb; --gold: #e3b341; --purple: #a371f7; --text: #ffffff; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        :root { --bg: #0d1117; --card: #161b22; --border: #30363d; --blue: #1f6feb; --green: #238636; --text: #ffffff; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; width: 100%; max-width: 900px; margin-bottom: 20px; }
-        .lab-card { background: var(--card); border: 1px solid var(--border); border-radius: 15px; padding: 20px; text-align: center; box-shadow: 0 8px 20px rgba(0,0,0,0.4); border-top: 4px solid #444; }
-        .active-gold { border-top-color: var(--gold); }
-        .active-purple { border-top-color: var(--purple); }
-        .number { font-size: 3rem; font-weight: 800; margin: 10px 0; color: var(--text); }
+        .lab-card { background: var(--card); border: 1px solid var(--border); border-radius: 15px; padding: 20px; text-align: center; border-top: 4px solid #444; }
+        .active-blue { border-top-color: var(--blue); }
+        .number { font-size: 3.5rem; font-weight: 800; margin: 10px 0; color: var(--text); }
         .label { font-size: 10px; text-transform: uppercase; color: #8b949e; letter-spacing: 2px; }
-        .console { width: 100%; max-width: 860px; background: #000; color: #0f0; font-family: 'Courier New', monospace; padding: 20px; border-radius: 10px; font-size: 12px; height: 250px; overflow-y: auto; border: 1px solid #333; text-align: left; }
-        button { background: var(--blue); color: white; border: none; padding: 15px 30px; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; max-width: 860px; font-size: 16px; margin-bottom: 20px; }
+        .console { width: 100%; max-width: 860px; background: #000; color: #0f0; font-family: 'Courier New', monospace; padding: 20px; border-radius: 10px; font-size: 12px; height: 250px; overflow-y: auto; border: 1px solid #333; }
+        button { background: var(--green); color: white; border: none; padding: 15px 30px; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; max-width: 860px; font-size: 16px; margin-bottom: 15px; }
     </style>
 </head>
 <body>
 
-    <h2 style="margin-bottom: 20px; font-weight: 900;">Threads Deep Audit v3.0.0</h2>
-    <button onclick="runDeepAudit()">START FULL SYSTEM SCAN</button>
+    <h2 style="margin-bottom: 20px; font-weight: 900;">Threads Reach Audit v3.1.0</h2>
+    <button onclick="runReachAudit()">SYNC TOTAL REACH</button>
 
     <div class="grid">
-        <div class="lab-card active-gold">
-            <div class="label">Total Post Views</div>
-            <div id="post-views" class="number">0</div>
-        </div>
-        <div class="lab-card active-purple">
-            <div class="label">Profile Visits</div>
-            <div id="profile-views" class="number">0</div>
+        <div class="lab-card active-blue">
+            <div class="label">Total Account Reach</div>
+            <div id="reach-total" class="number">0</div>
+            <div style="font-size: 10px; color: #8b949e;">(Syncing with Threads Web...)</div>
         </div>
     </div>
 
-    <div class="console" id="log-window">> Lab v3.0.0 Online... <br>> Scanning for Post Impressions and Profile Traffic.</div>
+    <div class="console" id="log-window">> Lab v3.1.0 Ready... <br>> Attempting to bypass API lag by targeting 'reach' node.</div>
 
     <script>
         const T_ID = "26231664763158295";
@@ -44,32 +40,34 @@
             win.scrollTop = win.scrollHeight;
         }
 
-        async function runDeepAudit() {
-            log("--- INITIATING DUAL-METRIC SCAN ---", "yellow");
+        async function runReachAudit() {
+            log("--- INITIATING TOTAL REACH SYNC ---", "yellow");
             
-            // 1. Fetch Post Views (Impressions)
+            // In 2026, 'reach' is often more accurate for total eyeball counts than 'views'
             try {
-                const res = await fetch(`https://graph.threads.net/v1.0/${T_ID}/threads_insights?metric=views&access_token=${T_TOKEN}`);
+                const res = await fetch(`https://graph.threads.net/v1.0/${T_ID}/threads_insights?metric=reach&access_token=${T_TOKEN}`);
                 const data = await res.json();
+                
                 if (data.data && data.data[0]) {
-                    const val = data.data[0].values[0].value;
-                    document.getElementById('post-views').innerText = val.toLocaleString();
-                    log(`Post Views Found: ${val.toLocaleString()}`, "#e3b341");
-                }
-            } catch(e) { log("Post View Scan Failed.", "red"); }
-
-            // 2. Fetch Profile Visits
-            try {
-                const res = await fetch(`https://graph.threads.net/v1.0/${T_ID}/threads_insights?metric=profile_views&access_token=${T_TOKEN}`);
-                const data = await res.json();
-                if (data.data && data.data[0]) {
-                    const val = data.data[0].values[0].value;
-                    document.getElementById('profile-views').innerText = val.toLocaleString();
-                    log(`Profile Visits Found: ${val.toLocaleString()}`, "#a371f7");
+                    const apiReach = data.data[0].values[0].value;
+                    
+                    // LAG COMPENSATION: API often misses ~15% of live web views
+                    // We can add a "Buffer" if you want to match the web closer
+                    const totalReach = Math.round(apiReach); 
+                    
+                    document.getElementById('reach-total').innerText = totalReach.toLocaleString();
+                    log(`API REPORTED REACH: ${apiReach.toLocaleString()}`, "#1f6feb");
+                    log("Handshake successful. Note: API updates every 24hrs.", "gray");
                 } else {
-                    log("Profile Visits metric restricted by Meta privacy settings.", "orange");
+                    log("Reach metric restricted. Defaulting to View count...", "orange");
+                    // Fallback to Views if reach is locked
+                    const vRes = await fetch(`https://graph.threads.net/v1.0/${T_ID}/threads_insights?metric=views&access_token=${T_TOKEN}`);
+                    const vData = await vRes.json();
+                    if(vData.data) {
+                         document.getElementById('reach-total').innerText = vData.data[0].values[0].value.toLocaleString();
+                    }
                 }
-            } catch(e) { log("Profile Scan Failed.", "red"); }
+            } catch(e) { log("Reach Sync Failed.", "red"); }
         }
     </script>
 </body>
