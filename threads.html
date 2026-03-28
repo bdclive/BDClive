@@ -2,35 +2,36 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Threads API Laboratory v1.9.0</title>
+    <title>Threads API Laboratory v2.1.0</title>
     <style>
         :root { --bg: #0d1117; --card: #161b22; --border: #30363d; --green: #238636; --text: #ffffff; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); display: flex; flex-direction: column; align-items: center; padding: 40px; }
-        .lab-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 30px; width: 520px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border-top: 4px solid var(--green); margin-bottom: 25px; }
-        .number { font-size: 5.5rem; font-weight: 800; margin: 15px 0; color: var(--green); text-shadow: 0 0 20px rgba(35, 134, 54, 0.3); }
-        .console { width: 100%; max-width: 850px; background: #000; color: #0f0; font-family: 'Courier New', monospace; padding: 20px; border-radius: 12px; font-size: 13px; height: 350px; overflow-y: auto; border: 1px solid #333; line-height: 1.5; }
-        .btn-group { display: flex; gap: 12px; justify-content: center; }
-        button { background: var(--green); color: white; border: none; padding: 14px 28px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 40px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        .lab-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 30px; width: 520px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border-top: 4px solid #1f6feb; margin-bottom: 25px; position: relative; }
+        .number { font-size: 5.5rem; font-weight: 800; margin: 15px 0; color: #8b949e; transition: 0.5s; }
+        .number.success { color: var(--green); text-shadow: 0 0 25px rgba(35, 134, 54, 0.5); }
+        .console { width: 100%; max-width: 850px; background: #000; color: #0f0; font-family: 'Courier New', monospace; padding: 20px; border-radius: 12px; font-size: 13px; height: 350px; overflow-y: auto; border: 1px solid #333; box-shadow: inset 0 0 10px rgba(0,255,0,0.1); }
+        button { background: var(--green); color: white; border: none; padding: 14px 28px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; font-size: 14px; letter-spacing: 1px; }
         button:hover { filter: brightness(1.2); transform: translateY(-2px); }
         .stat-badge { background: #21262d; padding: 4px 12px; border-radius: 15px; font-size: 11px; color: #8b949e; border: 1px solid var(--border); }
+        .live-indicator { position: absolute; top: 15px; left: 15px; width: 10px; height: 10px; background: #444; border-radius: 50%; }
+        .live-indicator.active { background: var(--green); box-shadow: 0 0 10px var(--green); animation: blink 2s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
     </style>
 </head>
 <body>
 
     <div class="lab-card">
-        <div class="stat-badge">ID: 26231664763158295</div>
-        <div class="number" id="count">330</div>
-        <div class="btn-group">
-            <button onclick="runMasterDiagnostic()">RUN MASTER DIAGNOSTIC</button>
-        </div>
+        <div id="pulse" class="live-indicator"></div>
+        <div class="stat-badge">60-DAY TOKEN ACTIVE</div>
+        <div class="number" id="count">---</div>
+        <button onclick="runFinalTest()">AUTHORIZE & FETCH</button>
     </div>
 
-    <div class="console" id="debug-console">> System Ready. Build v1.9.0 (2026-Stable)</div>
+    <div class="console" id="debug-console">> Initializing Lab v2.1.0... <br>> Standing by for 60-day token execution.</div>
 
     <script>
         const T_ID = "26231664763158295";
-        // REPLACE THE TOKEN BELOW WITH THE ONE FROM GRAPH EXPLORER (WITH INSIGHTS CHECKED)
-        const T_TOKEN = "THAAg36cTPHF1BUVNObmpNX1NmeWFyYXk2UHVfc29YYWU0SFI3QkRRc0luNnZAFcVNhS2RBdnhBV3VhOU9MV0JpZAWI2ZAGY4TmxaajhyN1NlSDJvQndYS3VteTRzZAU9jMDRPYS1kSnNvTDAtWWtqeUk5dmhZAa0gtd09ocmk0V09RVEQ1ZA3pqSk41TmFKbTA0d3FXampsOEJMamR1UWpHMG9MQzc3a2QZD";
+        const T_TOKEN = "THAAg36cTPHF1BUVNENF9FUkYyNzlwQktTck9faWhYS01rWVlwVk45QW94bDVwNEZAQWVlHSTlfZAU1XTXMtQ2ZA4QzRHbHdodENzRUQ4VU9WOURDSmwzUFlxMWo2QVdVSlVsZATBFNXdjeFJLZAnZAuWmtMeU9TNnFsTVJVMXhCRExiR0FGQQZDZD";
 
         function log(msg, color = "#0f0") {
             const con = document.getElementById('debug-console');
@@ -38,33 +39,40 @@
             con.scrollTop = con.scrollHeight;
         }
 
-        async function runMasterDiagnostic() {
-            log("INITIATING HANDSHAKE...", "yellow");
+        async function runFinalTest() {
+            log("--- INITIATING 60-DAY TOKEN HANDSHAKE ---", "yellow");
+            const countEl = document.getElementById('count');
+            const pulse = document.getElementById('pulse');
             
             try {
-                // Test 1: Username & ID Verification
+                // Step 1: User Verification
+                log("Verifying Identity for @briandivacox...");
                 const uRes = await fetch(`https://graph.threads.net/v1.0/me?fields=username&access_token=${T_TOKEN}`);
                 const uData = await uRes.json();
                 
                 if (uData.username) {
-                    log(`CONNECTED: Logged in as @${uData.username}`, "#238636");
+                    log(`CONNECTED: Handshake established with @${uData.username}`, "#238636");
                     
-                    // Test 2: Follower Data Request
-                    log("REQUESTING SENSITIVE DATA: [follower_count]...");
+                    // Step 2: Metric Fetch
+                    log("Querying Follower Insights (threads_manage_insights)...");
                     const fRes = await fetch(`https://graph.threads.net/v1.0/${T_ID}?fields=follower_count&access_token=${T_TOKEN}`);
                     const fData = await fRes.json();
                     
                     if (fData.follower_count !== undefined) {
-                        document.getElementById('count').innerText = fData.follower_count;
-                        log(`SUCCESS: Real-time count updated to ${fData.follower_count}`, "#238636");
-                    } else if (fData.error) {
-                        log(`META REJECTION: ${fData.error.message}`, "red");
-                        log("REQUIRED PERMISSION: [threads_manage_insights]", "orange");
+                        countEl.innerText = fData.follower_count.toLocaleString();
+                        countEl.classList.add('success');
+                        pulse.classList.add('active');
+                        log(`SUCCESS: Live Data Received: ${fData.follower_count}`, "#238636");
+                    } else {
+                        log(`REJECTED: ${fData.error.message}`, "red");
+                        log("HINT: If you just updated permissions, it may take 5-10 mins for Meta to propagate.", "orange");
                     }
                 } else {
-                    log("AUTH ERROR: Token is expired or invalid.", "red");
+                    log("AUTH ERROR: Token rejected by Meta.", "red");
                 }
-            } catch(e) { log("NETWORK ERROR: Check GitHub Pages settings or CORS blocks.", "red"); }
+            } catch(e) {
+                log("NETWORK ERROR: Check connection.", "red");
+            }
         }
     </script>
 </body>
