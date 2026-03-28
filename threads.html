@@ -2,32 +2,34 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Threads API Laboratory v1.8.0</title>
+    <title>Threads API Laboratory v1.9.0</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #0d1117; color: white; display: flex; flex-direction: column; align-items: center; padding: 40px; }
-        .lab-card { background: #161b22; border: 1px solid #30363d; border-radius: 20px; padding: 30px; width: 500px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin-bottom: 20px; border-top: 4px solid #238636; }
-        .number { font-size: 5rem; font-weight: 800; margin: 15px 0; color: #238636; text-shadow: 0 0 20px rgba(35, 134, 54, 0.4); }
-        .console { width: 100%; max-width: 800px; background: #000; color: #0f0; font-family: 'Courier New', monospace; padding: 20px; border-radius: 10px; font-size: 13px; text-align: left; height: 300px; overflow-y: auto; border: 1px solid #333; }
-        .btn-group { display: flex; gap: 10px; justify-content: center; }
-        button { background: #238636; color: white; border: none; padding: 12px 25px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.2s; }
-        button:hover { background: #2ea043; transform: scale(1.05); }
-        .status-pill { background: #21262d; border: 1px solid #30363d; padding: 4px 12px; border-radius: 20px; font-size: 10px; color: #8b949e; letter-spacing: 1px; }
+        :root { --bg: #0d1117; --card: #161b22; --border: #30363d; --green: #238636; --text: #ffffff; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); display: flex; flex-direction: column; align-items: center; padding: 40px; }
+        .lab-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 30px; width: 520px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border-top: 4px solid var(--green); margin-bottom: 25px; }
+        .number { font-size: 5.5rem; font-weight: 800; margin: 15px 0; color: var(--green); text-shadow: 0 0 20px rgba(35, 134, 54, 0.3); }
+        .console { width: 100%; max-width: 850px; background: #000; color: #0f0; font-family: 'Courier New', monospace; padding: 20px; border-radius: 12px; font-size: 13px; height: 350px; overflow-y: auto; border: 1px solid #333; line-height: 1.5; }
+        .btn-group { display: flex; gap: 12px; justify-content: center; }
+        button { background: var(--green); color: white; border: none; padding: 14px 28px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        button:hover { filter: brightness(1.2); transform: translateY(-2px); }
+        .stat-badge { background: #21262d; padding: 4px 12px; border-radius: 15px; font-size: 11px; color: #8b949e; border: 1px solid var(--border); }
     </style>
 </head>
 <body>
 
     <div class="lab-card">
-        <div class="status-pill">NODE: 26231664763158295</div>
+        <div class="stat-badge">ID: 26231664763158295</div>
         <div class="number" id="count">330</div>
         <div class="btn-group">
-            <button onclick="runMasterCheck()">Refresh Connection</button>
+            <button onclick="runMasterDiagnostic()">RUN MASTER DIAGNOSTIC</button>
         </div>
     </div>
 
-    <div class="console" id="debug-console">> Threads Lab v1.8.0 Online...</div>
+    <div class="console" id="debug-console">> System Ready. Build v1.9.0 (2026-Stable)</div>
 
     <script>
         const T_ID = "26231664763158295";
+        // REPLACE THE TOKEN BELOW WITH THE ONE FROM GRAPH EXPLORER (WITH INSIGHTS CHECKED)
         const T_TOKEN = "THAAg36cTPHF1BUVNObmpNX1NmeWFyYXk2UHVfc29YYWU0SFI3QkRRc0luNnZAFcVNhS2RBdnhBV3VhOU9MV0JpZAWI2ZAGY4TmxaajhyN1NlSDJvQndYS3VteTRzZAU9jMDRPYS1kSnNvTDAtWWtqeUk5dmhZAa0gtd09ocmk0V09RVEQ1ZA3pqSk41TmFKbTA0d3FXampsOEJMamR1UWpHMG9MQzc3a2QZD";
 
         function log(msg, color = "#0f0") {
@@ -36,26 +38,33 @@
             con.scrollTop = con.scrollHeight;
         }
 
-        async function runMasterCheck() {
+        async function runMasterDiagnostic() {
             log("INITIATING HANDSHAKE...", "yellow");
             
             try {
-                // Testing the specific 2026 'followers_count' (with an 's') field first
-                const res = await fetch(`https://graph.threads.net/v1.0/${T_ID}?fields=followers_count,username&access_token=${T_TOKEN}`);
-                const data = await res.json();
+                // Test 1: Username & ID Verification
+                const uRes = await fetch(`https://graph.threads.net/v1.0/me?fields=username&access_token=${T_TOKEN}`);
+                const uData = await uRes.json();
                 
-                if (data.followers_count !== undefined) {
-                    document.getElementById('count').innerText = data.followers_count;
-                    log(`DATA VERIFIED: ${data.followers_count} followers.`, "#238636");
-                } else if (data.error && data.error.code === 100) {
-                    log("HANDSHAKE SEMI-SUCCESSFUL: Profile found, but metrics are locked by Meta security.", "orange");
-                    log("NOTE: Accessing this field requires 'threads_manage_insights' in 2026.", "gray");
-                    // We keep the number at 330 so the UI doesn't break
-                    log("UI RETAINED: Displaying cached value (330).", "cyan");
+                if (uData.username) {
+                    log(`CONNECTED: Logged in as @${uData.username}`, "#238636");
+                    
+                    // Test 2: Follower Data Request
+                    log("REQUESTING SENSITIVE DATA: [follower_count]...");
+                    const fRes = await fetch(`https://graph.threads.net/v1.0/${T_ID}?fields=follower_count&access_token=${T_TOKEN}`);
+                    const fData = await fRes.json();
+                    
+                    if (fData.follower_count !== undefined) {
+                        document.getElementById('count').innerText = fData.follower_count;
+                        log(`SUCCESS: Real-time count updated to ${fData.follower_count}`, "#238636");
+                    } else if (fData.error) {
+                        log(`META REJECTION: ${fData.error.message}`, "red");
+                        log("REQUIRED PERMISSION: [threads_manage_insights]", "orange");
+                    }
+                } else {
+                    log("AUTH ERROR: Token is expired or invalid.", "red");
                 }
-            } catch(e) { 
-                log("NETWORK BLOCK: Are you using an AdBlocker or VPN?", "red"); 
-            }
+            } catch(e) { log("NETWORK ERROR: Check GitHub Pages settings or CORS blocks.", "red"); }
         }
     </script>
 </body>
