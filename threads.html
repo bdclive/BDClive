@@ -2,37 +2,30 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Threads API Laboratory v1.4.0</title>
+    <title>Threads API Laboratory v1.5.0</title>
     <style>
         body { font-family: 'Segoe UI', sans-serif; background: #0d1117; color: white; display: flex; flex-direction: column; align-items: center; padding: 40px; }
-        .lab-card { background: #161b22; border: 1px solid #30363d; border-radius: 20px; padding: 30px; width: 500px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin-bottom: 20px; border-top: 4px solid #1f6feb; }
+        .lab-card { background: #161b22; border: 1px solid #30363d; border-radius: 20px; padding: 30px; width: 500px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin-bottom: 20px; border-top: 4px solid #238636; }
         .number { font-size: 4rem; font-weight: 800; margin: 15px 0; color: #238636; }
-        .console { width: 100%; max-width: 800px; background: #000; color: #0f0; font-family: 'Courier New', monospace; padding: 20px; border-radius: 10px; font-size: 13px; text-align: left; height: 400px; overflow-y: auto; border: 1px solid #333; box-shadow: inset 0 0 10px #0f02; }
-        .btn-group { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
-        button { background: #238636; color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.2s; }
-        button.alt { background: #1f6feb; }
-        button.danger { background: #cf222e; }
-        button:hover { opacity: 0.8; transform: translateY(-2px); }
-        .json-out { color: #58a6ff; word-break: break-all; }
+        .console { width: 100%; max-width: 800px; background: #000; color: #0f0; font-family: 'Courier New', monospace; padding: 20px; border-radius: 10px; font-size: 13px; text-align: left; height: 400px; overflow-y: auto; border: 1px solid #333; }
+        button { background: #238636; color: white; border: none; padding: 12px 25px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 14px; }
+        button:hover { background: #2ea043; }
         .highlight { color: #e3b341; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <div class="lab-card">
-        <div style="font-size: 11px; color: #8b949e; margin-bottom: 5px;">ACCOUNT: <span class="highlight">@briandivacox</span></div>
-        <div id="status-text">PROBE READY</div>
+        <div style="font-size: 11px; color: #8b949e; margin-bottom: 5px;">CURRENT TARGET: <span class="highlight">@briandivacox</span></div>
+        <div id="status-text">RESOLVER READY</div>
         <div class="number" id="count">--</div>
-        <div class="btn-group">
-            <button onclick="runProbe()">Start Permission Probe</button>
-            <button class="alt" onclick="clearConsole()">Clear Logs</button>
-        </div>
+        <button onclick="resolveAndFetch()">Run Identity Resolver</button>
     </div>
 
-    <div class="console" id="debug-console">> Initializing Probe v1.4.0...</div>
+    <div class="console" id="debug-console">> Initializing Lab v1.5.0...</div>
 
     <script>
-        const T_ID = "26231664763158295";
+        // YOUR TOKEN
         const T_TOKEN = "THAAg36cTPHF1BUVNObmpNX1NmeWFyYXk2UHVfc29YYWU0SFI3QkRRc0luNnZAFcVNhS2RBdnhBV3VhOU9MV0JpZAWI2ZAGY4TmxaajhyN1NlSDJvQndYS3VteTRzZAU9jMDRPYS1kSnNvTDAtWWtqeUk5dmhZAa0gtd09ocmk0V09RVEQ1ZA3pqSk41TmFKbTA0d3FXampsOEJMamR1UWpHMG9MQzc3a2QZD";
 
         function log(msg, color = "#0f0") {
@@ -41,44 +34,36 @@
             con.scrollTop = con.scrollHeight;
         }
 
-        async function runProbe() {
-            log("--- PROBE SEQUENCE INITIATED ---", "yellow");
+        async function resolveAndFetch() {
+            log("--- STARTING IDENTITY RESOLUTION ---", "yellow");
             
-            // Test 1: Advanced Metadata Check
-            log("PROBE 1: Requesting all basic user fields...");
+            // Step 1: Use the 'me' endpoint to find your ACTUAL Threads ID
+            log("Step 1: Pinging /me endpoint to find current user ID...");
             try {
-                const res = await fetch(`https://graph.threads.net/v1.0/${T_ID}?fields=id,username,name,biography,profile_picture_url&access_token=${T_TOKEN}`);
+                const res = await fetch(`https://graph.threads.net/v1.0/me?fields=id,username&access_token=${T_TOKEN}`);
                 const data = await res.json();
-                log(`STATUS: Found @${data.username}. If biography is empty, account is likely 'Private'.`, "#1f6feb");
-                log(`RAW DATA: <span class="json-out">${JSON.stringify(data)}</span>`);
-            } catch(e) { log("Probe 1 Failed.", "red"); }
-
-            // Test 2: Multi-Field Insight Brute Force
-            log("PROBE 2: Brute-forcing hidden metric fields...");
-            const fields = ["follower_count", "followers_count", "threads_followers", "total_followers"];
-            
-            for(let f of fields) {
-                log(`Checking field [${f}]...`);
-                try {
-                    const res = await fetch(`https://graph.threads.net/v1.0/${T_ID}?fields=${f}&access_token=${T_TOKEN}`);
-                    const data = await res.json();
-                    if(data[f] !== undefined) {
-                        log(`SUCCESS! Field found: <span class="highlight">${f}</span>. Value: ${data[f]}`, "#238636");
-                        document.getElementById('count').innerText = data[f];
-                        return;
+                
+                if (data.id) {
+                    const realID = data.id;
+                    log(`SUCCESS: Found Real Threads ID: <span class="highlight">${realID}</span>`, "#238636");
+                    log(`Linked to username: @${data.username}`);
+                    
+                    // Step 2: Use that new ID to fetch followers
+                    log(`Step 2: Fetching followers for ID ${realID}...`);
+                    const fRes = await fetch(`https://graph.threads.net/v1.0/${realID}?fields=follower_count&access_token=${T_TOKEN}`);
+                    const fData = await fRes.json();
+                    
+                    if (fData.follower_count !== undefined) {
+                        document.getElementById('count').innerText = fData.follower_count;
+                        log(`MATCH FOUND! Followers: ${fData.follower_count}`, "#238636");
                     } else {
-                        log(`REJECTED: ${data.error.message}`, "#444");
+                        log(`FAIL: Field 'follower_count' still missing for this ID.`, "red");
+                        log(`RESPONSE: ${JSON.stringify(fData)}`, "#444");
                     }
-                } catch(e) {}
-            }
-
-            log("--- PROBE COMPLETE: NO METRICS FOUND ---", "red");
-            log("FIX: Open Threads App > Settings > Account > Switch to Professional Account.", "yellow");
-            log("If already Professional, try changing your 'Category' to 'Public Figure'.", "yellow");
-        }
-
-        function clearConsole() {
-            document.getElementById('debug-console').innerHTML = "> Console Cleared.";
+                } else {
+                    log(`ERROR: Could not resolve 'me'. Message: ${data.error.message}`, "red");
+                }
+            } catch(e) { log("Connection Fatal Error.", "red"); }
         }
     </script>
 </body>
