@@ -2,26 +2,25 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Threads API Laboratory v2.3.0</title>
+    <title>Threads API Laboratory v2.4.0</title>
     <style>
         :root { --bg: #0d1117; --card: #161b22; --border: #30363d; --green: #238636; --text: #ffffff; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 40px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
-        .lab-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 30px; width: 520px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border-top: 4px solid #f85149; margin-bottom: 25px; }
+        .lab-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 30px; width: 520px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border-top: 4px solid #1f6feb; margin-bottom: 25px; }
         .number { font-size: 5.5rem; font-weight: 800; margin: 15px 0; color: #444; }
-        .console { width: 100%; max-width: 850px; background: #000; color: #0f0; font-family: 'Courier New', monospace; padding: 20px; border-radius: 12px; font-size: 13px; height: 400px; overflow-y: auto; border: 1px solid #333; }
-        button { background: #1f6feb; color: white; border: none; padding: 14px 28px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 14px; margin: 5px; }
-        .json-box { color: #58a6ff; font-weight: bold; word-break: break-all; }
+        .console { width: 100%; max-width: 850px; background: #000; color: #0f0; font-family: 'Courier New', monospace; padding: 20px; border-radius: 12px; font-size: 13px; height: 350px; overflow-y: auto; border: 1px solid #333; }
+        button { background: #1f6feb; color: white; border: none; padding: 14px 28px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 14px; }
     </style>
 </head>
 <body>
 
     <div class="lab-card">
-        <div style="font-size: 11px; color: #8b949e; margin-bottom: 5px;">2026 THREADS NODE SCAN</div>
+        <div style="font-size: 11px; color: #8b949e; margin-bottom: 5px;">2026 PROFESSIONAL SYNC SCAN</div>
         <div class="number" id="count">330</div>
-        <button onclick="runFinalAudit()">RUN FINAL ACCOUNT AUDIT</button>
+        <button onclick="checkSync()">CHECK PROFESSIONAL SYNC</button>
     </div>
 
-    <div class="console" id="debug-console">> Lab v2.3.0 Online... <br>> Ready for Final Account Audit.</div>
+    <div class="console" id="debug-console">> Lab v2.4.0 Online... <br>> Waiting for Instagram Professional Sync.</div>
 
     <script>
         const T_ID = "26231664763158295";
@@ -33,35 +32,22 @@
             con.scrollTop = con.scrollHeight;
         }
 
-        async function runFinalAudit() {
-            log("--- INITIATING FINAL ACCOUNT AUDIT ---", "yellow");
-            
-            // Step 1: Check Account Visibility/Metadata
-            log("Step 1: Checking Account Metadata...");
+        async function checkSync() {
+            log("--- INITIATING INSTAGRAM SYNC AUDIT ---", "yellow");
             try {
-                const res = await fetch(`https://graph.threads.net/v1.0/${T_ID}?fields=id,username,name&access_token=${T_TOKEN}`);
-                const data = await res.json();
-                log(`ACCOUNT FOUND: @${data.username} (${data.name})`, "#238636");
-            } catch(e) { log("Account discovery failed.", "red"); }
-
-            // Step 2: Test the "Plural" field - This is the standard for 2026 Professional Accounts
-            log("Step 2: Testing [followers_count] Professional field...");
-            try {
+                // Testing the specific followers_count plural field used for Pro accounts
                 const res = await fetch(`https://graph.threads.net/v1.0/${T_ID}?fields=followers_count&access_token=${T_TOKEN}`);
                 const data = await res.json();
                 
                 if (data.followers_count !== undefined) {
-                    log(`SUCCESS! followers_count found: ${data.followers_count}`, "#238636");
+                    log(`SUCCESS! Sync Active. Followers: ${data.followers_count}`, "#238636");
                     document.getElementById('count').innerText = data.followers_count;
+                    document.getElementById('count').style.color = "#238636";
                 } else {
                     log(`REJECTED: ${data.error.message}`, "red");
-                    log("VERDICT: The field is physically blocked by Meta's privacy gates.", "orange");
+                    log("HINT: If Instagram is already Professional, try toggling it to Personal and back.", "orange");
                 }
-            } catch(e) {}
-
-            log("--- AUDIT COMPLETE ---", "yellow");
-            log("REQUIRED ACTION: Open Threads App > Settings > Account > Switch to Professional Account.", "white");
-            log("If already Professional, switch to 'Personal' then back to 'Professional' to reset the API permissions.", "white");
+            } catch(e) { log("Connection Error.", "red"); }
         }
     </script>
 </body>
