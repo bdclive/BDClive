@@ -2,33 +2,37 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Threads API Laboratory v2.9.0</title>
+    <title>Threads API Laboratory v3.0.0</title>
     <style>
-        :root { --bg: #0d1117; --card: #161b22; --border: #30363d; --green: #238636; --gold: #e3b341; --text: #ffffff; }
+        :root { --bg: #0d1117; --card: #161b22; --border: #30363d; --blue: #1f6feb; --gold: #e3b341; --purple: #a371f7; --text: #ffffff; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; width: 100%; max-width: 900px; margin-bottom: 20px; }
         .lab-card { background: var(--card); border: 1px solid var(--border); border-radius: 15px; padding: 20px; text-align: center; box-shadow: 0 8px 20px rgba(0,0,0,0.4); border-top: 4px solid #444; }
         .active-gold { border-top-color: var(--gold); }
-        .number { font-size: 3.5rem; font-weight: 800; margin: 10px 0; color: var(--gold); text-shadow: 0 0 15px rgba(227, 179, 65, 0.3); }
+        .active-purple { border-top-color: var(--purple); }
+        .number { font-size: 3rem; font-weight: 800; margin: 10px 0; color: var(--text); }
         .label { font-size: 10px; text-transform: uppercase; color: #8b949e; letter-spacing: 2px; }
-        .console { width: 100%; max-width: 860px; background: #000; color: #0f0; font-family: 'Courier New', monospace; padding: 20px; border-radius: 10px; font-size: 12px; height: 300px; overflow-y: auto; border: 1px solid #333; text-align: left; }
-        button { background: #1f6feb; color: white; border: none; padding: 15px 30px; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; max-width: 860px; font-size: 16px; margin-bottom: 20px; }
+        .console { width: 100%; max-width: 860px; background: #000; color: #0f0; font-family: 'Courier New', monospace; padding: 20px; border-radius: 10px; font-size: 12px; height: 250px; overflow-y: auto; border: 1px solid #333; text-align: left; }
+        button { background: var(--blue); color: white; border: none; padding: 15px 30px; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; max-width: 860px; font-size: 16px; margin-bottom: 20px; }
     </style>
 </head>
 <body>
 
-    <h2 style="margin-bottom: 20px; font-weight: 900;">Threads Multi-Pass Audit v2.9.0</h2>
-
-    <button onclick="runMultiPassAudit()">START DEEP HISTORY SCAN</button>
+    <h2 style="margin-bottom: 20px; font-weight: 900;">Threads Deep Audit v3.0.0</h2>
+    <button onclick="runDeepAudit()">START FULL SYSTEM SCAN</button>
 
     <div class="grid">
         <div class="lab-card active-gold">
-            <div class="label">LIFETIME VIEWS (AGGREGATED)</div>
-            <div class="number" id="view-num">0</div>
+            <div class="label">Total Post Views</div>
+            <div id="post-views" class="number">0</div>
+        </div>
+        <div class="lab-card active-purple">
+            <div class="label">Profile Visits</div>
+            <div id="profile-views" class="number">0</div>
         </div>
     </div>
 
-    <div class="console" id="log-window">> Lab v2.9.0 Ready... <br>> Multi-Pass mode enabled to bypass 90-day Meta limit.</div>
+    <div class="console" id="log-window">> Lab v3.0.0 Online... <br>> Scanning for Post Impressions and Profile Traffic.</div>
 
     <script>
         const T_ID = "26231664763158295";
@@ -40,47 +44,32 @@
             win.scrollTop = win.scrollHeight;
         }
 
-        async function runMultiPassAudit() {
-            log("--- INITIATING MULTI-PASS SCAN ---", "yellow");
-            let totalViews = 0;
+        async function runDeepAudit() {
+            log("--- INITIATING DUAL-METRIC SCAN ---", "yellow");
             
-            // Current time in seconds
-            let now = Math.floor(Date.now() / 1000);
-            // Threads Launch (July 2023)
-            const launchDate = 1688515200; 
-            // 90 days in seconds
-            const ninetyDays = 90 * 24 * 60 * 60;
+            // 1. Fetch Post Views (Impressions)
+            try {
+                const res = await fetch(`https://graph.threads.net/v1.0/${T_ID}/threads_insights?metric=views&access_token=${T_TOKEN}`);
+                const data = await res.json();
+                if (data.data && data.data[0]) {
+                    const val = data.data[0].values[0].value;
+                    document.getElementById('post-views').innerText = val.toLocaleString();
+                    log(`Post Views Found: ${val.toLocaleString()}`, "#e3b341");
+                }
+            } catch(e) { log("Post View Scan Failed.", "red"); }
 
-            let currentEnd = now;
-            let passCount = 1;
-
-            while (currentEnd > launchDate) {
-                let currentStart = currentEnd - ninetyDays;
-                if (currentStart < launchDate) currentStart = launchDate;
-
-                log(`PASS ${passCount}: Scanning ${new Date(currentStart * 1000).toLocaleDateString()} to ${new Date(currentEnd * 1000).toLocaleDateString()}...`);
-                
-                try {
-                    const url = `https://graph.threads.net/v1.0/${T_ID}/threads_insights?metric=views&since=${currentStart}&until=${currentEnd}&access_token=${T_TOKEN}`;
-                    const res = await fetch(url);
-                    const data = await res.json();
-                    
-                    if (data.data && data.data[0]) {
-                        const passViews = data.data[0].values[0].value;
-                        totalViews += passViews;
-                        document.getElementById('view-num').innerText = totalViews.toLocaleString();
-                        log(`Received ${passViews.toLocaleString()} views. Total: ${totalViews.toLocaleString()}`, "#e3b341");
-                    }
-                } catch(e) { log("Pass failed or timed out.", "red"); }
-
-                currentEnd = currentStart;
-                passCount++;
-                // Safety break to prevent infinite loops
-                if (passCount > 20) break;
-            }
-
-            log("--- DEEP SCAN COMPLETE ---", "green");
-            log(`FINAL LIFETIME TOTAL: ${totalViews.toLocaleString()}`, "white");
+            // 2. Fetch Profile Visits
+            try {
+                const res = await fetch(`https://graph.threads.net/v1.0/${T_ID}/threads_insights?metric=profile_views&access_token=${T_TOKEN}`);
+                const data = await res.json();
+                if (data.data && data.data[0]) {
+                    const val = data.data[0].values[0].value;
+                    document.getElementById('profile-views').innerText = val.toLocaleString();
+                    log(`Profile Visits Found: ${val.toLocaleString()}`, "#a371f7");
+                } else {
+                    log("Profile Visits metric restricted by Meta privacy settings.", "orange");
+                }
+            } catch(e) { log("Profile Scan Failed.", "red"); }
         }
     </script>
 </body>
