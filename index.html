@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Stats Dashboard v3.0.0</title>
+    <title>Live Stats Dashboard v3.1.0</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     
     <style>
         :root {
@@ -43,21 +43,21 @@
 
         .box-logo { position: absolute; top: 15px; right: 15px; font-size: 18px; z-index: 10; }
 
+        /* FIXED IFRAME POSITIONS FOR X AND IG */
         .counter-item iframe {
             filter: invert(1) hue-rotate(180deg); border: 0; width: 500px; height: 250px;
             position: absolute; top: 5px; left: -88px; transform: scale(1.1); transform-origin: top left;
         }
+        
+        /* Instagram often needs a slightly different alignment */
+        .instagram-fix iframe { top: 35px; left: -80px; transform: scale(1.0); }
 
         .header-tag { font-size: 12px; color: var(--text-dim); margin-bottom: 5px; display: block; }
         .main-number { font-size: 3.8rem; font-weight: 700; line-height: 1; margin: 0; color: #ffffff; }
 
         .version-info { 
-            margin-top: 30px; 
-            font-size: 12px; 
-            color: var(--text-dim); 
-            background: #21262d; 
-            padding: 4px 12px; 
-            border-radius: 20px; 
+            margin-top: 30px; font-size: 12px; color: var(--text-dim); 
+            background: #21262d; padding: 4px 12px; border-radius: 20px; 
             border: 1px solid var(--border-color);
         }
         
@@ -89,13 +89,13 @@
             <iframe scrolling="no" src="https://livecounts.io/embed/tiktok-live-follower-counter/briandivacox"></iframe>
         </div>
 
-        <div class="counter-item">
+        <div class="counter-item instagram-fix">
             <i class="fa-brands fa-instagram box-logo" style="color:#E1306C;"></i>
             <iframe scrolling="no" src="https://livecounts.nl/instagram-realtime/embed/?u=briandivacox"></iframe>
         </div>
 
         <div class="counter-item">
-            <i class="fa-solid fa-square-poll-vertical box-logo" style="color:var(--bsky-blue);"></i>
+            <svg class="box-logo" viewBox="0 0 566 500" fill="#0085ff" style="width:20px;"><path d="M121.2 35.6C191.6 86.9 282.9 178.1 282.9 178.1S374.2 86.9 444.7 35.6C502.9-6.8 566 -20.3 566 49.3c0 19.3-11.2 121.1-17.8 144.6-21 75"/></svg>
             <span class="header-tag">Bluesky API</span>
             <div class="main-number">22</div>
         </div>
@@ -106,13 +106,13 @@
         </div>
 
         <div class="counter-item">
-            <span class="material-symbols-outlined box-logo" style="color:white;">analytics</span>
-            <div id="threads-view-num" class="main-number">5.7m</div>
+            <i class="fa-brands fa-threads box-logo" style="color:white;"></i>
+            <div id="threads-view-num" class="main-number" style="color:#a371f7">5.7m</div>
         </div>
 
         <div class="counter-item">
             <i class="fa-brands fa-snapchat box-logo" style="color:var(--snap-yellow);"></i>
-            <div id="snap-fol-num" class="main-number" style="color:white;">3,674</div>
+            <div id="snap-fol-num" class="main-number">3,674</div>
         </div>
 
         <div class="counter-item">
@@ -128,7 +128,7 @@
         </div>
     </div>
 
-    <div class="version-info">v3.0.0</div>
+    <div class="version-info">v3.1.0</div>
 
     <script>
         function updateDisplay() {
@@ -136,14 +136,4 @@
             if (rawData) {
                 const data = JSON.parse(rawData);
                 if(document.getElementById('threads-fol-num')) document.getElementById('threads-fol-num').innerText = data.threadsFol || "330";
-                if(document.getElementById('threads-view-num')) document.getElementById('threads-view-num').innerText = data.threadsViews || "5.7m";
-                if(document.getElementById('snap-fol-num')) document.getElementById('snap-fol-num').innerText = data.snapFol || "3,674";
-                if(document.getElementById('fb-page-num')) document.getElementById('fb-page-num').innerText = data.fbPage || "1k";
-                if(document.getElementById('fb-personal-num')) document.getElementById('fb-personal-num').innerText = data.fbPersonal || "5.5k";
-            }
-        }
-        updateDisplay();
-        window.addEventListener('storage', (event) => { if (event.key === 'labData') updateDisplay(); });
-    </script>
-</body>
-</html>
+                if(document.getElementById('threads-view-num')) document.getElementById('threads-view
