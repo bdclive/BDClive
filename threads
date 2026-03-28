@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Threads API Laboratory</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #0d1117; color: white; display: flex; flex-direction: column; align-items: center; padding: 50px; }
+        .lab-card { background: #161b22; border: 1px solid #30363d; border-radius: 20px; padding: 40px; width: 400px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .number { font-size: 5rem; font-weight: 800; margin: 20px 0; color: #238636; }
+        .status { font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: #8b949e; }
+        .console { margin-top: 30px; width: 100%; max-width: 600px; background: black; color: #00ff00; font-family: monospace; padding: 15px; border-radius: 8px; font-size: 13px; text-align: left; overflow-x: auto; }
+        button { background: #238636; color: white; border: none; padding: 15px 30px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 20px; }
+        button:hover { background: #2ea043; }
+    </style>
+</head>
+<body>
+
+    <div class="lab-card">
+        <div class="status" id="status-text">Testing Connection...</div>
+        <div class="number" id="count">--</div>
+        <button onclick="testThreads()">Run Test</button>
+    </div>
+
+    <div class="console" id="debug-console">
+        > Laboratory Initialized...<br>
+        > Waiting for manual test run...
+    </div>
+
+    <script>
+        // --- CONFIGURATION ---
+        const T_ID = "26231664763158295"; 
+        const T_TOKEN = "THAAg36cTPHF1BUVNObmpNX1NmeWFyYXk2UHVfc29YYWU0SFI3QkRRc0luNnZAFcVNhS2RBdnhBV3VhOU9MV0JpZAWI2ZAGY4TmxaajhyN1NlSDJvQndYS3VteTRzZAU9jMDRPYS1kSnNvTDAtWWtqeUk5dmhZAa0gtd09ocmk0V09RVEQ1ZA3pqSk41TmFKbTA0d3FXampsOEJMamR1UWpHMG9MQzc3a2QZD";
+
+        function log(msg, isError = false) {
+            const con = document.getElementById('debug-console');
+            const color = isError ? "red" : "#00ff00";
+            con.innerHTML += `<br><span style="color: ${color}">> ${msg}</span>`;
+        }
+
+        async function testThreads() {
+            const countEl = document.getElementById('count');
+            const statusEl = document.getElementById('status-text');
+            
+            log("Starting fetch to Meta Graph...");
+            
+            try {
+                const url = `https://graph.threads.net/v1.0/${T_ID}?fields=follower_count&access_token=${T_TOKEN}`;
+                const response = await fetch(url);
+                const data = await response.json();
+
+                if (data.follower_count !== undefined) {
+                    countEl.innerText = data.follower_count.toLocaleString();
+                    statusEl.innerText = "SUCCESS";
+                    log("Data received: " + data.follower_count + " followers.");
+                } else if (data.error) {
+                    statusEl.innerText = "FAILED";
+                    log("META ERROR: " + data.error.message, true);
+                    log("TYPE: " + data.error.type, true);
+                    log("CODE: " + data.error.code, true);
+                }
+            } catch (err) {
+                statusEl.innerText = "BLOCK";
+                log("NETWORK ERROR: " + err.message, true);
+                log("Check if you are running this on GitHub or a Local Server.", true);
+            }
+        }
+    </script>
+</body>
+</html>
