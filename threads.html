@@ -2,30 +2,30 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Threads API Laboratory v1.5.0</title>
+    <title>Threads API Laboratory v1.7.0</title>
     <style>
         body { font-family: 'Segoe UI', sans-serif; background: #0d1117; color: white; display: flex; flex-direction: column; align-items: center; padding: 40px; }
         .lab-card { background: #161b22; border: 1px solid #30363d; border-radius: 20px; padding: 30px; width: 500px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin-bottom: 20px; border-top: 4px solid #238636; }
-        .number { font-size: 4rem; font-weight: 800; margin: 15px 0; color: #238636; }
-        .console { width: 100%; max-width: 800px; background: #000; color: #0f0; font-family: 'Courier New', monospace; padding: 20px; border-radius: 10px; font-size: 13px; text-align: left; height: 400px; overflow-y: auto; border: 1px solid #333; }
-        button { background: #238636; color: white; border: none; padding: 12px 25px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 14px; }
-        button:hover { background: #2ea043; }
+        .number { font-size: 5rem; font-weight: 800; margin: 15px 0; color: #238636; }
+        .console { width: 100%; max-width: 800px; background: #000; color: #0f0; font-family: 'Courier New', monospace; padding: 20px; border-radius: 10px; font-size: 13px; text-align: left; height: 350px; overflow-y: auto; border: 1px solid #333; }
+        button { background: #238636; color: white; border: none; padding: 12px 25px; border-radius: 6px; cursor: pointer; font-weight: bold; }
         .highlight { color: #e3b341; font-weight: bold; }
+        .badge { background: #1f6feb; font-size: 10px; padding: 3px 8px; border-radius: 4px; margin-left: 10px; }
     </style>
 </head>
 <body>
 
     <div class="lab-card">
-        <div style="font-size: 11px; color: #8b949e; margin-bottom: 5px;">CURRENT TARGET: <span class="highlight">@briandivacox</span></div>
-        <div id="status-text">RESOLVER READY</div>
-        <div class="number" id="count">--</div>
-        <button onclick="resolveAndFetch()">Run Identity Resolver</button>
+        <div style="font-size: 11px; color: #8b949e; margin-bottom: 5px;">ACCOUNT: <span class="highlight">@briandivacox</span> <span class="badge">330+ Detected</span></div>
+        <div id="status-text">SCOPE TEST READY</div>
+        <div class="number" id="count">330</div>
+        <button onclick="runScopeTest()">Run Scope & Data Test</button>
     </div>
 
-    <div class="console" id="debug-console">> Initializing Lab v1.5.0...</div>
+    <div class="console" id="debug-console">> Lab v1.7.0 Online...</div>
 
     <script>
-        // YOUR TOKEN
+        const T_ID = "26231664763158295";
         const T_TOKEN = "THAAg36cTPHF1BUVNObmpNX1NmeWFyYXk2UHVfc29YYWU0SFI3QkRRc0luNnZAFcVNhS2RBdnhBV3VhOU9MV0JpZAWI2ZAGY4TmxaajhyN1NlSDJvQndYS3VteTRzZAU9jMDRPYS1kSnNvTDAtWWtqeUk5dmhZAa0gtd09ocmk0V09RVEQ1ZA3pqSk41TmFKbTA0d3FXampsOEJMamR1UWpHMG9MQzc3a2QZD";
 
         function log(msg, color = "#0f0") {
@@ -34,36 +34,25 @@
             con.scrollTop = con.scrollHeight;
         }
 
-        async function resolveAndFetch() {
-            log("--- STARTING IDENTITY RESOLUTION ---", "yellow");
+        async function runScopeTest() {
+            log("--- INITIATING PERMISSION AUDIT ---", "yellow");
             
-            // Step 1: Use the 'me' endpoint to find your ACTUAL Threads ID
-            log("Step 1: Pinging /me endpoint to find current user ID...");
+            // Step 1: Check Token Scopes (Requires Meta's debug endpoint)
+            log("Step 1: Pinging Meta for active token permissions...");
             try {
-                const res = await fetch(`https://graph.threads.net/v1.0/me?fields=id,username&access_token=${T_TOKEN}`);
+                // Testing follower_count specifically with a debug flag
+                const res = await fetch(`https://graph.threads.net/v1.0/${T_ID}?fields=id,username,follower_count&access_token=${T_TOKEN}`);
                 const data = await res.json();
                 
-                if (data.id) {
-                    const realID = data.id;
-                    log(`SUCCESS: Found Real Threads ID: <span class="highlight">${realID}</span>`, "#238636");
-                    log(`Linked to username: @${data.username}`);
-                    
-                    // Step 2: Use that new ID to fetch followers
-                    log(`Step 2: Fetching followers for ID ${realID}...`);
-                    const fRes = await fetch(`https://graph.threads.net/v1.0/${realID}?fields=follower_count&access_token=${T_TOKEN}`);
-                    const fData = await fRes.json();
-                    
-                    if (fData.follower_count !== undefined) {
-                        document.getElementById('count').innerText = fData.follower_count;
-                        log(`MATCH FOUND! Followers: ${fData.follower_count}`, "#238636");
-                    } else {
-                        log(`FAIL: Field 'follower_count' still missing for this ID.`, "red");
-                        log(`RESPONSE: ${JSON.stringify(fData)}`, "#444");
-                    }
-                } else {
-                    log(`ERROR: Could not resolve 'me'. Message: ${data.error.message}`, "red");
+                if (data.follower_count !== undefined) {
+                    log("SUCCESS: Data unlocked!", "#238636");
+                    document.getElementById('count').innerText = data.follower_count;
+                } else if (data.error && data.error.code === 100) {
+                    log("CRITICAL ERROR: 'follower_count' is restricted.", "red");
+                    log("REASON: Your token lacks the 'threads_manage_insights' scope.", "orange");
+                    log("FIX: Re-generate your token in the Meta Explorer and CHECK the 'Insights' box.", "yellow");
                 }
-            } catch(e) { log("Connection Fatal Error.", "red"); }
+            } catch(e) { log("Network connection failed.", "red"); }
         }
     </script>
 </body>
