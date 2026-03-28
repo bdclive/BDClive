@@ -2,44 +2,45 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Threads API Laboratory v2.7.0</title>
+    <title>Threads API Laboratory v2.8.0</title>
     <style>
-        :root { --bg: #0d1117; --card: #161b22; --border: #30363d; --green: #238636; --blue: #1f6feb; --text: #ffffff; }
+        :root { --bg: #0d1117; --card: #161b22; --border: #30363d; --green: #238636; --blue: #1f6feb; --gold: #e3b341; --text: #ffffff; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
         
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; width: 100%; max-width: 900px; margin-bottom: 20px; }
-        .lab-card { background: var(--card); border: 1px solid var(--border); border-radius: 15px; padding: 20px; text-align: center; box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
-        .lab-card.followers { border-top: 4px solid var(--green); }
-        .lab-card.views { border-top: 4px solid var(--blue); }
+        .lab-card { background: var(--card); border: 1px solid var(--border); border-radius: 15px; padding: 20px; text-align: center; box-shadow: 0 8px 20px rgba(0,0,0,0.4); border-top: 4px solid #444; }
         
-        .number { font-size: 3.5rem; font-weight: 800; margin: 10px 0; color: #444; }
-        .number.active { color: var(--text); text-shadow: 0 0 10px rgba(255,255,255,0.2); }
-        .label { font-size: 10px; text-transform: uppercase; color: #8b949e; letter-spacing: 1px; }
+        .lab-card.active-green { border-top-color: var(--green); }
+        .lab-card.active-gold { border-top-color: var(--gold); }
         
-        .console { width: 100%; max-width: 860px; background: #000; color: #0f0; font-family: 'Courier New', monospace; padding: 20px; border-radius: 10px; font-size: 12px; height: 300px; overflow-y: auto; border: 1px solid #333; text-align: left; }
+        .number { font-size: 3.5rem; font-weight: 800; margin: 10px 0; color: #444; transition: 0.5s; }
+        .number.glow { color: var(--text); text-shadow: 0 0 15px rgba(255,255,255,0.3); }
+        .label { font-size: 10px; text-transform: uppercase; color: #8b949e; letter-spacing: 2px; }
         
-        button { background: var(--green); color: white; border: none; padding: 15px 30px; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; max-width: 860px; font-size: 16px; margin-bottom: 20px; }
-        button:hover { filter: brightness(1.2); }
+        .console { width: 100%; max-width: 860px; background: #000; color: #0f0; font-family: 'Courier New', monospace; padding: 20px; border-radius: 10px; font-size: 12px; height: 280px; overflow-y: auto; border: 1px solid #333; text-align: left; }
+        
+        button { background: var(--blue); color: white; border: none; padding: 15px 30px; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; max-width: 860px; font-size: 16px; margin-bottom: 20px; transition: 0.3s; }
+        button:hover { filter: brightness(1.2); transform: scale(1.01); }
     </style>
 </head>
 <body>
 
-    <h2 style="margin-bottom: 20px; font-weight: 900;">Threads Insights Diagnostic v2.7.0</h2>
+    <h2 style="margin-bottom: 20px; font-weight: 900;">Threads Lifetime Audit v2.8.0</h2>
 
-    <button onclick="runDiagnostic()">INITIALIZE API FETCH</button>
+    <button onclick="runLifetimeAudit()">CALCULATE LIFETIME METRICS</button>
 
     <div class="grid">
-        <div class="lab-card followers">
-            <div class="label">Followers</div>
+        <div class="lab-card active-green">
+            <div class="label">Total Followers</div>
             <div class="number" id="follower-num">0</div>
         </div>
-        <div class="lab-card views">
-            <div class="label">Total Views</div>
+        <div class="lab-card active-gold">
+            <div class="label">Lifetime Views</div>
             <div class="number" id="view-num">0</div>
         </div>
     </div>
 
-    <div class="console" id="log-window">> Lab v2.7.0 Online... <br>> Waiting for button click.</div>
+    <div class="console" id="log-window">> Lab v2.8.0 Online... <br>> Target: Lifetime Statistics.</div>
 
     <script>
         const T_ID = "26231664763158295";
@@ -51,40 +52,45 @@
             win.scrollTop = win.scrollHeight;
         }
 
-        async function runDiagnostic() {
-            log("--- STARTING API HANDSHAKE ---", "yellow");
+        async function runLifetimeAudit() {
+            log("--- INITIATING LIFETIME DATA SCRAPE ---", "yellow");
             
-            // 1. Fetch Follower Count (Plural field for 2026)
+            // 1. Fetch Followers
             try {
                 const res = await fetch(`https://graph.threads.net/v1.0/${T_ID}?fields=followers_count&access_token=${T_TOKEN}`);
                 const data = await res.json();
-                
                 if (data.followers_count !== undefined) {
                     const el = document.getElementById('follower-num');
                     el.innerText = data.followers_count.toLocaleString();
-                    el.classList.add('active');
-                    log(`SUCCESS: Found ${data.followers_count} followers.`, "#238636");
-                } else {
-                    log(`ERROR: ${data.error ? data.error.message : "Access Denied"}`, "red");
+                    el.classList.add('glow');
+                    log(`Follower verification complete.`, "#238636");
                 }
-            } catch(e) { log("Network Blocked.", "red"); }
+            } catch(e) { log("Follower node blocked.", "red"); }
 
-            // 2. Fetch View Insights (30-day rolling)
-            log("Querying Insights edge for 'views'...");
+            // 2. Fetch Lifetime Views (Calculating since launch)
+            // We use 'since=1688515200' which is July 5, 2023 (Threads Launch Day)
+            log("Requesting historical insights since July 2023...");
             try {
-                const iRes = await fetch(`https://graph.threads.net/v1.0/${T_ID}/threads_insights?metric=views&access_token=${T_TOKEN}`);
+                const iRes = await fetch(`https://graph.threads.net/v1.0/${T_ID}/threads_insights?metric=views&since=1688515200&access_token=${T_TOKEN}`);
                 const iData = await iRes.json();
                 
                 if (iData.data && iData.data[0]) {
                     const views = iData.data[0].values[0].value;
                     const el = document.getElementById('view-num');
                     el.innerText = views.toLocaleString();
-                    el.classList.add('active');
-                    log(`SUCCESS: Found ${views} views.`, "#1f6feb");
+                    el.classList.add('glow');
+                    log(`LIFETIME SUCCESS: Found ${views} total views.`, "#e3b341");
                 } else {
-                    log("INSIGHTS REJECTED: Ensure Instagram is set to Professional.", "orange");
+                    log("Meta rejected the historical 'since' parameter. Returning 30-day default.", "orange");
+                    // Fallback to basic view check if since is blocked
+                    const fallback = await fetch(`https://graph.threads.net/v1.0/${T_ID}/threads_insights?metric=views&access_token=${T_TOKEN}`);
+                    const fData = await fallback.json();
+                    if(fData.data) {
+                        document.getElementById('view-num').innerText = fData.data[0].values[0].value.toLocaleString();
+                        document.getElementById('view-num').classList.add('glow');
+                    }
                 }
-            } catch(e) { log("Insights Network Error.", "red"); }
+            } catch(e) { log("Insights scan failed.", "red"); }
         }
     </script>
 </body>
