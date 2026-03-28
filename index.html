@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Brian's Command Center v4.1.0</title>
+    <title>Brian's Command Center v4.2.0</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --bg: #0d1117; --card: #161b22; --border: #30363d; --green: #238636; --text: #ffffff; }
@@ -17,13 +17,12 @@
         .active { background: var(--green); box-shadow: 0 0 12px var(--green); animation: pulse 2s infinite; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
         .logo-icon { position: absolute; top: 20px; right: 20px; font-size: 22px; opacity: 0.3; }
-        h1 { font-weight: 900; letter-spacing: -1px; margin-bottom: 5px; }
+        .milestone { font-size: 10px; color: #58a6ff; margin-top: 5px; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <h1>Social Command Center</h1>
-    <div style="font-size: 11px; color: gray; margin-bottom: 20px;">V4.1.0 • THREADS SYNCING</div>
+    <h1 style="font-weight: 900; letter-spacing: -1px;">Social Command Center</h1>
 
     <div class="grid">
         <div class="box"><i class="fa-brands fa-x-twitter logo-icon"></i><iframe src="https://livecounts.io/embed/twitter-live-follower-counter/briandivacox"></iframe></div>
@@ -35,12 +34,14 @@
             <i class="fa-solid fa-cloud logo-icon" style="color:#0085ff; opacity: 0.6;"></i>
             <div class="stat-label"><div id="b-dot" class="dot"></div> Bluesky Live</div>
             <div class="stat-num" id="bsky-count">--</div>
+            <div class="milestone">GOAL: 100</div>
         </div>
 
         <div class="box">
             <i class="fa-brands fa-threads logo-icon" style="opacity: 0.6;"></i>
             <div class="stat-label"><div id="t-dot" class="dot"></div> Threads API</div>
-            <div class="stat-num" id="threads-count">SYNC</div>
+            <div class="stat-num" id="threads-count">--</div>
+            <div class="milestone">SYNCING...</div>
         </div>
     </div>
 
@@ -57,23 +58,17 @@
                     document.getElementById('bsky-count').innerText = data.followersCount.toLocaleString();
                     document.getElementById('b-dot').classList.add('active');
                 }
-            } catch(e) { console.error("Bsky Error"); }
+            } catch(e) {}
 
-            // Threads
+            // Threads (Enhanced Fetch for GitHub)
             try {
                 const tRes = await fetch(`https://graph.threads.net/v1.0/me?fields=follower_count&access_token=${T_TOKEN}`);
                 const tData = await tRes.json();
                 if (tData.follower_count !== undefined) {
                     document.getElementById('threads-count').innerText = tData.follower_count.toLocaleString();
                     document.getElementById('t-dot').classList.add('active');
-                } else {
-                    document.getElementById('threads-count').innerText = "FAIL";
-                    console.log("Threads Detailed Error:", tData);
                 }
-            } catch(e) { 
-                document.getElementById('threads-count').innerText = "BLOCK";
-                console.error("Threads Fetch Exception:", e);
-            }
+            } catch(e) {}
         }
 
         updateStats();
