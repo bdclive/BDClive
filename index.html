@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Stats Dashboard v2.2.0</title>
+    <title>Live Stats Dashboard v2.3.0</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
@@ -16,8 +16,6 @@
             --text-main: #ffffff;
             --text-dim: #8b949e;
             --accent-green: #238636;
-            --snap-yellow: #fffc00;
-            --fb-blue: #0866ff;
             --threads-purple: #a371f7;
         }
 
@@ -59,7 +57,7 @@
             justify-content: center; padding-left: 25px;
         }
 
-        .box-logo { position: absolute; top: 15px; right: 15px; width: 20px; height: 20px; z-index: 100; }
+        .box-logo { position: absolute; top: 15px; right: 15px; width: 20px; height: 20px; z-index: 100; text-align: right; }
 
         /* iFrame Specifics */
         .counter-item iframe {
@@ -67,10 +65,10 @@
             position: absolute; top: 5px; left: -88px; transform: scale(1.1); transform-origin: top left;
         }
 
-        /* Manual & API Card Styling */
+        /* Label and Number Styling */
         .label-group { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
         .live-status { font-size: 11px; text-transform: uppercase; color: var(--text-dim); letter-spacing: 1px; }
-        .main-number { font-size: 4rem; font-weight: 700; line-height: 1; margin: 0; }
+        .main-number { font-size: 4.5rem; font-weight: 700; line-height: 1; margin: 0; color: #ffffff; }
         .username-tag { font-size: 14px; color: var(--text-dim); margin-bottom: 5px; }
 
         .live-dot {
@@ -87,13 +85,13 @@
 
     <div class="header-section">
         <h2>Live Social Statistics</h2>
-        <div class="version-badge">v2.2.0</div>
+        <div class="version-badge">v2.3.0</div>
         <br>
         <button id="refresh-btn" onclick="location.reload()">
             <span class="material-symbols-outlined">refresh</span>
             Update All Stats
         </button>
-        <div id="last-updated">Systems Online</div>
+        <div id="last-updated">Status: Optimal</div>
     </div>
 
     <div class="counter-grid">
@@ -128,76 +126,4 @@
                 <div class="live-dot" style="background-color:var(--bsky-blue); box-shadow: 0 0 8px var(--bsky-blue);"></div>
                 <span class="live-status">Bluesky API</span>
             </div>
-            <div id="bsky-num" class="main-number">22</div>
-        </div>
-
-        <div class="counter-item">
-            <i class="fa-brands fa-threads box-logo" style="color:white; font-size:20px;"></i>
-            <div class="username-tag">@briandivacox</div>
-            <div class="label-group">
-                <div class="live-dot"></div>
-                <span class="live-status">Threads Real-Time</span>
-            </div>
-            <div id="threads-fol-num" class="main-number">0</div>
-        </div>
-
-        <div class="counter-item">
-            <span class="material-symbols-outlined box-logo" style="color:var(--threads-purple);">analytics</span>
-            <div class="label-group">
-                <div class="live-dot" style="background-color:var(--threads-purple); box-shadow: 0 0 8px var(--threads-purple);"></div>
-                <span class="live-status">Threads Total Views</span>
-            </div>
-            <div id="threads-view-num" class="main-number" style="color:var(--threads-purple)">0</div>
-        </div>
-
-        <div class="counter-item">
-            <i class="fa-brands fa-snapchat box-logo" style="color:var(--snap-yellow); font-size:20px;"></i>
-            <div class="username-tag">briandivacox</div>
-            <div class="label-group">
-                <div class="live-dot"></div>
-                <span class="live-status">Snapchat followers</span>
-            </div>
-            <div id="snap-fol-num" class="main-number" style="color:var(--snap-yellow)">0</div>
-        </div>
-
-        <div class="counter-item">
-            <i class="fa-brands fa-facebook box-logo" style="color:var(--fb-blue); font-size:20px;"></i>
-            <div class="username-tag">Brian Diva Cox</div>
-            <div class="label-group">
-                <div class="live-dot"></div>
-                <span class="live-status">FB Page Followers</span>
-            </div>
-            <div id="fb-page-num" class="main-number">0</div>
-        </div>
-
-        <div class="counter-item">
-            <i class="fa-brands fa-facebook-f box-logo" style="color:#00c6ff; font-size:20px;"></i>
-            <div class="username-tag">Brian Diva Cox (Personal)</div>
-            <div class="label-group">
-                <div class="live-dot"></div>
-                <span class="live-status">FB Friends</span>
-            </div>
-            <div id="fb-personal-num" class="main-number">0</div>
-        </div>
-    </div>
-
-    <script>
-        function updateDisplay() {
-            const rawData = localStorage.getItem('labData');
-            if (rawData) {
-                const data = JSON.parse(rawData);
-                // Manual overrides
-                if(document.getElementById('threads-fol-num')) document.getElementById('threads-fol-num').innerText = data.threadsFol || "0";
-                if(document.getElementById('threads-view-num')) document.getElementById('threads-view-num').innerText = data.threadsViews || "0";
-                if(document.getElementById('snap-fol-num')) document.getElementById('snap-fol-num').innerText = data.snapFol || "0";
-                if(document.getElementById('fb-page-num')) document.getElementById('fb-page-num').innerText = data.fbPage || "0";
-                if(document.getElementById('fb-personal-num')) document.getElementById('fb-personal-num').innerText = data.fbPersonal || "0";
-                
-                document.getElementById('last-updated').innerText = "Last sync: " + new Date().toLocaleTimeString();
-            }
-        }
-        updateDisplay();
-        window.addEventListener('storage', (event) => { if (event.key === 'labData') updateDisplay(); });
-    </script>
-</body>
-</html>
+            <div id="bsky-num" class="main
