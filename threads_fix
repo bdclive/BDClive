@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Threads API Command Center</title>
+    <style>
+        body { font-family: sans-serif; background: #101010; color: white; padding: 40px; line-height: 1.6; }
+        .card { background: #1c1c1c; border: 1px solid #333; padding: 20px; border-radius: 12px; margin-bottom: 20px; }
+        button { background: #0095f6; color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        button:hover { background: #1877f2; }
+        input { width: 100%; padding: 10px; margin: 10px 0; background: #2a2a2a; border: 1px solid #444; color: white; border-radius: 4px; }
+        .step-num { background: #0095f6; color: white; padding: 4px 10px; border-radius: 50%; margin-right: 10px; }
+        #output { background: #000; color: #00ff00; padding: 15px; border-radius: 4px; font-family: monospace; display: none; white-space: pre-wrap; word-break: break-all; }
+    </style>
+</head>
+<body>
+
+    <h2>Threads API Automation Panel</h2>
+
+    <div class="card">
+        <h3><span class="step-num">1</span> Get Fresh Authorization Code</h3>
+        <p>Clicking this will open Threads. Click "Allow," then copy the <b>Code</b> from the URL bar (everything after <code>code=</code> but before <code>#_</code>).</p>
+        <button onclick="window.open('https://threads.net/oauth/authorize?client_id=2313276982500445&redirect_uri=https://localhost/&scope=threads_basic,threads_manage_insights&response_type=code', '_blank')">Open Threads Auth</button>
+    </div>
+
+    <div class="card">
+        <h3><span class="step-num">2</span> Exchange Code for Short-Lived Token</h3>
+        <input type="text" id="authCode" placeholder="Paste the Code from Step 1 here...">
+        <button onclick="exchangeCode()">Generate Short-Lived Token</button>
+    </div>
+
+    <div class="card">
+        <h3><span class="step-num">3</span> Upgrade to 60-Day Token</h3>
+        <input type="text" id="shortToken" placeholder="Paste the Short-Lived Token from Step 2 here...">
+        <button onclick="upgradeToken()">Generate 60-Day Master Token</button>
+    </div>
+
+    <div id="output"></div>
+
+    <script>
+        const APP_ID = "2313276982500445";
+        const APP_SECRET = "17f316f24d48548ee0005a47fec400eb";
+        const REDIRECT = "https://localhost/";
+
+        async function exchangeCode() {
+            const code = document.getElementById('authCode').value.trim().split('#')[0];
+            const out = document.getElementById('output');
+            out.style.display = "block";
+            out.innerText = "Exchanging code... please wait.";
+
+            let fd = new FormData();
+            fd.append('client_id', APP_ID);
+            fd.append('client_secret', APP_SECRET);
+            fd.append('grant_type', 'authorization_code');
+            fd.append('redirect_uri', REDIRECT);
+            fd.append('code', code);
+
+            try {
+                const res = await fetch('https://graph.threads.net/oauth/access_token', { method: 'POST', body: fd });
+                const data = await res.json();
+                if(data.access_token) {
+                    out.innerText = "SUCCESS! Short-Lived Token:\n\n" + data.access_token;
+                    document.getElementById('shortToken').value = data.access_token;
+                } else {
+                    out.innerText = "ERROR:\n" + JSON.stringify(data, null, 2);
+                }
+            } catch (e) { out.innerText = "Fetch Error: Check Console"; }
+        }
+
+        async function upgradeToken() {
+            const token = document.getElementById('shortToken').value.trim();
+            const out = document.getElementById('output');
+            
+            const url = `https://graph.threads.net/access_token?grant_type=th_exchange_token&client_secret=${APP_SECRET}&access_token=${token}`;
+            out.innerText = "Upgrading... please wait.";
+            
+            try {
+                const res = await fetch(url);
+                const data = await res.json();
+                if(data.access_token) {
+                    out.innerText = "FINAL 60-DAY MASTER TOKEN:\n\n" + data.access_token;
+                } else {
+                    out.innerText = "ERROR:\n" + JSON.stringify(data, null, 2);
+                }
+            } catch (e) { out.innerText = "Fetch Error: Check Console"; }
+        }
+    </script>
+</body>
+</html>
