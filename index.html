@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Brian's Live Dashboard v2.8.0</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brian's Live Dashboard v2.9.0</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --bg: #0d1117; --card: #161b22; --border: #30363d; --green: #238636; --text: #ffffff; }
@@ -16,17 +17,22 @@
         .active { background: var(--green); box-shadow: 0 0 10px var(--green); animation: pulse 2s infinite; }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
         .logo-icon { position: absolute; top: 15px; right: 15px; font-size: 20px; opacity: 0.5; }
+        .header { text-align: center; margin-bottom: 30px; }
     </style>
 </head>
 <body>
 
-    <h1 style="margin-bottom: 30px;">Social Dashboard <small style="font-size: 11px; color:gray;">v2.8.0 GH-READY</small></h1>
+    <div class="header">
+        <h1>Social Dashboard</h1>
+        <div style="font-size: 11px; color:gray; font-family: monospace;">v2.9.0 MASTER-BUILD</div>
+    </div>
 
     <div class="grid">
         <div class="box"><iframe src="https://livecounts.io/embed/twitter-live-follower-counter/briandivacox"></iframe></div>
         <div class="box"><iframe src="https://livecounts.io/embed/twitch-live-follower-counter/briandivacox"></iframe></div>
         <div class="box"><iframe src="https://livecounts.io/embed/youtube-live-subscriber-counter/UCMuv7PfbLVm8IZsd6Bgqqzg"></iframe></div>
         <div class="box"><iframe src="https://livecounts.io/embed/tiktok-live-follower-counter/briandivacox"></iframe></div>
+        <div class="box" style="padding-top:35px;"><iframe src="https://livecounts.nl/instagram-realtime/embed/?u=briandivacox"></iframe></div>
         
         <div class="box">
             <i class="fa-solid fa-cloud logo-icon" style="color:#0085ff"></i>
@@ -43,34 +49,5 @@
 
     <script>
         const BSKY_ID = "did:plc:ziubyammvuvgotfaqgscfny7";
-        // Final Master Token
-        const T_TOKEN = "THAAg36cTPHF1BUVJmR0xSazU4d3FkSkp6ekJKYmU5SWhLQld1UDJLTlM3S1JjODNtbHNnWXFOcVZAqZAGZAhLTRQWlZAuTHZApMEdRZAzdYeVRSS3ZAiX19rSkVwQkRZAUkQzWnp0Q3F0ckhJSjVmVzdQSnZAKXzFpUm5vNkV2NnNEZAEdHQjUtdwZDZD";
-
-        async function updateData() {
-            // Bluesky (GitHub compatible)
-            try {
-                const b = await fetch(`https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=${BSKY_ID}`);
-                const bd = await b.json();
-                document.getElementById('bsky-count').innerText = bd.followersCount.toLocaleString();
-            } catch(e) { document.getElementById('bsky-count').innerText = "ERR"; }
-
-            // Threads (GitHub compatible)
-            try {
-                // We add a random number to the end to force GitHub to fetch NEW data, not cached data
-                const cacheBuster = Math.random();
-                const t = await fetch(`https://graph.threads.net/v1.0/me?fields=follower_count&access_token=${T_TOKEN}&cb=${cacheBuster}`);
-                const td = await t.json();
-                if(td.follower_count !== undefined) {
-                    document.getElementById('threads-count').innerText = td.follower_count.toLocaleString();
-                    document.getElementById('t-dot').classList.add('active');
-                } else {
-                    document.getElementById('threads-count').innerText = "TOKEN?";
-                }
-            } catch(e) { document.getElementById('threads-count').innerText = "OFFLINE"; }
-        }
-
-        updateData();
-        setInterval(updateData, 30000);
-    </script>
-</body>
-</html>
+        // YOUR ACTIVATED 60-DAY TOKEN
+        const T_TOKEN = "THAAg36cTPHF1BUVNObmpNX1NmeWFyYXk2UHVfc29YYWU0SFI3
