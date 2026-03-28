@@ -2,68 +2,80 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Threads API Laboratory v1.2.0</title>
+    <title>Threads API Laboratory v1.3.0</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #0d1117; color: white; display: flex; flex-direction: column; align-items: center; padding: 50px; }
-        .lab-card { background: #161b22; border: 1px solid #30363d; border-radius: 20px; padding: 40px; width: 450px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); position: relative; }
-        .number { font-size: 5rem; font-weight: 800; margin: 20px 0; color: #238636; }
-        .status { font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: #8b949e; }
-        .console { margin-top: 30px; width: 100%; max-width: 700px; background: black; color: #00ff00; font-family: monospace; padding: 15px; border-radius: 8px; font-size: 13px; text-align: left; overflow-y: auto; height: 300px; border: 1px solid #333; }
-        button { background: #238636; color: white; border: none; padding: 15px 30px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 20px; transition: 0.2s; }
-        button:hover { background: #2ea043; transform: scale(1.05); }
-        .badge { position: absolute; top: 15px; right: 15px; background: #1f6feb; font-size: 10px; padding: 4px 8px; border-radius: 5px; }
+        body { font-family: 'Segoe UI', sans-serif; background: #0d1117; color: white; display: flex; flex-direction: column; align-items: center; padding: 40px; }
+        .lab-card { background: #161b22; border: 1px solid #30363d; border-radius: 20px; padding: 30px; width: 500px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin-bottom: 20px; }
+        .number { font-size: 4rem; font-weight: 800; margin: 15px 0; color: #238636; }
+        .console { width: 100%; max-width: 800px; background: #000; color: #0f0; font-family: 'Courier New', monospace; padding: 20px; border-radius: 10px; font-size: 13px; text-align: left; height: 350px; overflow-y: auto; border: 1px solid #333; }
+        .btn-group { display: flex; gap: 10px; justify-content: center; }
+        button { background: #238636; color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        button.alt { background: #1f6feb; }
+        button:hover { opacity: 0.8; transform: translateY(-2px); }
+        .json-out { color: #58a6ff; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <div class="lab-card">
-        <div class="badge">v1.2.0 DEEP SCAN</div>
-        <div class="status" id="status-text">Ready for Diagnostic</div>
+        <div style="font-size: 10px; color: #8b949e; margin-bottom: 10px;">THREADS ID: 26231664763158295</div>
+        <div id="status-text">SYSTEM STANDBY</div>
         <div class="number" id="count">--</div>
-        <button onclick="startDeepScan()">Initialize Deep Scan</button>
+        <div class="btn-group">
+            <button onclick="runDiagnostic()">Run Diagnostic</button>
+            <button class="alt" onclick="clearConsole()">Clear Logs</button>
+        </div>
     </div>
 
-    <div class="console" id="debug-console">
-        > System Online...<br>
-        > Node ID: 26231664763158295 detected.<br>
-        > Standing by for manual override...
-    </div>
+    <div class="console" id="debug-console">> Initializing Lab v1.3.0...</div>
 
     <script>
-        const T_ID = "26231664763158295"; 
+        const T_ID = "26231664763158295";
         const T_TOKEN = "THAAg36cTPHF1BUVNObmpNX1NmeWFyYXk2UHVfc29YYWU0SFI3QkRRc0luNnZAFcVNhS2RBdnhBV3VhOU9MV0JpZAWI2ZAGY4TmxaajhyN1NlSDJvQndYS3VteTRzZAU9jMDRPYS1kSnNvTDAtWWtqeUk5dmhZAa0gtd09ocmk0V09RVEQ1ZA3pqSk41TmFKbTA0d3FXampsOEJMamR1UWpHMG9MQzc3a2QZD";
 
-        function log(msg, color = "#00ff00") {
+        function log(msg, color = "#0f0") {
             const con = document.getElementById('debug-console');
-            con.innerHTML += `<br><span style="color: ${color}">> ${msg}</span>`;
+            con.innerHTML += `<br><span style="color:${color}">> ${msg}</span>`;
             con.scrollTop = con.scrollHeight;
         }
 
-        async function startDeepScan() {
-            const countEl = document.getElementById('count');
-            const statusEl = document.getElementById('status-text');
+        async function runDiagnostic() {
+            log("DIAGNOSTIC START...", "yellow");
             
-            // List of all possible 2026 follower-related fields
-            const fields = [
-                "followers_count", 
-                "follower_count", 
-                "threads_followers_count", 
-                "insights.metric(follower_count)",
-                "statistics"
-            ];
-            
-            log("DIAGNOSTIC START: Testing Meta Graph Nodes...", "yellow");
+            // Step 1: Check basic profile existence
+            log("Step 1: Testing basic node connectivity...");
+            try {
+                const res = await fetch(`https://graph.threads.net/v1.0/${T_ID}?fields=id,username,name&access_token=${T_TOKEN}`);
+                const data = await res.json();
+                
+                if (data.username) {
+                    log(`CONNECTED: Found user @${data.username} (${data.name})`, "#238636");
+                    log(`RAW JSON: <span class="json-out">${JSON.stringify(data)}</span>`);
+                } else {
+                    log(`ERROR: ${data.error.message}`, "red");
+                    return;
+                }
+            } catch(e) { log("Connection Blocked.", "red"); }
 
-            for (let f of fields) {
-                log(`Testing Endpoint Field: [${f}]...`);
-                try {
-                    const url = `https://graph.threads.net/v1.0/${T_ID}?fields=${f}&access_token=${T_TOKEN}`;
-                    const response = await fetch(url);
-                    const data = await response.json();
+            // Step 2: Test 2026 Follower Insight Node
+            log("Step 2: Testing Follower Insight Edge...");
+            try {
+                const res = await fetch(`https://graph.threads.net/v1.0/${T_ID}?fields=follower_count&access_token=${T_TOKEN}`);
+                const data = await res.json();
+                
+                if (data.follower_count !== undefined) {
+                    log(`MATCH! Follower Count: ${data.follower_count}`, "#238636");
+                    document.getElementById('count').innerText = data.follower_count;
+                } else {
+                    log(`FIELD REJECTED: Account might not be set to 'Professional'.`, "orange");
+                    log(`RAW REJECTION: <span class="json-out">${JSON.stringify(data)}</span>`);
+                }
+            } catch(e) {}
+        }
 
-                    if (data[f] !== undefined || (data.insights && data.insights.data)) {
-                        let finalVal = data[f] || "Check Insights";
-                        countEl.innerText = finalVal;
-                        statusEl.innerText = "MATCH FOUND";
-                        log(`CRITICAL SUCCESS: Field '${f}' is valid.`, "#238636");
-                        log(`DATA: ${JSON.stringify(data)}`, "cyan");
+        function clearConsole() {
+            document.getElementById('debug-console').innerHTML = "> Console Cleared.";
+        }
+    </script>
+</body>
+</html>
