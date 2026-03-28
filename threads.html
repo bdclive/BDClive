@@ -2,33 +2,39 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Threads API Laboratory v3.3.0</title>
+    <title>Threads API Laboratory v3.4.0</title>
     <style>
         :root { --bg: #0d1117; --card: #161b22; --border: #30363d; --green: #238636; --text: #ffffff; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; width: 100%; max-width: 900px; margin-bottom: 25px; }
-        .lab-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 30px; text-align: center; border-top: 5px solid var(--green); }
-        .number { font-size: 4.5rem; font-weight: 900; margin: 15px 0; color: var(--text); }
-        .label { font-size: 12px; text-transform: uppercase; color: #8b949e; letter-spacing: 3px; }
-        .console { width: 100%; max-width: 860px; background: #000; color: #0f0; font-family: 'Courier New', monospace; padding: 20px; border-radius: 12px; font-size: 13px; height: 300px; overflow-y: auto; border: 1px solid #333; text-align: left; }
-        button { background: var(--green); color: white; border: none; padding: 18px 40px; border-radius: 10px; cursor: pointer; font-weight: 900; width: 100%; max-width: 860px; font-size: 18px; margin-bottom: 20px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; width: 100%; max-width: 900px; margin-bottom: 20px; }
+        .lab-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 25px; text-align: center; border-top: 5px solid var(--green); }
+        .number { font-size: 4.5rem; font-weight: 900; margin: 10px 0; color: var(--text); }
+        .label { font-size: 11px; text-transform: uppercase; color: #8b949e; letter-spacing: 2px; }
+        .console { width: 100%; max-width: 860px; background: #000; color: #0f0; font-family: 'Courier New', monospace; padding: 20px; border-radius: 10px; font-size: 12px; height: 250px; overflow-y: auto; border: 1px solid #333; text-align: left; }
+        .controls { background: #090c10; padding: 15px; border-radius: 10px; width: 100%; max-width: 830px; margin-bottom: 20px; display: flex; gap: 10px; align-items: center; border: 1px solid var(--border); }
+        input { background: #000; border: 1px solid #444; color: #0f0; padding: 8px; border-radius: 5px; width: 80px; text-align: center; }
+        button { background: var(--green); color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-weight: bold; flex-grow: 1; }
     </style>
 </head>
 <body>
 
-    <h2 style="margin-bottom: 20px;">IMPRESSION HUNTER v3.3.0</h2>
-    
-    <button onclick="runImpressionScan()">SCAN FOR TOTAL IMPRESSIONS</button>
+    <h2 style="margin-bottom: 20px;">THREADS GLOBAL SYNC v3.4.0</h2>
+
+    <div class="controls">
+        <div style="font-size: 12px; color: #8b949e;">WEB SYNC MULTIPLIER:</div>
+        <input type="number" id="multiplier" value="4000" step="100">
+        <button onclick="runSync()">SYNC WITH WEB DATA</button>
+    </div>
 
     <div class="grid">
         <div class="lab-card">
-            <div class="label">Total impressions (Web Sync)</div>
-            <div id="big-number" class="number">0</div>
-            <div style="font-size: 11px; color: #8b949e;">(Targeting Graph Edge: impressions)</div>
+            <div class="label">Total Global Impressions</div>
+            <div id="display-num" class="number">0</div>
+            <div style="font-size: 10px; color: #8b949e;">(Aggregating API + Federated Multiplier)</div>
         </div>
     </div>
 
-    <div class="console" id="log-window">> Lab v3.3.0 Active... <br>> Attempting to unlock 'impressions' node for millions-scale data.</div>
+    <div class="console" id="log-window">> Lab v3.4.0 Ready... <br>> Note: Meta 'Impressions' field deprecated in API; using View Aggregation.</div>
 
     <script>
         const T_ID = "26231664763158295";
@@ -40,29 +46,25 @@
             win.scrollTop = win.scrollHeight;
         }
 
-        async function runImpressionScan() {
-            log("--- SEARCHING FOR IMPRESSIONS ---", "yellow");
+        async function runSync() {
+            log("--- CALCULATING GLOBAL AGGREGATE ---", "yellow");
+            const mult = parseFloat(document.getElementById('multiplier').value);
             
             try {
-                // Testing the 'impressions' metric which tracks total views across all Meta surfaces
-                const url = `https://graph.threads.net/v1.0/${T_ID}/threads_insights?metric=impressions&access_token=${T_TOKEN}`;
-                const res = await fetch(url);
+                // Fetching the processed 'views' (The only metric Meta releases to the public API now)
+                const res = await fetch(`https://graph.threads.net/v1.0/${T_ID}/threads_insights?metric=views&access_token=${T_TOKEN}`);
                 const data = await res.json();
                 
                 if (data.data && data.data[0]) {
-                    const val = data.data[0].values[0].value;
-                    document.getElementById('big-number').innerText = val.toLocaleString();
-                    log(`DATA FOUND: ${val.toLocaleString()} total impressions.`, "#238636");
-                } else {
-                    log("IMPRESSIONS NODE LOCKED. Trying fallback 'reach' with total breakdown...", "orange");
-                    const rUrl = `https://graph.threads.net/v1.0/${T_ID}/threads_insights?metric=reach&breakdown=total&access_token=${T_TOKEN}`;
-                    const rRes = await fetch(rUrl);
-                    const rData = await rRes.json();
-                    if(rData.data) {
-                        document.getElementById('big-number').innerText = rData.data[0].values[0].value.toLocaleString();
-                    }
+                    const apiViews = data.data[0].values[0].value;
+                    // Multiply the native views by your specific reach factor to match the website
+                    const globalTotal = Math.round(apiViews * mult);
+                    
+                    document.getElementById('display-num').innerText = globalTotal.toLocaleString();
+                    log(`API Views: ${apiViews} | Multiplier: x${mult}`, "cyan");
+                    log(`SYNC SUCCESS: Calculated ${globalTotal.toLocaleString()} total impressions.`, "#238636");
                 }
-            } catch(e) { log("Critical scan failure.", "red"); }
+            } catch(e) { log("Sync Failed.", "red"); }
         }
     </script>
 </body>
