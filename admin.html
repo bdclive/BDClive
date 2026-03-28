@@ -4,12 +4,14 @@
     <meta charset="UTF-8">
     <title>Lab Admin | Brian Diva Cox</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #0d1117; color: white; display: flex; flex-direction: column; align-items: center; padding: 50px; }
-        .admin-card { background: #161b22; border: 1px solid #30363d; padding: 30px; border-radius: 20px; width: 350px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        input { width: 100%; padding: 12px; margin: 10px 0; background: #000; border: 1px solid #444; color: #0f0; border-radius: 8px; box-sizing: border-box; font-family: monospace; }
-        button { width: 100%; padding: 15px; background: #238636; color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; margin-top: 15px; font-size: 14px; }
+        body { font-family: 'Segoe UI', sans-serif; background: #0d1117; color: white; display: flex; flex-direction: column; align-items: center; padding: 30px; }
+        .admin-card { background: #161b22; border: 1px solid #30363d; padding: 25px; border-radius: 20px; width: 380px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .row { margin-bottom: 15px; }
+        .label { font-size: 10px; text-transform: uppercase; color: #8b949e; letter-spacing: 1px; margin-bottom: 5px; display: block; }
+        input { width: 100%; padding: 10px; background: #000; border: 1px solid #444; color: #0f0; border-radius: 8px; box-sizing: border-box; font-family: monospace; }
+        button { width: 100%; padding: 15px; background: #238636; color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; margin-top: 10px; font-size: 14px; transition: 0.2s; }
         button:hover { background: #2ea043; transform: scale(1.02); }
-        .label { font-size: 11px; text-transform: uppercase; color: #8b949e; letter-spacing: 1px; }
+        .section-title { border-bottom: 1px solid #333; padding-bottom: 5px; margin-bottom: 15px; color: #58a6ff; font-size: 14px; }
     </style>
 </head>
 <body>
@@ -17,23 +19,35 @@
     <h2 style="margin-bottom: 20px;">Lab Command Center</h2>
 
     <div class="admin-card">
-        <div class="label">Threads Followers</div>
-        <input type="text" id="threads-fol" placeholder="e.g. 330">
-        
-        <div class="label">Threads Lifetime Views</div>
-        <input type="text" id="threads-views" placeholder="e.g. 1.2M">
+        <div class="section-title">Threads & Snapchat</div>
+        <div class="row">
+            <span class="label">Threads Followers</span>
+            <input type="text" id="threads-fol" placeholder="e.g. 330">
+        </div>
+        <div class="row">
+            <span class="label">Threads Lifetime Views</span>
+            <input type="text" id="threads-views" placeholder="e.g. 1.2M">
+        </div>
+        <div class="row">
+            <span class="label">Snapchat Followers</span>
+            <input type="text" id="snap-fol" placeholder="e.g. 5,400">
+        </div>
 
-        <div class="label">Snapchat Followers</div>
-        <input type="text" id="snap-fol" placeholder="e.g. 5,400">
+        <div class="section-title">Facebook Network</div>
+        <div class="row">
+            <span class="label">Facebook Friends (Personal)</span>
+            <input type="text" id="fb-personal" placeholder="e.g. 2.1K">
+        </div>
+        <div class="row">
+            <span class="label">Facebook Page Followers</span>
+            <input type="text" id="fb-page" placeholder="e.g. 10.5K">
+        </div>
 
-        <button onclick="broadcast()">PUSH TO INDEX</button>
-        <p style="font-size: 10px; color: #8b949e; text-align: center; margin-top: 15px;">
-            Changes will reflect on index.html instantly.
-        </p>
+        <button onclick="broadcast()">PUSH TO DASHBOARD</button>
     </div>
 
     <script>
-        // Load existing values if they exist
+        // Load saved data when you open the admin page
         window.onload = function() {
             const raw = localStorage.getItem('labData');
             if(raw) {
@@ -41,6 +55,8 @@
                 document.getElementById('threads-fol').value = data.threadsFol || "";
                 document.getElementById('threads-views').value = data.threadsViews || "";
                 document.getElementById('snap-fol').value = data.snapFol || "";
+                document.getElementById('fb-personal').value = data.fbPersonal || "";
+                document.getElementById('fb-page').value = data.fbPage || "";
             }
         };
 
@@ -48,10 +64,12 @@
             const data = {
                 threadsFol: document.getElementById('threads-fol').value,
                 threadsViews: document.getElementById('threads-views').value,
-                snapFol: document.getElementById('snap-fol').value
+                snapFol: document.getElementById('snap-fol').value,
+                fbPersonal: document.getElementById('fb-personal').value,
+                fbPage: document.getElementById('fb-page').value
             };
             localStorage.setItem('labData', JSON.stringify(data));
-            alert("Data Sent to Index!");
+            alert("Broadcast Sent!");
         }
     </script>
 </body>
