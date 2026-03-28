@@ -2,8 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Brian's Live Dashboard v2.9.0</title>
+    <title>Brian's Live Dashboard v3.0.0</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --bg: #0d1117; --card: #161b22; --border: #30363d; --green: #238636; --text: #ffffff; }
@@ -12,32 +11,27 @@
         .box { background: var(--card); border: 1px solid var(--border); border-radius: 15px; height: 180px; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: center; padding-left: 30px; }
         .box iframe { position: absolute; top: -50px; left: -90px; width: 600px; height: 300px; filter: invert(1) hue-rotate(180deg); transform: scale(0.9); pointer-events: none; }
         .stat-label { font-size: 12px; color: #8b949e; text-transform: uppercase; margin-bottom: 5px; display: flex; align-items: center; gap: 8px; }
-        .stat-num { font-size: 4rem; font-weight: 800; line-height: 1; margin: 0; }
+        .stat-num { font-size: 4.2rem; font-weight: 800; line-height: 1; margin: 0; }
         .dot { width: 8px; height: 8px; background: #333; border-radius: 50%; }
         .active { background: var(--green); box-shadow: 0 0 10px var(--green); animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
         .logo-icon { position: absolute; top: 15px; right: 15px; font-size: 20px; opacity: 0.5; }
-        .header { text-align: center; margin-bottom: 30px; }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h1>Social Dashboard</h1>
-        <div style="font-size: 11px; color:gray; font-family: monospace;">v2.9.0 MASTER-BUILD</div>
-    </div>
+    <h1 style="margin-bottom: 30px;">Social Command Center <small style="font-size:11px; color:gray;">v3.0.0</small></h1>
 
     <div class="grid">
         <div class="box"><iframe src="https://livecounts.io/embed/twitter-live-follower-counter/briandivacox"></iframe></div>
         <div class="box"><iframe src="https://livecounts.io/embed/twitch-live-follower-counter/briandivacox"></iframe></div>
         <div class="box"><iframe src="https://livecounts.io/embed/youtube-live-subscriber-counter/UCMuv7PfbLVm8IZsd6Bgqqzg"></iframe></div>
         <div class="box"><iframe src="https://livecounts.io/embed/tiktok-live-follower-counter/briandivacox"></iframe></div>
-        <div class="box" style="padding-top:35px;"><iframe src="https://livecounts.nl/instagram-realtime/embed/?u=briandivacox"></iframe></div>
         
         <div class="box">
             <i class="fa-solid fa-cloud logo-icon" style="color:#0085ff"></i>
-            <div class="stat-label"><div class="dot active"></div> Bluesky Live</div>
-            <div class="stat-num" id="bsky-count">0</div>
+            <div class="stat-label"><div id="b-dot" class="dot"></div> Bluesky Followers</div>
+            <div class="stat-num" id="bsky-count">--</div>
         </div>
 
         <div class="box">
@@ -48,6 +42,35 @@
     </div>
 
     <script>
-        const BSKY_ID = "did:plc:ziubyammvuvgotfaqgscfny7";
-        // YOUR ACTIVATED 60-DAY TOKEN
-        const T_TOKEN = "THAAg36cTPHF1BUVNObmpNX1NmeWFyYXk2UHVfc29YYWU0SFI3
+        const B_ID = "briandivacox.bsky.social";
+        const T_TOKEN = "THAAg36cTPHF1BUVNObmpNX1NmeWFyYXk2UHVfc29YYWU0SFI3QkRRc0luNnZAFcVNhS2RBdnhBV3VhOU9MV0JpZAWI2ZAGY4TmxaajhyN1NlSDJvQndYS3VteTRzZAU9jMDRPYS1kSnNvTDAtWWtqeUk5dmhZAa0gtd09ocmk0V09RVEQ1ZA3pqSk41TmFKbTA0d3FXampsOEJMamR1UWpHMG9MQzc3a2QZD";
+
+        async function updateStats() {
+            // Bluesky Fix: Use Handle instead of DID for better compatibility
+            try {
+                const res = await fetch(`https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=${B_ID}`);
+                const data = await res.json();
+                if (data.followersCount !== undefined) {
+                    document.getElementById('bsky-count').innerText = data.followersCount.toLocaleString();
+                    document.getElementById('b-dot').classList.add('active');
+                }
+            } catch(e) { document.getElementById('bsky-count').innerText = "CORS"; }
+
+            // Threads Fix: Explicit Versioning
+            try {
+                const tRes = await fetch(`https://graph.threads.net/v1.0/me?fields=follower_count&access_token=${T_TOKEN}`);
+                const tData = await tRes.json();
+                if (tData.follower_count !== undefined) {
+                    document.getElementById('threads-count').innerText = tData.follower_count.toLocaleString();
+                    document.getElementById('t-dot').classList.add('active');
+                } else {
+                    document.getElementById('threads-count').innerText = "AUTH";
+                }
+            } catch(e) { document.getElementById('threads-count').innerText = "BLOCK"; }
+        }
+
+        updateStats();
+        setInterval(updateStats, 60000);
+    </script>
+</body>
+</html>
