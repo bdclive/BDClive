@@ -2,32 +2,34 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Threads API Laboratory v1.3.0</title>
+    <title>Threads API Laboratory v1.4.0</title>
     <style>
         body { font-family: 'Segoe UI', sans-serif; background: #0d1117; color: white; display: flex; flex-direction: column; align-items: center; padding: 40px; }
-        .lab-card { background: #161b22; border: 1px solid #30363d; border-radius: 20px; padding: 30px; width: 500px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin-bottom: 20px; }
+        .lab-card { background: #161b22; border: 1px solid #30363d; border-radius: 20px; padding: 30px; width: 500px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin-bottom: 20px; border-top: 4px solid #1f6feb; }
         .number { font-size: 4rem; font-weight: 800; margin: 15px 0; color: #238636; }
-        .console { width: 100%; max-width: 800px; background: #000; color: #0f0; font-family: 'Courier New', monospace; padding: 20px; border-radius: 10px; font-size: 13px; text-align: left; height: 350px; overflow-y: auto; border: 1px solid #333; }
-        .btn-group { display: flex; gap: 10px; justify-content: center; }
+        .console { width: 100%; max-width: 800px; background: #000; color: #0f0; font-family: 'Courier New', monospace; padding: 20px; border-radius: 10px; font-size: 13px; text-align: left; height: 400px; overflow-y: auto; border: 1px solid #333; box-shadow: inset 0 0 10px #0f02; }
+        .btn-group { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
         button { background: #238636; color: white; border: none; padding: 12px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.2s; }
         button.alt { background: #1f6feb; }
+        button.danger { background: #cf222e; }
         button:hover { opacity: 0.8; transform: translateY(-2px); }
-        .json-out { color: #58a6ff; font-weight: bold; }
+        .json-out { color: #58a6ff; word-break: break-all; }
+        .highlight { color: #e3b341; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <div class="lab-card">
-        <div style="font-size: 10px; color: #8b949e; margin-bottom: 10px;">THREADS ID: 26231664763158295</div>
-        <div id="status-text">SYSTEM STANDBY</div>
+        <div style="font-size: 11px; color: #8b949e; margin-bottom: 5px;">ACCOUNT: <span class="highlight">@briandivacox</span></div>
+        <div id="status-text">PROBE READY</div>
         <div class="number" id="count">--</div>
         <div class="btn-group">
-            <button onclick="runDiagnostic()">Run Diagnostic</button>
+            <button onclick="runProbe()">Start Permission Probe</button>
             <button class="alt" onclick="clearConsole()">Clear Logs</button>
         </div>
     </div>
 
-    <div class="console" id="debug-console">> Initializing Lab v1.3.0...</div>
+    <div class="console" id="debug-console">> Initializing Probe v1.4.0...</div>
 
     <script>
         const T_ID = "26231664763158295";
@@ -39,38 +41,40 @@
             con.scrollTop = con.scrollHeight;
         }
 
-        async function runDiagnostic() {
-            log("DIAGNOSTIC START...", "yellow");
+        async function runProbe() {
+            log("--- PROBE SEQUENCE INITIATED ---", "yellow");
             
-            // Step 1: Check basic profile existence
-            log("Step 1: Testing basic node connectivity...");
+            // Test 1: Advanced Metadata Check
+            log("PROBE 1: Requesting all basic user fields...");
             try {
-                const res = await fetch(`https://graph.threads.net/v1.0/${T_ID}?fields=id,username,name&access_token=${T_TOKEN}`);
+                const res = await fetch(`https://graph.threads.net/v1.0/${T_ID}?fields=id,username,name,biography,profile_picture_url&access_token=${T_TOKEN}`);
                 const data = await res.json();
-                
-                if (data.username) {
-                    log(`CONNECTED: Found user @${data.username} (${data.name})`, "#238636");
-                    log(`RAW JSON: <span class="json-out">${JSON.stringify(data)}</span>`);
-                } else {
-                    log(`ERROR: ${data.error.message}`, "red");
-                    return;
-                }
-            } catch(e) { log("Connection Blocked.", "red"); }
+                log(`STATUS: Found @${data.username}. If biography is empty, account is likely 'Private'.`, "#1f6feb");
+                log(`RAW DATA: <span class="json-out">${JSON.stringify(data)}</span>`);
+            } catch(e) { log("Probe 1 Failed.", "red"); }
 
-            // Step 2: Test 2026 Follower Insight Node
-            log("Step 2: Testing Follower Insight Edge...");
-            try {
-                const res = await fetch(`https://graph.threads.net/v1.0/${T_ID}?fields=follower_count&access_token=${T_TOKEN}`);
-                const data = await res.json();
-                
-                if (data.follower_count !== undefined) {
-                    log(`MATCH! Follower Count: ${data.follower_count}`, "#238636");
-                    document.getElementById('count').innerText = data.follower_count;
-                } else {
-                    log(`FIELD REJECTED: Account might not be set to 'Professional'.`, "orange");
-                    log(`RAW REJECTION: <span class="json-out">${JSON.stringify(data)}</span>`);
-                }
-            } catch(e) {}
+            // Test 2: Multi-Field Insight Brute Force
+            log("PROBE 2: Brute-forcing hidden metric fields...");
+            const fields = ["follower_count", "followers_count", "threads_followers", "total_followers"];
+            
+            for(let f of fields) {
+                log(`Checking field [${f}]...`);
+                try {
+                    const res = await fetch(`https://graph.threads.net/v1.0/${T_ID}?fields=${f}&access_token=${T_TOKEN}`);
+                    const data = await res.json();
+                    if(data[f] !== undefined) {
+                        log(`SUCCESS! Field found: <span class="highlight">${f}</span>. Value: ${data[f]}`, "#238636");
+                        document.getElementById('count').innerText = data[f];
+                        return;
+                    } else {
+                        log(`REJECTED: ${data.error.message}`, "#444");
+                    }
+                } catch(e) {}
+            }
+
+            log("--- PROBE COMPLETE: NO METRICS FOUND ---", "red");
+            log("FIX: Open Threads App > Settings > Account > Switch to Professional Account.", "yellow");
+            log("If already Professional, try changing your 'Category' to 'Public Figure'.", "yellow");
         }
 
         function clearConsole() {
