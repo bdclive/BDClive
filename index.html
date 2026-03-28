@@ -1,51 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Brian's Command Center v4.6.0</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        :root { --bg: #0d1117; --card: #161b22; --border: #30363d; --green: #238636; --text: #ffffff; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; width: 100%; max-width: 1100px; margin-top: 20px; }
-        .box { background: var(--card); border: 1px solid var(--border); border-radius: 18px; height: 180px; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: center; padding-left: 30px; transition: 0.3s; }
-        .box:hover { border-color: #58a6ff; transform: translateY(-5px); }
-        .box iframe { position: absolute; top: -50px; left: -90px; width: 600px; height: 300px; filter: invert(1) hue-rotate(180deg); transform: scale(0.9); pointer-events: none; }
-        .stat-label { font-size: 11px; color: #8b949e; text-transform: uppercase; margin-bottom: 5px; display: flex; align-items: center; gap: 8px; font-weight: 700; }
-        .stat-num { font-size: 4.5rem; font-weight: 800; line-height: 1; margin: 0; }
-        .dot { width: 10px; height: 10px; background: #333; border-radius: 50%; }
-        .active { background: var(--green); box-shadow: 0 0 12px var(--green); animation: pulse 2s infinite; }
-        .error { background: #cf222e; box-shadow: 0 0 12px #cf222e; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
-        .logo-icon { position: absolute; top: 20px; right: 20px; font-size: 22px; opacity: 0.3; }
-    </style>
-</head>
-<body>
-
-    <h1 style="font-weight: 900; letter-spacing: -1px;">Social Command Center</h1>
-
-    <div class="grid">
-        <div class="box"><i class="fa-brands fa-x-twitter logo-icon"></i><iframe src="https://livecounts.io/embed/twitter-live-follower-counter/briandivacox"></iframe></div>
-        <div class="box"><i class="fa-brands fa-twitch logo-icon"></i><iframe src="https://livecounts.io/embed/twitch-live-follower-counter/briandivacox"></iframe></div>
-        <div class="box"><i class="fa-brands fa-youtube logo-icon"></i><iframe src="https://livecounts.io/embed/youtube-live-subscriber-counter/UCMuv7PfbLVm8IZsd6Bgqqzg"></iframe></div>
-        <div class="box"><i class="fa-brands fa-tiktok logo-icon"></i><iframe src="https://livecounts.io/embed/tiktok-live-follower-counter/briandivacox"></iframe></div>
-        
-        <div class="box">
-            <i class="fa-solid fa-cloud logo-icon" style="color:#0085ff; opacity: 0.6;"></i>
-            <div class="stat-label"><div id="b-dot" class="dot"></div> Bluesky Live</div>
-            <div class="stat-num" id="bsky-count">--</div>
-        </div>
-
-        <div class="box">
-            <i class="fa-brands fa-threads logo-icon" style="opacity: 0.6;"></i>
-            <div class="stat-label"><div id="t-dot" class="dot"></div> Threads API</div>
-            <div class="stat-num" id="threads-count">SYNC</div>
-        </div>
-    </div>
-
-    <script>
-        const B_ID = "briandivacox.bsky.social";
+const B_ID = "briandivacox.bsky.social";
         const T_ID = "26231664763158295"; 
+        // PASTE YOUR NEW TOKEN (WITH 3 SCOPES) BELOW
         const T_TOKEN = "THAAg36cTPHF1BUVNObmpNX1NmeWFyYXk2UHVfc29YYWU0SFI3QkRRc0luNnZAFcVNhS2RBdnhBV3VhOU9MV0JpZAWI2ZAGY4TmxaajhyN1NlSDJvQndYS3VteTRzZAU9jMDRPYS1kSnNvTDAtWWtqeUk5dmhZAa0gtd09ocmk0V09RVEQ1ZA3pqSk41TmFKbTA0d3FXampsOEJMamR1UWpHMG9MQzc3a2QZD";
 
         async function updateStats() {
@@ -55,25 +10,26 @@
                 const bData = await bRes.json();
                 if (bData.followersCount !== undefined) {
                     document.getElementById('bsky-count').innerText = bData.followersCount.toLocaleString();
-                    document.getElementById('b-dot').classList.add('active');
+                    document.getElementById('b-dot').className = 'dot active';
                 }
             } catch(e) {}
 
-            // Threads - Priority Fetch
+            // Threads - The High-Permission Fetch
             const tDot = document.getElementById('t-dot');
             const tCount = document.getElementById('threads-count');
             try {
-                // We use your Numeric ID and a Cache Buster to force a fresh response
-                const tRes = await fetch(`https://graph.threads.net/v1.0/${T_ID}?fields=follower_count&access_token=${T_TOKEN}&cb=${Date.now()}`);
+                // In 2026, requesting 'id' along with 'follower_count' helps verify the node
+                const tRes = await fetch(`https://graph.threads.net/v1.0/${T_ID}?fields=id,follower_count&access_token=${T_TOKEN}`);
                 const tData = await tRes.json();
                 
                 if (tData.follower_count !== undefined) {
                     tCount.innerText = tData.follower_count.toLocaleString();
                     tDot.className = 'dot active';
+                    console.log("Threads Success!");
                 } else {
-                    // This logs the specific Meta error to your Browser Console (F12)
-                    console.error("Threads API Error:", tData);
-                    tCount.innerText = "FAIL";
+                    // Check Console (F12) to see why it's failing
+                    console.error("Threads Meta Response:", tData);
+                    tCount.innerText = "CHECK_MSG"; 
                     tDot.className = 'dot error';
                 }
             } catch(e) { 
@@ -81,9 +37,3 @@
                 tDot.className = 'dot error';
             }
         }
-
-        updateStats();
-        setInterval(updateStats, 45000);
-    </script>
-</body>
-</html>
