@@ -2,25 +2,46 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Threads API Laboratory v2.4.0</title>
+    <title>Threads API Laboratory v2.5.0</title>
     <style>
-        :root { --bg: #0d1117; --card: #161b22; --border: #30363d; --green: #238636; --text: #ffffff; }
+        :root { --bg: #0d1117; --card: #161b22; --border: #30363d; --green: #238636; --blue: #1f6feb; --text: #ffffff; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 40px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
-        .lab-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 30px; width: 520px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border-top: 4px solid #1f6feb; margin-bottom: 25px; }
-        .number { font-size: 5.5rem; font-weight: 800; margin: 15px 0; color: #444; }
-        .console { width: 100%; max-width: 850px; background: #000; color: #0f0; font-family: 'Courier New', monospace; padding: 20px; border-radius: 12px; font-size: 13px; height: 350px; overflow-y: auto; border: 1px solid #333; }
-        button { background: #1f6feb; color: white; border: none; padding: 14px 28px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 14px; }
+        
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; width: 100%; max-width: 900px; margin-bottom: 30px; }
+        
+        .lab-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 25px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); position: relative; }
+        .lab-card.followers { border-top: 4px solid var(--green); }
+        .lab-card.views { border-top: 4px solid var(--blue); }
+        
+        .number { font-size: 4rem; font-weight: 800; margin: 10px 0; color: #444; transition: 0.5s; }
+        .number.active { color: var(--text); text-shadow: 0 0 15px rgba(255,255,255,0.2); }
+        
+        .label { font-size: 11px; text-transform: uppercase; color: #8b949e; letter-spacing: 2px; }
+        
+        .console { width: 100%; max-width: 900px; background: #000; color: #0f0; font-family: 'Courier New', monospace; padding: 20px; border-radius: 12px; font-size: 13px; height: 300px; overflow-y: auto; border: 1px solid #333; }
+        
+        button { background: var(--green); color: white; border: none; padding: 15px 30px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-bottom: 20px; transition: 0.3s; }
+        button:hover { transform: translateY(-2px); filter: brightness(1.1); }
     </style>
 </head>
 <body>
 
-    <div class="lab-card">
-        <div style="font-size: 11px; color: #8b949e; margin-bottom: 5px;">2026 PROFESSIONAL SYNC SCAN</div>
-        <div class="number" id="count">330</div>
-        <button onclick="checkSync()">CHECK PROFESSIONAL SYNC</button>
+    <h1 style="margin-bottom: 10px; font-weight: 900;">Threads Insights Lab</h1>
+    <button onclick="runDiscovery()">PULL LIVE INSIGHTS</button>
+
+    <div class="grid">
+        <div class="lab-card followers">
+            <div class="label">Followers</div>
+            <div class="number" id="follower-num">---</div>
+        </div>
+
+        <div class="lab-card views">
+            <div class="label">30-Day Views</div>
+            <div class="number" id="view-num">---</div>
+        </div>
     </div>
 
-    <div class="console" id="debug-console">> Lab v2.4.0 Online... <br>> Waiting for Instagram Professional Sync.</div>
+    <div class="console" id="debug-console">> Lab v2.5.0 Online... <br>> Ready to scan for View Metrics.</div>
 
     <script>
         const T_ID = "26231664763158295";
@@ -32,23 +53,37 @@
             con.scrollTop = con.scrollHeight;
         }
 
-        async function checkSync() {
-            log("--- INITIATING INSTAGRAM SYNC AUDIT ---", "yellow");
+        async function runDiscovery() {
+            log("--- STARTING INSIGHTS DISCOVERY ---", "yellow");
+            
+            // 1. Fetch Followers
             try {
-                // Testing the specific followers_count plural field used for Pro accounts
-                const res = await fetch(`https://graph.threads.net/v1.0/${T_ID}?fields=followers_count&access_token=${T_TOKEN}`);
-                const data = await res.json();
-                
-                if (data.followers_count !== undefined) {
-                    log(`SUCCESS! Sync Active. Followers: ${data.followers_count}`, "#238636");
-                    document.getElementById('count').innerText = data.followers_count;
-                    document.getElementById('count').style.color = "#238636";
+                const fRes = await fetch(`https://graph.threads.net/v1.0/${T_ID}?fields=followers_count&access_token=${T_TOKEN}`);
+                const fData = await fRes.json();
+                if(fData.followers_count !== undefined) {
+                    document.getElementById('follower-num').innerText = fData.followers_count.toLocaleString();
+                    document.getElementById('follower-num').classList.add('active');
+                    log("Follower data retrieved.", "#238636");
                 } else {
-                    log(`REJECTED: ${data.error.message}`, "red");
-                    log("HINT: If Instagram is already Professional, try toggling it to Personal and back.", "orange");
+                    log("Followers field locked.", "red");
                 }
-            } catch(e) { log("Connection Error.", "red"); }
-        }
-    </script>
-</body>
-</html>
+            } catch(e) { log("Follower API Error", "red"); }
+
+            // 2. Fetch Views (Impressions)
+            // In 2026, views are often found in the 'threads_insights' edge
+            log("Attempting to reach Insights Edge for Views...");
+            try {
+                // Testing the 'views' metric for the last 30 days
+                const iRes = await fetch(`https://graph.threads.net/v1.0/${T_ID}/threads_insights?metric=views&period=day&access_token=${T_TOKEN}`);
+                const iData = await iRes.json();
+                
+                if (iData.data && iData.data[0]) {
+                    const totalViews = iData.data[0].values[0].value;
+                    document.getElementById('view-num').innerText = totalViews.toLocaleString();
+                    document.getElementById('view-num').classList.add('active');
+                    log(`SUCCESS: Found ${totalViews} views in 30-day window.`, "#1f6feb");
+                } else {
+                    log("Views metric rejected or account not Professional.", "orange");
+                    log("Raw Response: " + JSON.stringify(iData), "gray");
+                }
+            } catch(e)
