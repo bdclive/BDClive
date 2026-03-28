@@ -2,45 +2,33 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Threads API Laboratory v2.8.0</title>
+    <title>Threads API Laboratory v2.9.0</title>
     <style>
-        :root { --bg: #0d1117; --card: #161b22; --border: #30363d; --green: #238636; --blue: #1f6feb; --gold: #e3b341; --text: #ffffff; }
+        :root { --bg: #0d1117; --card: #161b22; --border: #30363d; --green: #238636; --gold: #e3b341; --text: #ffffff; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
-        
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; width: 100%; max-width: 900px; margin-bottom: 20px; }
         .lab-card { background: var(--card); border: 1px solid var(--border); border-radius: 15px; padding: 20px; text-align: center; box-shadow: 0 8px 20px rgba(0,0,0,0.4); border-top: 4px solid #444; }
-        
-        .lab-card.active-green { border-top-color: var(--green); }
-        .lab-card.active-gold { border-top-color: var(--gold); }
-        
-        .number { font-size: 3.5rem; font-weight: 800; margin: 10px 0; color: #444; transition: 0.5s; }
-        .number.glow { color: var(--text); text-shadow: 0 0 15px rgba(255,255,255,0.3); }
+        .active-gold { border-top-color: var(--gold); }
+        .number { font-size: 3.5rem; font-weight: 800; margin: 10px 0; color: var(--gold); text-shadow: 0 0 15px rgba(227, 179, 65, 0.3); }
         .label { font-size: 10px; text-transform: uppercase; color: #8b949e; letter-spacing: 2px; }
-        
-        .console { width: 100%; max-width: 860px; background: #000; color: #0f0; font-family: 'Courier New', monospace; padding: 20px; border-radius: 10px; font-size: 12px; height: 280px; overflow-y: auto; border: 1px solid #333; text-align: left; }
-        
-        button { background: var(--blue); color: white; border: none; padding: 15px 30px; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; max-width: 860px; font-size: 16px; margin-bottom: 20px; transition: 0.3s; }
-        button:hover { filter: brightness(1.2); transform: scale(1.01); }
+        .console { width: 100%; max-width: 860px; background: #000; color: #0f0; font-family: 'Courier New', monospace; padding: 20px; border-radius: 10px; font-size: 12px; height: 300px; overflow-y: auto; border: 1px solid #333; text-align: left; }
+        button { background: #1f6feb; color: white; border: none; padding: 15px 30px; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; max-width: 860px; font-size: 16px; margin-bottom: 20px; }
     </style>
 </head>
 <body>
 
-    <h2 style="margin-bottom: 20px; font-weight: 900;">Threads Lifetime Audit v2.8.0</h2>
+    <h2 style="margin-bottom: 20px; font-weight: 900;">Threads Multi-Pass Audit v2.9.0</h2>
 
-    <button onclick="runLifetimeAudit()">CALCULATE LIFETIME METRICS</button>
+    <button onclick="runMultiPassAudit()">START DEEP HISTORY SCAN</button>
 
     <div class="grid">
-        <div class="lab-card active-green">
-            <div class="label">Total Followers</div>
-            <div class="number" id="follower-num">0</div>
-        </div>
         <div class="lab-card active-gold">
-            <div class="label">Lifetime Views</div>
+            <div class="label">LIFETIME VIEWS (AGGREGATED)</div>
             <div class="number" id="view-num">0</div>
         </div>
     </div>
 
-    <div class="console" id="log-window">> Lab v2.8.0 Online... <br>> Target: Lifetime Statistics.</div>
+    <div class="console" id="log-window">> Lab v2.9.0 Ready... <br>> Multi-Pass mode enabled to bypass 90-day Meta limit.</div>
 
     <script>
         const T_ID = "26231664763158295";
@@ -52,45 +40,47 @@
             win.scrollTop = win.scrollHeight;
         }
 
-        async function runLifetimeAudit() {
-            log("--- INITIATING LIFETIME DATA SCRAPE ---", "yellow");
+        async function runMultiPassAudit() {
+            log("--- INITIATING MULTI-PASS SCAN ---", "yellow");
+            let totalViews = 0;
             
-            // 1. Fetch Followers
-            try {
-                const res = await fetch(`https://graph.threads.net/v1.0/${T_ID}?fields=followers_count&access_token=${T_TOKEN}`);
-                const data = await res.json();
-                if (data.followers_count !== undefined) {
-                    const el = document.getElementById('follower-num');
-                    el.innerText = data.followers_count.toLocaleString();
-                    el.classList.add('glow');
-                    log(`Follower verification complete.`, "#238636");
-                }
-            } catch(e) { log("Follower node blocked.", "red"); }
+            // Current time in seconds
+            let now = Math.floor(Date.now() / 1000);
+            // Threads Launch (July 2023)
+            const launchDate = 1688515200; 
+            // 90 days in seconds
+            const ninetyDays = 90 * 24 * 60 * 60;
 
-            // 2. Fetch Lifetime Views (Calculating since launch)
-            // We use 'since=1688515200' which is July 5, 2023 (Threads Launch Day)
-            log("Requesting historical insights since July 2023...");
-            try {
-                const iRes = await fetch(`https://graph.threads.net/v1.0/${T_ID}/threads_insights?metric=views&since=1688515200&access_token=${T_TOKEN}`);
-                const iData = await iRes.json();
+            let currentEnd = now;
+            let passCount = 1;
+
+            while (currentEnd > launchDate) {
+                let currentStart = currentEnd - ninetyDays;
+                if (currentStart < launchDate) currentStart = launchDate;
+
+                log(`PASS ${passCount}: Scanning ${new Date(currentStart * 1000).toLocaleDateString()} to ${new Date(currentEnd * 1000).toLocaleDateString()}...`);
                 
-                if (iData.data && iData.data[0]) {
-                    const views = iData.data[0].values[0].value;
-                    const el = document.getElementById('view-num');
-                    el.innerText = views.toLocaleString();
-                    el.classList.add('glow');
-                    log(`LIFETIME SUCCESS: Found ${views} total views.`, "#e3b341");
-                } else {
-                    log("Meta rejected the historical 'since' parameter. Returning 30-day default.", "orange");
-                    // Fallback to basic view check if since is blocked
-                    const fallback = await fetch(`https://graph.threads.net/v1.0/${T_ID}/threads_insights?metric=views&access_token=${T_TOKEN}`);
-                    const fData = await fallback.json();
-                    if(fData.data) {
-                        document.getElementById('view-num').innerText = fData.data[0].values[0].value.toLocaleString();
-                        document.getElementById('view-num').classList.add('glow');
+                try {
+                    const url = `https://graph.threads.net/v1.0/${T_ID}/threads_insights?metric=views&since=${currentStart}&until=${currentEnd}&access_token=${T_TOKEN}`;
+                    const res = await fetch(url);
+                    const data = await res.json();
+                    
+                    if (data.data && data.data[0]) {
+                        const passViews = data.data[0].values[0].value;
+                        totalViews += passViews;
+                        document.getElementById('view-num').innerText = totalViews.toLocaleString();
+                        log(`Received ${passViews.toLocaleString()} views. Total: ${totalViews.toLocaleString()}`, "#e3b341");
                     }
-                }
-            } catch(e) { log("Insights scan failed.", "red"); }
+                } catch(e) { log("Pass failed or timed out.", "red"); }
+
+                currentEnd = currentStart;
+                passCount++;
+                // Safety break to prevent infinite loops
+                if (passCount > 20) break;
+            }
+
+            log("--- DEEP SCAN COMPLETE ---", "green");
+            log(`FINAL LIFETIME TOTAL: ${totalViews.toLocaleString()}`, "white");
         }
     </script>
 </body>
