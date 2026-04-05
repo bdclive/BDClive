@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Stats Dashboard v4.2.0</title>
+    <title>Live Stats Dashboard v4.3.0</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     
     <style>
@@ -22,13 +22,12 @@
             color: var(--text-main);
             display: flex; flex-direction: column; align-items: center;
             padding: 10px; margin: 0;
-            height: 100vh; overflow: hidden; /* Strict no-scroll for 1080p */
+            height: 100vh; overflow: hidden;
         }
 
-        /* TIMER AREA - 35% of Screen */
+        /* TIMER AREA */
         .timer-container {
             width: 100%;
-            max-width: 1880px;
             height: 35vh; 
             margin-bottom: 10px;
             border-radius: 12px;
@@ -37,20 +36,19 @@
         }
         .timer-container iframe { width: 100%; height: 100%; border: none; }
 
-        /* THE GRID - 6 COLUMNS */
+        /* THE GRID */
         .counter-grid {
             display: grid;
             grid-template-columns: repeat(6, 1fr);
             gap: 8px;
             width: 100%;
-            max-width: 1880px;
         }
 
         .counter-item {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 8px;
-            height: 120px; /* Precise height to fit 2 rows on 1080p */
+            height: 120px;
             position: relative;
             display: flex;
             flex-direction: column;
@@ -61,7 +59,7 @@
 
         .box-logo { position: absolute; top: 10px; right: 10px; font-size: 16px; z-index: 20; }
 
-        /* IFRAME POSITIONING FOR X, IG, YT, etc. */
+        /* IFRAME OVERLAYS */
         .counter-item iframe {
             filter: invert(1) hue-rotate(180deg);
             border: 0;
@@ -79,4 +77,96 @@
         .header-tag { font-size: 10px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 2px; font-weight: bold; }
         .main-number { font-size: 2.2rem; font-weight: 900; color: #ffffff; margin: 0; white-space: nowrap; letter-spacing: -1px; }
 
-        .version-info { position: fixed; bottom: 5px;
+        .version-info { position: fixed; bottom: 5px; right: 10px; font-size: 9px; color: var(--text-dim); }
+    </style>
+</head>
+<body>
+
+    <div class="timer-container">
+        <iframe src="https://board.multitimer.net/view/?q=6z0n8w08m0"></iframe>
+    </div>
+
+    <div class="counter-grid">
+        <div class="counter-item">
+            <i class="fa-brands fa-x-twitter box-logo" style="color:white;"></i>
+            <iframe scrolling="no" src="https://livecounts.io/embed/twitter-live-follower-counter/briandivacox"></iframe>
+        </div>
+
+        <div class="counter-item">
+            <i class="fa-brands fa-twitch box-logo" style="color:#9146FF;"></i>
+            <iframe scrolling="no" src="https://livecounts.io/embed/twitch-live-follower-counter/briandivacox"></iframe>
+        </div>
+
+        <div class="counter-item">
+            <i class="fa-brands fa-youtube box-logo" style="color:#FF0000;"></i>
+            <iframe scrolling="no" src="https://livecounts.io/embed/youtube-live-subscriber-counter/UCMuv7PfbLVm8IZsd6Bgqqzg"></iframe>
+        </div>
+
+        <div class="counter-item">
+            <i class="fa-brands fa-tiktok box-logo" style="color:#00f2ea;"></i>
+            <iframe scrolling="no" src="https://livecounts.io/embed/tiktok-live-follower-counter/briandivacox"></iframe>
+        </div>
+
+        <div class="counter-item instagram-fix">
+            <i class="fa-brands fa-instagram box-logo" style="color:#E1306C;"></i>
+            <iframe scrolling="no" src="https://livecounts.nl/instagram-realtime/embed/?u=briandivacox"></iframe>
+        </div>
+
+        <div class="counter-item">
+            <i class="fa-solid fa-square-poll-vertical box-logo" style="color:#0085ff;"></i>
+            <span class="header-tag">Bluesky</span>
+            <div class="main-number">22</div>
+        </div>
+
+        <div class="counter-item">
+            <i class="fa-brands fa-threads box-logo" style="color:white;"></i>
+            <span class="header-tag">Threads</span>
+            <div id="threads-fol-num" class="main-number">0</div>
+        </div>
+
+        <div class="counter-item">
+            <i class="fa-brands fa-threads box-logo" style="color:white;"></i>
+            <span class="header-tag">Total Views</span>
+            <div id="threads-view-num" class="main-number">0</div>
+        </div>
+
+        <div class="counter-item">
+            <i class="fa-brands fa-snapchat box-logo" style="color:var(--snap-yellow);"></i>
+            <span class="header-tag">Snapchat</span>
+            <div id="snap-fol-num" class="main-number">0</div>
+        </div>
+
+        <div class="counter-item">
+            <i class="fa-brands fa-facebook box-logo" style="color:#0866ff;"></i>
+            <span class="header-tag">Brian Diva Cox</span>
+            <div id="fb-page-num" class="main-number">0</div>
+        </div>
+
+        <div class="counter-item">
+            <i class="fa-brands fa-facebook-f box-logo" style="color:#0866ff;"></i>
+            <span class="header-tag">Brian Diva Cox (Personal)</span>
+            <div id="fb-personal-num" class="main-number">0</div>
+        </div>
+    </div>
+
+    <div class="version-info">v4.3.0 • Hard Reset</div>
+
+    <script>
+        function updateDisplay() {
+            try {
+                const rawData = localStorage.getItem('labData');
+                if (rawData) {
+                    const data = JSON.parse(rawData);
+                    document.getElementById('threads-fol-num').innerText = data.threadsFol || "0";
+                    document.getElementById('threads-view-num').innerText = data.threadsViews || "0";
+                    document.getElementById('snap-fol-num').innerText = data.snapFol || "0";
+                    document.getElementById('fb-page-num').innerText = data.fbPage || "0";
+                    document.getElementById('fb-personal-num').innerText = data.fbPersonal || "0";
+                }
+            } catch (e) { console.error("Update failed", e); }
+        }
+        updateDisplay();
+        window.addEventListener('storage', updateDisplay);
+    </script>
+</body>
+</html>
