@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Stats Dashboard v3.8.0</title>
+    <title>Live Stats Dashboard v3.9.0</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     
@@ -24,16 +24,15 @@
             background-color: var(--bg-color);
             color: var(--text-main);
             display: flex; flex-direction: column; align-items: center;
-            padding: 10px;
+            padding: 10px 5px; /* Reduced side padding to maximize width */
             margin: 0;
-            overflow: hidden; /* Keep it on one screen */
+            overflow: hidden;
         }
 
-        /* TIMER SECTION */
         .timer-container {
             width: 100%;
-            max-width: 1880px;
-            height: 300px; /* Adjusted height to give cards more room */
+            max-width: 1900px;
+            height: 280px; 
             margin-bottom: 10px;
             border-radius: 12px;
             overflow: hidden;
@@ -42,56 +41,57 @@
 
         .timer-container iframe { width: 100%; height: 100%; border: none; }
 
-        /* 6-COLUMN GRID FIX */
         .counter-grid {
             display: grid;
             grid-template-columns: repeat(6, 1fr);
-            gap: 10px; 
-            max-width: 1880px; 
+            gap: 8px; 
+            max-width: 1900px; 
             width: 100%;
+            container-type: inline-size; /* Allows the numbers to scale based on box width */
         }
 
         .counter-item {
             background: var(--card-bg); 
             border-radius: 8px; 
-            height: 120px; 
+            height: 125px; 
             border: 1px solid var(--border-color); 
             position: relative;
             display: flex;
             flex-direction: column; 
             justify-content: center; 
-            padding: 0 15px; /* Balanced padding */
+            padding: 0 10px; 
             overflow: hidden;
         }
 
-        .box-logo { position: absolute; top: 10px; right: 10px; font-size: 14px; z-index: 10; }
+        .box-logo { position: absolute; top: 8px; right: 8px; font-size: 14px; z-index: 10; }
 
-        /* IFRAME ALIGNMENT FIX */
+        /* IFRAME FORCE SCALE */
         .counter-item iframe {
             filter: invert(1) hue-rotate(180deg); border: 0; 
-            width: 350px; height: 180px; 
+            width: 320px; height: 160px; 
             position: absolute; 
-            top: 10px; 
-            left: -95px; /* Pulled back slightly so numbers center better */
-            transform: scale(0.85); 
+            top: 25px; 
+            left: -105px; 
+            transform: scale(0.75); /* Scaled down further to prevent cutoff */
             transform-origin: top left;
         }
         
-        .instagram-fix iframe { top: 35px; left: -90px; transform: scale(0.8); }
+        .instagram-fix iframe { top: 40px; left: -95px; transform: scale(0.7); }
 
-        .header-tag { font-size: 10px; color: var(--text-dim); margin-bottom: 2px; text-transform: uppercase; font-weight: bold; }
+        .header-tag { font-size: 9px; color: var(--text-dim); margin-bottom: 2px; text-transform: uppercase; font-weight: 800; }
         
-        /* NUMBER RESIZING FOR 1080p */
+        /* THE FIX: FLUID TEXT SIZE */
         .main-number { 
-            font-size: 2.2rem; /* Reduced from 2.8 to fit millions without cutoff */
-            font-weight: 800; 
-            line-height: 1.1; 
+            font-size: clamp(1.5rem, 6cqw, 2.1rem); /* Dynamically shrinks if the millions get too long */
+            font-weight: 900; 
+            line-height: 1; 
             margin: 0; 
             color: #ffffff;
-            white-space: nowrap; /* Prevents number from wrapping */
+            white-space: nowrap;
+            letter-spacing: -1px; /* Tightens the numbers up */
         }
 
-        .version-info { position: fixed; bottom: 5px; right: 10px; font-size: 9px; color: var(--text-dim); opacity: 0.4; }
+        .version-info { position: fixed; bottom: 5px; left: 10px; font-size: 8px; color: var(--text-dim); opacity: 0.3; }
     </style>
 </head>
 <body>
@@ -127,7 +127,7 @@
         </div>
 
         <div class="counter-item">
-            <svg class="box-logo" viewBox="0 0 566 500" fill="#0085ff" style="width:16px;"><path d="M121.2 35.6C191.6 86.9 282.9 178.1 282.9 178.1S374.2 86.9 444.7 35.6C502.9-6.8 566 -20.3 566 49.3c0 19.3-11.2 121.1-17.8 144.6-21 75"/></svg>
+            <svg class="box-logo" viewBox="0 0 566 500" fill="#0085ff" style="width:14px;"><path d="M121.2 35.6C191.6 86.9 282.9 178.1 282.9 178.1S374.2 86.9 444.7 35.6C502.9-6.8 566 -20.3 566 49.3c0 19.3-11.2 121.1-17.8 144.6-21 75"/></svg>
             <span class="header-tag">Bluesky</span>
             <div class="main-number">22</div>
         </div>
@@ -147,7 +147,7 @@
         <div class="counter-item">
             <i class="fa-brands fa-snapchat box-logo" style="color:var(--snap-yellow);"></i>
             <span class="header-tag">Snapchat</span>
-            <div id="snap-fol-num" class="main-number">3,674</div>
+            <div id="snap-fol-num" class="main-number" style="color:#ffffff">3,674</div>
         </div>
 
         <div class="counter-item">
@@ -163,7 +163,7 @@
         </div>
     </div>
 
-    <div class="version-info">v3.8.0 • 1080p Scale Fix</div>
+    <div class="version-info">v3.9.0 • Emergency Scale</div>
 
     <script>
         function updateDisplay() {
