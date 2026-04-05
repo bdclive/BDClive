@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Stats Dashboard v4.5.0</title>
+    <title>Live Stats Dashboard v4.6.0</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     
     <style>
@@ -112,41 +112,41 @@
                 <path d="M121.2 35.6C191.6 86.9 282.9 178.1 282.9 178.1S374.2 86.9 444.7 35.6C502.9-6.8 566 -20.3 566 49.3c0 19.3-11.2 121.1-17.8 144.6-21 75-52.2 89.8-118.4 104.8 134.5 25.3 152.9 70.6 152.9 101.7 0 71-65.4 63.3-119 31.9-74.5-43.8-139.8-138.8-179.9-195.1-40.1 56.3-105.4 151.3-179.9 195.1-53.6 31.5-119 39.1-119-31.9 0-31.1 18.4-76.4 152.9-101.7C46.2 283.7 15 268.9 0 193.9c-6.6-23.5-17.8-125.3-17.8-144.6 0-69.6 63.1-56.1 121.2-13.7z"/>
             </svg>
             <span class="header-tag">Bluesky</span>
-            <div class="main-number">22</div>
+            <div id="bsky-num" class="main-number">22</div>
         </div>
 
         <div class="counter-item">
             <i class="fa-brands fa-threads box-logo" style="color:white; font-size: 20px;"></i>
             <span class="header-tag">Threads</span>
-            <div id="threads-fol-num" class="main-number">330</div>
+            <div id="threads-fol-num" class="main-number">---</div>
         </div>
 
         <div class="counter-item">
             <i class="fa-brands fa-threads box-logo" style="color:white; font-size: 20px;"></i>
             <span class="header-tag">Total Views</span>
-            <div id="threads-view-num" class="main-number">5.7m</div>
+            <div id="threads-view-num" class="main-number">---</div>
         </div>
 
         <div class="counter-item">
             <i class="fa-brands fa-snapchat box-logo" style="color:var(--snap-yellow); font-size: 20px;"></i>
             <span class="header-tag">Snapchat</span>
-            <div id="snap-fol-num" class="main-number">3,674</div>
+            <div id="snap-fol-num" class="main-number">---</div>
         </div>
 
         <div class="counter-item">
             <i class="fa-brands fa-facebook box-logo" style="color:#0866ff; font-size: 20px;"></i>
             <span class="header-tag">Brian Diva Cox</span>
-            <div id="fb-page-num" class="main-number">1k</div>
+            <div id="fb-page-num" class="main-number">---</div>
         </div>
 
         <div class="counter-item">
             <i class="fa-brands fa-facebook-f box-logo" style="color:#0866ff; font-size: 20px;"></i>
             <span class="header-tag">Brian Diva Cox (Personal)</span>
-            <div id="fb-personal-num" class="main-number">5.5k</div>
+            <div id="fb-personal-num" class="main-number">---</div>
         </div>
     </div>
 
-    <div class="version-info">v4.5.0 • Official Butterfly Restore</div>
+    <div class="version-info">v4.6.0 • Live Sync Active</div>
 
     <script>
         function updateDisplay() {
@@ -154,16 +154,27 @@
                 const rawData = localStorage.getItem('labData');
                 if (rawData) {
                     const data = JSON.parse(rawData);
+                    // Match IDs exactly to Admin Page values
                     if(data.threadsFol) document.getElementById('threads-fol-num').innerText = data.threadsFol;
                     if(data.threadsViews) document.getElementById('threads-view-num').innerText = data.threadsViews;
                     if(data.snapFol) document.getElementById('snap-fol-num').innerText = data.snapFol;
                     if(data.fbPage) document.getElementById('fb-page-num').innerText = data.fbPage;
                     if(data.fbPersonal) document.getElementById('fb-personal-num').innerText = data.fbPersonal;
                 }
-            } catch (e) { console.error("Sync Error", e); }
+            } catch (e) {
+                console.error("Local Storage Error:", e);
+            }
         }
+
+        // Initial load
         updateDisplay();
-        window.addEventListener('storage', updateDisplay);
+
+        // THE KEY FIX: Listen for any changes to localStorage from other tabs
+        window.addEventListener('storage', (event) => {
+            if (event.key === 'labData') {
+                updateDisplay();
+            }
+        });
     </script>
 </body>
 </html>
