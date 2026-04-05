@@ -47,7 +47,8 @@
     </div>
 
     <script>
-        // Load saved data when you open the admin page
+        const channel = new BroadcastChannel('lab_sync');
+
         window.onload = function() {
             const raw = localStorage.getItem('labData');
             if(raw) {
@@ -68,7 +69,13 @@
                 fbPersonal: document.getElementById('fb-personal').value,
                 fbPage: document.getElementById('fb-page').value
             };
+            
+            // Push live broadcast
+            channel.postMessage(data);
+            
+            // Save backup
             localStorage.setItem('labData', JSON.stringify(data));
+            
             alert("Broadcast Sent!");
         }
     </script>
