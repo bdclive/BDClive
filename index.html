@@ -3,83 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Stats Dashboard v5.3.0</title>
+    <title>Cloud Dashboard v6.1.0</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     
     <style>
         :root {
-            --bg-color: #0d1117;
-            --card-bg: #161b22;
-            --border-color: #30363d;
-            --text-main: #ffffff;
-            --text-dim: #8b949e;
-            --snap-yellow: #eaff00;
-            --bsky-blue: #1185FE;
+            --bg-color: #0d1117; --card-bg: #161b22; --border-color: #30363d;
+            --text-main: #ffffff; --text-dim: #8b949e; --snap-yellow: #eaff00; --bsky-blue: #1185FE;
         }
 
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            display: flex; flex-direction: column; align-items: center;
-            padding: 15px; margin: 0;
-            min-height: 100vh;
-        }
-
-        .timer-container {
-            width: 100%;
-            max-width: 1400px;
-            height: 300px; 
-            margin-bottom: 20px;
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
-            overflow: hidden;
-        }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: var(--text-main); display: flex; flex-direction: column; align-items: center; padding: 15px; margin: 0; min-height: 100vh; }
+        .timer-container { width: 100%; max-width: 1400px; height: 300px; margin-bottom: 20px; border-radius: 12px; border: 1px solid var(--border-color); overflow: hidden; }
         .timer-container iframe { width: 100%; height: 100%; border: none; }
-
-        .counter-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-            width: 100%;
-            max-width: 1400px;
-        }
-
-        .counter-item {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            height: 150px;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding-left: 20px;
-            overflow: hidden;
-        }
-
+        .counter-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; width: 100%; max-width: 1400px; }
+        .counter-item { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; height: 150px; position: relative; display: flex; flex-direction: column; justify-content: center; padding-left: 20px; overflow: hidden; }
         .box-logo { position: absolute; top: 12px; right: 12px; width: 22px; height: 22px; z-index: 20; }
-
-        .counter-item iframe {
-            filter: invert(1) hue-rotate(180deg);
-            border: 0; width: 450px; height: 220px;
-            position: absolute; top: 10px; left: -90px;
-            transform: scale(1); transform-origin: top left;
-        }
-        
+        .counter-item iframe { filter: invert(1) hue-rotate(180deg); border: 0; width: 450px; height: 220px; position: absolute; top: 10px; left: -90px; }
         .instagram-fix iframe { top: 35px; left: -85px; transform: scale(0.95); }
-
         .header-tag { font-size: 11px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 5px; font-weight: bold; }
         .main-number { font-size: 3.5rem; font-weight: 800; color: #ffffff; margin: 0; white-space: nowrap; letter-spacing: -1px; }
-
         .version-info { margin-top: 30px; font-size: 10px; color: var(--text-dim); opacity: 0.5; }
     </style>
 </head>
 <body>
 
-    <div class="timer-container">
-        <iframe src="https://board.multitimer.net/view/?q=6z0n8w08m0"></iframe>
-    </div>
+    <div class="timer-container"><iframe src="https://board.multitimer.net/view/?q=6z0n8w08m0"></iframe></div>
 
     <div class="counter-grid">
         <div class="counter-item">
@@ -107,6 +55,7 @@
             <span class="header-tag">Bluesky</span>
             <div class="main-number">22</div>
         </div>
+
         <div class="counter-item">
             <i class="fa-brands fa-threads box-logo" style="color:white; font-size: 20px;"></i>
             <span class="header-tag">Threads</span>
@@ -124,33 +73,45 @@
         </div>
         <div class="counter-item">
             <i class="fa-brands fa-facebook box-logo" style="color:#0866ff; font-size: 20px;"></i>
-            <span class="header-tag">Brian Diva Cox</span>
+            <span class="header-tag">FB Page</span>
             <div id="fb-page-num" class="main-number">---</div>
         </div>
         <div class="counter-item">
             <i class="fa-brands fa-facebook-f box-logo" style="color:#0866ff; font-size: 20px;"></i>
-            <span class="header-tag">Brian Diva Cox (Personal)</span>
+            <span class="header-tag">FB Personal</span>
             <div id="fb-personal-num" class="main-number">---</div>
         </div>
     </div>
 
-    <div class="version-info">v5.3.0 • Stable Sync Build</div>
+    <div class="version-info">v6.1.0 • Cloud Sync (Modular Firebase)</div>
 
-    <script>
-        function updateUI() {
-            const rawData = localStorage.getItem('labData');
-            if (rawData) {
-                const data = JSON.parse(rawData);
-                if(data.threadsFol) document.getElementById('threads-fol-num').innerText = data.threadsFol;
-                if(data.threadsViews) document.getElementById('threads-view-num').innerText = data.threadsViews;
-                if(data.snapFol) document.getElementById('snap-fol-num').innerText = data.snapFol;
-                if(data.fbPage) document.getElementById('fb-page-num').innerText = data.fbPage;
-                if(data.fbPersonal) document.getElementById('fb-personal-num').innerText = data.fbPersonal;
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDsTv2YBsOHdfBeV1aZ1upwPPqmuSbhK7U",
+            authDomain: "livecounters-8eaa8.firebaseapp.com",
+            projectId: "livecounters-8eaa8",
+            storageBucket: "livecounters-8eaa8.firebasestorage.app",
+            messagingSenderId: "386919719539",
+            appId: "1:386919719539:web:c60c0d185c3d7e97ecc006"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // LIVE LISTENER
+        onValue(ref(db, 'labData'), (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                document.getElementById('threads-fol-num').innerText = data.threadsFol || "---";
+                document.getElementById('threads-view-num').innerText = data.threadsViews || "---";
+                document.getElementById('snap-fol-num').innerText = data.snapFol || "---";
+                document.getElementById('fb-page-num').innerText = data.fbPage || "---";
+                document.getElementById('fb-personal-num').innerText = data.fbPersonal || "---";
             }
-        }
-        window.addEventListener('storage', updateUI);
-        window.onload = updateUI;
-        setInterval(updateUI, 5000);
+        });
     </script>
 </body>
 </html>
