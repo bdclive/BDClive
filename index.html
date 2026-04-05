@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Stats Dashboard v4.1.0</title>
+    <title>Live Stats Dashboard v4.2.0</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     
     <style>
@@ -16,33 +16,23 @@
             --snap-yellow: #eaff00;
         }
 
-        /* FORCE FULL SCREEN - NO SCROLL */
-        html, body { 
-            height: 100vh; 
-            width: 100vw; 
-            margin: 0; 
-            padding: 0; 
-            overflow: hidden; 
-            background-color: var(--bg-color);
-            font-family: 'Segoe UI', sans-serif;
-        }
-
         body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 10px;
-            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex; flex-direction: column; align-items: center;
+            padding: 10px; margin: 0;
+            height: 100vh; overflow: hidden; /* Strict no-scroll for 1080p */
         }
 
-        /* TIMER AREA */
+        /* TIMER AREA - 35% of Screen */
         .timer-container {
             width: 100%;
-            height: 35vh; /* Uses 35% of your screen height */
+            max-width: 1880px;
+            height: 35vh; 
             margin-bottom: 10px;
             border-radius: 12px;
             border: 1px solid var(--border-color);
-            background: var(--card-bg);
             overflow: hidden;
         }
         .timer-container iframe { width: 100%; height: 100%; border: none; }
@@ -53,61 +43,40 @@
             grid-template-columns: repeat(6, 1fr);
             gap: 8px;
             width: 100%;
-            flex-grow: 1; /* Takes up remaining space */
+            max-width: 1880px;
         }
 
         .counter-item {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 8px;
+            height: 120px; /* Precise height to fit 2 rows on 1080p */
             position: relative;
-            padding: 10px;
             display: flex;
             flex-direction: column;
             justify-content: center;
+            padding-left: 15px;
             overflow: hidden;
         }
 
-        /* ICONS - TOP RIGHT */
-        .box-logo {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            font-size: 16px;
-            z-index: 50; /* Ensures it stays above numbers */
-        }
+        .box-logo { position: absolute; top: 10px; right: 10px; font-size: 16px; z-index: 20; }
 
-        /* IFRAME OVERLAYS (X, IG, TikTok, etc) */
+        /* IFRAME POSITIONING FOR X, IG, YT, etc. */
         .counter-item iframe {
             filter: invert(1) hue-rotate(180deg);
             border: 0;
-            width: 400px;
-            height: 200px;
+            width: 350px;
+            height: 180px;
             position: absolute;
-            top: 20px;
-            left: -110px;
-            transform: scale(0.75);
+            top: 10px;
+            left: -100px;
+            transform: scale(0.8);
             transform-origin: top left;
-            pointer-events: none;
         }
-
-        /* TEXT STYLING */
-        .header-tag { font-size: 10px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 2px; font-weight: bold; }
         
-        .main-number {
-            font-size: 2.1rem; /* Slightly smaller to ensure fit */
-            font-weight: 900;
-            color: #ffffff;
-            margin: 0;
-            white-space: nowrap;
-            letter-spacing: -1px;
-        }
+        .instagram-fix iframe { top: 35px; left: -90px; transform: scale(0.75); }
 
-        .version-info { position: fixed; bottom: 5px; right: 10px; font-size: 9px; color: var(--text-dim); }
-    </style>
-</head>
-<body>
+        .header-tag { font-size: 10px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 2px; font-weight: bold; }
+        .main-number { font-size: 2.2rem; font-weight: 900; color: #ffffff; margin: 0; white-space: nowrap; letter-spacing: -1px; }
 
-    <div class="timer-container">
-        <iframe src="https://board.multitimer.net/view/?q=6z0n8w08m0"></iframe>
-    </div>
+        .version-info { position: fixed; bottom: 5px;
