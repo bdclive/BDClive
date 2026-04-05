@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Stats Dashboard v4.8.0</title>
+    <title>Live Stats Dashboard v5.1.0</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     
     <style>
@@ -72,12 +72,7 @@
         .header-tag { font-size: 11px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 5px; font-weight: bold; }
         .main-number { font-size: 3.5rem; font-weight: 800; color: #ffffff; margin: 0; white-space: nowrap; letter-spacing: -1px; }
 
-        /* Sync Controls */
-        .control-bar { margin-top: 25px; display: flex; align-items: center; gap: 15px; }
-        #manual-sync-btn { 
-            background: #238636; color: white; border: none; padding: 8px 16px; 
-            border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 12px;
-        }
+        .status-bar { margin-top: 25px; display: flex; align-items: center; gap: 10px; }
         .status-dot { height: 10px; width: 10px; background: #444; border-radius: 50%; transition: 0.3s; }
         .status-dot.active { background: #238636; box-shadow: 0 0 10px #238636; }
         .version-info { font-size: 10px; color: var(--text-dim); opacity: 0.5; }
@@ -94,7 +89,6 @@
             <svg class="box-logo" viewBox="0 0 24 24" fill="white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.045 4.126H5.078z"/></svg>
             <iframe scrolling="no" src="https://livecounts.io/embed/twitter-live-follower-counter/briandivacox"></iframe>
         </div>
-        
         <div class="counter-item">
             <i class="fa-brands fa-twitch box-logo" style="color:#9146FF; font-size: 20px;"></i>
             <iframe scrolling="no" src="https://livecounts.io/embed/twitch-live-follower-counter/briandivacox"></iframe>
@@ -111,13 +105,11 @@
             <i class="fa-brands fa-instagram box-logo" style="color:#E1306C; font-size: 20px;"></i>
             <iframe scrolling="no" src="https://livecounts.nl/instagram-realtime/embed/?u=briandivacox"></iframe>
         </div>
-
         <div class="counter-item">
             <svg class="box-logo" viewBox="0 0 566 500" fill="var(--bsky-blue)"><path d="M121.2 35.6C191.6 86.9 282.9 178.1 282.9 178.1S374.2 86.9 444.7 35.6C502.9-6.8 566 -20.3 566 49.3c0 19.3-11.2 121.1-17.8 144.6-21 75-52.2 89.8-118.4 104.8 134.5 25.3 152.9 70.6 152.9 101.7 0 71-65.4 63.3-119 31.9-74.5-43.8-139.8-138.8-179.9-195.1-40.1 56.3-105.4 151.3-179.9 195.1-53.6 31.5-119 39.1-119-31.9 0-31.1 18.4-76.4 152.9-101.7C46.2 283.7 15 268.9 0 193.9c-6.6-23.5-17.8-125.3-17.8-144.6 0-69.6 63.1-56.1 121.2-13.7z"/></svg>
             <span class="header-tag">Bluesky</span>
-            <div id="bsky-num" class="main-number">22</div>
+            <div class="main-number">22</div>
         </div>
-
         <div class="counter-item">
             <i class="fa-brands fa-threads box-logo" style="color:white; font-size: 20px;"></i>
             <span class="header-tag">Threads</span>
@@ -131,7 +123,7 @@
         <div class="counter-item">
             <i class="fa-brands fa-snapchat box-logo" style="color:var(--snap-yellow); font-size: 20px;"></i>
             <span class="header-tag">Snapchat</span>
-            <div id="snap-fol-num" class="main-number">---</div>
+            <div id="snap-fol-num" class="main-number" style="color:white">---</div>
         </div>
         <div class="counter-item">
             <i class="fa-brands fa-facebook box-logo" style="color:#0866ff; font-size: 20px;"></i>
@@ -139,49 +131,4 @@
             <div id="fb-page-num" class="main-number">---</div>
         </div>
         <div class="counter-item">
-            <i class="fa-brands fa-facebook-f box-logo" style="color:#0866ff; font-size: 20px;"></i>
-            <span class="header-tag">Brian Diva Cox (Personal)</span>
-            <div id="fb-personal-num" class="main-number">---</div>
-        </div>
-    </div>
-
-    <div class="control-bar">
-        <button id="manual-sync-btn" onclick="updateDisplay()">FORCE DATA REFRESH</button>
-        <div id="sync-dot" class="status-dot"></div>
-        <div class="version-info">v4.8.0 • Emergency Sync Mode</div>
-    </div>
-
-    <script>
-        function updateDisplay() {
-            const rawData = localStorage.getItem('labData');
-            const dot = document.getElementById('sync-dot');
-            
-            if (rawData) {
-                const data = JSON.parse(rawData);
-                const map = {
-                    'threads-fol-num': data.threadsFol,
-                    'threads-view-num': data.threadsViews,
-                    'snap-fol-num': data.snapFol,
-                    'fb-page-num': data.fbPage,
-                    'fb-personal-num': data.fbPersonal
-                };
-
-                for (const [id, val] of Object.entries(map)) {
-                    const el = document.getElementById(id);
-                    if (el && val) el.innerText = val;
-                }
-                
-                dot.classList.add('active');
-                setTimeout(() => dot.classList.remove('active'), 1000);
-            } else {
-                console.warn("No labData found in local storage.");
-            }
-        }
-
-        // Auto-check and listener
-        setInterval(updateDisplay, 3000);
-        window.addEventListener('storage', updateDisplay);
-        window.onload = updateDisplay;
-    </script>
-</body>
-</html>
+            <i class="fa-brands fa-facebook-f box-logo" style="color:#0866ff; font
