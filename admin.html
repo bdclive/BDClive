@@ -2,155 +2,77 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Stats Dashboard -  Admin v5.3.0</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    
+    <title>Lab Admin v2.2.0 | Brian Diva Cox</title>
     <style>
-        :root {
-            --bg-color: #0d1117;
-            --card-bg: #161b22;
-            --border-color: #30363d;
-            --text-main: #ffffff;
-            --text-dim: #8b949e;
-            --snap-yellow: #eaff00;
-            --bsky-blue: #1185FE;
-        }
-
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            display: flex; flex-direction: column; align-items: center;
-            padding: 15px; margin: 0;
-            min-height: 100vh;
-        }
-
-        .timer-container {
-            width: 100%;
-            max-width: 1400px;
-            height: 300px; 
-            margin-bottom: 20px;
-            border-radius: 12px;
-            border: 1px solid var(--border-color);
-            overflow: hidden;
-        }
-        .timer-container iframe { width: 100%; height: 100%; border: none; }
-
-        .counter-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-            width: 100%;
-            max-width: 1400px;
-        }
-
-        .counter-item {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            height: 150px;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding-left: 20px;
-            overflow: hidden;
-        }
-
-        .box-logo { position: absolute; top: 12px; right: 12px; width: 22px; height: 22px; z-index: 20; }
-
-        .counter-item iframe {
-            filter: invert(1) hue-rotate(180deg);
-            border: 0; width: 450px; height: 220px;
-            position: absolute; top: 10px; left: -90px;
-            transform: scale(1); transform-origin: top left;
-        }
-        
-        .instagram-fix iframe { top: 35px; left: -85px; transform: scale(0.95); }
-
-        .header-tag { font-size: 11px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 5px; font-weight: bold; }
-        .main-number { font-size: 3.5rem; font-weight: 800; color: #ffffff; margin: 0; white-space: nowrap; letter-spacing: -1px; }
-
-        .version-info { margin-top: 30px; font-size: 10px; color: var(--text-dim); opacity: 0.5; }
+        body { font-family: 'Segoe UI', sans-serif; background: #0d1117; color: white; display: flex; flex-direction: column; align-items: center; padding: 30px; }
+        .admin-card { background: #161b22; border: 1px solid #30363d; padding: 25px; border-radius: 20px; width: 380px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .row { margin-bottom: 15px; }
+        .label { font-size: 10px; text-transform: uppercase; color: #8b949e; letter-spacing: 1px; margin-bottom: 5px; display: block; }
+        input { width: 100%; padding: 10px; background: #000; border: 1px solid #444; color: #0f0; border-radius: 8px; box-sizing: border-box; font-family: monospace; }
+        button { width: 100%; padding: 15px; background: #238636; color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; margin-top: 10px; font-size: 14px; transition: 0.2s; }
+        button:hover { background: #2ea043; transform: scale(1.02); }
+        .section-title { border-bottom: 1px solid #333; padding-bottom: 5px; margin-bottom: 15px; color: #58a6ff; font-size: 14px; }
+        .version-badge { margin-top: 20px; font-size: 10px; color: #8b949e; opacity: 0.5; }
     </style>
 </head>
 <body>
 
-    <div class="timer-container">
-        <iframe src="https://board.multitimer.net/view/?q=6z0n8w08m0"></iframe>
+    <h2 style="margin-bottom: 20px;">Lab Command Center</h2>
+
+    <div class="admin-card">
+        <div class="section-title">Threads & Snapchat</div>
+        <div class="row">
+            <span class="label">Threads Followers</span>
+            <input type="text" id="threads-fol" placeholder="e.g. 330">
+        </div>
+        <div class="row">
+            <span class="label">Threads Lifetime Views</span>
+            <input type="text" id="threads-views" placeholder="e.g. 1.2M">
+        </div>
+        <div class="row">
+            <span class="label">Snapchat Followers</span>
+            <input type="text" id="snap-fol" placeholder="e.g. 5,400">
+        </div>
+
+        <div class="section-title">Facebook Network</div>
+        <div class="row">
+            <span class="label">Facebook Friends (Personal)</span>
+            <input type="text" id="fb-personal" placeholder="e.g. 2.1K">
+        </div>
+        <div class="row">
+            <span class="label">Facebook Page Followers</span>
+            <input type="text" id="fb-page" placeholder="e.g. 10.5K">
+        </div>
+
+        <button onclick="broadcast()">PUSH TO DASHBOARD</button>
     </div>
 
-    <div class="counter-grid">
-        <div class="counter-item">
-            <svg class="box-logo" viewBox="0 0 24 24" fill="white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.045 4.126H5.078z"/></svg>
-            <iframe scrolling="no" src="https://livecounts.io/embed/twitter-live-follower-counter/briandivacox"></iframe>
-        </div>
-        <div class="counter-item">
-            <i class="fa-brands fa-twitch box-logo" style="color:#9146FF; font-size: 20px;"></i>
-            <iframe scrolling="no" src="https://livecounts.io/embed/twitch-live-follower-counter/briandivacox"></iframe>
-        </div>
-        <div class="counter-item">
-            <i class="fa-brands fa-youtube box-logo" style="color:#FF0000; font-size: 20px;"></i>
-            <iframe scrolling="no" src="https://livecounts.io/embed/youtube-live-subscriber-counter/UCMuv7PfbLVm8IZsd6Bgqqzg"></iframe>
-        </div>
-        <div class="counter-item">
-            <i class="fa-brands fa-tiktok box-logo" style="color:#00f2ea; font-size: 20px;"></i>
-            <iframe scrolling="no" src="https://livecounts.io/embed/tiktok-live-follower-counter/briandivacox"></iframe>
-        </div>
-        <div class="counter-item instagram-fix">
-            <i class="fa-brands fa-instagram box-logo" style="color:#E1306C; font-size: 20px;"></i>
-            <iframe scrolling="no" src="https://livecounts.nl/instagram-realtime/embed/?u=briandivacox"></iframe>
-        </div>
-        <div class="counter-item">
-            <svg class="box-logo" viewBox="0 0 566 500" fill="var(--bsky-blue)"><path d="M121.2 35.6C191.6 86.9 282.9 178.1 282.9 178.1S374.2 86.9 444.7 35.6C502.9-6.8 566 -20.3 566 49.3c0 19.3-11.2 121.1-17.8 144.6-21 75-52.2 89.8-118.4 104.8 134.5 25.3 152.9 70.6 152.9 101.7 0 71-65.4 63.3-119 31.9-74.5-43.8-139.8-138.8-179.9-195.1-40.1 56.3-105.4 151.3-179.9 195.1-53.6 31.5-119 39.1-119-31.9 0-31.1 18.4-76.4 152.9-101.7C46.2 283.7 15 268.9 0 193.9c-6.6-23.5-17.8-125.3-17.8-144.6 0-69.6 63.1-56.1 121.2-13.7z"/></svg>
-            <span class="header-tag">Bluesky</span>
-            <div class="main-number">22</div>
-        </div>
-        <div class="counter-item">
-            <i class="fa-brands fa-threads box-logo" style="color:white; font-size: 20px;"></i>
-            <span class="header-tag">Threads</span>
-            <div id="threads-fol-num" class="main-number">---</div>
-        </div>
-        <div class="counter-item">
-            <i class="fa-brands fa-threads box-logo" style="color:white; font-size: 20px;"></i>
-            <span class="header-tag">Total Views</span>
-            <div id="threads-view-num" class="main-number">---</div>
-        </div>
-        <div class="counter-item">
-            <i class="fa-brands fa-snapchat box-logo" style="color:var(--snap-yellow); font-size: 20px;"></i>
-            <span class="header-tag">Snapchat</span>
-            <div id="snap-fol-num" class="main-number" style="color:white">---</div>
-        </div>
-        <div class="counter-item">
-            <i class="fa-brands fa-facebook box-logo" style="color:#0866ff; font-size: 20px;"></i>
-            <span class="header-tag">Brian Diva Cox</span>
-            <div id="fb-page-num" class="main-number">---</div>
-        </div>
-        <div class="counter-item">
-            <i class="fa-brands fa-facebook-f box-logo" style="color:#0866ff; font-size: 20px;"></i>
-            <span class="header-tag">Brian Diva Cox (Personal)</span>
-            <div id="fb-personal-num" class="main-number">---</div>
-        </div>
-    </div>
-
-    <div class="version-info">v5.3.0 • Stable Sync Build</div>
+    <div class="version-badge">Admin v2.2.0 • Sync v5.3.0 Ready</div>
 
     <script>
-        function updateUI() {
-            const rawData = localStorage.getItem('labData');
-            if (rawData) {
-                const data = JSON.parse(rawData);
-                if(data.threadsFol) document.getElementById('threads-fol-num').innerText = data.threadsFol;
-                if(data.threadsViews) document.getElementById('threads-view-num').innerText = data.threadsViews;
-                if(data.snapFol) document.getElementById('snap-fol-num').innerText = data.snapFol;
-                if(data.fbPage) document.getElementById('fb-page-num').innerText = data.fbPage;
-                if(data.fbPersonal) document.getElementById('fb-personal-num').innerText = data.fbPersonal;
+        window.onload = function() {
+            const raw = localStorage.getItem('labData');
+            if(raw) {
+                const data = JSON.parse(raw);
+                document.getElementById('threads-fol').value = data.threadsFol || "";
+                document.getElementById('threads-views').value = data.threadsViews || "";
+                document.getElementById('snap-fol').value = data.snapFol || "";
+                document.getElementById('fb-personal').value = data.fbPersonal || "";
+                document.getElementById('fb-page').value = data.fbPage || "";
             }
+        };
+
+        function broadcast() {
+            const data = {
+                threadsFol: document.getElementById('threads-fol').value,
+                threadsViews: document.getElementById('threads-views').value,
+                snapFol: document.getElementById('snap-fol').value,
+                fbPersonal: document.getElementById('fb-personal').value,
+                fbPage: document.getElementById('fb-page').value
+            };
+            localStorage.setItem('labData', JSON.stringify(data));
+            alert("Broadcast Sent!");
         }
-        window.addEventListener('storage', updateUI);
-        window.onload = updateUI;
-        setInterval(updateUI, 5000);
     </script>
 </body>
 </html>
