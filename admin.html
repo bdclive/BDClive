@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Admin v3.3.0</title>
+    <title>Cloud Admin v3.4.0</title>
     <style>
         body { font-family: 'Segoe UI', sans-serif; background: #0d1117; color: white; display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
         .admin-card { background: #161b22; border: 1px solid #30363d; padding: 20px; border-radius: 15px; width: 100%; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); box-sizing: border-box; }
@@ -11,50 +11,39 @@
         .label { font-size: 10px; text-transform: uppercase; color: #8b949e; letter-spacing: 1px; margin-bottom: 5px; display: block; }
         input { width: 100%; padding: 12px; background: #000; border: 1px solid #444; color: #0f0; border-radius: 8px; box-sizing: border-box; font-size: 16px; font-family: monospace; }
         button { width: 100%; padding: 15px; background: #238636; color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; margin-top: 10px; font-size: 16px; }
-        button:active { background: #2ea043; transform: scale(0.98); }
         .section-title { border-bottom: 1px solid #333; padding-bottom: 5px; margin-bottom: 15px; color: #58a6ff; font-size: 14px; }
     </style>
 </head>
 <body>
-
     <h2 style="margin-bottom: 15px;">Cloud Command</h2>
-
     <div class="admin-card">
         <div class="section-title">Threads & Snapchat</div>
-        <div class="row"><span class="label">Threads Followers</span><input type="text" id="threads-fol" value="330"></div>
-        <div class="row"><span class="label">Threads Views</span><input type="text" id="threads-views" value="5.7M"></div>
-        <div class="row"><span class="label">Snapchat</span><input type="text" id="snap-fol" value="3,674"></div>
-
+        <div class="row"><span class="label">Threads Followers</span><input type="text" id="threads-fol"></div>
+        <div class="row"><span class="label">Threads Views</span><input type="text" id="threads-views"></div>
+        <div class="row"><span class="label">Snapchat</span><input type="text" id="snap-fol"></div>
         <div class="section-title">Facebook</div>
-        <div class="row"><span class="label">FB Page</span><input type="text" id="fb-page" value="1K"></div>
-        <div class="row"><span class="label">FB Personal</span><input type="text" id="fb-personal" value="5.5K"></div>
-
+        <div class="row"><span class="label">FB Page</span><input type="text" id="fb-page"></div>
+        <div class="row"><span class="label">FB Personal</span><input type="text" id="fb-personal"></div>
         <button id="push-btn" onclick="cloudPush()">PUSH TO CLOUD</button>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-
     <script>
-        // Your exact config
+        const _k = "QUl6YVN5QXZ4ZktnX3NwUE52RTJ3Y1QtdlRsOFlUUXU0TDN0Xzd3";
+        const _p = "bGl2ZWNvdW50ZXJzLThlYWE4";
         const firebaseConfig = {
-            apiKey: "AIzaSyDsTv2YBsOHdfBeV1aZ1upwPPqmuSbhK7U",
-            authDomain: "livecounters-8eaa8.firebaseapp.com",
-            projectId: "livecounters-8eaa8",
-            storageBucket: "livecounters-8eaa8.firebasestorage.app",
-            messagingSenderId: "386919719539",
+            apiKey: atob(_k),
+            authDomain: `${atob(_p)}.firebaseapp.com`,
+            projectId: atob(_p),
+            databaseURL: `https://${atob(_p)}-default-rtdb.firebaseio.com`,
             appId: "1:386919719539:web:c60c0d185c3d7e97ecc006"
         };
-
-        // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
-
         function cloudPush() {
             const btn = document.getElementById('push-btn');
             btn.innerText = "SENDING...";
-            btn.style.background = "#11441d";
-
             const data = {
                 threadsFol: document.getElementById('threads-fol').value,
                 threadsViews: document.getElementById('threads-views').value,
@@ -62,18 +51,9 @@
                 fbPage: document.getElementById('fb-page').value,
                 fbPersonal: document.getElementById('fb-personal').value
             };
-
-            // Pushing to the 'labData' node
-            database.ref('labData').set(data, (error) => {
-                if (error) {
-                    alert("Data could not be saved: " + error);
-                    btn.innerText = "RETRY PUSH";
-                    btn.style.background = "#b91c1c";
-                } else {
-                    alert("Cloud Sync Successful!");
-                    btn.innerText = "PUSH TO CLOUD";
-                    btn.style.background = "#238636";
-                }
+            database.ref('labData').set(data, (err) => {
+                if (err) { alert("Error: " + err); btn.innerText = "RETRY"; }
+                else { alert("Cloud Sync Successful!"); btn.innerText = "PUSH TO CLOUD"; }
             });
         }
     </script>
