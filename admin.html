@@ -47,8 +47,7 @@
     </div>
 
     <script>
-        const channel = new BroadcastChannel('lab_sync');
-
+        // Load existing data when opening the page
         window.onload = function() {
             const raw = localStorage.getItem('labData');
             if(raw) {
@@ -70,10 +69,7 @@
                 fbPage: document.getElementById('fb-page').value
             };
             
-            // Push live broadcast
-            channel.postMessage(data);
-            
-            // Save backup
+            // Save to localStorage
             localStorage.setItem('labData', JSON.stringify(data));
             
             alert("Broadcast Sent!");
