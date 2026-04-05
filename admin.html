@@ -3,27 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Admin v3.4.0</title>
+    <title>Cloud Admin v3.5.0</title>
     <style>
         body { font-family: 'Segoe UI', sans-serif; background: #0d1117; color: white; display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
         .admin-card { background: #161b22; border: 1px solid #30363d; padding: 20px; border-radius: 15px; width: 100%; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); box-sizing: border-box; }
+        
+        /* NEW QUICK LINKS SECTION */
+        .quick-links { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; width: 100%; }
+        .link-btn { 
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 10px; border-radius: 8px; text-decoration: none; font-size: 10px; font-weight: bold;
+            color: white; border: 1px solid rgba(255,255,255,0.1); transition: 0.2s;
+        }
+        .link-btn i { font-size: 18px; margin-bottom: 5px; }
+        .link-btn:hover { transform: translateY(-2px); filter: brightness(1.2); }
+
         .row { margin-bottom: 12px; }
         .label { font-size: 10px; text-transform: uppercase; color: #8b949e; letter-spacing: 1px; margin-bottom: 5px; display: block; }
         input { width: 100%; padding: 12px; background: #000; border: 1px solid #444; color: #0f0; border-radius: 8px; box-sizing: border-box; font-size: 16px; font-family: monospace; }
-        button { width: 100%; padding: 15px; background: #238636; color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; margin-top: 10px; font-size: 16px; }
-        .section-title { border-bottom: 1px solid #333; padding-bottom: 5px; margin-bottom: 15px; color: #58a6ff; font-size: 14px; }
+        #push-btn { width: 100%; padding: 15px; background: #238636; color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; margin-top: 10px; font-size: 16px; }
+        .section-title { border-bottom: 1px solid #333; padding-bottom: 5px; margin-bottom: 15px; color: #58a6ff; font-size: 14px; margin-top: 10px; }
     </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
 <body>
+
     <h2 style="margin-bottom: 15px;">Cloud Command</h2>
+
     <div class="admin-card">
-        <div class="section-title">Threads & Snapchat</div>
+        <div class="section-title">Quick Launch Sources</div>
+        <div class="quick-links">
+            <a href="https://www.threads.net/@briandivacox" target="_blank" class="link-btn" style="background: #000;">
+                <i class="fa-brands fa-threads"></i>Threads
+            </a>
+            <a href="https://www.snapchat.com/add/briandivacox" target="_blank" class="link-btn" style="background: #FFFC00; color: black;">
+                <i class="fa-brands fa-snapchat"></i>Snapchat
+            </a>
+            <a href="https://www.facebook.com/briandivacox" target="_blank" class="link-btn" style="background: #0866FF;">
+                <i class="fa-brands fa-facebook"></i>FB Page
+            </a>
+            <a href="https://bsky.app/profile/briandivacox.bsky.social" target="_blank" class="link-btn" style="background: #1185FE;">
+                <i class="fa-solid fa-square-poll-vertical"></i>Bluesky
+            </a>
+        </div>
+
+        <div class="section-title">Update Numbers</div>
         <div class="row"><span class="label">Threads Followers</span><input type="text" id="threads-fol"></div>
         <div class="row"><span class="label">Threads Views</span><input type="text" id="threads-views"></div>
         <div class="row"><span class="label">Snapchat</span><input type="text" id="snap-fol"></div>
-        <div class="section-title">Facebook</div>
         <div class="row"><span class="label">FB Page</span><input type="text" id="fb-page"></div>
         <div class="row"><span class="label">FB Personal</span><input type="text" id="fb-personal"></div>
+        
         <button id="push-btn" onclick="cloudPush()">PUSH TO CLOUD</button>
     </div>
 
@@ -41,6 +71,7 @@
         };
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
+
         function cloudPush() {
             const btn = document.getElementById('push-btn');
             btn.innerText = "SENDING...";
