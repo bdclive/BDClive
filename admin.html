@@ -3,26 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Admin v3.5.0</title>
+    <title>Cloud Admin v3.7.0</title>
     <style>
         body { font-family: 'Segoe UI', sans-serif; background: #0d1117; color: white; display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
         .admin-card { background: #161b22; border: 1px solid #30363d; padding: 20px; border-radius: 15px; width: 100%; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); box-sizing: border-box; }
-        
-        /* NEW QUICK LINKS SECTION */
         .quick-links { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; width: 100%; }
-        .link-btn { 
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            padding: 10px; border-radius: 8px; text-decoration: none; font-size: 10px; font-weight: bold;
-            color: white; border: 1px solid rgba(255,255,255,0.1); transition: 0.2s;
-        }
+        .link-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; border-radius: 8px; text-decoration: none; font-size: 10px; font-weight: bold; color: white; border: 1px solid rgba(255,255,255,0.1); transition: 0.2s; }
         .link-btn i { font-size: 18px; margin-bottom: 5px; }
         .link-btn:hover { transform: translateY(-2px); filter: brightness(1.2); }
-
         .row { margin-bottom: 12px; }
         .label { font-size: 10px; text-transform: uppercase; color: #8b949e; letter-spacing: 1px; margin-bottom: 5px; display: block; }
         input { width: 100%; padding: 12px; background: #000; border: 1px solid #444; color: #0f0; border-radius: 8px; box-sizing: border-box; font-size: 16px; font-family: monospace; }
         #push-btn { width: 100%; padding: 15px; background: #238636; color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; margin-top: 10px; font-size: 16px; }
         .section-title { border-bottom: 1px solid #333; padding-bottom: 5px; margin-bottom: 15px; color: #58a6ff; font-size: 14px; margin-top: 10px; }
+        .version-tag { margin-top: 15px; font-size: 10px; color: #444; }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
@@ -33,18 +27,10 @@
     <div class="admin-card">
         <div class="section-title">Quick Launch Sources</div>
         <div class="quick-links">
-            <a href="https://www.threads.net/@briandivacox" target="_blank" class="link-btn" style="background: #000;">
-                <i class="fa-brands fa-threads"></i>Threads
-            </a>
-            <a href="https://www.snapchat.com/add/briandivacox" target="_blank" class="link-btn" style="background: #FFFC00; color: black;">
-                <i class="fa-brands fa-snapchat"></i>Snapchat
-            </a>
-            <a href="https://www.facebook.com/briandivacox" target="_blank" class="link-btn" style="background: #0866FF;">
-                <i class="fa-brands fa-facebook"></i>FB Page
-            </a>
-            <a href="https://bsky.app/profile/briandivacox.bsky.social" target="_blank" class="link-btn" style="background: #1185FE;">
-                <i class="fa-solid fa-square-poll-vertical"></i>Bluesky
-            </a>
+            <a href="https://www.threads.net/@briandivacox" target="_blank" class="link-btn" style="background: #000;"><i class="fa-brands fa-threads"></i>Threads</a>
+            <a href="https://www.snapchat.com/add/briandivacox" target="_blank" class="link-btn" style="background: #FFFC00; color: black;"><i class="fa-brands fa-snapchat"></i>Snapchat</a>
+            <a href="https://www.facebook.com/briandivacox" target="_blank" class="link-btn" style="background: #0866FF;"><i class="fa-brands fa-facebook"></i>FB Page</a>
+            <a href="https://bsky.app/profile/briandivacox.bsky.social" target="_blank" class="link-btn" style="background: #1185FE;"><i class="fa-solid fa-square-poll-vertical"></i>Bluesky</a>
         </div>
 
         <div class="section-title">Update Numbers</div>
@@ -56,6 +42,8 @@
         
         <button id="push-btn" onclick="cloudPush()">PUSH TO CLOUD</button>
     </div>
+
+    <div class="version-tag">Admin v3.7.0 • Memory Active</div>
 
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
@@ -72,9 +60,23 @@
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
+        // LOAD SAVED DATA FROM PHONE MEMORY ON OPEN
+        window.onload = function() {
+            const savedData = localStorage.getItem('lastAdminPush');
+            if (savedData) {
+                const d = JSON.parse(savedData);
+                document.getElementById('threads-fol').value = d.threadsFol || "";
+                document.getElementById('threads-views').value = d.threadsViews || "";
+                document.getElementById('snap-fol').value = d.snapFol || "";
+                document.getElementById('fb-page').value = d.fbPage || "";
+                document.getElementById('fb-personal').value = d.fbPersonal || "";
+            }
+        };
+
         function cloudPush() {
             const btn = document.getElementById('push-btn');
             btn.innerText = "SENDING...";
+
             const data = {
                 threadsFol: document.getElementById('threads-fol').value,
                 threadsViews: document.getElementById('threads-views').value,
@@ -82,9 +84,17 @@
                 fbPage: document.getElementById('fb-page').value,
                 fbPersonal: document.getElementById('fb-personal').value
             };
+
             database.ref('labData').set(data, (err) => {
-                if (err) { alert("Error: " + err); btn.innerText = "RETRY"; }
-                else { alert("Cloud Sync Successful!"); btn.innerText = "PUSH TO CLOUD"; }
+                if (err) { 
+                    alert("Error: " + err); 
+                    btn.innerText = "RETRY"; 
+                } else {
+                    // SAVE TO PHONE MEMORY ON SUCCESS
+                    localStorage.setItem('lastAdminPush', JSON.stringify(data));
+                    alert("Cloud Sync Successful!");
+                    btn.innerText = "PUSH TO CLOUD";
+                }
             });
         }
     </script>
