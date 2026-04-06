@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v6.8.0</title>
+    <title>Cloud Dashboard v6.9.0</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         :root {
             --bg-color: #0d1117; --card-bg: #161b22; --border-color: #30363d;
             --text-main: #ffffff; --text-dim: #8b949e; --snap-yellow: #eaff00; --bsky-blue: #1185FE;
-            --gold: #FFD700;
+            --light-purple: #bc95ff;
         }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: var(--text-main); display: flex; flex-direction: column; align-items: center; padding: 15px; margin: 0; min-height: 100vh; overflow-x: hidden; }
         
@@ -21,15 +21,14 @@
         
         .box-logo { position: absolute; top: 12px; right: 12px; width: 22px; height: 22px; z-index: 20; font-size: 20px; }
         .counter-item iframe { filter: invert(1) hue-rotate(180deg); border: 0; width: 450px; height: 220px; position: absolute; top: 10px; left: -90px; pointer-events: none; }
-        .instagram-fix iframe { top: 35px; left: -85px; transform: scale(0.95); }
         
         .header-tag { font-size: 11px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 2px; font-weight: bold; }
         .main-number { font-size: 3.5rem; font-weight: 800; color: #ffffff; margin: 0; white-space: nowrap; letter-spacing: -1px; }
         
-        /* SPECIAL COMPACT STYLING FOR THE COMBINED MIRROR BOX */
+        /* THE NEW PURPLE MIRROR STYLING */
         .mirror-box { justify-content: space-evenly !important; }
-        .mirror-label { font-size: 10px; color: var(--gold); text-transform: uppercase; font-weight: bold; margin: 0; }
-        .mirror-stat { font-size: 2.2rem; font-weight: 800; color: var(--gold); font-family: 'Courier New', monospace; margin-bottom: 5px; }
+        .purple-tag { color: var(--light-purple) !important; font-size: 10px; text-transform: uppercase; font-weight: bold; margin: 0; }
+        .mirror-stat { font-size: 2.2rem; font-weight: 800; color: #ffffff; margin-bottom: 5px; }
 
         .sync-status { margin-top: 20px; display: flex; align-items: center; gap: 8px; font-size: 10px; color: var(--text-dim); }
         .dot { width: 8px; height: 8px; background: #444; border-radius: 50%; transition: 0.3s; }
@@ -42,13 +41,13 @@
 
     <div class="counter-grid">
         <div class="counter-item mirror-box">
-            <i class="fa-solid fa-wand-magic-sparkles box-logo" style="color:var(--gold);"></i>
+            <i class="fa-solid fa-wand-magic-sparkles box-logo" style="color:var(--light-purple);"></i>
             <div>
-                <p class="mirror-label">✨ Tales Detected</p>
+                <p class="purple-tag">✨ Tales Detected</p>
                 <div id="totalViewsCounter" class="mirror-stat">0</div>
             </div>
             <div>
-                <p class="mirror-label">👥 Online Now</p>
+                <p class="purple-tag">👥 Online Now</p>
                 <div id="visitorCounter" class="mirror-stat">0</div>
             </div>
         </div>
@@ -69,7 +68,7 @@
             <i class="fa-brands fa-tiktok box-logo" style="color:#00f2ea;"></i>
             <iframe scrolling="no" src="https://livecounts.io/embed/tiktok-live-follower-counter/briandivacox"></iframe>
         </div>
-        <div class="counter-item instagram-fix">
+        <div class="counter-item">
             <i class="fa-brands fa-instagram box-logo" style="color:#E1306C;"></i>
             <iframe scrolling="no" src="https://livecounts.nl/instagram-realtime/embed/?u=briandivacox"></iframe>
         </div>
@@ -107,7 +106,7 @@
         </div>
     </div>
 
-    <div class="sync-status"><div id="sync-dot" class="dot"></div><span>v6.8.0 • Compact Mirror Build</span></div>
+    <div class="sync-status"><div id="sync-dot" class="dot"></div><span>v6.9.0 • Purple Mirror Integration</span></div>
 
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
@@ -151,25 +150,4 @@
                 const p = await r.json();
                 if (p.followersCount !== undefined) {
                     document.getElementById('bsky-num').innerText = p.followersCount.toLocaleString();
-                    flash();
-                }
-            } catch (e) { console.error(e); }
-        }
-        getBsky(); setInterval(getBsky, 300000);
-
-        const tRef = vDb.ref("totalViewCount");
-        const cRef = vDb.ref("visitorsConnected");
-        tRef.transaction(c => (c || 0) + 1);
-        vDb.ref(".info/connected").on("value", s => {
-            if (s.val() === true) { let r = cRef.push(true); r.onDisconnect().remove(); }
-        });
-        tRef.on("value", s => document.getElementById("totalViewsCounter").innerText = s.val() || 0);
-        cRef.on("value", s => document.getElementById("visitorCounter").innerText = s.numChildren() || 0);
-
-        function flash() {
-            document.getElementById('sync-dot').classList.add('active');
-            setTimeout(() => document.getElementById('sync-dot').classList.remove('active'), 1500);
-        }
-    </script>
-</body>
-</html>
+                    flash
