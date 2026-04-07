@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v7.2.5</title>
+    <title>Cloud Dashboard v7.2.6</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         :root {
@@ -13,11 +13,11 @@
         }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: var(--text-main); display: flex; flex-direction: column; align-items: center; padding: 15px; margin: 0; min-height: 100vh; overflow-x: hidden; }
         
-        /* CROPPER BOX: Hides the top 60px of the timer */
+        /* ADJUSTED CROPPER: Bringing the top-right icons into view */
         .timer-crop-container { 
             width: 100%; 
             max-width: 1400px; 
-            height: 240px; /* Shorter height to hide the header */
+            height: 280px; /* Made slightly taller to fit the buttons */
             margin-bottom: 20px; 
             border-radius: 12px; 
             border: 1px solid var(--border-color); 
@@ -26,12 +26,12 @@
             background: #000;
         }
         .timer-crop-container iframe { 
-            width: 100%; 
-            height: 320px; /* Taller than the container */
+            width: 102%; /* Stretch slightly to ensure right-side icons appear */
+            height: 350px; 
             border: none; 
             position: absolute;
-            top: -65px; /* Shifts the timer UP to hide the top bar */
-            left: 0;
+            top: -40px; /* Shifting DOWN from -65px to find those icons */
+            left: -1%;
         }
         
         .counter-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; width: 100%; max-width: 1400px; }
@@ -40,19 +40,11 @@
         .box-logo { position: absolute; top: 12px; right: 12px; width: 22px; height: 22px; z-index: 20; font-size: 20px; }
         .counter-item iframe { filter: invert(1) hue-rotate(180deg); border: 0; width: 450px; height: 220px; position: absolute; top: 10px; left: -90px; pointer-events: none; }
         
-        .header-tag { font-size: 11px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 2px; font-weight: bold; }
-        .main-number { font-size: 3.5rem; font-weight: 800; color: #ffffff; margin: 0; white-space: nowrap; letter-spacing: -1px; }
-        
-        /* 3-IN-1 MIRROR BOX */
         .mirror-box { justify-content: space-evenly !important; padding-left: 0 !important; text-align: center; }
         .mirror-row { display: flex; justify-content: space-around; width: 100%; margin-top: 5px; }
         .mirror-label { font-size: 9px; color: var(--light-purple); text-transform: uppercase; font-weight: bold; margin: 0; }
         .mirror-stat { font-size: 2rem; font-weight: 800; color: #ffffff; margin-bottom: 2px; }
         .plex-label { color: var(--plex-orange) !important; }
-
-        .sync-status { margin-top: 20px; display: flex; align-items: center; gap: 8px; font-size: 10px; color: var(--text-dim); }
-        .dot { width: 8px; height: 8px; background: #444; border-radius: 50%; transition: 0.3s; }
-        .dot.active { background: #238636; box-shadow: 0 0 8px #238636; }
     </style>
 </head>
 <body>
