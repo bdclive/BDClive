@@ -12,20 +12,30 @@
             --light-purple: #bc95ff; --plex-orange: #e5a00d;
         }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: var(--text-main); display: flex; flex-direction: column; align-items: center; padding: 15px; margin: 0; min-height: 100vh; overflow-x: hidden; }
+        
         .timer-container { width: 100%; max-width: 1400px; height: 300px; margin-bottom: 20px; border-radius: 12px; border: 1px solid var(--border-color); overflow: hidden; }
         .timer-container iframe { width: 100%; height: 100%; border: none; }
+        
         .counter-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; width: 100%; max-width: 1400px; }
         .counter-item { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; height: 150px; position: relative; display: flex; flex-direction: column; justify-content: center; padding-left: 20px; overflow: hidden; }
+        
         .box-logo { position: absolute; top: 12px; right: 12px; width: 22px; height: 22px; z-index: 20; font-size: 20px; }
+        .counter-item iframe { filter: invert(1) hue-rotate(180deg); border: 0; width: 450px; height: 220px; position: absolute; top: 10px; left: -90px; pointer-events: none; }
+        .instagram-fix iframe { top: 35px; left: -85px; transform: scale(0.95); }
+        
         .header-tag { font-size: 11px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 2px; font-weight: bold; }
         .main-number { font-size: 3.5rem; font-weight: 800; color: #ffffff; margin: 0; white-space: nowrap; letter-spacing: -1px; }
-
-        /* MULTI-STAT MIRROR BOX */
+        
+        /* 3-IN-1 MIRROR BOX STYLING */
         .mirror-box { justify-content: space-evenly !important; padding-left: 0 !important; text-align: center; }
         .mirror-row { display: flex; justify-content: space-around; width: 100%; margin-top: 5px; }
         .mirror-label { font-size: 9px; color: var(--light-purple); text-transform: uppercase; font-weight: bold; margin: 0; }
         .mirror-stat { font-size: 2rem; font-weight: 800; color: #ffffff; margin-bottom: 2px; }
         .plex-label { color: var(--plex-orange) !important; }
+
+        .sync-status { margin-top: 20px; display: flex; align-items: center; gap: 8px; font-size: 10px; color: var(--text-dim); }
+        .dot { width: 8px; height: 8px; background: #444; border-radius: 50%; transition: 0.3s; }
+        .dot.active { background: #238636; box-shadow: 0 0 8px #238636; }
     </style>
 </head>
 <body>
@@ -53,17 +63,105 @@
 
         <div class="counter-item">
             <svg class="box-logo" viewBox="0 0 24 24" fill="white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.045 4.126H5.078z"/></svg>
-            <iframe scrolling="no" style="filter: invert(1) hue-rotate(180deg); border: 0; width: 450px; height: 220px; position: absolute; top: 10px; left: -90px; pointer-events: none;" src="https://livecounts.io/embed/twitter-live-follower-counter/briandivacox"></iframe>
+            <iframe scrolling="no" src="https://livecounts.io/embed/twitter-live-follower-counter/briandivacox"></iframe>
         </div>
+
+        <div class="counter-item">
+            <i class="fa-brands fa-twitch box-logo" style="color:#9146FF;"></i>
+            <iframe scrolling="no" src="https://livecounts.io/embed/twitch-live-follower-counter/briandivacox"></iframe>
         </div>
+
+        <div class="counter-item">
+            <i class="fa-brands fa-youtube box-logo" style="color:#FF0000;"></i>
+            <iframe scrolling="no" src="https://livecounts.io/embed/youtube-live-subscriber-counter/UCMuv7PfbLVm8IZsd6Bgqqzg"></iframe>
+        </div>
+
+        <div class="counter-item">
+            <i class="fa-brands fa-tiktok box-logo" style="color:#00f2ea;"></i>
+            <iframe scrolling="no" src="https://livecounts.io/embed/tiktok-live-follower-counter/briandivacox"></iframe>
+        </div>
+
+        <div class="counter-item instagram-fix">
+            <i class="fa-brands fa-instagram box-logo" style="color:#E1306C;"></i>
+            <iframe scrolling="no" src="https://livecounts.nl/instagram-realtime/embed/?u=briandivacox"></iframe>
+        </div>
+
+        <div class="counter-item">
+            <svg class="box-logo" viewBox="0 0 566 500" fill="var(--bsky-blue)"><path d="M121.2 35.6C191.6 86.9 282.9 178.1 282.9 178.1S374.2 86.9 444.7 35.6C502.9-6.8 566 -20.3 566 49.3c0 19.3-11.2 121.1-17.8 144.6-21 75-52.2 89.8-118.4 104.8 134.5 25.3 152.9 70.6 152.9 101.7 0 71-65.4 63.3-119 31.9-74.5-43.8-139.8-138.8-179.9-195.1-40.1 56.3-105.4 151.3-179.9 195.1-53.6 31.5-119 39.1-119-31.9 0-31.1 18.4-76.4 152.9-101.7C46.2 283.7 15 268.9 0 193.9c-6.6-23.5-17.8-125.3-17.8-144.6 0-69.6 63.1-56.1 121.2-13.7z"/></svg>
+            <span class="header-tag">Bluesky</span>
+            <div id="bsky-num" class="main-number">...</div>
+        </div>
+
+        <div class="counter-item">
+            <i class="fa-brands fa-threads box-logo" style="color:white;"></i>
+            <span class="header-tag">Threads</span>
+            <div id="threads-fol-num" class="main-number">---</div>
+        </div>
+
+        <div class="counter-item">
+            <i class="fa-brands fa-threads box-logo" style="color:white;"></i>
+            <span class="header-tag">Total Views</span>
+            <div id="threads-view-num" class="main-number">---</div>
+        </div>
+
+        <div class="counter-item">
+            <i class="fa-brands fa-snapchat box-logo" style="color:var(--snap-yellow);"></i>
+            <span class="header-tag">Snapchat</span>
+            <div id="snap-fol-num" class="main-number">---</div>
+        </div>
+
+        <div class="counter-item">
+            <i class="fa-brands fa-facebook box-logo" style="color:#0866ff;"></i>
+            <span class="header-tag">FB Page</span>
+            <div id="fb-page-num" class="main-number">---</div>
+        </div>
+
+        <div class="counter-item">
+            <i class="fa-brands fa-facebook-f box-logo" style="color:#0866ff;"></i>
+            <span class="header-tag">FB Personal</span>
+            <div id="fb-personal-num" class="main-number">---</div>
+        </div>
+    </div>
+
+    <div class="sync-status"><div id="sync-dot" class="dot"></div><span>v7.1.0 • All Systems Active</span></div>
 
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-    <script>
-        // CONFIGS REMAIN THE SAME AS v6.9.1
-        // ... (Include your Firebase init logic here) ...
 
-        // UPDATED SOCIAL LISTENER
+    <script>
+        // INIT VISITOR APP (lbbb-webcounter)
+        const vConf = {
+            apiKey: "AIzaSyCokXnEtboNuUIASBMz2ZzS0GuchemoJYI",
+            authDomain: "lbbb-webcounter.firebaseapp.com",
+            projectId: "lbbb-webcounter",
+            databaseURL: "https://lbbb-webcounter-default-rtdb.firebaseio.com/",
+            appId: "1:217634980859:web:49ef2b0aa7fe7d0bb1415e"
+        };
+        const vApp = firebase.initializeApp(vConf, "vApp");
+        const vDb = vApp.database();
+
+        // INIT SOCIAL APP (livecounters-8eaa8)
+        const sConf = {
+            apiKey: atob("QUl6YVN5QXZ4ZktnX3NwUE52RTJ3Y1QtdlRsOFlUUXU0TDN0Xzd3"),
+            authDomain: "livecounters-8eaa8.firebaseapp.com",
+            projectId: "livecounters-8eaa8",
+            databaseURL: "https://livecounters-8eaa8-default-rtdb.firebaseio.com/",
+            appId: "1:386919719539:web:c60c0d185c3d7e97ecc006"
+        };
+        const sApp = firebase.initializeApp(sConf, "sApp");
+        const sDb = sApp.database();
+
+        // --- 1. VISITOR/TALES LOGIC ---
+        const tRef = vDb.ref("totalViewCount");
+        const cRef = vDb.ref("visitorsConnected");
+        tRef.transaction(c => (c || 0) + 1);
+        vDb.ref(".info/connected").on("value", s => {
+            if (s.val() === true) { let r = cRef.push(true); r.onDisconnect().remove(); }
+        });
+        tRef.on("value", s => document.getElementById("totalViewsCounter").innerText = s.val() || 0);
+        cRef.on("value", s => document.getElementById("visitorCounter").innerText = s.numChildren() || 0);
+
+        // --- 2. SOCIAL/PLEX LISTENER ---
         sDb.ref('labData').on('value', (s) => {
             const d = s.val();
             if (d) {
@@ -72,11 +170,28 @@
                 document.getElementById('snap-fol-num').innerText = d.snapFol || "---";
                 document.getElementById('fb-page-num').innerText = d.fbPage || "---";
                 document.getElementById('fb-personal-num').innerText = d.fbPersonal || "---";
-                document.getElementById('plex-count-num').innerText = d.plexCount || "0"; // NEW PLEX LINE
+                document.getElementById('plex-count-num').innerText = d.plexCount || "0";
                 flash();
             }
         });
-        // ... (Include your Visitor and Bluesky logic here) ...
+
+        // --- 3. AUTO-BLUESKY SCRAPER ---
+        async function getBsky() {
+            try {
+                const r = await fetch('https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=briandivacox.bsky.social');
+                const p = await r.json();
+                if (p.followersCount !== undefined) {
+                    document.getElementById('bsky-num').innerText = p.followersCount.toLocaleString();
+                    flash();
+                }
+            } catch (e) { console.error(e); }
+        }
+        getBsky(); setInterval(getBsky, 300000);
+
+        function flash() {
+            document.getElementById('sync-dot').classList.add('active');
+            setTimeout(() => document.getElementById('sync-dot').classList.remove('active'), 1500);
+        }
     </script>
 </body>
 </html>
