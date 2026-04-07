@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v7.2.3</title>
+    <title>Cloud Dashboard v7.2.4</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         :root {
@@ -25,7 +25,6 @@
         
         .counter-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; width: 100%; max-width: 1400px; }
         
-        /* UNIFIED BOX DESIGN */
         .counter-item { 
             background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; 
             height: 150px; position: relative; display: flex; flex-direction: column; 
@@ -34,15 +33,13 @@
         
         .box-logo { position: absolute; top: 12px; right: 15px; width: 22px; height: 22px; z-index: 20; font-size: 20px; }
         
-        /* Embedded Counter logic (Top Row) */
         .counter-item iframe { filter: invert(1) hue-rotate(180deg); border: 0; width: 450px; height: 220px; position: absolute; top: 10px; left: -85px; pointer-events: none; }
-        
         .instagram-fix { overflow: hidden !important; }
         .instagram-fix iframe { top: 38px !important; left: -75px !important; transform: scale(0.92); clip-path: inset(0px 0px 0px 80px); }
         
-        /* THE UNIFIED FONT LOGIC (Matches livecounts.io style) */
+        /* THE MATCHED FONT LOGIC (v7.2.4 Updates) */
         .header-tag { font-size: 11px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 5px; font-weight: bold; }
-        .main-number { font-size: 3.5rem; font-weight: 800; color: #ffffff; margin: 0; white-space: nowrap; letter-spacing: -1px; line-height: 1; }
+        .main-number { font-size: 3.1rem; font-weight: 800; color: #ffffff; margin: 0; white-space: nowrap; letter-spacing: -2px; line-height: 1.1; }
         
         .mirror-box { justify-content: space-evenly !important; padding-left: 0 !important; text-align: center; }
         .mirror-row { display: flex; justify-content: space-around; width: 100%; margin-top: 5px; }
