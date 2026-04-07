@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v7.1.0</title>
+    <title>Cloud Dashboard v7.2.0</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         :root {
@@ -13,7 +13,8 @@
         }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: var(--text-main); display: flex; flex-direction: column; align-items: center; padding: 15px; margin: 0; min-height: 100vh; overflow-x: hidden; }
         
-        .timer-container { width: 100%; max-width: 1400px; height: 300px; margin-bottom: 20px; border-radius: 12px; border: 1px solid var(--border-color); overflow: hidden; }
+        /* CLEAN TIMER CONTAINER */
+        .timer-container { width: 100%; max-width: 1400px; height: 300px; margin-bottom: 20px; border-radius: 12px; border: 1px solid var(--border-color); overflow: hidden; background: #000; }
         .timer-container iframe { width: 100%; height: 100%; border: none; }
         
         .counter-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; width: 100%; max-width: 1400px; }
@@ -40,7 +41,9 @@
 </head>
 <body>
 
-    <div class="timer-container"><iframe src="https://board.multitimer.net/view/?q=6z0n8w08m0"></iframe></div>
+    <div class="timer-container">
+        <iframe src="https://board.multitimer.net/view/?q=6z0n8w08m0&header=0&icon=0&sound=1&alert=1"></iframe>
+    </div>
 
     <div class="counter-grid">
         <div class="counter-item mirror-box">
@@ -123,13 +126,12 @@
         </div>
     </div>
 
-    <div class="sync-status"><div id="sync-dot" class="dot"></div><span>v7.1.0 • All Systems Active</span></div>
+    <div class="sync-status"><div id="sync-dot" class="dot"></div><span>v7.2.0 • Cinema Mode Active</span></div>
 
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 
     <script>
-        // INIT VISITOR APP (lbbb-webcounter)
         const vConf = {
             apiKey: "AIzaSyCokXnEtboNuUIASBMz2ZzS0GuchemoJYI",
             authDomain: "lbbb-webcounter.firebaseapp.com",
@@ -140,7 +142,6 @@
         const vApp = firebase.initializeApp(vConf, "vApp");
         const vDb = vApp.database();
 
-        // INIT SOCIAL APP (livecounters-8eaa8)
         const sConf = {
             apiKey: atob("QUl6YVN5QXZ4ZktnX3NwUE52RTJ3Y1QtdlRsOFlUUXU0TDN0Xzd3"),
             authDomain: "livecounters-8eaa8.firebaseapp.com",
@@ -151,7 +152,6 @@
         const sApp = firebase.initializeApp(sConf, "sApp");
         const sDb = sApp.database();
 
-        // --- 1. VISITOR/TALES LOGIC ---
         const tRef = vDb.ref("totalViewCount");
         const cRef = vDb.ref("visitorsConnected");
         tRef.transaction(c => (c || 0) + 1);
@@ -161,7 +161,6 @@
         tRef.on("value", s => document.getElementById("totalViewsCounter").innerText = s.val() || 0);
         cRef.on("value", s => document.getElementById("visitorCounter").innerText = s.numChildren() || 0);
 
-        // --- 2. SOCIAL/PLEX LISTENER ---
         sDb.ref('labData').on('value', (s) => {
             const d = s.val();
             if (d) {
@@ -175,7 +174,6 @@
             }
         });
 
-        // --- 3. AUTO-BLUESKY SCRAPER ---
         async function getBsky() {
             try {
                 const r = await fetch('https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=briandivacox.bsky.social');
