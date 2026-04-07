@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v7.3.1</title>
+    <title>Cloud Dashboard v7.3.5</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         :root {
@@ -13,32 +13,29 @@
         }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: var(--text-main); display: flex; flex-direction: column; align-items: center; padding: 15px; margin: 0; min-height: 100vh; overflow-x: hidden; }
         
-        /* THE ZOOM FIX: Shrinking the timer to bring buttons into the frame */
-        .timer-crop-container { 
-            width: 100%; max-width: 1400px; height: 300px; 
-            margin-bottom: 25px; border-radius: 12px; border: 1px solid var(--border-color); 
-            overflow: hidden; position: relative; background: #000;
+        /* THE STAGE: Full view to ensure Sound/Alert buttons are visible */
+        .timer-stage { 
+            width: 100%; max-width: 1400px; height: 350px; 
+            margin-bottom: 20px; border-radius: 12px; border: 1px solid var(--border-color); 
+            overflow: hidden; background: #000;
         }
-        .timer-crop-container iframe { 
-            width: 112%; /* Over-width to allow for zoom-out centering */
-            height: 400px; border: none; 
-            position: absolute; 
-            top: -10px; /* Slight offset to keep it clean */
-            left: -6%; 
-            transform: scale(0.88); /* ZOOM OUT: This pulls the top-right buttons into view */
-            transform-origin: top center;
-        }
+        .timer-stage iframe { width: 100%; height: 100%; border: none; }
         
         .counter-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; width: 100%; max-width: 1400px; }
         .counter-item { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; height: 150px; position: relative; display: flex; flex-direction: column; justify-content: center; padding-left: 20px; overflow: hidden; }
         .box-logo { position: absolute; top: 12px; right: 12px; width: 22px; height: 22px; z-index: 20; font-size: 20px; }
+        
+        /* Social Iframe Filtering */
         .counter-item iframe { filter: invert(1) hue-rotate(180deg); border: 0; width: 450px; height: 220px; position: absolute; top: 10px; left: -90px; pointer-events: none; }
         
+        /* Fixed Instagram Bleed */
         .instagram-fix { overflow: hidden !important; }
         .instagram-fix iframe { top: 38px !important; left: -80px !important; transform: scale(0.92); clip-path: inset(0px 0px 0px 80px); }
         
         .header-tag { font-size: 11px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 2px; font-weight: bold; }
         .main-number { font-size: 3.5rem; font-weight: 800; color: #ffffff; margin: 0; white-space: nowrap; letter-spacing: -1px; }
+        
+        /* Mirror Box */
         .mirror-box { justify-content: space-evenly !important; padding-left: 0 !important; text-align: center; }
         .mirror-row { display: flex; justify-content: space-around; width: 100%; margin-top: 5px; }
         .mirror-label { font-size: 9px; color: var(--light-purple); text-transform: uppercase; font-weight: bold; margin: 0; }
@@ -47,7 +44,7 @@
 </head>
 <body>
 
-    <div class="timer-crop-container">
+    <div class="timer-stage">
         <iframe src="https://board.multitimer.net/view/?q=6z0n8w08m0"></iframe>
     </div>
 
