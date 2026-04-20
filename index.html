@@ -33,10 +33,7 @@
             display: inline-flex;
             align-items: center;
             gap: 10px;
-            transition: background 0.2s;
         }
-
-        #refresh-btn:hover { background-color: #2ea043; }
 
         .counter-grid {
             display: grid;
@@ -58,7 +55,6 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
 
-        /* LOGO POSITIONING (TOP-RIGHT) */
         .box-logo {
             position: absolute !important;
             top: 12px !important;
@@ -69,7 +65,7 @@
             opacity: 0.8;
         }
 
-        /* BLINKING DOT STYLES */
+        /* COURT STATUS DOT */
         .status-container {
             display: flex;
             align-items: center;
@@ -86,7 +82,7 @@
         .dot {
             height: 10px;
             width: 10px;
-            background-color: #484f58; /* Idle color */
+            background-color: #484f58;
             border-radius: 50%;
             display: inline-block;
         }
@@ -103,9 +99,9 @@
             100% { opacity: 1; }
         }
 
-        .status-text { font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; color: #8b949e; }
+        .status-text { font-size: 11px; font-weight: bold; text-transform: uppercase; color: #8b949e; }
 
-        /* STANDARD IFRAME NUDGES (v1.4.0 Coordinates) */
+        /* IFRAME POSITIONS (Twitter, Twitch, YT, TikTok) */
         .counter-item iframe {
             filter: invert(1) hue-rotate(180deg);
             border: 0;
@@ -118,7 +114,7 @@
             transform-origin: top left;
         }
 
-        /* PERFECTED INSTAGRAM NUDGE */
+        /* INSTAGRAM SPECIFIC POSITION */
         .instagram-fix iframe {
             width: 500px; 
             height: 400px;
@@ -138,58 +134,58 @@
             <span class="material-symbols-outlined">refresh</span>
             Refresh All Data
         </button>
-        <div id="last-updated">System Initializing...</div>
+        <div id="last-updated">Status: Synced (v7.2.5)</div>
     </div>
 
     <div class="counter-grid">
+        <div class="counter-item">
+            <i class="fa-brands fa-x-twitter box-logo" style="color: #ffffff;"></i>
+            <iframe scrolling="no" src="https://livecounts.io/embed/twitter-live-follower-counter/briandivacox"></iframe>
+        </div>
+
+        <div class="counter-item">
+            <i class="fa-brands fa-twitch box-logo" style="color: #9146FF;"></i>
+            <iframe scrolling="no" src="https://livecounts.io/embed/twitch-live-follower-counter/briandivacox"></iframe>
+        </div>
+
+        <div class="counter-item">
+            <i class="fa-brands fa-youtube box-logo" style="color: #FF0000;"></i>
+            <iframe scrolling="no" src="https://livecounts.io/embed/youtube-live-subscriber-counter/UCMuv7PfbLVm8IZsd6Bgqqzg"></iframe>
+        </div>
+
+        <div class="counter-item">
+            <i class="fa-brands fa-tiktok box-logo" style="color: #00f2ea;"></i>
+            <iframe scrolling="no" src="https://livecounts.io/embed/tiktok-live-follower-counter/briandivacox"></iframe>
+        </div>
+
+        <div class="counter-item instagram-fix">
+            <i class="fa-brands fa-instagram box-logo" style="color: #E1306C;"></i>
+            <iframe scrolling="no" src="https://livecounts.nl/instagram-realtime/embed/?u=briandivacox"></iframe>
+        </div>
+
         <div class="counter-item" style="background: linear-gradient(145deg, #1c2128, #161b22);">
             <i class="fa-solid fa-gavel box-logo" style="color: #d29922;"></i>
             <div style="padding: 20px;">
                 <h4 style="margin: 0; color: #c9d1d9;">Court Stream</h4>
-                <p style="font-size: 13px; color: #8b949e; margin-top: 5px;">Judge David (IBM Video)</p>
+                <p style="font-size: 13px; color: #8b949e; margin-top: 5px;">Judge David</p>
             </div>
             <div class="status-container">
                 <span id="live-dot" class="dot"></span>
                 <span id="status-label" class="status-text">OFF AIR</span>
             </div>
         </div>
-
-        <div class="counter-item">
-            <i class="fa-brands fa-x-twitter box-logo" style="color: #ffffff;"></i>
-            <iframe scrolling="no" src="https://livecounts.io/embed/twitter-live-follower-counter/briandivacox"></iframe>
-        </div>
-        <div class="counter-item">
-            <i class="fa-brands fa-twitch box-logo" style="color: #9146FF;"></i>
-            <iframe scrolling="no" src="https://livecounts.io/embed/twitch-live-follower-counter/briandivacox"></iframe>
-        </div>
-        <div class="counter-item">
-            <i class="fa-brands fa-youtube box-logo" style="color: #FF0000;"></i>
-            <iframe scrolling="no" src="https://livecounts.io/embed/youtube-live-subscriber-counter/UCMuv7PfbLVm8IZsd6Bgqqzg"></iframe>
-        </div>
-        <div class="counter-item">
-            <i class="fa-brands fa-tiktok box-logo" style="color: #00f2ea;"></i>
-            <iframe scrolling="no" src="https://livecounts.io/embed/tiktok-live-follower-counter/briandivacox"></iframe>
-        </div>
-        <div class="counter-item instagram-fix">
-            <i class="fa-brands fa-instagram box-logo" style="color: #E1306C;"></i>
-            <iframe scrolling="no" src="https://livecounts.nl/instagram-realtime/embed/?u=briandivacox"></iframe>
-        </div>
     </div>
 
     <script>
-        // FUNCTION TO CHECK UPTIMEROBOT STATUS PAGE
         async function checkCourtStatus() {
             const dot = document.getElementById('live-dot');
             const label = document.getElementById('status-label');
-            
             const statusPageUrl = 'https://stats.uptimerobot.com/KytOwDWn6R/802886200'; 
             const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(statusPageUrl)}`;
 
             try {
                 const response = await fetch(proxyUrl);
                 const data = await response.json();
-                
-                // If UptimeRobot says "Operational", Judge David is NOT "Off Air" (meaning he is LIVE)
                 if (data.contents.includes('Operational') || data.contents.includes('bg-success')) {
                     dot.classList.add('live');
                     label.innerText = "LIVE NOW";
@@ -199,32 +195,18 @@
                     label.innerText = "OFF AIR";
                     label.style.color = "#8b949e";
                 }
-            } catch (error) {
-                console.log("Status Check Failed. Possible Proxy Issue.");
-            }
+            } catch (e) { console.log("Alert system sync pending..."); }
         }
 
-        // REFRESH BUTTON LOGIC
         function refreshAll() {
             const iframes = document.querySelectorAll('iframe');
-            const timeDisplay = document.getElementById('last-updated');
-            
-            // Refresh each iframe source
             iframes.forEach(iframe => { iframe.src = iframe.src; });
-            
-            // Trigger the court status check
             checkCourtStatus();
-            
-            const now = new Date();
-            timeDisplay.innerText = "Last updated at: " + now.toLocaleTimeString();
+            document.getElementById('last-updated').innerText = "Last updated: " + new Date().toLocaleTimeString();
         }
 
-        // AUTO-RUN ON LOAD
-        window.onload = () => {
-            refreshAll();
-            // Automatically check court status every 60 seconds
-            setInterval(checkCourtStatus, 60000);
-        };
+        window.onload = refreshAll;
+        setInterval(checkCourtStatus, 60000);
     </script>
 </body>
 </html>
