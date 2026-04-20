@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Command Center v7.2.8</title>
+    <title>Live Command Center v7.2.9</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <script src="https://video.ibm.com/embed-api/v1/ustream-embedapi.min.js"></script>
@@ -86,7 +86,7 @@
 
         .status-text { font-size: 11px; font-weight: bold; text-transform: uppercase; color: #8b949e; }
 
-        /* IFRAME COORDINATES */
+        /* IFRAME COORDINATES (Standard 4) */
         .counter-item iframe {
             filter: invert(1) hue-rotate(180deg);
             border: 0;
@@ -96,6 +96,7 @@
             transform: scale(1.1); transform-origin: top left;
         }
 
+        /* INSTAGRAM COORDINATES */
         .instagram-fix iframe {
             width: 500px; height: 400px;
             top: 35px; left: -80px;  
@@ -145,21 +146,6 @@
                 label.style.color = "#8b949e";
             }
         });
-
-        // Background check every 2 minutes
-        setInterval(() => {
-            viewer.getProperty('isLive', (isLive) => {
-                const dot = document.getElementById('live-dot');
-                const label = document.getElementById('status-label');
-                if (isLive) {
-                    dot.classList.add('live');
-                    label.innerText = "LIVE NOW";
-                } else {
-                    dot.classList.remove('live');
-                    label.innerText = "OFF AIR";
-                }
-            });
-        }, 120000);
     </script>
 </body>
 </html>
