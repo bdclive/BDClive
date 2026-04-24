@@ -2,90 +2,188 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Court Stream v7.9.1</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Court Stream v7.9.2</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
-        :root { --bg: #0d1117; --card: #161b22; --border: #30363d; --text: #ffffff; --orange: #ffb515; }
-        body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
-        .counter-item { 
-            background: var(--card); border: 2px solid var(--border); border-radius: 12px; 
-            width: 320px; height: 160px; position: relative; padding-left: 25px;
-            display: flex; flex-direction: column; justify-content: center; transition: all 0.5s ease;
+        :root { 
+            --bg: #0d1117; 
+            --card: #161b22; 
+            --border: #30363d; 
+            --text: #ffffff; 
+            --orange: #ffb515; 
+            --live-red: #ff3333;
         }
-        .version-tag { position: absolute; top: 12px; right: 50px; font-size: 10px; font-weight: 900; color: var(--orange); background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 4px; }
-        .box-logo { position: absolute; top: 12px; right: 15px; font-size: 22px; color: var(--orange); }
-        .dot { height: 12px; width: 12px; background: #484f58; border-radius: 50%; display: inline-block; transition: 0.3s; }
-        .dot.live { background: #ff0000; box-shadow: 0 0 10px #ff0000; animation: blink 1s infinite; }
-        @keyframes blink { 50% { opacity: 0.3; } }
-        /* IBM Bridge */
-        #ibm-bridge { position: absolute; bottom: 0; right: 0; width: 10px; height: 10px; opacity: 0.001; pointer-events: none; }
+        
+        body { 
+            background: var(--bg); 
+            color: var(--text); 
+            font-family: 'Segoe UI', system-ui, sans-serif; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            margin: 0; 
+            overflow: hidden; 
+        }
+
+        .counter-item { 
+            background: var(--card); 
+            border: 2px solid var(--border); 
+            border-radius: 12px; 
+            width: 320px; 
+            height: 160px; 
+            position: relative; 
+            padding-left: 25px;
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+
+        /* High-Visibility Labels */
+        .version-tag { 
+            position: absolute; 
+            top: 12px; 
+            right: 50px; 
+            font-size: 10px; 
+            font-weight: 900; 
+            color: var(--orange); 
+            background: rgba(0,0,0,0.5); 
+            padding: 2px 6px; 
+            border-radius: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        .box-logo { 
+            position: absolute; 
+            top: 12px; 
+            right: 15px; 
+            font-size: 22px; 
+            color: var(--orange); 
+        }
+
+        .court-label {
+            font-size: 11px; 
+            color: var(--orange); 
+            font-weight: bold; 
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .system-title {
+            font-size: 26px; 
+            font-weight: 800;
+            margin: 5px 0; 
+            letter-spacing: -1px;
+        }
+
+        .status-area {
+            display: flex; 
+            align-items: center; 
+            gap: 10px;
+            margin-top: 5px;
+        }
+
+        .dot { 
+            height: 12px; 
+            width: 12px; 
+            background: #484f58; 
+            border-radius: 50%; 
+            display: inline-block; 
+            transition: all 0.3s ease; 
+        }
+
+        /* Live Animation */
+        .dot.live { 
+            background: var(--live-red); 
+            box-shadow: 0 0 12px var(--live-red); 
+            animation: blink 1.2s infinite; 
+        }
+
+        @keyframes blink { 
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; } 
+        }
+
+        #court-text {
+            font-size: 14px; 
+            font-weight: 900; 
+            color: #8b949e;
+            text-transform: uppercase;
+        }
+
+        #sync-status { 
+            position: absolute; 
+            bottom: 8px; 
+            right: 12px; 
+            font-size: 9px; 
+            color: #484f58;
+            font-family: monospace;
+        }
     </style>
 </head>
 <body>
 
     <div class="counter-item" id="court-box">
-        <div class="version-tag">v7.9.1</div>
+        <div class="version-tag">v7.9.2</div>
         <i class="fa-solid fa-gavel box-logo"></i>
-        <p style="font-size:11px; color:var(--orange); font-weight:bold; margin:0;">JUDGE DAVID</p>
-        <h4 style="font-size:26px; margin:5px 0;">Court Stream</h4>
-        <div style="display:flex; align-items:center; gap:10px;">
+        
+        <p class="court-label">Judge David</p>
+        <h4 class="system-title">Court Stream</h4>
+        
+        <div class="status-area">
             <span id="court-dot" class="dot"></span>
-            <span id="court-text" style="font-size:14px; font-weight:bold; color:#8b949e;">SYNCING...</span>
+            <span id="court-text">Syncing...</span>
         </div>
-        <iframe id="ibm-bridge" src="https://video.ibm.com/embed/23891775?autoplay=true&volume=0&api=1&mute=1" allow="autoplay"></iframe>
+
+        <div id="sync-status">READY</div>
     </div>
 
     <script>
         const dot = document.getElementById('court-dot');
         const txt = document.getElementById('court-text');
         const box = document.getElementById('court-box');
-        const bridge = document.getElementById('ibm-bridge');
+        const status = document.getElementById('sync-status');
 
-        let isDetected = false;
+        async function updateCourt() {
+            // Ensure this URL is your LATEST deployment (Who has access: Anyone)
+            const api = 'https://script.google.com/macros/s/AKfycbxvKbJqw6_JoYtWlKwV1t5Kav2w4HBRrtxsZUU-PzkAPxd7kd_tWuj165mLhkwLfhE/exec';
+            
+            try {
+                const res = await fetch(api + '?t=' + Date.now());
+                if (!res.ok) throw new Error('Network Error');
+                
+                const d = await res.json();
 
-        function updateUI(isLive) {
-            isDetected = true;
-            if (isLive) {
-                dot.className = 'dot live';
-                txt.innerText = "LIVE NOW"; txt.style.color = "#ff3333";
-                box.style.borderColor = "#ff3333"; box.style.background = "#1a0505";
-            } else {
-                dot.className = 'dot';
-                txt.innerText = "OFF AIR"; txt.style.color = "#8b949e";
-                box.style.borderColor = "#30363d"; box.style.background = "#161b22";
+                if (d.judgeLive === true) {
+                    dot.className = 'dot live';
+                    txt.innerText = "LIVE NOW";
+                    txt.style.color = "#ff3333";
+                    box.style.borderColor = "#ff3333";
+                    box.style.background = "#1a0505";
+                    box.style.boxShadow = "0 0 20px rgba(255, 51, 51, 0.2)";
+                } else {
+                    dot.className = 'dot';
+                    txt.innerText = "OFF AIR";
+                    txt.style.color = "#8b949e";
+                    box.style.borderColor = "#30363d";
+                    box.style.background = "#161b22";
+                    box.style.boxShadow = "none";
+                }
+                status.innerText = "Sync: " + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'});
+            } catch (e) {
+                txt.innerText = "SYNC ERROR";
+                txt.style.color = "yellow";
+                status.innerText = "Check Deployment";
             }
         }
 
-        // Channel 1: Listen for IBM's 'playing' heartbeats
-        window.addEventListener('message', (e) => {
-            try {
-                const d = JSON.parse(e.data);
-                if (d.event === 'playing' || d.event === 'live' || (d.property === 'live' && d.value === true)) {
-                    updateUI(true);
-                }
-            } catch(err) {}
-        });
-
-        // Channel 2: Google Script Pulse
-        async function pulseCheck() {
-            try {
-                const r = await fetch('https://script.google.com/macros/s/AKfycbxvKbJqw6_JoYtWlKwV1t5Kav2w4HBRrtxsZUU-PzkAPxd7kd_tWuj165mLhkwLfhE/exec?t=' + Date.now());
-                const d = await r.json();
-                if (d.judgeLive) {
-                    updateUI(true);
-                } else if (!isDetected) {
-                    updateUI(false);
-                }
-            } catch(e) {
-                if (!isDetected) updateUI(false);
-            }
-        }
-
-        // Fail-safe: If nothing is detected in 5 seconds, show Off Air
-        setTimeout(() => { if (!isDetected) updateUI(false); }, 5000);
-
-        setInterval(pulseCheck, 20000);
-        pulseCheck();
+        // Check every 20 seconds for high precision
+        setInterval(updateCourt, 20000);
+        updateCourt();
     </script>
 </body>
 </html>
