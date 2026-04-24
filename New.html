@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Command Center v7.5.3</title>
+    <title>Live Command Center v7.5.5</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script data-cfasync="false" src="https://video.ibm.com/embed-api/v1/ustream-embedapi.min.js"></script>
 
@@ -18,12 +18,18 @@
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
         .status-text { font-size: 10px; font-weight: bold; color: #8b949e; }
         iframe { filter: invert(1) hue-rotate(180deg); border: 0; width: 500px; height: 250px; position: absolute; top: 5px; left: -88px; transform: scale(1.1); transform-origin: top left; pointer-events: none; }
-        .movie-info { padding: 12px; display: grid; grid-template-columns: 1.2fr 1fr; gap: 8px; height: 100%; }
-        .movie-col { display: flex; flex-direction: column; justify-content: space-between; }
+        
+        /* UPDATED MOVIE BOX LAYOUT */
+        .movie-info { padding: 12px; display: grid; grid-template-columns: 1.2fr 1fr; gap: 10px; height: 100%; }
+        .movie-col { display: flex; flex-direction: column; }
         .movie-label { font-size: 9px; color: #2ea043; text-transform: uppercase; font-weight: bold; letter-spacing: 0.5px; }
-        .movie-title { font-size: 13px; font-weight: bold; color: #ffffff; line-height: 1.2; margin-top: 2px; }
+        .movie-title { font-size: 13px; font-weight: bold; color: #ffffff; line-height: 1.2; margin-top: 2px; height: 32px; overflow: hidden; }
         .movie-meta { font-size: 10px; color: #8b949e; margin-top: 2px; }
-        .movie-stats { font-size: 9px; color: #d29922; border-top: 1px solid #30363d; padding-top: 4px; margin-top: 4px; }
+        
+        /* BOTTOM STATS AREA */
+        .stats-footer { position: absolute; bottom: 0; left: 0; right: 0; background: #0d1117; padding: 6px 12px; border-top: 1px solid #30363d; display: flex; flex-direction: column; gap: 2px; }
+        .stats-line { font-size: 10px; color: #d29922; display: flex; justify-content: space-between; }
+        .open-line { font-size: 9px; color: #8b949e; }
     </style>
 </head>
 <body>
@@ -33,14 +39,11 @@
         <div class="counter-item"><i class="fa-brands fa-twitch box-logo"></i><iframe src="https://livecounts.io/embed/twitch-live-follower-counter/briandivacox"></iframe></div>
         <div class="counter-item"><i class="fa-brands fa-youtube box-logo"></i><iframe src="https://livecounts.io/embed/youtube-live-subscriber-counter/UCMuv7PfbLVm8IZsd6Bgqqzg"></iframe></div>
         <div class="counter-item"><i class="fa-brands fa-tiktok box-logo"></i><iframe src="https://livecounts.io/embed/tiktok-live-follower-counter/briandivacox"></iframe></div>
-        <div class="counter-item" style="height: 160px;"><i class="fa-brands fa-instagram box-logo"></i><iframe src="https://livecounts.nl/instagram-realtime/embed/?u=briandivacox" style="top: 30px;"></iframe></div>
+        <div class="counter-item"><i class="fa-brands fa-instagram box-logo"></i><iframe src="https://livecounts.nl/instagram-realtime/embed/?u=briandivacox" style="top: 30px;"></iframe></div>
 
         <div class="counter-item" style="background: #1c2128;">
             <i class="fa-solid fa-gavel box-logo" style="color: #d29922;"></i>
-            <div style="padding: 15px;">
-                <h4 style="margin: 0; font-size: 14px;">Court Stream</h4>
-                <p style="font-size: 12px; color: #8b949e; margin: 4px 0;">Judge David</p>
-            </div>
+            <div style="padding: 15px;"><h4 style="margin: 0; font-size: 14px;">Court Stream</h4><p style="font-size: 12px; color: #8b949e; margin: 4px 0;">Judge David</p></div>
             <iframe id="court-player" src="https://video.ibm.com/embed/23891775" style="display:none;"></iframe>
             <div class="status-container"><span id="live-dot" class="dot"></span><span id="status-label" class="status-text">OFF AIR</span></div>
         </div>
@@ -49,21 +52,22 @@
             <i class="fa-solid fa-film box-logo" style="color: #238636;"></i>
             <div class="movie-info">
                 <div class="movie-col">
-                    <div>
-                        <div class="movie-label">Now Playing</div>
-                        <div id="d-now" class="movie-title">Syncing...</div>
-                        <div id="d-left" class="movie-meta">--</div>
-                    </div>
-                    <div id="d-stats" class="movie-stats">M: -- | TV: --</div>
+                    <div class="movie-label">Now Playing</div>
+                    <div id="m-now" class="movie-title">Syncing...</div>
+                    <div id="m-left" class="movie-meta">--</div>
                 </div>
                 <div class="movie-col" style="border-left: 1px solid #30363d; padding-left: 10px;">
-                    <div>
-                        <div class="movie-label" style="color: #d29922;">Up Next</div>
-                        <div id="d-next" class="movie-title">--</div>
-                        <div id="d-time" class="movie-meta">--</div>
-                    </div>
-                    <div id="d-open" style="font-size: 8px; color: #8b949e; margin-top: auto;">Days: --</div>
+                    <div class="movie-label" style="color: #d29922;">Up Next</div>
+                    <div id="m-next" class="movie-title">--</div>
+                    <div id="m-time" class="movie-meta">--</div>
                 </div>
+            </div>
+            <div class="stats-footer">
+                <div class="stats-line">
+                    <span>Movies: <b id="m-count">--</b></span>
+                    <span>TV: <b id="tv-count">--</b></span>
+                </div>
+                <div class="open-line">Open For: <span id="m-open">--</span></div>
             </div>
         </div>
 
@@ -71,7 +75,7 @@
     </div>
 
     <script data-cfasync="false">
-        function startCourtMonitor() {
+        function initCourt() {
             if (window.UstreamEmbed) {
                 const viewer = UstreamEmbed('court-player');
                 viewer.addListener('live', (isLive) => {
@@ -82,26 +86,19 @@
                     label.innerText = isNowLive ? "LIVE NOW" : "OFF AIR";
                     label.style.color = isNowLive ? "#ff0000" : "#8b949e";
                 });
-            } else { setTimeout(startCourtMonitor, 1000); }
+            } else { setTimeout(initCourt, 1000); }
         }
 
-        async function fetchMovieData() {
+        async function syncCinema() {
             const api = 'https://script.google.com/macros/s/AKfycbxvKbJqw6_JoYtWlKwV1t5Kav2w4HBRrtxsZUU-PzkAPxd7kd_tWuj165mLhkwLfhE/exec';
             try {
-                const res = await fetch(api + '?t=' + Date.now());
+                const res = await fetch(api + '?cache=' + Date.now());
                 const d = await res.json();
-                document.getElementById('d-now').innerText = d.nowPlaying;
-                document.getElementById('d-left').innerText = d.timeLeft;
-                document.getElementById('d-stats').innerText = `Movies: ${d.moviesCount} | TV: ${d.tvCount}`;
-                document.getElementById('d-next').innerText = d.nextTitle;
-                document.getElementById('d-time').innerText = d.nextTime;
-                document.getElementById('d-open').innerText = "Open: " + d.daysOpen;
-            } catch (e) { document.getElementById('d-now').innerText = "Sync Error"; }
-        }
-
-        startCourtMonitor();
-        fetchMovieData();
-        setInterval(fetchMovieData, 60000);
-    </script>
-</body>
-</html>
+                
+                document.getElementById('m-now').innerText = d.nowPlaying;
+                document.getElementById('m-left').innerText = "Left: " + d.timeLeft;
+                document.getElementById('m-count').innerText = d.moviesCount;
+                document.getElementById('tv-count').innerText = d.tvCount;
+                document.getElementById('m-next').innerText = d.nextTitle;
+                document.getElementById('m-time').innerText = d.nextTime;
+                document
