@@ -1,14 +1,12 @@
-<div class="counter-item" id="court-box" style="background: linear-gradient(145deg, #1c2128, #161b22); transition: all 0.5s ease;">
+<div class="counter-item" id="court-box" style="background: #1c2128;">
     <i class="fa-solid fa-gavel box-logo" style="color: var(--plex-orange);"></i>
-    <div style="padding: 15px;">
+    <div style="padding: 20px;">
         <h4 style="margin: 0; font-size: 14px;">Court Stream</h4>
-        <p style="font-size: 12px; color: var(--text-dim); margin: 4px 0;">Judge David</p>
+        <p id="court-subtitle" style="font-size: 12px; color: var(--text-dim); margin-top: 5px;">Checking Status...</p>
     </div>
     
-    <div id="player-container" style="display:none; width: 100%; height: 80px; margin-top: -10px;">
-        <iframe id="court-player" src="https://video.ibm.com/embed/23891775" 
-            style="width: 100%; height: 100%; border:none; filter: none; position: static; transform: none;">
-        </iframe>
+    <div style="position: absolute; bottom: 0; right: 0; width: 1px; height: 1px; opacity: 0;">
+        <iframe id="court-player" src="https://video.ibm.com/embed/23891775" allow="autoplay"></iframe>
     </div>
 
     <div class="status-container">
@@ -18,35 +16,52 @@
 </div>
 
 <script data-cfasync="false">
-    // COURT SYSTEM LOGIC
-    function initCourtSystem() {
-        if (window.UstreamEmbed) {
-            const viewer = UstreamEmbed('court-player');
-            const dot = document.getElementById('court-dot');
-            const text = document.getElementById('court-text');
-            const playerDiv = document.getElementById('player-container');
-            const box = document.getElementById('court-box');
+    // REBUILT COURT ENGINE
+    let courtStatusRetries = 0;
 
-            viewer.addListener('live', (isLive) => {
-                const liveStatus = isLive === true || isLive === 'live';
+    function monitorCourt() {
+        if (typeof UstreamEmbed === 'undefined') {
+            courtStatusRetries++;
+            if (courtStatusRetries < 10) setTimeout(monitorCourt, 1000);
+            return;
+        }
+
+        const viewer = UstreamEmbed('court-player');
+        const dot = document.getElementById('court-dot');
+        const text = document.getElementById('court-text');
+        const sub = document.getElementById('court-subtitle');
+        const box = document.getElementById('court-box');
+
+        // Check every 15 seconds to be sure
+        const checkLive = () => {
+            viewer.getProperty('live', (isLive) => {
+                // IBM returns 'live' or true if online
+                const active = (isLive === true || isLive === 'live');
                 
-                if (liveStatus) {
+                if (active) {
                     dot.classList.add('live');
                     text.innerText = "LIVE NOW";
                     text.style.color = "#ff0000";
+                    sub.innerText = "Judge David is Online";
+                    box.style.boxShadow = "inset 0 0 20px rgba(255, 0, 0, 0.2)";
                     box.style.borderColor = "#ff0000";
-                    playerDiv.style.display = "block"; // Show player when live
                 } else {
                     dot.classList.remove('live');
                     text.innerText = "OFF AIR";
                     text.style.color = "var(--text-dim)";
+                    sub.innerText = "Judge David";
+                    box.style.boxShadow = "none";
                     box.style.borderColor = "var(--border-color)";
-                    playerDiv.style.display = "none"; // Hide player when off
                 }
             });
-        } else {
-            setTimeout(initCourtSystem, 1000);
-        }
+        };
+
+        // Listen for the event, but also force a check manually
+        viewer.addListener('live', checkLive);
+        setInterval(checkLive, 15000); 
+        checkLive(); 
     }
-    initCourtSystem();
+
+    // Call it after the page loads
+    window.addEventListener('load', monitorCourt);
 </script>
