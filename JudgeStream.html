@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Court System v7.7.3</title>
+    <title>Court System v7.7.4</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         :root {
@@ -45,8 +45,8 @@
             <span id="court-dot" class="dot"></span>
             <span id="court-text" class="status-text">OFF AIR</span>
         </div>
-        <div id="debug-msg">READY...</div>
-        <div class="version">v7.7.3</div>
+        <div id="debug-msg">INITIALIZING...</div>
+        <div class="version">v7.7.4</div>
     </div>
 
     <script>
@@ -55,43 +55,53 @@
         const text = document.getElementById('court-text');
         const debug = document.getElementById('debug-msg');
 
-        async function updateStatus() {
-            // Using a high-availability proxy to check the IBM status
+        function checkStatus() {
+            debug.innerText = "CHECKING IMAGE...";
+            
+            // We load the thumbnail image for this channel
+            // IBM updates this image only when the stream is active
+            const img = new Image();
             const channelID = "23891775";
-            const proxy = "https://corsproxy.io/?";
-            const target = `https://video.ibm.com/api/channels/${channelID}.json`;
+            
+            // The 't=' ensures we don't load a cached version of the image
+            img.src = `https://thumbnail.ustream.tv/v1/channel/${channelID}/live_thumbnail.jpg?t=` + Date.now();
 
-            try {
-                debug.innerText = "REFRESHING...";
-                const response = await fetch(proxy + encodeURIComponent(target));
-                const data = await response.json();
-                
-                // IBM JSON API returns status: "live" or "offair"
-                const isLive = data.channel.status === "live";
-
-                if (isLive) {
-                    dot.classList.add('live');
-                    text.innerText = "LIVE NOW";
-                    text.style.color = "#ff3333";
-                    box.style.borderColor = "var(--border-active)";
-                    box.style.background = "#1a0505";
-                    debug.innerText = "API: ONLINE";
+            img.onload = function() {
+                // If the image is the standard 'offline' size (usually 120x90 or similar)
+                // or if it's the actual live capture. 
+                // Most importantly: If it loads at all, we can check its dimensions.
+                if (img.width > 120) { 
+                    setLive(true);
                 } else {
-                    dot.classList.remove('live');
-                    text.innerText = "OFF AIR";
-                    text.style.color = "#8b949e";
-                    box.style.borderColor = "var(--border-inactive)";
-                    box.style.background = "#161b22";
-                    debug.innerText = "API: OFFLINE";
+                    setLive(false);
                 }
-            } catch (e) {
-                debug.innerText = "RETRYING...";
-                console.log(e);
+            };
+
+            img.onerror = function() {
+                setLive(false);
+            };
+        }
+
+        function setLive(isLive) {
+            if (isLive) {
+                dot.classList.add('live');
+                text.innerText = "LIVE NOW";
+                text.style.color = "#ff3333";
+                box.style.borderColor = "var(--border-active)";
+                box.style.background = "#1a0505";
+                debug.innerText = "IMG: ONLINE";
+            } else {
+                dot.classList.remove('live');
+                text.innerText = "OFF AIR";
+                text.style.color = "#8b949e";
+                box.style.borderColor = "var(--border-inactive)";
+                box.style.background = "#161b22";
+                debug.innerText = "IMG: OFFLINE";
             }
         }
 
-        setInterval(updateStatus, 15000); // Check every 15 seconds
-        updateStatus();
+        setInterval(checkStatus, 20000); // Check every 20 seconds
+        checkStatus();
     </script>
 </body>
 </html>
