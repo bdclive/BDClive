@@ -2,73 +2,59 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Court Box Standalone</title>
+    <title>Court Box Standalone v7.8.2</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
-        :root {
-            --bg-color: #0d1117; --card-bg: #161b22; --border-inactive: #30363d;
-            --text-bright: #ffffff; --plex-orange: #ffb515;
-        }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: var(--text-bright); display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        
+        :root { --bg: #0d1117; --card: #161b22; --text: #ffffff; --orange: #ffb515; }
+        body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
         .counter-item { 
-            background: var(--card-bg); border: 2px solid var(--border-inactive); border-radius: 12px; 
-            width: 320px; height: 160px; position: relative; overflow: hidden;
-            display: flex; flex-direction: column; justify-content: center; padding-left: 25px;
-            transition: all 0.5s ease;
+            background: var(--card); border: 2px solid #30363d; border-radius: 12px; 
+            width: 320px; height: 160px; position: relative; padding-left: 25px;
+            display: flex; flex-direction: column; justify-content: center;
         }
-
-        .box-logo { position: absolute; top: 15px; right: 20px; font-size: 24px; color: var(--plex-orange); }
-        .system-title { font-size: 26px; font-weight: 800; margin: 5px 0; letter-spacing: -1px; }
-
-        .status-container { display: flex; align-items: center; gap: 10px; margin-top: 8px; background: rgba(0,0,0,0.4); width: fit-content; padding: 6px 15px; border-radius: 20px; }
-        .dot { height: 12px; width: 12px; background-color: #484f58; border-radius: 50%; }
-        .dot.live { background-color: #ff0000; box-shadow: 0 0 15px #ff0000; animation: blink 1s infinite; }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
-        
-        .status-text { font-size: 14px; font-weight: 900; color: #8b949e; text-transform: uppercase; }
-        #sync-timer { position: absolute; bottom: 8px; right: 12px; font-size: 10px; color: #30363d; font-weight: bold; }
+        .box-logo { position: absolute; top: 15px; right: 20px; font-size: 24px; color: var(--orange); }
+        .dot { height: 12px; width: 12px; background: #484f58; border-radius: 50%; display: inline-block; }
+        .dot.live { background: #ff0000; box-shadow: 0 0 10px #ff0000; animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0.3; } }
+        #sync-time { position: absolute; bottom: 8px; right: 12px; font-size: 9px; color: #30363d; }
     </style>
 </head>
 <body>
-
     <div class="counter-item" id="court-box">
         <i class="fa-solid fa-gavel box-logo"></i>
-        <div class="status-header">
-            <p style="font-size: 12px; color: var(--plex-orange); font-weight: bold; margin:0;">JUDGE DAVID</p>
-            <h4 class="system-title">Court Stream</h4>
-        </div>
-        <div class="status-container">
+        <p style="font-size: 11px; color: var(--orange); font-weight: bold; margin: 0;">JUDGE DAVID</p>
+        <h4 style="font-size: 26px; margin: 5px 0;">Court Stream</h4>
+        <div style="display: flex; align-items: center; gap: 10px; margin-top: 5px;">
             <span id="court-dot" class="dot"></span>
-            <span id="court-text" class="status-text">OFF AIR</span>
+            <span id="court-text" style="font-size: 14px; font-weight: bold; color: #8b949e;">OFF AIR</span>
         </div>
-        <div id="sync-timer">Syncing...</div>
+        <div id="sync-time">v7.8.2</div>
     </div>
 
     <script>
-        const dot = document.getElementById('court-dot');
-        const text = document.getElementById('court-text');
-        const box = document.getElementById('court-box');
-        const timer = document.getElementById('sync-timer');
-
-        async function checkStatus() {
-            // This is your current Apps Script URL
-            const api = 'https://script.google.com/macros/s/AKfycbxvKbJqw6_JoYtWlKwV1t5Kav2w4HBRrtxsZUU-PzkAPxd7kd_tWuj165mLhkwLfhE/exec';
-            
+        async function check() {
+            const api = 'YOUR_NEW_DEPLOYED_URL_HERE'; // <--- PASTE NEW URL HERE
             try {
                 const res = await fetch(api + '?t=' + Date.now());
                 const data = await res.json();
+                const dot = document.getElementById('court-dot');
+                const txt = document.getElementById('court-text');
+                const box = document.getElementById('court-box');
                 
-                // Use the 'judgeLive' property from your script
                 if (data.judgeLive) {
-                    dot.classList.add('live');
-                    text.innerText = "LIVE NOW";
-                    text.style.color = "#ff3333";
+                    dot.className = 'dot live';
+                    txt.innerText = "LIVE NOW"; txt.style.color = "#ff3333";
                     box.style.borderColor = "#ff3333";
-                    box.style.background = "#1a0505";
                 } else {
-                    dot.classList.remove('live');
-                    text.innerText = "OFF AIR";
-                    text.style.color = "#8b949e";
-                    box
+                    dot.className = 'dot';
+                    txt.innerText = "OFF AIR"; txt.style.color = "#8b949e";
+                    box.style.borderColor = "#30363d";
+                }
+                document.getElementById('sync-time').innerText = "Last Sync: " + new Date().toLocaleTimeString();
+            } catch (e) { document.getElementById('sync-time').innerText = "Sync Error"; }
+        }
+        setInterval(check, 30000);
+        check();
+    </script>
+</body>
+</html>
