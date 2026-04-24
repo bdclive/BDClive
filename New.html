@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Command Center v7.5.0</title>
+    <title>Live Command Center v7.5.1</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
-    <script src="https://video.ibm.com/embed-api/v1/ustream-embedapi.min.js"></script>
+    <script data-cfasync="false" src="https://video.ibm.com/embed-api/v1/ustream-embedapi.min.js"></script>
 
     <style>
         body { font-family: 'Segoe UI', sans-serif; background-color: #0d1117; display: flex; flex-direction: column; align-items: center; padding: 50px 20px; margin: 0; color: white; }
@@ -20,14 +20,15 @@
         @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
         .status-text { font-size: 11px; font-weight: bold; text-transform: uppercase; color: #8b949e; }
 
-        /* Counter Adjustments */
-        .counter-item iframe { filter: invert(1) hue-rotate(180deg); border: 0; width: 500px; height: 250px; position: absolute; top: 5px; left: -88px; transform: scale(1.1); transform-origin: top left; }
+        /* Social Embed Nudges */
+        .counter-item iframe { filter: invert(1) hue-rotate(180deg); border: 0; width: 500px; height: 250px; position: absolute; top: 5px; left: -88px; transform: scale(1.1); transform-origin: top left; pointer-events: none; }
         .instagram-fix iframe { width: 500px; height: 400px; top: 35px; left: -80px; transform: scale(1.0); }
 
+        /* Movie Tracker Box */
         .movie-info { padding: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; height: 100%; }
         .movie-col { display: flex; flex-direction: column; }
         .movie-label { font-size: 10px; color: #2ea043; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; }
-        .movie-title { font-size: 13px; font-weight: bold; margin-top: 4px; color: #ffffff; line-height: 1.2; }
+        .movie-title { font-size: 13px; font-weight: bold; margin-top: 4px; color: #ffffff; line-height: 1.2; height: 32px; overflow: hidden; }
         .movie-meta { font-size: 11px; color: #8b949e; margin-top: 4px; }
         .movie-stats { font-size: 10px; color: #d29922; margin-top: auto; border-top: 1px solid #30363d; padding-top: 5px; }
     </style>
@@ -53,9 +54,9 @@
             <div class="movie-info">
                 <div class="movie-col">
                     <div class="movie-label">Now Playing</div>
-                    <div id="cell-now" class="movie-title">Syncing...</div>
+                    <div id="cell-now" class="movie-title">Refreshing...</div>
                     <div id="cell-left" class="movie-meta">--:--</div>
-                    <div id="cell-stats" class="movie-stats">Active v7.5.0</div>
+                    <div id="cell-stats" class="movie-stats">Dashboard v7.5.1</div>
                 </div>
                 <div class="movie-col" style="border-left: 1px solid #30363d; padding-left: 10px;">
                     <div class="movie-label" style="color: #d29922;">Up Next</div>
@@ -72,47 +73,45 @@
         <div class="counter-item"><div style="padding:20px; color:#484f58;">[Box 12]</div></div>
     </div>
 
-    <script>
-        // FIX FOR IBM ERROR: Wait for library to load
-        function initCourtStream() {
-            if (typeof UstreamEmbed === 'undefined') {
-                setTimeout(initCourtStream, 500);
-                return;
+    <script data-cfasync="false">
+        // IBM Court Status
+        function startCourtMonitor() {
+            if (window.UstreamEmbed) {
+                const viewer = UstreamEmbed('court-player');
+                viewer.addListener('live', (isLive) => {
+                    const dot = document.getElementById('live-dot');
+                    const label = document.getElementById('status-label');
+                    if (isLive === true || isLive === 'live') {
+                        dot.classList.add('live'); label.innerText = "LIVE NOW"; label.style.color = "#ff0000";
+                    } else {
+                        dot.classList.remove('live'); label.innerText = "OFF AIR"; label.style.color = "#8b949e";
+                    }
+                });
+            } else {
+                setTimeout(startCourtMonitor, 1000);
             }
-            const viewer = UstreamEmbed('court-player');
-            viewer.addListener('live', (isLive) => {
-                const dot = document.getElementById('live-dot');
-                const label = document.getElementById('status-label');
-                if (isLive === true || isLive === 'live') {
-                    dot.classList.add('live'); label.innerText = "LIVE NOW"; label.style.color = "#ff0000";
-                } else {
-                    dot.classList.remove('live'); label.innerText = "OFF AIR"; label.style.color = "#8b949e";
-                }
-            });
         }
-        initCourtStream();
 
-        // FIX FOR MOVIE SYNC: Cross-Origin Fetch
-        async function updateMovieTracker() {
-            const scriptUrl = 'https://script.google.com/macros/s/AKfycbxvKbJqw6_JoYtWlKwV1t5Kav2w4HBRrtxsZUU-PzkAPxd7kd_tWuj165mLhkwLfhE/exec';
-            
+        // Movie Data Push
+        async function fetchMovieData() {
+            const api = 'https://script.google.com/macros/s/AKfycbxvKbJqw6_JoYtWlKwV1t5Kav2w4HBRrtxsZUU-PzkAPxd7kd_tWuj165mLhkwLfhE/exec';
             try {
-                const response = await fetch(scriptUrl);
-                const data = await response.json();
-                
+                const res = await fetch(api + '?cache=' + Date.now());
+                const data = await res.json();
                 document.getElementById('cell-now').innerText = data.nowPlaying || "None";
                 document.getElementById('cell-left').innerText = "Left: " + (data.timeLeft || "--");
                 document.getElementById('cell-stats').innerText = "Movies: " + (data.moviesTv || "-") + " | Day: " + (data.daysOpen || "-");
                 document.getElementById('cell-next').innerText = data.nextTitle || "--";
                 document.getElementById('cell-time').innerText = data.nextTime || "--";
             } catch (e) {
-                console.log("Sync Error:", e);
-                document.getElementById('cell-now').innerText = "Syncing...";
+                document.getElementById('cell-now').innerText = "Update Error";
             }
         }
-        
-        updateMovieTracker();
-        setInterval(updateMovieTracker, 60000);
+
+        // Initialize
+        startCourtMonitor();
+        fetchMovieData();
+        setInterval(fetchMovieData, 30000); // 30 second refresh
     </script>
 </body>
 </html>
