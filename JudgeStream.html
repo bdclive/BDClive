@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Court System v7.7.2</title>
+    <title>Court System v7.7.3</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         :root {
@@ -16,26 +16,20 @@
             --debug-yellow: #eaff00;
         }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: var(--text-bright); display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        
         .counter-item { 
             background: var(--card-bg); border: 2px solid var(--border-inactive); border-radius: 12px; 
             width: 320px; height: 160px; position: relative; overflow: hidden;
             display: flex; flex-direction: column; justify-content: center; padding-left: 25px;
             transition: all 0.5s ease;
         }
-
         .box-logo { position: absolute; top: 15px; right: 20px; font-size: 24px; color: var(--plex-orange); }
-        .court-name { font-size: 12px; color: var(--plex-orange); text-transform: uppercase; font-weight: bold; margin: 0; letter-spacing: 1.5px; }
         .system-title { font-size: 26px; font-weight: 800; margin: 5px 0; letter-spacing: -1px; }
-
         .status-container { display: flex; align-items: center; gap: 10px; margin-top: 8px; background: rgba(0,0,0,0.4); width: fit-content; padding: 6px 15px; border-radius: 20px; }
         .dot { height: 12px; width: 12px; background-color: #484f58; border-radius: 50%; }
-        
         .dot.live { background-color: #ff0000; box-shadow: 0 0 15px #ff0000; animation: blink 1s infinite; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
-        
         .status-text { font-size: 14px; font-weight: 900; color: #8b949e; text-transform: uppercase; }
-        #debug-msg { position: absolute; bottom: 28px; left: 25px; font-size: 10px; color: var(--debug-yellow); font-family: monospace; font-weight: bold; }
+        #debug-msg { position: absolute; bottom: 28px; left: 25px; font-size: 10px; color: var(--debug-yellow); font-family: monospace; }
         .version { position: absolute; bottom: 8px; right: 12px; font-size: 10px; color: #30363d; font-weight: bold; }
     </style>
 </head>
@@ -44,15 +38,15 @@
     <div class="counter-item" id="court-box">
         <i class="fa-solid fa-gavel box-logo"></i>
         <div class="status-header">
-            <p class="court-name">Judge David</p>
+            <p style="font-size: 12px; color: var(--plex-orange); font-weight: bold; margin:0;">JUDGE DAVID</p>
             <h4 class="system-title">Court Stream</h4>
         </div>
         <div class="status-container">
             <span id="court-dot" class="dot"></span>
             <span id="court-text" class="status-text">OFF AIR</span>
         </div>
-        <div id="debug-msg">INITIALIZING...</div>
-        <div class="version">v7.7.2</div>
+        <div id="debug-msg">READY...</div>
+        <div class="version">v7.7.3</div>
     </div>
 
     <script>
@@ -61,19 +55,19 @@
         const text = document.getElementById('court-text');
         const debug = document.getElementById('debug-msg');
 
-        async function checkJudgeStatus() {
-            // Channel ID for Judge David
+        async function updateStatus() {
+            // Using a high-availability proxy to check the IBM status
             const channelID = "23891775";
-            // We use a CORS proxy to peek at the IBM status page
-            const url = `https://api.allorigins.win/get?url=${encodeURIComponent('https://video.ibm.com/channel/' + channelID)}`;
+            const proxy = "https://corsproxy.io/?";
+            const target = `https://video.ibm.com/api/channels/${channelID}.json`;
 
             try {
-                debug.innerText = "POLLING IBM...";
-                const response = await fetch(url);
+                debug.innerText = "REFRESHING...";
+                const response = await fetch(proxy + encodeURIComponent(target));
                 const data = await response.json();
                 
-                // We look for the "isLive" indicator in the page source
-                const isLive = data.contents.includes('"isLive":true') || data.contents.includes('ustream:is_live" content="true"');
+                // IBM JSON API returns status: "live" or "offair"
+                const isLive = data.channel.status === "live";
 
                 if (isLive) {
                     dot.classList.add('live');
@@ -81,24 +75,23 @@
                     text.style.color = "#ff3333";
                     box.style.borderColor = "var(--border-active)";
                     box.style.background = "#1a0505";
-                    debug.innerText = "STATUS: ONLINE";
+                    debug.innerText = "API: ONLINE";
                 } else {
                     dot.classList.remove('live');
                     text.innerText = "OFF AIR";
                     text.style.color = "#8b949e";
                     box.style.borderColor = "var(--border-inactive)";
                     box.style.background = "#161b22";
-                    debug.innerText = "STATUS: OFFLINE";
+                    debug.innerText = "API: OFFLINE";
                 }
             } catch (e) {
-                debug.innerText = "CONNECTION ERROR";
-                console.error(e);
+                debug.innerText = "RETRYING...";
+                console.log(e);
             }
         }
 
-        // Check every 30 seconds
-        setInterval(checkJudgeStatus, 30000);
-        checkJudgeStatus();
+        setInterval(updateStatus, 15000); // Check every 15 seconds
+        updateStatus();
     </script>
 </body>
 </html>
