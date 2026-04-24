@@ -3,10 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Court System v7.6.7</title>
+    <title>Court System v7.6.8</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    
-    <script data-cfasync="false" src="https://video.ibm.com/embed-api/v1/ustream-embedapi.min.js"></script>
 
     <style>
         :root {
@@ -16,29 +14,26 @@
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: var(--text-main); display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
 
         .counter-item { 
-            background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; 
+            background: var(--card-bg); border: 2px solid var(--border-color); border-radius: 12px; 
             width: 320px; height: 160px; position: relative; overflow: hidden;
             display: flex; flex-direction: column; justify-content: center; padding-left: 25px;
-            transition: border-color 0.4s ease, box-shadow 0.4s ease;
+            transition: all 0.5s ease;
         }
 
         .box-logo { position: absolute; top: 15px; right: 20px; font-size: 22px; color: var(--plex-orange); }
 
-        .status-header { margin-bottom: 15px; }
+        .status-header { margin-bottom: 10px; }
         .court-name { font-size: 11px; color: var(--text-dim); text-transform: uppercase; font-weight: bold; margin: 0; letter-spacing: 1px; }
         .system-title { font-size: 24px; font-weight: 800; margin: 5px 0; letter-spacing: -1px; }
 
-        /* STATUS AREA */
-        .status-container { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+        .status-container { display: flex; align-items: center; gap: 8px; margin-top: 5px; }
         .dot { height: 10px; width: 10px; background-color: #484f58; border-radius: 50%; }
-        .dot.live { background-color: #ff0000; box-shadow: 0 0 10px #ff0000; animation: blink 1.5s infinite; }
+        .dot.live { background-color: #ff0000; box-shadow: 0 0 12px #ff0000; animation: blink 1.5s infinite; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
         .status-text { font-size: 12px; font-weight: bold; color: var(--text-dim); text-transform: uppercase; }
 
-        /* HIDDEN PLAYER */
-        #court-player { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
-        
-        .version-tag { position: absolute; bottom: 8px; right: 12px; font-size: 9px; color: #30363d; font-weight: bold; }
+        #court-iframe { position: absolute; width: 1px; height: 1px; opacity: 0; }
+        .version { position: absolute; bottom: 8px; right: 12px; font-size: 9px; color: #30363d; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -56,36 +51,41 @@
             <span id="court-text" class="status-text">OFF AIR</span>
         </div>
 
-        <iframe id="court-player" src="https://video.ibm.com/embed/23891775?autoplay=true&volume=0&mute=1" allow="autoplay"></iframe>
+        <iframe id="court-iframe" src="https://video.ibm.com/embed/23891775?autoplay=true&volume=0&api=1" allow="autoplay"></iframe>
         
-        <div class="version-tag">v7.6.7</div>
+        <div class="version">v7.6.8</div>
     </div>
 
     <script>
-        function initCourtSystem() {
-            // Wait for IBM library to be available
-            if (typeof UstreamEmbed === 'undefined') {
-                console.log("Waiting for IBM API...");
-                setTimeout(initCourtSystem, 500);
-                return;
-            }
+        const box = document.getElementById('court-box');
+        const dot = document.getElementById('court-dot');
+        const text = document.getElementById('court-text');
+        const iframe = document.getElementById('court-iframe');
 
-            const viewer = UstreamEmbed('court-player');
-            const dot = document.getElementById('court-dot');
-            const text = document.getElementById('court-text');
-            const box = document.getElementById('court-box');
+        // Function to send command to IBM without the library
+        function sendCommand(method, value) {
+            iframe.contentWindow.postMessage(JSON.stringify({
+                event: 'command',
+                func: method,
+                args: [value]
+            }), '*');
+        }
 
-            // Set up a direct property check
-            const checkLiveStatus = () => {
-                viewer.getProperty('live', (res) => {
-                    const isNowLive = (res === true || res === 'live');
+        // Listen for data coming BACK from the iframe
+        window.addEventListener('message', function(event) {
+            try {
+                const data = JSON.parse(event.data);
+                
+                // If IBM tells us the 'live' property changed
+                if (data.event === 'live' || (data.getProperty === 'live')) {
+                    const isLive = data.value === true || data.value === 'live';
                     
-                    if (isNowLive) {
+                    if (isLive) {
                         dot.classList.add('live');
                         text.innerText = "LIVE NOW";
                         text.style.color = "#ff0000";
                         box.style.borderColor = "#ff0000";
-                        box.style.boxShadow = "inset 0 0 15px rgba(255, 0, 0, 0.1)";
+                        box.style.boxShadow = "inset 0 0 20px rgba(255, 0, 0, 0.2)";
                     } else {
                         dot.classList.remove('live');
                         text.innerText = "OFF AIR";
@@ -93,19 +93,26 @@
                         box.style.borderColor = "var(--border-color)";
                         box.style.boxShadow = "none";
                     }
-                });
-            };
+                }
+            } catch (e) {
+                // Ignore non-JSON messages
+            }
+        });
 
-            // Force volume to 0 to bypass Autoplay blocks
-            viewer.callMethod('volume', 0);
-            
-            // Periodically poll the server
-            setInterval(checkLiveStatus, 15000); 
-            checkLiveStatus(); 
-        }
+        // Ping the iframe every 10 seconds to ask if it's live
+        setInterval(() => {
+            iframe.contentWindow.postMessage(JSON.stringify({
+                event: 'command',
+                func: 'getProperty',
+                args: ['live']
+            }), '*');
+        }, 10000);
 
-        // Run when the page is fully loaded
-        window.addEventListener('load', initCourtSystem);
+        // Initial setup
+        iframe.onload = () => {
+            sendCommand('volume', 0);
+            sendCommand('getProperty', 'live');
+        };
     </script>
 </body>
 </html>
