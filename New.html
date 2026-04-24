@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Command Center v7.5.1</title>
+    <title>Live Command Center v7.5.2</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
     <script data-cfasync="false" src="https://video.ibm.com/embed-api/v1/ustream-embedapi.min.js"></script>
 
     <style>
@@ -13,18 +12,13 @@
         .counter-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; max-width: 1400px; width: 100%; justify-items: center; }
         .counter-item { background: #161b22; border-radius: 12px; width: 320px; height: 160px; overflow: hidden; border: 1px solid #30363d; position: relative; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
         .box-logo { position: absolute !important; top: 12px !important; right: 12px !important; font-size: 20px; z-index: 100; opacity: 0.8; }
-        
         .status-container { display: flex; align-items: center; gap: 10px; position: absolute; bottom: 15px; left: 15px; background: rgba(0,0,0,0.4); padding: 5px 12px; border-radius: 20px; border: 1px solid #30363d; }
         .dot { height: 10px; width: 10px; background-color: #484f58; border-radius: 50%; display: inline-block; }
         .dot.live { background-color: #ff0000; box-shadow: 0 0 10px #ff0000; animation: blink 1.5s infinite; }
         @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
         .status-text { font-size: 11px; font-weight: bold; text-transform: uppercase; color: #8b949e; }
-
-        /* Social Embed Nudges */
         .counter-item iframe { filter: invert(1) hue-rotate(180deg); border: 0; width: 500px; height: 250px; position: absolute; top: 5px; left: -88px; transform: scale(1.1); transform-origin: top left; pointer-events: none; }
         .instagram-fix iframe { width: 500px; height: 400px; top: 35px; left: -80px; transform: scale(1.0); }
-
-        /* Movie Tracker Box */
         .movie-info { padding: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; height: 100%; }
         .movie-col { display: flex; flex-direction: column; }
         .movie-label { font-size: 10px; color: #2ea043; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; }
@@ -54,14 +48,14 @@
             <div class="movie-info">
                 <div class="movie-col">
                     <div class="movie-label">Now Playing</div>
-                    <div id="cell-now" class="movie-title">Refreshing...</div>
-                    <div id="cell-left" class="movie-meta">--:--</div>
-                    <div id="cell-stats" class="movie-stats">Dashboard v7.5.1</div>
+                    <div id="disp-now" class="movie-title">Syncing...</div>
+                    <div id="disp-left" class="movie-meta">--:--</div>
+                    <div id="disp-stats" class="movie-stats">Movies: - | Day: -</div>
                 </div>
                 <div class="movie-col" style="border-left: 1px solid #30363d; padding-left: 10px;">
                     <div class="movie-label" style="color: #d29922;">Up Next</div>
-                    <div id="cell-next" class="movie-title">--</div>
-                    <div id="cell-time" class="movie-meta">--</div>
+                    <div id="disp-next" class="movie-title">--</div>
+                    <div id="disp-time" class="movie-meta">--</div>
                 </div>
             </div>
         </div>
@@ -74,7 +68,6 @@
     </div>
 
     <script data-cfasync="false">
-        // IBM Court Status
         function startCourtMonitor() {
             if (window.UstreamEmbed) {
                 const viewer = UstreamEmbed('court-player');
@@ -87,31 +80,26 @@
                         dot.classList.remove('live'); label.innerText = "OFF AIR"; label.style.color = "#8b949e";
                     }
                 });
-            } else {
-                setTimeout(startCourtMonitor, 1000);
-            }
+            } else { setTimeout(startCourtMonitor, 1000); }
         }
 
-        // Movie Data Push
         async function fetchMovieData() {
             const api = 'https://script.google.com/macros/s/AKfycbxvKbJqw6_JoYtWlKwV1t5Kav2w4HBRrtxsZUU-PzkAPxd7kd_tWuj165mLhkwLfhE/exec';
             try {
-                const res = await fetch(api + '?cache=' + Date.now());
-                const data = await res.json();
-                document.getElementById('cell-now').innerText = data.nowPlaying || "None";
-                document.getElementById('cell-left').innerText = "Left: " + (data.timeLeft || "--");
-                document.getElementById('cell-stats').innerText = "Movies: " + (data.moviesTv || "-") + " | Day: " + (data.daysOpen || "-");
-                document.getElementById('cell-next').innerText = data.nextTitle || "--";
-                document.getElementById('cell-time').innerText = data.nextTime || "--";
-            } catch (e) {
-                document.getElementById('cell-now').innerText = "Update Error";
-            }
+                const res = await fetch(api + '?t=' + Date.now());
+                const d = await res.json();
+                // Mapping the explicit labels from Step 1
+                document.getElementById('disp-now').innerText = d.l4 || "None";
+                document.getElementById('disp-left').innerText = "Left: " + (d.j5 || "--");
+                document.getElementById('disp-stats').innerText = "Movies: " + (d.j4 || "-") + " | Day: " + (d.k4 || "-");
+                document.getElementById('disp-next').innerText = d.k5 || "--";
+                document.getElementById('disp-time').innerText = d.l5 || "--";
+            } catch (e) { document.getElementById('disp-now').innerText = "Update Error"; }
         }
 
-        // Initialize
         startCourtMonitor();
         fetchMovieData();
-        setInterval(fetchMovieData, 30000); // 30 second refresh
+        setInterval(fetchMovieData, 60000);
     </script>
 </body>
 </html>
