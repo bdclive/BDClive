@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v7.6.0</title>
+    <title>Cloud Dashboard v7.6.1</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         :root {
@@ -42,19 +42,21 @@
         .header-tag { font-size: 11px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 5px; font-weight: bold; }
         .main-number { font-size: 3.1rem; font-weight: 800; color: #ffffff; margin: 0; white-space: nowrap; letter-spacing: -2px; line-height: 1.1; }
 
-        /* Unified Mirror/Stats Styles */
+        /* Unified Stats Styles */
         .mirror-box { justify-content: space-evenly !important; padding-left: 0 !important; text-align: center; }
         .mirror-row { display: flex; justify-content: space-around; width: 100%; margin-top: 5px; }
         .mirror-label { font-size: 9px; color: var(--light-purple); text-transform: uppercase; font-weight: bold; margin: 0; }
         .mirror-stat { font-size: 2rem; font-weight: 800; color: #ffffff; margin-bottom: 2px; }
 
-        /* CINEMA SPECIFIC */
+        /* CINEMA TRACKER BOX */
         .cinema-info { padding: 12px 20px 12px 15px; display: grid; grid-template-columns: 1.2fr 1fr; gap: 8px; height: 100%; text-align: left; }
         .cinema-label { font-size: 9px; color: var(--cinema-green); text-transform: uppercase; font-weight: bold; }
         .cinema-title { font-size: 13px; font-weight: bold; color: #ffffff; line-height: 1.2; margin-top: 2px; height: 32px; overflow: hidden; }
         .cinema-meta { font-size: 10px; color: var(--text-dim); margin-top: 2px; }
         .cinema-footer { position: absolute; bottom: 0; left: 0; right: 0; background: #0d1117; padding: 6px 12px; border-top: 1px solid var(--border-color); display: flex; flex-direction: column; }
         .cinema-stats-line { font-size: 10px; color: var(--plex-orange); display: flex; justify-content: space-between; font-weight: bold; }
+        .cinema-sub-footer { font-size: 9px; color: var(--text-dim); margin-top: 1px; display: flex; justify-content: space-between; }
+        #sync-timer { color: var(--cinema-green); font-weight: bold; }
     </style>
 </head>
 <body>
@@ -125,7 +127,10 @@
                     <span>Movies: <span id="m-count">--</span></span>
                     <span>TV: <span id="tv-count">--</span></span>
                 </div>
-                <div style="font-size: 9px; color: var(--text-dim); margin-top: 1px;">Open For: <span id="m-open">--</span></div>
+                <div class="cinema-sub-footer">
+                    <span>Open For: <span id="m-open">--</span></span>
+                    <span>Sync: <span id="sync-timer">60</span>s</span>
+                </div>
             </div>
         </div>
     </div>
@@ -133,7 +138,6 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
     <script>
-        // CONFIG
         const sConf = { apiKey: atob("QUl6YVN5QXZ4ZktnX3NwUE52RTJ3Y1QtdlRsOFlUUXU0TDN0Xzd3"), authDomain: "livecounters-8eaa8.firebaseapp.com", projectId: "livecounters-8eaa8", databaseURL: "https://livecounters-8eaa8-default-rtdb.firebaseio.com/", appId: "1:386919719539:web:c60c0d185c3d7e97ecc006" };
         const vConf = { apiKey: "AIzaSyCokXnEtboNuUIASBMz2ZzS0GuchemoJYI", authDomain: "lbbb-webcounter.firebaseapp.com", projectId: "lbbb-webcounter", databaseURL: "https://lbbb-webcounter-default-rtdb.firebaseio.com/", appId: "1:217634980859:web:49ef2b0aa7fe7d0bb1415e" };
         const sApp = firebase.initializeApp(sConf, "sApp");
@@ -141,11 +145,9 @@
         const sDb = sApp.database();
         const vDb = vApp.database();
 
-        // Magic Counters
         vDb.ref("totalViewCount").on("value", s => document.getElementById("totalViewsCounter").innerText = s.val() || 0);
         vDb.ref("visitorsConnected").on("value", s => document.getElementById("visitorCounter").innerText = s.numChildren() || 0);
 
-        // Lab Data (Threads, Snapchat, FB, Plex)
         sDb.ref('labData').on('value', (s) => {
             const d = s.val();
             if (d) {
@@ -158,7 +160,6 @@
             }
         });
 
-        // Bluesky API
         async function getBsky() {
             try {
                 const r = await fetch('https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=briandivacox.bsky.social');
@@ -168,7 +169,10 @@
         }
         getBsky(); setInterval(getBsky, 300000);
 
-        // CINEMA SYNC (Apps Script)
+        // MOVIE SYNC & COUNTDOWN LOGIC
+        let countdown = 60;
+        const timerDisplay = document.getElementById('sync-timer');
+
         async function syncCinema() {
             const api = 'https://script.google.com/macros/s/AKfycbxvKbJqw6_JoYtWlKwV1t5Kav2w4HBRrtxsZUU-PzkAPxd7kd_tWuj165mLhkwLfhE/exec';
             try {
@@ -181,9 +185,23 @@
                 document.getElementById('m-next').innerText = d.nextTitle;
                 document.getElementById('m-time').innerText = d.nextTime;
                 document.getElementById('m-open').innerText = d.daysOpen;
-            } catch (e) { document.getElementById('m-now').innerText = "Update Error"; }
+                countdown = 60; // Reset timer on success
+            } catch (e) { 
+                document.getElementById('m-now').innerText = "Sync Error"; 
+            }
         }
-        syncCinema(); setInterval(syncCinema, 60000);
+
+        // Ticker function for the countdown
+        setInterval(() => {
+            countdown--;
+            if (countdown <= 0) {
+                syncCinema();
+                countdown = 60;
+            }
+            timerDisplay.innerText = countdown;
+        }, 1000);
+
+        syncCinema(); // Initial load
     </script>
 </body>
 </html>
