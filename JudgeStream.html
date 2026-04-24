@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Court Stream v7.9.3</title>
+    <title>Court Stream v7.9.4</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         :root { --bg: #0d1117; --card: #161b22; --border: #30363d; --text: #ffffff; --orange: #ffb515; --live: #ff3333; }
@@ -20,14 +20,14 @@
         .dot.live { background: var(--live); box-shadow: 0 0 10px var(--live); animation: blink 1s infinite; }
         @keyframes blink { 50% { opacity: 0.3; } }
         
-        /* Hidden but Active Player */
-        #JudgePlayer { position: absolute; bottom: 0; right: 0; width: 1px; height: 1px; opacity: 0.01; }
+        /* The "Heartbeat" Monitor - Invisible but active */
+        #JudgePlayer { position: absolute; bottom: 0; right: 0; width: 1px; height: 1px; opacity: 0.01; border: none; }
     </style>
 </head>
 <body>
 
     <div class="counter-item" id="court-box">
-        <div class="version-tag">v7.9.3</div>
+        <div class="version-tag">v7.9.4</div>
         <i class="fa-solid fa-gavel box-logo"></i>
         
         <p style="font-size:11px; color:var(--orange); font-weight:bold; margin:0;">Judge David</p>
@@ -35,21 +35,18 @@
         
         <div style="display:flex; align-items:center; gap:10px;">
             <span id="court-dot" class="dot"></span>
-            <span id="court-text" style="font-size:14px; font-weight:bold; color:#8b949e;">INITIATING...</span>
+            <span id="court-text" style="font-size:14px; font-weight:bold; color:#8b949e;">OFF AIR</span>
         </div>
 
         <iframe id="JudgePlayer" src="https://video.ibm.com/embed/23891775?autoplay=true&volume=0&api=1&mute=1" allow="autoplay"></iframe>
     </div>
 
-    <script src="https://static.ustream.tv/js/libs/ustream-embedapi.min.js"></script>
-
     <script>
-        const viewer = UstreamEmbed('JudgePlayer');
         const dot = document.getElementById('court-dot');
         const txt = document.getElementById('court-text');
         const box = document.getElementById('court-box');
 
-        function updateUI(isLive) {
+        function setStatus(isLive) {
             if (isLive) {
                 dot.className = 'dot live';
                 txt.innerText = "LIVE NOW"; txt.style.color = "#ff3333";
@@ -61,23 +58,25 @@
             }
         }
 
-        // The API listener
-        viewer.addListener('live', (isLive) => {
-            updateUI(isLive);
+        // The "Secret Listener" - Catches messages directly from the IBM iframe
+        window.addEventListener('message', function(event) {
+            try {
+                // IBM sends data as a string that looks like JSON
+                const data = JSON.parse(event.data);
+                
+                // If the event is 'playing' or 'live', we know the stream is active
+                if (data.event === 'playing' || data.event === 'live' || (data.property === 'live' && data.value === true)) {
+                    setStatus(true);
+                }
+                
+                // If the event is 'offline', it's done
+                if (data.event === 'offline' || data.event === 'finished') {
+                    setStatus(false);
+                }
+            } catch (e) {
+                // Ignore non-JSON messages (like those font errors)
+            }
         });
-
-        // The API listener for 'playing' (sometimes used as fallback)
-        viewer.addListener('playing', () => {
-            updateUI(true);
-        });
-
-        // Manual check every 15 seconds to ensure the connection hasn't timed out
-        setInterval(() => {
-            viewer.getProperty('live', (isLive) => {
-                updateUI(isLive);
-            });
-        }, 15000);
-
     </script>
 </body>
 </html>
