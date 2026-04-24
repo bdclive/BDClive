@@ -3,100 +3,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v7.6.6</title>
+    <title>Court System v7.6.7</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
     <script data-cfasync="false" src="https://video.ibm.com/embed-api/v1/ustream-embedapi.min.js"></script>
 
     <style>
         :root {
             --bg-color: #0d1117; --card-bg: #161b22; --border-color: #30363d;
-            --text-main: #ffffff; --text-dim: #8b949e; --snap-yellow: #eaff00; --bsky-blue: #1185FE;
-            --light-purple: #bc95ff; --plex-orange: #e5a00d; --cinema-green: #238636;
+            --text-main: #ffffff; --text-dim: #8b949e; --plex-orange: #e5a00d;
         }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: var(--text-main); display: flex; flex-direction: column; align-items: center; padding: 15px; margin: 0; min-height: 100vh; overflow-x: hidden; }
-        .counter-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; width: 100%; max-width: 1400px; }
-        .counter-item { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; height: 150px; position: relative; display: flex; flex-direction: column; justify-content: center; padding-left: 25px; padding-bottom: 10px; overflow: hidden; }
-        .box-logo { position: absolute; top: 12px; right: 15px; font-size: 20px; z-index: 20; }
-        .status-container { display: flex; align-items: center; gap: 8px; position: absolute; bottom: 12px; left: 12px; background: rgba(0,0,0,0.5); padding: 4px 10px; border-radius: 20px; border: 1px solid var(--border-color); }
-        .dot { height: 8px; width: 8px; background-color: #484f58; border-radius: 50%; }
-        .dot.live { background-color: #ff0000; box-shadow: 0 0 8px #ff0000; animation: blink 1.5s infinite; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: var(--text-main); display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+
+        .counter-item { 
+            background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; 
+            width: 320px; height: 160px; position: relative; overflow: hidden;
+            display: flex; flex-direction: column; justify-content: center; padding-left: 25px;
+            transition: border-color 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        .box-logo { position: absolute; top: 15px; right: 20px; font-size: 22px; color: var(--plex-orange); }
+
+        .status-header { margin-bottom: 15px; }
+        .court-name { font-size: 11px; color: var(--text-dim); text-transform: uppercase; font-weight: bold; margin: 0; letter-spacing: 1px; }
+        .system-title { font-size: 24px; font-weight: 800; margin: 5px 0; letter-spacing: -1px; }
+
+        /* STATUS AREA */
+        .status-container { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+        .dot { height: 10px; width: 10px; background-color: #484f58; border-radius: 50%; }
+        .dot.live { background-color: #ff0000; box-shadow: 0 0 10px #ff0000; animation: blink 1.5s infinite; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-        .status-text { font-size: 10px; font-weight: bold; color: var(--text-dim); }
-        .btn-connect { background: var(--cinema-green); border: none; color: white; font-size: 9px; padding: 4px 8px; border-radius: 4px; cursor: pointer; margin-top: 5px; display: none; }
-        .cinema-footer { position: absolute; bottom: 0; left: 0; right: 0; background: #0d1117; padding: 6px 12px; border-top: 1px solid var(--border-color); font-size: 10px; }
+        .status-text { font-size: 12px; font-weight: bold; color: var(--text-dim); text-transform: uppercase; }
+
+        /* HIDDEN PLAYER */
+        #court-player { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+        
+        .version-tag { position: absolute; bottom: 8px; right: 12px; font-size: 9px; color: #30363d; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <div class="counter-grid">
-        <div class="counter-item" id="court-box" style="background: #1c2128;">
-            <i class="fa-solid fa-gavel box-logo" style="color: var(--plex-orange);"></i>
-            <div style="padding: 15px;">
-                <h4 style="margin: 0; font-size: 14px;">Court Stream</h4>
-                <p id="court-subtitle" style="font-size: 11px; color: var(--text-dim);">Scanning Server...</p>
-                <button id="btn-connect" class="btn-connect" onclick="forceConnect()">Force Connect</button>
-            </div>
-            <div style="position: absolute; width: 1px; height: 1px; opacity: 0; overflow: hidden;">
-                <iframe id="court-player" src="https://video.ibm.com/embed/23891775?autoplay=true&volume=0" allow="autoplay"></iframe>
-            </div>
-            <div class="status-container">
-                <span id="court-dot" class="dot"></span>
-                <span id="court-text" class="status-text">OFF AIR</span>
-            </div>
+    <div class="counter-item" id="court-box">
+        <i class="fa-solid fa-gavel box-logo"></i>
+        
+        <div class="status-header">
+            <p class="court-name">Judge David</p>
+            <h4 class="system-title">Court Stream</h4>
         </div>
 
-        <div class="counter-item" style="border-color: var(--cinema-green); padding-left: 0;">
-            <div class="cinema-footer">
-                <div style="color: var(--plex-orange); font-weight: bold; display: flex; justify-content: space-between;">
-                    <span>M: <span id="m-count">--</span> TV: <span id="tv-count">--</span></span>
-                    <span style="color: var(--cinema-green);">S: <span id="sync-timer">60</span>s</span>
-                </div>
-                <div style="color: var(--text-dim); font-size: 9px; margin-top: 1px; display: flex; justify-content: space-between;">
-                    <span>Open: <span id="m-open">--</span></span><span>v7.6.6</span>
-                </div>
-            </div>
+        <div class="status-container">
+            <span id="court-dot" class="dot"></span>
+            <span id="court-text" class="status-text">OFF AIR</span>
         </div>
+
+        <iframe id="court-player" src="https://video.ibm.com/embed/23891775?autoplay=true&volume=0&mute=1" allow="autoplay"></iframe>
+        
+        <div class="version-tag">v7.6.7</div>
     </div>
 
     <script>
-        // COURT MONITOR v7.6.6
-        let viewer;
-        function initCourt() {
-            if (typeof UstreamEmbed === 'undefined') { setTimeout(initCourt, 1000); return; }
-            viewer = UstreamEmbed('court-player');
-            
-            const check = () => {
+        function initCourtSystem() {
+            // Wait for IBM library to be available
+            if (typeof UstreamEmbed === 'undefined') {
+                console.log("Waiting for IBM API...");
+                setTimeout(initCourtSystem, 500);
+                return;
+            }
+
+            const viewer = UstreamEmbed('court-player');
+            const dot = document.getElementById('court-dot');
+            const text = document.getElementById('court-text');
+            const box = document.getElementById('court-box');
+
+            // Set up a direct property check
+            const checkLiveStatus = () => {
                 viewer.getProperty('live', (res) => {
-                    const isLive = (res === true || res === 'live');
-                    document.getElementById('court-dot').className = isLive ? 'dot live' : 'dot';
-                    document.getElementById('court-text').innerText = isLive ? "LIVE NOW" : "OFF AIR";
-                    document.getElementById('court-subtitle').innerText = isLive ? "Judge David Online" : "Judge David";
-                    document.getElementById('btn-connect').style.display = "none";
+                    const isNowLive = (res === true || res === 'live');
+                    
+                    if (isNowLive) {
+                        dot.classList.add('live');
+                        text.innerText = "LIVE NOW";
+                        text.style.color = "#ff0000";
+                        box.style.borderColor = "#ff0000";
+                        box.style.boxShadow = "inset 0 0 15px rgba(255, 0, 0, 0.1)";
+                    } else {
+                        dot.classList.remove('live');
+                        text.innerText = "OFF AIR";
+                        text.style.color = "var(--text-dim)";
+                        box.style.borderColor = "var(--border-color)";
+                        box.style.boxShadow = "none";
+                    }
                 });
             };
 
-            viewer.addListener('live', check);
-            setInterval(check, 20000);
-            check();
-
-            // Show force button if no response in 5 seconds
-            setTimeout(() => {
-                if (document.getElementById('court-subtitle').innerText === "Scanning Server...") {
-                    document.getElementById('btn-connect').style.display = "block";
-                }
-            }, 5000);
+            // Force volume to 0 to bypass Autoplay blocks
+            viewer.callMethod('volume', 0);
+            
+            // Periodically poll the server
+            setInterval(checkLiveStatus, 15000); 
+            checkLiveStatus(); 
         }
 
-        function forceConnect() {
-            if (viewer) {
-                viewer.callMethod('play');
-                viewer.callMethod('volume', 0);
-                document.getElementById('court-subtitle').innerText = "Connecting...";
-            }
-        }
-
-        window.addEventListener('load', initCourt);
-        // ... (Keep your existing Firebase and Cinema Sync scripts here)
+        // Run when the page is fully loaded
+        window.addEventListener('load', initCourtSystem);
     </script>
 </body>
 </html>
