@@ -1,0 +1,52 @@
+<div class="counter-item" id="court-box" style="background: linear-gradient(145deg, #1c2128, #161b22); transition: all 0.5s ease;">
+    <i class="fa-solid fa-gavel box-logo" style="color: var(--plex-orange);"></i>
+    <div style="padding: 15px;">
+        <h4 style="margin: 0; font-size: 14px;">Court Stream</h4>
+        <p style="font-size: 12px; color: var(--text-dim); margin: 4px 0;">Judge David</p>
+    </div>
+    
+    <div id="player-container" style="display:none; width: 100%; height: 80px; margin-top: -10px;">
+        <iframe id="court-player" src="https://video.ibm.com/embed/23891775" 
+            style="width: 100%; height: 100%; border:none; filter: none; position: static; transform: none;">
+        </iframe>
+    </div>
+
+    <div class="status-container">
+        <span id="court-dot" class="dot"></span>
+        <span id="court-text" class="status-text">OFF AIR</span>
+    </div>
+</div>
+
+<script data-cfasync="false">
+    // COURT SYSTEM LOGIC
+    function initCourtSystem() {
+        if (window.UstreamEmbed) {
+            const viewer = UstreamEmbed('court-player');
+            const dot = document.getElementById('court-dot');
+            const text = document.getElementById('court-text');
+            const playerDiv = document.getElementById('player-container');
+            const box = document.getElementById('court-box');
+
+            viewer.addListener('live', (isLive) => {
+                const liveStatus = isLive === true || isLive === 'live';
+                
+                if (liveStatus) {
+                    dot.classList.add('live');
+                    text.innerText = "LIVE NOW";
+                    text.style.color = "#ff0000";
+                    box.style.borderColor = "#ff0000";
+                    playerDiv.style.display = "block"; // Show player when live
+                } else {
+                    dot.classList.remove('live');
+                    text.innerText = "OFF AIR";
+                    text.style.color = "var(--text-dim)";
+                    box.style.borderColor = "var(--border-color)";
+                    playerDiv.style.display = "none"; // Hide player when off
+                }
+            });
+        } else {
+            setTimeout(initCourtSystem, 1000);
+        }
+    }
+    initCourtSystem();
+</script>
