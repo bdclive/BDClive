@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Command Center v7.4.1</title>
+    <title>Live Command Center v7.4.3</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
     <script src="https://video.ibm.com/embed-api/v1/ustream-embedapi.min.js"></script>
 
     <style>
@@ -68,7 +69,7 @@
         @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
         .status-text { font-size: 11px; font-weight: bold; text-transform: uppercase; color: #8b949e; }
 
-        /* IFRAME COORDINATES */
+        /* IFRAMES (Counters) */
         .counter-item iframe {
             filter: invert(1) hue-rotate(180deg);
             border: 0;
@@ -80,29 +81,39 @@
 
         .instagram-fix iframe { width: 500px; height: 400px; top: 35px; left: -80px; transform: scale(1.0); }
 
-        /* MOVIE BOX */
+        /* MOVIE TRACKER (J4:L5) */
         .movie-info { padding: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; height: 100%; }
         .movie-col { display: flex; flex-direction: column; }
         .movie-label { font-size: 10px; color: #2ea043; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; }
         .movie-title { font-size: 13px; font-weight: bold; margin-top: 4px; color: #ffffff; line-height: 1.2; }
         .movie-meta { font-size: 11px; color: #8b949e; margin-top: 4px; }
-        .movie-stats { font-size: 10px; color: #d29922; margin-top: auto; border-top: 1px solid #30363d; padding-top: 5px; cursor: pointer; }
+        .movie-stats { font-size: 10px; color: #d29922; margin-top: auto; border-top: 1px solid #30363d; padding-top: 5px; }
     </style>
 </head>
 <body>
 
     <div class="counter-grid">
-        <div class="counter-item"><i class="fa-brands fa-x-twitter box-logo"></i><iframe src="https://livecounts.io/embed/twitter-live-follower-counter/briandivacox"></iframe></div>
-        <div class="counter-item"><i class="fa-brands fa-twitch box-logo" style="color:#9146FF"></i><iframe src="https://livecounts.io/embed/twitch-live-follower-counter/briandivacox"></iframe></div>
-        <div class="counter-item"><i class="fa-brands fa-youtube box-logo" style="color:#FF0000"></i><iframe src="https://livecounts.io/embed/youtube-live-subscriber-counter/UCMuv7PfbLVm8IZsd6Bgqqzg"></iframe></div>
-        <div class="counter-item"><i class="fa-brands fa-tiktok box-logo" style="color:#00f2ea"></i><iframe src="https://livecounts.io/embed/tiktok-live-follower-counter/briandivacox"></iframe></div>
-        <div class="counter-item instagram-fix"><i class="fa-brands fa-instagram box-logo" style="color:#E1306C"></i><iframe src="https://livecounts.nl/instagram-realtime/embed/?u=briandivacox"></iframe></div>
+        <div class="counter-item"><i class="fa-brands fa-x-twitter box-logo"></i><iframe scrolling="no" src="https://livecounts.io/embed/twitter-live-follower-counter/briandivacox"></iframe></div>
+        
+        <div class="counter-item"><i class="fa-brands fa-twitch box-logo" style="color:#9146FF"></i><iframe scrolling="no" src="https://livecounts.io/embed/twitch-live-follower-counter/briandivacox"></iframe></div>
+        
+        <div class="counter-item"><i class="fa-brands fa-youtube box-logo" style="color:#FF0000"></i><iframe scrolling="no" src="https://livecounts.io/embed/youtube-live-subscriber-counter/UCMuv7PfbLVm8IZsd6Bgqqzg"></iframe></div>
+        
+        <div class="counter-item"><i class="fa-brands fa-tiktok box-logo" style="color:#00f2ea"></i><iframe scrolling="no" src="https://livecounts.io/embed/tiktok-live-follower-counter/briandivacox"></iframe></div>
+        
+        <div class="counter-item instagram-fix"><i class="fa-brands fa-instagram box-logo" style="color:#E1306C"></i><iframe scrolling="no" src="https://livecounts.nl/instagram-realtime/embed/?u=briandivacox"></iframe></div>
 
         <div class="counter-item" style="background: linear-gradient(145deg, #1c2128, #161b22);">
             <i class="fa-solid fa-gavel box-logo" style="color: #d29922;"></i>
-            <div style="padding: 20px;"><h4 style="margin: 0; color: #c9d1d9;">Court Stream</h4><p style="font-size: 13px; color: #8b949e; margin-top: 5px;">Judge David</p></div>
+            <div style="padding: 20px;">
+                <h4 style="margin: 0; color: #c9d1d9;">Court Stream</h4>
+                <p style="font-size: 13px; color: #8b949e; margin-top: 5px;">Judge David</p>
+            </div>
             <iframe id="court-player" src="https://video.ibm.com/embed/23891775" style="display:none;"></iframe>
-            <div class="status-container"><span id="live-dot" class="dot"></span><span id="status-label" class="status-text">OFF AIR</span></div>
+            <div class="status-container">
+                <span id="live-dot" class="dot"></span>
+                <span id="status-label" class="status-text">OFF AIR</span>
+            </div>
         </div>
 
         <div class="counter-item" style="border-color: #238636;">
@@ -112,7 +123,7 @@
                     <div class="movie-label">Now Playing</div>
                     <div id="cell-L4" class="movie-title">Syncing...</div>
                     <div id="cell-J5" class="movie-meta">--:--</div>
-                    <div id="cell-J4K4" class="movie-stats" onclick="updateCinemaTracker()">Click to retry</div>
+                    <div id="cell-J4K4" class="movie-stats">Movies/TV: -</div>
                 </div>
                 <div class="movie-col" style="border-left: 1px solid #30363d; padding-left: 10px;">
                     <div class="movie-label" style="color: #d29922;">Up Next</div>
@@ -124,70 +135,4 @@
 
         <div class="counter-item"><div style="padding:20px; color:#484f58;">[Box 8]</div></div>
         <div class="counter-item"><div style="padding:20px; color:#484f58;">[Box 9]</div></div>
-        <div class="counter-item"><div style="padding:20px; color:#484f58;">[Box 10]</div></div>
-        <div class="counter-item"><div style="padding:20px; color:#484f58;">[Box 11]</div></div>
-        <div class="counter-item"><div style="padding:20px; color:#484f58;">[Box 12]</div></div>
-    </div>
-
-    <script>
-        // 1. COURT API
-        const viewer = UstreamEmbed('court-player');
-        viewer.addListener('live', (isLive) => {
-            const dot = document.getElementById('live-dot');
-            const label = document.getElementById('status-label');
-            if (isLive === true || isLive === 'live') {
-                dot.classList.add('live'); label.innerText = "LIVE NOW"; label.style.color = "#ff0000";
-            } else {
-                dot.classList.remove('live'); label.innerText = "OFF AIR"; label.style.color = "#8b949e";
-            }
-        });
-
-        // 2. DOUBLE-PROXY CINEMA SYNC
-        async function updateCinemaTracker() {
-            const spreadsheetId = '1vTDBg7MHhfjy_RnLnminYsNDndA3c5x7sxTIwyEZtfx5TQ9Km8q7HiC0mk5nAbj1Oz6ePLZf68N1V42';
-            const gid = '428404608';
-            const csvUrl = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?tqx=out:csv&gid=${gid}&t=${Date.now()}`;
-            
-            const proxies = [
-                `https://api.allorigins.win/get?url=${encodeURIComponent(csvUrl)}`,
-                `https://corsproxy.io/?${encodeURIComponent(csvUrl)}`
-            ];
-
-            for (let proxy of proxies) {
-                try {
-                    const response = await fetch(proxy);
-                    if (!response.ok) continue;
-                    
-                    let text;
-                    if (proxy.includes('allorigins')) {
-                        const json = await response.json();
-                        text = json.contents;
-                    } else {
-                        text = await response.text();
-                    }
-
-                    if (!text || text.includes('<!DOCTYPE html>')) continue;
-
-                    const rows = text.split('\n').map(row => {
-                        return row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(cell => cell.replace(/^"(.*)"$/, '$1').trim());
-                    });
-
-                    const r4 = rows[3]; const r5 = rows[4];
-                    if (r4 && r5) {
-                        document.getElementById('cell-L4').innerText = r4[11] || "None";
-                        document.getElementById('cell-J4K4').innerText = `Movies/TV: ${r4[9]} | Open: ${r4[10]}`;
-                        document.getElementById('cell-J5').innerText = `Time Left: ${r5[9]}`;
-                        document.getElementById('cell-K5').innerText = r5[10] || "--";
-                        document.getElementById('cell-L5').innerText = r5[11] || "--";
-                        return; // Exit if successful
-                    }
-                } catch (e) { console.error("Proxy failed, trying next..."); }
-            }
-            document.getElementById('cell-L4').innerText = "CORS Blocked";
-        }
-
-        setInterval(updateCinemaTracker, 60000);
-        updateCinemaTracker();
-    </script>
-</body>
-</html>
+        <div class="counter-item"><div style="padding:20px; color:#484f58;">[Box
