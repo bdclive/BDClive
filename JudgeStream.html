@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Court Box Standalone v7.8.2</title>
+    <title>Court Box Standalone v7.8.3</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         :root { --bg: #0d1117; --card: #161b22; --text: #ffffff; --orange: #ffb515; }
@@ -16,7 +16,7 @@
         .dot { height: 12px; width: 12px; background: #484f58; border-radius: 50%; display: inline-block; }
         .dot.live { background: #ff0000; box-shadow: 0 0 10px #ff0000; animation: blink 1s infinite; }
         @keyframes blink { 50% { opacity: 0.3; } }
-        #sync-time { position: absolute; bottom: 8px; right: 12px; font-size: 9px; color: #30363d; }
+        #sync-time { position: absolute; bottom: 8px; right: 12px; font-size: 9px; color: #8b949e; }
     </style>
 </head>
 <body>
@@ -26,16 +26,20 @@
         <h4 style="font-size: 26px; margin: 5px 0;">Court Stream</h4>
         <div style="display: flex; align-items: center; gap: 10px; margin-top: 5px;">
             <span id="court-dot" class="dot"></span>
-            <span id="court-text" style="font-size: 14px; font-weight: bold; color: #8b949e;">OFF AIR</span>
+            <span id="court-text" style="font-size: 14px; font-weight: bold; color: #8b949e;">CHECKING...</span>
         </div>
-        <div id="sync-time">v7.8.2</div>
+        <div id="sync-time">v7.8.3</div>
     </div>
 
     <script>
         async function check() {
-            const api = 'YOUR_NEW_DEPLOYED_URL_HERE'; // <--- PASTE NEW URL HERE
+            // BE SURE TO REPLACE THIS URL
+            const api = 'https://script.google.com/macros/s/AKfycbxvKbJqw6_JoYtWlKwV1t5Kav2w4HBRrtxsZUU-PzkAPxd7kd_tWuj165mLhkwLfhE/exec';
+            
             try {
                 const res = await fetch(api + '?t=' + Date.now());
+                if (!res.ok) throw new Error('Network response was not ok');
+                
                 const data = await res.json();
                 const dot = document.getElementById('court-dot');
                 const txt = document.getElementById('court-text');
@@ -51,7 +55,11 @@
                     box.style.borderColor = "#30363d";
                 }
                 document.getElementById('sync-time').innerText = "Last Sync: " + new Date().toLocaleTimeString();
-            } catch (e) { document.getElementById('sync-time').innerText = "Sync Error"; }
+            } catch (e) { 
+                document.getElementById('court-text').innerText = "SYNC ERROR";
+                document.getElementById('court-text').style.color = "yellow";
+                console.error("Dashboard Error:", e);
+            }
         }
         setInterval(check, 30000);
         check();
