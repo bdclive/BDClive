@@ -3,29 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Court System v7.7.6</title>
+    <title>Court System v7.7.7</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         :root {
             --bg-color: #0d1117; --card-bg: #161b22; --border-inactive: #30363d;
             --text-bright: #ffffff; --plex-orange: #ffb515; --debug-yellow: #eaff00;
         }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: var(--text-bright); display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: var(--text-bright); display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
+        
+        /* The main visible box */
         .counter-item { 
             background: var(--card-bg); border: 2px solid var(--border-inactive); border-radius: 12px; 
-            width: 320px; height: 160px; position: relative; overflow: hidden;
+            width: 320px; height: 160px; position: relative; z-index: 10;
             display: flex; flex-direction: column; justify-content: center; padding-left: 25px;
+            transition: all 0.3s ease;
         }
+
         .box-logo { position: absolute; top: 15px; right: 20px; font-size: 24px; color: var(--plex-orange); }
         .system-title { font-size: 26px; font-weight: 800; margin: 5px 0; letter-spacing: -1px; }
+        
         .status-container { display: flex; align-items: center; gap: 10px; margin-top: 8px; background: rgba(0,0,0,0.4); width: fit-content; padding: 6px 15px; border-radius: 20px; }
         .dot { height: 12px; width: 12px; background-color: #484f58; border-radius: 50%; }
         .dot.live { background-color: #ff0000; box-shadow: 0 0 15px #ff0000; animation: blink 1s infinite; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
         .status-text { font-size: 14px; font-weight: 900; color: #8b949e; text-transform: uppercase; }
-        #debug-msg { position: absolute; bottom: 28px; left: 25px; font-size: 10px; color: var(--debug-yellow); font-family: monospace; }
-        /* Player is 1x1 pixel and nearly invisible but NOT 'display:none' */
-        #court-bridge { position: absolute; bottom: 0; right: 0; width: 1px; height: 1px; opacity: 0.01; }
+        
+        #debug-msg { position: absolute; bottom: 28px; left: 25px; font-size: 10px; color: var(--debug-yellow); font-family: monospace; font-weight: bold; }
+        
+        /* Larger bridge hidden behind the box to prevent browser 'sleep' mode */
+        #court-bridge { 
+            position: absolute; top: 0; left: 0; width: 320px; height: 160px; 
+            z-index: 1; opacity: 0.01; border: none; 
+        }
     </style>
 </head>
 <body>
@@ -40,53 +50,69 @@
             <span id="court-dot" class="dot"></span>
             <span id="court-text" class="status-text">OFF AIR</span>
         </div>
-        <div id="debug-msg">WAITING FOR HEARTBEAT...</div>
-        
-        <iframe id="court-bridge" src="https://video.ibm.com/embed/23891775?autoplay=true&volume=0&api=1" allow="autoplay"></iframe>
+        <div id="debug-msg">INITIALIZING...</div>
     </div>
+
+    <iframe id="court-bridge" src="https://video.ibm.com/embed/23891775?autoplay=true&volume=0&api=1&mute=1" allow="autoplay"></iframe>
 
     <script>
         const dot = document.getElementById('court-dot');
         const text = document.getElementById('court-text');
         const box = document.getElementById('court-box');
         const debug = document.getElementById('debug-msg');
+        const iframe = document.getElementById('court-bridge');
+
+        function updateUI(isLive) {
+            if (isLive) {
+                dot.classList.add('live');
+                text.innerText = "LIVE NOW";
+                text.style.color = "#ff3333";
+                box.style.borderColor = "#ff3333";
+                debug.innerText = "BRIDGE: ONLINE";
+            } else {
+                dot.classList.remove('live');
+                text.innerText = "OFF AIR";
+                text.style.color = "#8b949e";
+                box.style.borderColor = "#30363d";
+                debug.innerText = "BRIDGE: OFFLINE";
+            }
+        }
 
         window.addEventListener('message', function(event) {
-            // Log incoming events for debugging
             try {
                 const data = JSON.parse(event.data);
                 
-                // If the player starts 'playing', he is live.
-                // If it's 'offline' or 'stopped', he's off.
-                if (data.event === 'live' || data.event === 'playing' || data.event === 'offline') {
-                    const isLive = (data.event === 'playing' || data.args[0] === true || data.args[0] === 'live');
-                    
-                    if (isLive) {
-                        dot.classList.add('live');
-                        text.innerText = "LIVE NOW";
-                        text.style.color = "#ff3333";
-                        box.style.borderColor = "#ff3333";
-                        debug.innerText = "HEARTBEAT: ACTIVE";
-                    } else {
-                        dot.classList.remove('live');
-                        text.innerText = "OFF AIR";
-                        text.style.color = "#8b949e";
-                        box.style.borderColor = "#30363d";
-                        debug.innerText = "HEARTBEAT: SILENT";
-                    }
+                // Catch standard IBM "live" event
+                if (data.event === 'live') {
+                    updateUI(data.args[0] === true || data.args[0] === 'live');
+                }
+                
+                // Catch manual property check response
+                if (data.property === 'live') {
+                    updateUI(data.value === true || data.value === 'live');
                 }
             } catch (e) {}
         });
 
-        // Force a check by trying to "play" the muted stream
-        function pokePlayer() {
-            const frame = document.getElementById('court-bridge');
-            if (frame.contentWindow) {
-                frame.contentWindow.postMessage(JSON.stringify({cmd: 'play'}), '*');
+        // The "Handshake" - Keeps the connection awake
+        function poke() {
+            if (iframe.contentWindow) {
+                debug.innerText = "POKING SERVER...";
+                iframe.contentWindow.postMessage(JSON.stringify({
+                    "event": "command",
+                    "func": "getProperty",
+                    "args": ["live"]
+                }), '*');
             }
         }
 
-        setInterval(pokePlayer, 30000);
+        // Run every 10 seconds
+        setInterval(poke, 10000);
+        
+        iframe.onload = () => {
+            debug.innerText = "BRIDGE READY";
+            poke();
+        };
     </script>
 </body>
 </html>
