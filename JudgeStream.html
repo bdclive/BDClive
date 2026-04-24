@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Court Stream v7.9.0</title>
+    <title>Court Stream v7.9.1</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         :root { --bg: #0d1117; --card: #161b22; --border: #30363d; --text: #ffffff; --orange: #ffb515; }
@@ -17,13 +17,14 @@
         .dot { height: 12px; width: 12px; background: #484f58; border-radius: 50%; display: inline-block; transition: 0.3s; }
         .dot.live { background: #ff0000; box-shadow: 0 0 10px #ff0000; animation: blink 1s infinite; }
         @keyframes blink { 50% { opacity: 0.3; } }
-        #ibm-bridge { position: absolute; bottom: 0; right: 0; width: 100px; height: 100px; opacity: 0.001; pointer-events: none; }
+        /* IBM Bridge */
+        #ibm-bridge { position: absolute; bottom: 0; right: 0; width: 10px; height: 10px; opacity: 0.001; pointer-events: none; }
     </style>
 </head>
 <body>
 
     <div class="counter-item" id="court-box">
-        <div class="version-tag">v7.9.0</div>
+        <div class="version-tag">v7.9.1</div>
         <i class="fa-solid fa-gavel box-logo"></i>
         <p style="font-size:11px; color:var(--orange); font-weight:bold; margin:0;">JUDGE DAVID</p>
         <h4 style="font-size:26px; margin:5px 0;">Court Stream</h4>
@@ -40,7 +41,10 @@
         const box = document.getElementById('court-box');
         const bridge = document.getElementById('ibm-bridge');
 
+        let isDetected = false;
+
         function updateUI(isLive) {
+            isDetected = true;
             if (isLive) {
                 dot.className = 'dot live';
                 txt.innerText = "LIVE NOW"; txt.style.color = "#ff3333";
@@ -52,33 +56,35 @@
             }
         }
 
-        // Channel 1: The IBM Iframe Listener
+        // Channel 1: Listen for IBM's 'playing' heartbeats
         window.addEventListener('message', (e) => {
             try {
                 const d = JSON.parse(e.data);
-                if (d.event === 'playing' || d.event === 'live' || d.property === 'live' && d.value === true) updateUI(true);
-                if (d.event === 'offline') updateUI(false);
+                if (d.event === 'playing' || d.event === 'live' || (d.property === 'live' && d.value === true)) {
+                    updateUI(true);
+                }
             } catch(err) {}
         });
 
-        // Channel 2: The Google Script Pulse
+        // Channel 2: Google Script Pulse
         async function pulseCheck() {
             try {
                 const r = await fetch('https://script.google.com/macros/s/AKfycbxvKbJqw6_JoYtWlKwV1t5Kav2w4HBRrtxsZUU-PzkAPxd7kd_tWuj165mLhkwLfhE/exec?t=' + Date.now());
                 const d = await r.json();
-                if (d.judgeLive) updateUI(true);
-            } catch(e) { console.log("Pulse Failed"); }
-        }
-
-        // Channel 3: Force the Iframe to answer
-        function poke() {
-            if (bridge.contentWindow) {
-                bridge.contentWindow.postMessage(JSON.stringify({cmd: 'getProperty', args: ['live']}), '*');
+                if (d.judgeLive) {
+                    updateUI(true);
+                } else if (!isDetected) {
+                    updateUI(false);
+                }
+            } catch(e) {
+                if (!isDetected) updateUI(false);
             }
         }
 
-        setInterval(pulseCheck, 20000); // Check Google every 20s
-        setInterval(poke, 10000);       // Poke IBM every 10s
+        // Fail-safe: If nothing is detected in 5 seconds, show Off Air
+        setTimeout(() => { if (!isDetected) updateUI(false); }, 5000);
+
+        setInterval(pulseCheck, 20000);
         pulseCheck();
     </script>
 </body>
