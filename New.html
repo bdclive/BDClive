@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Command Center v7.4.5</title>
+    <title>Live Command Center v7.4.6</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://video.ibm.com/embed-api/v1/ustream-embedapi.min.js"></script>
 
@@ -50,7 +50,7 @@
                     <div class="movie-label">Now Playing</div>
                     <div id="cell-now" class="movie-title">Syncing...</div>
                     <div id="cell-left" class="movie-meta">--:--</div>
-                    <div id="cell-stats" class="movie-stats">Loading...</div>
+                    <div id="cell-stats" class="movie-stats">v7.4.6 Active</div>
                 </div>
                 <div class="movie-col" style="border-left: 1px solid #30363d; padding-left: 10px;">
                     <div class="movie-label" style="color: #d29922;">Up Next</div>
@@ -80,19 +80,27 @@
         });
 
         async function updateMovieTracker() {
-            const url = 'https://script.google.com/macros/s/AKfycbxvKbJqw6_JoYtWlKwV1t5Kav2w4HBRrtxsZUU-PzkAPxd7kd_tWuj165mLhkwLfhE/exec';
+            // Added ?t= variable to the URL to bypass browser cache
+            const url = 'https://script.google.com/macros/s/AKfycbxvKbJqw6_JoYtWlKwV1t5Kav2w4HBRrtxsZUU-PzkAPxd7kd_tWuj165mLhkwLfhE/exec?t=' + Date.now();
+            
             try {
                 const res = await fetch(url);
                 const data = await res.json();
+                
                 document.getElementById('cell-now').innerText = data.nowPlaying || "None";
-                document.getElementById('cell-left').innerText = "Left: " + data.timeLeft;
-                document.getElementById('cell-stats').innerText = "Movies: " + data.moviesTv + " | Day: " + data.daysOpen;
+                document.getElementById('cell-left').innerText = "Left: " + (data.timeLeft || "--");
+                document.getElementById('cell-stats').innerText = "Movies: " + (data.moviesTv || "-") + " | Day: " + (data.daysOpen || "-");
                 document.getElementById('cell-next').innerText = data.nextTitle || "--";
                 document.getElementById('cell-time').innerText = data.nextTime || "--";
-            } catch (e) { document.getElementById('cell-now').innerText = "Sync Error"; }
+            } catch (e) { 
+                console.error("Sync error:", e);
+                document.getElementById('cell-now').innerText = "Sync Error"; 
+            }
         }
-        setInterval(updateMovieTracker, 60000);
+        
+        // Initial run + 60s interval
         updateMovieTracker();
+        setInterval(updateMovieTracker, 60000);
     </script>
 </body>
 </html>
