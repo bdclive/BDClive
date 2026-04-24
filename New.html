@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Command Center v7.3.8</title>
+    <title>Live Command Center v7.3.9</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
     <script src="https://video.ibm.com/embed-api/v1/ustream-embedapi.min.js"></script>
 
     <style>
@@ -49,7 +50,7 @@
             pointer-events: none;
         }
 
-        /* DOT STATUS */
+        /* STATUS DOT */
         .status-container {
             display: flex;
             align-items: center;
@@ -130,7 +131,7 @@
     </div>
 
     <script>
-        // 1. COURT API
+        // 1. IBM PLAYER (COURT ALERT)
         const viewer = UstreamEmbed('court-player');
         viewer.addListener('live', (isLive) => {
             const dot = document.getElementById('live-dot');
@@ -142,35 +143,36 @@
             }
         });
 
-        // 2. CINEMA SYNC (GitHub Pages Compatible)
+        // 2. CINEMA SYNC (GIHUB PAGES + GVIZ + PROXY)
         async function updateCinemaTracker() {
-            const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTDBg7MHhfjy_RnLnminYsNDndA3c5x7sxTIwyEZtfx5TQ9Km8q7HiC0mk5nAbj1Oz6ePLZf68N1V42/pub?output=csv&t=' + new Date().getTime(); 
+            const spreadsheetId = '1vTDBg7MHhfjy_RnLnminYsNDndA3c5x7sxTIwyEZtfx5TQ9Km8q7HiC0mk5nAbj1Oz6ePLZf68N1V42';
+            const gid = '428404608';
+            const csvUrl = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?tqx=out:csv&gid=${gid}`;
             const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(csvUrl)}`;
 
             try {
                 const response = await fetch(proxyUrl);
                 const text = await response.text();
                 
-                // Parse CSV rows
+                // Detailed CSV parsing for GitHub compatibility
                 const rows = text.split('\n').map(row => {
-                    // This handles commas inside quotes if your titles have them
-                    return row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                    return row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(cell => cell.replace(/^"(.*)"$/, '$1').trim());
                 });
 
-                // Row 4 (index 3) | J=9, K=10, L=11
+                // Row 4 = index 3 | J=9, K=10, L=11
                 const r4 = rows[3]; 
                 const r5 = rows[4];
 
                 if (r4 && r5) {
-                    document.getElementById('cell-L4').innerText = r4[11].replace(/"/g, "") || "None";
+                    document.getElementById('cell-L4').innerText = r4[11] || "None";
                     document.getElementById('cell-J4K4').innerText = `Movies/TV: ${r4[9]} | Open: ${r4[10]}`;
                     document.getElementById('cell-J5').innerText = `Time Left: ${r5[9]}`;
-                    document.getElementById('cell-K5').innerText = r5[10].replace(/"/g, "") || "--";
-                    document.getElementById('cell-L5').innerText = r5[11].replace(/"/g, "") || "--";
+                    document.getElementById('cell-K5').innerText = r5[10] || "--";
+                    document.getElementById('cell-L5').innerText = r5[11] || "--";
                 }
             } catch (e) {
                 console.error("Sync error:", e);
-                document.getElementById('cell-L4').innerText = "Sync Error";
+                document.getElementById('cell-L4').innerText = "Link Blocked";
             }
         }
 
