@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Court System v7.6.9</title>
+    <title>Court System v7.7.0</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         :root {
@@ -25,6 +25,7 @@
         .dot.live { background-color: #ff0000; box-shadow: 0 0 12px #ff0000; animation: blink 1.5s infinite; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
         .status-text { font-size: 12px; font-weight: bold; color: var(--text-dim); text-transform: uppercase; }
+        #debug-msg { position: absolute; bottom: 25px; left: 25px; font-size: 8px; color: #30363d; font-family: monospace; }
         #court-iframe { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
         .version { position: absolute; bottom: 8px; right: 12px; font-size: 9px; color: #30363d; font-weight: bold; }
     </style>
@@ -41,61 +42,57 @@
             <span id="court-dot" class="dot"></span>
             <span id="court-text" class="status-text">OFF AIR</span>
         </div>
-        <iframe id="court-iframe" src="https://video.ibm.com/embed/23891775?autoplay=true&volume=0&api=1&showtitle=false" allow="autoplay"></iframe>
-        <div class="version">v7.6.9</div>
+        <div id="debug-msg">Waiting for Signal...</div>
+        <iframe id="court-iframe" src="https://video.ibm.com/embed/23891775?autoplay=true&volume=0&api=1" allow="autoplay"></iframe>
+        <div class="version">v7.7.0</div>
     </div>
 
     <script>
         const box = document.getElementById('court-box');
         const dot = document.getElementById('court-dot');
         const text = document.getElementById('court-text');
+        const debug = document.getElementById('debug-msg');
         const iframe = document.getElementById('court-iframe');
 
-        function updateUI(isLive) {
+        function updateStatus(isLive) {
             if (isLive) {
                 dot.classList.add('live');
                 text.innerText = "LIVE NOW";
                 text.style.color = "#ff0000";
                 box.style.borderColor = "#ff0000";
-                box.style.boxShadow = "inset 0 0 20px rgba(255, 0, 0, 0.2)";
             } else {
                 dot.classList.remove('live');
                 text.innerText = "OFF AIR";
                 text.style.color = "var(--text-dim)";
                 box.style.borderColor = "var(--border-color)";
-                box.style.boxShadow = "none";
             }
         }
 
         window.addEventListener('message', function(event) {
-            // Only listen to IBM messages
-            if (!event.origin.includes('video.ibm.com') && !event.origin.includes('ustream.tv')) return;
-
             try {
                 const data = JSON.parse(event.data);
-                
-                // Catching "live" event or "getProperty:live" response
-                if (data.event === 'live' || (data.cmd === 'getProperty' && data.args && data.args[0] === 'live')) {
-                    const status = (data.event === 'live') ? data.args[0] : data.result;
-                    updateUI(status === true || status === 'live');
+                debug.innerText = "Signal Recv: " + (data.event || data.cmd || "Property");
+
+                // Check for every possible way IBM reports 'live'
+                if (data.event === 'live') {
+                    updateStatus(data.args[0] === true || data.args[0] === 'live');
+                } else if (data.property === 'live' || (data.args && data.args[0] === 'live')) {
+                    updateStatus(data.value === true || data.result === true || data.value === 'live');
                 }
             } catch (e) {}
         });
 
-        // The "Handshake": Ask IBM for status every 10 seconds
-        setInterval(() => {
+        // The "Handshake"
+        function pingIBM() {
             if (iframe.contentWindow) {
-                iframe.contentWindow.postMessage(JSON.stringify({
-                    cmd: 'getProperty',
-                    args: ['live']
-                }), '*');
+                // Sending both common command formats
+                iframe.contentWindow.postMessage(JSON.stringify({cmd: 'getProperty', args: ['live']}), '*');
+                iframe.contentWindow.postMessage(JSON.stringify({call: 'getProperty', args: ['live']}), '*');
             }
-        }, 10000);
+        }
 
-        // Run immediately when iframe loads
-        iframe.onload = () => {
-            iframe.contentWindow.postMessage(JSON.stringify({cmd: 'getProperty', args: ['live']}), '*');
-        };
+        setInterval(pingIBM, 10000);
+        iframe.onload = pingIBM;
     </script>
 </body>
 </html>
