@@ -3,17 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Court System v7.7.1</title>
+    <title>Court System v7.7.2</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         :root {
             --bg-color: #0d1117; 
             --card-bg: #161b22; 
+            --border-active: #ff3333;
             --border-inactive: #30363d;
-            --text-bright: #ffffff; /* Pure white for readability */
-            --text-dim: #c9d1d9;    /* Light grey instead of dark grey */
-            --plex-orange: #ffb515; /* Brightened orange */
-            --status-off: #8b949e;
+            --text-bright: #ffffff;
+            --plex-orange: #ffb515;
             --debug-yellow: #eaff00;
         }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: var(--text-bright); display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
@@ -22,28 +21,22 @@
             background: var(--card-bg); border: 2px solid var(--border-inactive); border-radius: 12px; 
             width: 320px; height: 160px; position: relative; overflow: hidden;
             display: flex; flex-direction: column; justify-content: center; padding-left: 25px;
-            transition: all 0.3s ease;
+            transition: all 0.5s ease;
         }
 
         .box-logo { position: absolute; top: 15px; right: 20px; font-size: 24px; color: var(--plex-orange); }
-
         .court-name { font-size: 12px; color: var(--plex-orange); text-transform: uppercase; font-weight: bold; margin: 0; letter-spacing: 1.5px; }
-        .system-title { font-size: 26px; font-weight: 800; margin: 5px 0; letter-spacing: -1px; color: var(--text-bright); }
+        .system-title { font-size: 26px; font-weight: 800; margin: 5px 0; letter-spacing: -1px; }
 
-        .status-container { display: flex; align-items: center; gap: 10px; margin-top: 8px; background: rgba(0,0,0,0.3); width: fit-content; padding: 5px 12px; border-radius: 20px; }
-        .dot { height: 12px; width: 12px; background-color: var(--status-off); border-radius: 50%; border: 1px solid rgba(255,255,255,0.2); }
+        .status-container { display: flex; align-items: center; gap: 10px; margin-top: 8px; background: rgba(0,0,0,0.4); width: fit-content; padding: 6px 15px; border-radius: 20px; }
+        .dot { height: 12px; width: 12px; background-color: #484f58; border-radius: 50%; }
         
-        /* High-Vis Live State */
         .dot.live { background-color: #ff0000; box-shadow: 0 0 15px #ff0000; animation: blink 1s infinite; }
-        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.2; } 100% { opacity: 1; } }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
         
-        .status-text { font-size: 14px; font-weight: 900; color: var(--text-dim); text-transform: uppercase; }
-
-        /* Debug text - High Visibility */
-        #debug-msg { position: absolute; bottom: 28px; left: 25px; font-size: 10px; color: var(--debug-yellow); font-family: 'Courier New', monospace; font-weight: bold; }
-        
-        #court-iframe { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
-        .version { position: absolute; bottom: 8px; right: 12px; font-size: 10px; color: #484f58; font-weight: bold; }
+        .status-text { font-size: 14px; font-weight: 900; color: #8b949e; text-transform: uppercase; }
+        #debug-msg { position: absolute; bottom: 28px; left: 25px; font-size: 10px; color: var(--debug-yellow); font-family: monospace; font-weight: bold; }
+        .version { position: absolute; bottom: 8px; right: 12px; font-size: 10px; color: #30363d; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -58,9 +51,8 @@
             <span id="court-dot" class="dot"></span>
             <span id="court-text" class="status-text">OFF AIR</span>
         </div>
-        <div id="debug-msg">SCANNING...</div>
-        <iframe id="court-iframe" src="https://video.ibm.com/embed/23891775?autoplay=true&volume=0&api=1" allow="autoplay"></iframe>
-        <div class="version">v7.7.1</div>
+        <div id="debug-msg">INITIALIZING...</div>
+        <div class="version">v7.7.2</div>
     </div>
 
     <script>
@@ -68,17 +60,45 @@
         const dot = document.getElementById('court-dot');
         const text = document.getElementById('court-text');
         const debug = document.getElementById('debug-msg');
-        const iframe = document.getElementById('court-iframe');
 
-        function updateStatus(isLive) {
-            if (isLive) {
-                dot.classList.add('live');
-                text.innerText = "LIVE NOW";
-                text.style.color = "#ff3333"; // Vibrant Red
-                box.style.borderColor = "#ff3333";
-                box.style.background = "#1a0505"; // Dark red tint
-            } else {
-                dot.classList.remove('live');
-                text.innerText = "OFF AIR";
-                text.style.color = "#c9d1d9"; 
-                box.style.borderColor = "#303
+        async function checkJudgeStatus() {
+            // Channel ID for Judge David
+            const channelID = "23891775";
+            // We use a CORS proxy to peek at the IBM status page
+            const url = `https://api.allorigins.win/get?url=${encodeURIComponent('https://video.ibm.com/channel/' + channelID)}`;
+
+            try {
+                debug.innerText = "POLLING IBM...";
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                // We look for the "isLive" indicator in the page source
+                const isLive = data.contents.includes('"isLive":true') || data.contents.includes('ustream:is_live" content="true"');
+
+                if (isLive) {
+                    dot.classList.add('live');
+                    text.innerText = "LIVE NOW";
+                    text.style.color = "#ff3333";
+                    box.style.borderColor = "var(--border-active)";
+                    box.style.background = "#1a0505";
+                    debug.innerText = "STATUS: ONLINE";
+                } else {
+                    dot.classList.remove('live');
+                    text.innerText = "OFF AIR";
+                    text.style.color = "#8b949e";
+                    box.style.borderColor = "var(--border-inactive)";
+                    box.style.background = "#161b22";
+                    debug.innerText = "STATUS: OFFLINE";
+                }
+            } catch (e) {
+                debug.innerText = "CONNECTION ERROR";
+                console.error(e);
+            }
+        }
+
+        // Check every 30 seconds
+        setInterval(checkJudgeStatus, 30000);
+        checkJudgeStatus();
+    </script>
+</body>
+</html>
