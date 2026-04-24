@@ -3,42 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Command Center v7.5.2</title>
+    <title>Live Command Center v7.5.3</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script data-cfasync="false" src="https://video.ibm.com/embed-api/v1/ustream-embedapi.min.js"></script>
 
     <style>
         body { font-family: 'Segoe UI', sans-serif; background-color: #0d1117; display: flex; flex-direction: column; align-items: center; padding: 50px 20px; margin: 0; color: white; }
         .counter-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; max-width: 1400px; width: 100%; justify-items: center; }
-        .counter-item { background: #161b22; border-radius: 12px; width: 320px; height: 160px; overflow: hidden; border: 1px solid #30363d; position: relative; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-        .box-logo { position: absolute !important; top: 12px !important; right: 12px !important; font-size: 20px; z-index: 100; opacity: 0.8; }
-        .status-container { display: flex; align-items: center; gap: 10px; position: absolute; bottom: 15px; left: 15px; background: rgba(0,0,0,0.4); padding: 5px 12px; border-radius: 20px; border: 1px solid #30363d; }
-        .dot { height: 10px; width: 10px; background-color: #484f58; border-radius: 50%; display: inline-block; }
-        .dot.live { background-color: #ff0000; box-shadow: 0 0 10px #ff0000; animation: blink 1.5s infinite; }
-        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
-        .status-text { font-size: 11px; font-weight: bold; text-transform: uppercase; color: #8b949e; }
-        .counter-item iframe { filter: invert(1) hue-rotate(180deg); border: 0; width: 500px; height: 250px; position: absolute; top: 5px; left: -88px; transform: scale(1.1); transform-origin: top left; pointer-events: none; }
-        .instagram-fix iframe { width: 500px; height: 400px; top: 35px; left: -80px; transform: scale(1.0); }
-        .movie-info { padding: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; height: 100%; }
-        .movie-col { display: flex; flex-direction: column; }
-        .movie-label { font-size: 10px; color: #2ea043; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; }
-        .movie-title { font-size: 13px; font-weight: bold; margin-top: 4px; color: #ffffff; line-height: 1.2; height: 32px; overflow: hidden; }
-        .movie-meta { font-size: 11px; color: #8b949e; margin-top: 4px; }
-        .movie-stats { font-size: 10px; color: #d29922; margin-top: auto; border-top: 1px solid #30363d; padding-top: 5px; }
+        .counter-item { background: #161b22; border-radius: 12px; width: 320px; height: 160px; border: 1px solid #30363d; position: relative; overflow: hidden; }
+        .box-logo { position: absolute; top: 12px; right: 12px; font-size: 18px; opacity: 0.6; z-index: 10; }
+        .status-container { display: flex; align-items: center; gap: 8px; position: absolute; bottom: 12px; left: 12px; background: rgba(0,0,0,0.5); padding: 4px 10px; border-radius: 20px; border: 1px solid #30363d; }
+        .dot { height: 8px; width: 8px; background-color: #484f58; border-radius: 50%; }
+        .dot.live { background-color: #ff0000; box-shadow: 0 0 8px #ff0000; animation: blink 1.5s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        .status-text { font-size: 10px; font-weight: bold; color: #8b949e; }
+        iframe { filter: invert(1) hue-rotate(180deg); border: 0; width: 500px; height: 250px; position: absolute; top: 5px; left: -88px; transform: scale(1.1); transform-origin: top left; pointer-events: none; }
+        .movie-info { padding: 12px; display: grid; grid-template-columns: 1.2fr 1fr; gap: 8px; height: 100%; }
+        .movie-col { display: flex; flex-direction: column; justify-content: space-between; }
+        .movie-label { font-size: 9px; color: #2ea043; text-transform: uppercase; font-weight: bold; letter-spacing: 0.5px; }
+        .movie-title { font-size: 13px; font-weight: bold; color: #ffffff; line-height: 1.2; margin-top: 2px; }
+        .movie-meta { font-size: 10px; color: #8b949e; margin-top: 2px; }
+        .movie-stats { font-size: 9px; color: #d29922; border-top: 1px solid #30363d; padding-top: 4px; margin-top: 4px; }
     </style>
 </head>
 <body>
 
     <div class="counter-grid">
         <div class="counter-item"><i class="fa-brands fa-x-twitter box-logo"></i><iframe src="https://livecounts.io/embed/twitter-live-follower-counter/briandivacox"></iframe></div>
-        <div class="counter-item"><i class="fa-brands fa-twitch box-logo" style="color:#9146FF"></i><iframe src="https://livecounts.io/embed/twitch-live-follower-counter/briandivacox"></iframe></div>
-        <div class="counter-item"><i class="fa-brands fa-youtube box-logo" style="color:#FF0000"></i><iframe src="https://livecounts.io/embed/youtube-live-subscriber-counter/UCMuv7PfbLVm8IZsd6Bgqqzg"></iframe></div>
-        <div class="counter-item"><i class="fa-brands fa-tiktok box-logo" style="color:#00f2ea"></i><iframe src="https://livecounts.io/embed/tiktok-live-follower-counter/briandivacox"></iframe></div>
-        <div class="counter-item instagram-fix"><i class="fa-brands fa-instagram box-logo" style="color:#E1306C"></i><iframe src="https://livecounts.nl/instagram-realtime/embed/?u=briandivacox"></iframe></div>
+        <div class="counter-item"><i class="fa-brands fa-twitch box-logo"></i><iframe src="https://livecounts.io/embed/twitch-live-follower-counter/briandivacox"></iframe></div>
+        <div class="counter-item"><i class="fa-brands fa-youtube box-logo"></i><iframe src="https://livecounts.io/embed/youtube-live-subscriber-counter/UCMuv7PfbLVm8IZsd6Bgqqzg"></iframe></div>
+        <div class="counter-item"><i class="fa-brands fa-tiktok box-logo"></i><iframe src="https://livecounts.io/embed/tiktok-live-follower-counter/briandivacox"></iframe></div>
+        <div class="counter-item" style="height: 160px;"><i class="fa-brands fa-instagram box-logo"></i><iframe src="https://livecounts.nl/instagram-realtime/embed/?u=briandivacox" style="top: 30px;"></iframe></div>
 
         <div class="counter-item" style="background: #1c2128;">
             <i class="fa-solid fa-gavel box-logo" style="color: #d29922;"></i>
-            <div style="padding: 20px;"><h4>Court Stream</h4><p style="font-size: 13px; color: #8b949e;">Judge David</p></div>
+            <div style="padding: 15px;">
+                <h4 style="margin: 0; font-size: 14px;">Court Stream</h4>
+                <p style="font-size: 12px; color: #8b949e; margin: 4px 0;">Judge David</p>
+            </div>
             <iframe id="court-player" src="https://video.ibm.com/embed/23891775" style="display:none;"></iframe>
             <div class="status-container"><span id="live-dot" class="dot"></span><span id="status-label" class="status-text">OFF AIR</span></div>
         </div>
@@ -47,24 +49,25 @@
             <i class="fa-solid fa-film box-logo" style="color: #238636;"></i>
             <div class="movie-info">
                 <div class="movie-col">
-                    <div class="movie-label">Now Playing</div>
-                    <div id="disp-now" class="movie-title">Syncing...</div>
-                    <div id="disp-left" class="movie-meta">--:--</div>
-                    <div id="disp-stats" class="movie-stats">Movies: - | Day: -</div>
+                    <div>
+                        <div class="movie-label">Now Playing</div>
+                        <div id="d-now" class="movie-title">Syncing...</div>
+                        <div id="d-left" class="movie-meta">--</div>
+                    </div>
+                    <div id="d-stats" class="movie-stats">M: -- | TV: --</div>
                 </div>
                 <div class="movie-col" style="border-left: 1px solid #30363d; padding-left: 10px;">
-                    <div class="movie-label" style="color: #d29922;">Up Next</div>
-                    <div id="disp-next" class="movie-title">--</div>
-                    <div id="disp-time" class="movie-meta">--</div>
+                    <div>
+                        <div class="movie-label" style="color: #d29922;">Up Next</div>
+                        <div id="d-next" class="movie-title">--</div>
+                        <div id="d-time" class="movie-meta">--</div>
+                    </div>
+                    <div id="d-open" style="font-size: 8px; color: #8b949e; margin-top: auto;">Days: --</div>
                 </div>
             </div>
         </div>
 
-        <div class="counter-item"><div style="padding:20px; color:#484f58;">[Box 8]</div></div>
-        <div class="counter-item"><div style="padding:20px; color:#484f58;">[Box 9]</div></div>
-        <div class="counter-item"><div style="padding:20px; color:#484f58;">[Box 10]</div></div>
-        <div class="counter-item"><div style="padding:20px; color:#484f58;">[Box 11]</div></div>
-        <div class="counter-item"><div style="padding:20px; color:#484f58;">[Box 12]</div></div>
+        <div class="counter-item"></div><div class="counter-item"></div><div class="counter-item"></div><div class="counter-item"></div><div class="counter-item"></div>
     </div>
 
     <script data-cfasync="false">
@@ -74,11 +77,10 @@
                 viewer.addListener('live', (isLive) => {
                     const dot = document.getElementById('live-dot');
                     const label = document.getElementById('status-label');
-                    if (isLive === true || isLive === 'live') {
-                        dot.classList.add('live'); label.innerText = "LIVE NOW"; label.style.color = "#ff0000";
-                    } else {
-                        dot.classList.remove('live'); label.innerText = "OFF AIR"; label.style.color = "#8b949e";
-                    }
+                    const isNowLive = isLive === true || isLive === 'live';
+                    dot.className = isNowLive ? 'dot live' : 'dot';
+                    label.innerText = isNowLive ? "LIVE NOW" : "OFF AIR";
+                    label.style.color = isNowLive ? "#ff0000" : "#8b949e";
                 });
             } else { setTimeout(startCourtMonitor, 1000); }
         }
@@ -88,13 +90,13 @@
             try {
                 const res = await fetch(api + '?t=' + Date.now());
                 const d = await res.json();
-                // Mapping the explicit labels from Step 1
-                document.getElementById('disp-now').innerText = d.l4 || "None";
-                document.getElementById('disp-left').innerText = "Left: " + (d.j5 || "--");
-                document.getElementById('disp-stats').innerText = "Movies: " + (d.j4 || "-") + " | Day: " + (d.k4 || "-");
-                document.getElementById('disp-next').innerText = d.k5 || "--";
-                document.getElementById('disp-time').innerText = d.l5 || "--";
-            } catch (e) { document.getElementById('disp-now').innerText = "Update Error"; }
+                document.getElementById('d-now').innerText = d.nowPlaying;
+                document.getElementById('d-left').innerText = d.timeLeft;
+                document.getElementById('d-stats').innerText = `Movies: ${d.moviesCount} | TV: ${d.tvCount}`;
+                document.getElementById('d-next').innerText = d.nextTitle;
+                document.getElementById('d-time').innerText = d.nextTime;
+                document.getElementById('d-open').innerText = "Open: " + d.daysOpen;
+            } catch (e) { document.getElementById('d-now').innerText = "Sync Error"; }
         }
 
         startCourtMonitor();
