@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Command Center v7.5.5</title>
+    <title>Live Command Center v7.5.6</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script data-cfasync="false" src="https://video.ibm.com/embed-api/v1/ustream-embedapi.min.js"></script>
 
@@ -19,17 +19,16 @@
         .status-text { font-size: 10px; font-weight: bold; color: #8b949e; }
         iframe { filter: invert(1) hue-rotate(180deg); border: 0; width: 500px; height: 250px; position: absolute; top: 5px; left: -88px; transform: scale(1.1); transform-origin: top left; pointer-events: none; }
         
-        /* UPDATED MOVIE BOX LAYOUT */
+        /* THEATER BOX LAYOUT */
         .movie-info { padding: 12px; display: grid; grid-template-columns: 1.2fr 1fr; gap: 10px; height: 100%; }
         .movie-col { display: flex; flex-direction: column; }
         .movie-label { font-size: 9px; color: #2ea043; text-transform: uppercase; font-weight: bold; letter-spacing: 0.5px; }
         .movie-title { font-size: 13px; font-weight: bold; color: #ffffff; line-height: 1.2; margin-top: 2px; height: 32px; overflow: hidden; }
         .movie-meta { font-size: 10px; color: #8b949e; margin-top: 2px; }
         
-        /* BOTTOM STATS AREA */
-        .stats-footer { position: absolute; bottom: 0; left: 0; right: 0; background: #0d1117; padding: 6px 12px; border-top: 1px solid #30363d; display: flex; flex-direction: column; gap: 2px; }
-        .stats-line { font-size: 10px; color: #d29922; display: flex; justify-content: space-between; }
-        .open-line { font-size: 9px; color: #8b949e; }
+        .stats-footer { position: absolute; bottom: 0; left: 0; right: 0; background: #0d1117; padding: 6px 12px; border-top: 1px solid #30363d; display: flex; flex-direction: column; }
+        .stats-line { font-size: 10px; color: #d29922; display: flex; justify-content: space-between; font-weight: bold; }
+        .open-line { font-size: 9px; color: #8b949e; margin-top: 1px; }
     </style>
 </head>
 <body>
@@ -64,8 +63,8 @@
             </div>
             <div class="stats-footer">
                 <div class="stats-line">
-                    <span>Movies: <b id="m-count">--</b></span>
-                    <span>TV: <b id="tv-count">--</b></span>
+                    <span>Movies: <span id="m-count">--</span></span>
+                    <span>TV: <span id="tv-count">--</span></span>
                 </div>
                 <div class="open-line">Open For: <span id="m-open">--</span></div>
             </div>
@@ -92,13 +91,21 @@
         async function syncCinema() {
             const api = 'https://script.google.com/macros/s/AKfycbxvKbJqw6_JoYtWlKwV1t5Kav2w4HBRrtxsZUU-PzkAPxd7kd_tWuj165mLhkwLfhE/exec';
             try {
-                const res = await fetch(api + '?cache=' + Date.now());
+                const res = await fetch(api + '?t=' + Date.now());
                 const d = await res.json();
-                
-                document.getElementById('m-now').innerText = d.nowPlaying;
+                document.getElementById('m-now').innerText = d.nowPlaying || "None";
                 document.getElementById('m-left').innerText = "Left: " + d.timeLeft;
                 document.getElementById('m-count').innerText = d.moviesCount;
                 document.getElementById('tv-count').innerText = d.tvCount;
                 document.getElementById('m-next').innerText = d.nextTitle;
                 document.getElementById('m-time').innerText = d.nextTime;
-                document
+                document.getElementById('m-open').innerText = d.daysOpen;
+            } catch (e) { document.getElementById('m-now').innerText = "Sync Error"; }
+        }
+
+        initCourt();
+        syncCinema();
+        setInterval(syncCinema, 60000);
+    </script>
+</body>
+</html>
