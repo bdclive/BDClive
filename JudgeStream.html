@@ -3,116 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Court System v7.7.7</title>
+    <title>Cloud Dashboard v7.8.0</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         :root {
-            --bg-color: #0d1117; --card-bg: #161b22; --border-inactive: #30363d;
-            --text-bright: #ffffff; --plex-orange: #ffb515; --debug-yellow: #eaff00;
+            --bg-color: #0d1117; --card-bg: #161b22; --border-color: #30363d;
+            --text-main: #ffffff; --text-dim: #8b949e; --snap-yellow: #eaff00; --bsky-blue: #1185FE;
+            --light-purple: #bc95ff; --plex-orange: #e5a00d; --cinema-green: #238636;
         }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: var(--text-bright); display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
-        
-        /* The main visible box */
-        .counter-item { 
-            background: var(--card-bg); border: 2px solid var(--border-inactive); border-radius: 12px; 
-            width: 320px; height: 160px; position: relative; z-index: 10;
-            display: flex; flex-direction: column; justify-content: center; padding-left: 25px;
-            transition: all 0.3s ease;
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: var(--text-main); display: flex; flex-direction: column; align-items: center; padding: 15px; margin: 0; min-height: 100vh; overflow-x: hidden; }
+
+        /* Top Stage (Timer) */
+        .timer-stage { 
+            width: 100%; max-width: 1400px; height: 195px; 
+            margin-bottom: 25px; border-radius: 12px; border: 1px solid var(--border-color); 
+            overflow: hidden; background: #000; position: relative;
+        }
+        .timer-stage iframe { 
+            width: 100%; height: 350px; border: none; 
+            position: absolute; top: -92px; left: 0; border-radius: 12px;
         }
 
-        .box-logo { position: absolute; top: 15px; right: 20px; font-size: 24px; color: var(--plex-orange); }
-        .system-title { font-size: 26px; font-weight: 800; margin: 5px 0; letter-spacing: -1px; }
-        
-        .status-container { display: flex; align-items: center; gap: 10px; margin-top: 8px; background: rgba(0,0,0,0.4); width: fit-content; padding: 6px 15px; border-radius: 20px; }
-        .dot { height: 12px; width: 12px; background-color: #484f58; border-radius: 50%; }
-        .dot.live { background-color: #ff0000; box-shadow: 0 0 15px #ff0000; animation: blink 1s infinite; }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
-        .status-text { font-size: 14px; font-weight: 900; color: #8b949e; text-transform: uppercase; }
-        
-        #debug-msg { position: absolute; bottom: 28px; left: 25px; font-size: 10px; color: var(--debug-yellow); font-family: monospace; font-weight: bold; }
-        
-        /* Larger bridge hidden behind the box to prevent browser 'sleep' mode */
-        #court-bridge { 
-            position: absolute; top: 0; left: 0; width: 320px; height: 160px; 
-            z-index: 1; opacity: 0.01; border: none; 
+        .counter-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; width: 100%; max-width: 1400px; }
+
+        .counter-item { 
+            background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; 
+            height: 150px; position: relative; display: flex; flex-direction: column; 
+            justify-content: center; padding-left: 25px; padding-bottom: 10px; overflow: hidden; 
         }
+
+        .box-logo { position: absolute; top: 12px; right: 15px; width: 22px; height: 22px; z-index: 20; font-size: 20px; }
+
+        /* Counter Embeds */
+        .counter-item iframe { filter: invert(1) hue-rotate(180deg); border: 0; width: 450px; height: 220px; position: absolute; top: 10px; left: -85px; pointer-events: none; }
+        
+        .header-tag { font-size: 11px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 5px; font-weight: bold; }
+        .main-number { font-size: 3.1rem; font-weight: 800; color: #ffffff; margin: 0; white-space: nowrap; letter-spacing: -2px; line-height: 1.1; }
+        
+        .mirror-box { justify-content: space-evenly !important; padding-left: 0 !important; text-align: center; }
+        .mirror-row { display: flex; justify-content: space-around; width: 100%; margin-top: 5px; }
+        .mirror-label { font-size: 9px; color: var(--light-purple); text-transform: uppercase; font-weight: bold; margin: 0; }
+        .mirror-stat { font-size: 2rem; font-weight: 800; color: #ffffff; margin-bottom: 2px; }
+
+        /* Status Dot */
+        .status-container { display: flex; align-items: center; gap: 8px; position: absolute; bottom: 12px; left: 12px; background: rgba(0,0,0,0.5); padding: 4px 10px; border-radius: 20px; border: 1px solid var(--border-color); }
+        .dot { height: 8px; width: 8px; background-color: #484f58; border-radius: 50%; }
+        .dot.live { background-color: #ff0000; box-shadow: 0 0 8px #ff0000; animation: blink 1.5s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        .status-text { font-size: 10px; font-weight: bold; color: var(--text-dim); }
+
+        /* Cinema Hub */
+        .cinema-info { padding: 12px 20px 12px 15px; display: grid; grid-template-columns: 1.2fr 1fr; gap: 8px; height: 100%; text-align: left; }
+        .cinema-label { font-size: 9px; color: var(--cinema-green); text-transform: uppercase; font-weight: bold; }
+        .cinema-title { font-size: 13px; font-weight: bold; color: #ffffff; line-height: 1.2; margin-top: 2px; height: 32px; overflow: hidden; }
+        .cinema-footer { position: absolute; bottom: 0; left: 0; right: 0; background: #0d1117; padding: 6px 12px; border-top: 1px solid var(--border-color); display: flex; flex-direction: column; }
+        .cinema-stats-line { font-size: 10px; color: var(--plex-orange); display: flex; justify-content: space-between; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <div class="counter-item" id="court-box">
-        <i class="fa-solid fa-gavel box-logo"></i>
-        <div class="status-header">
-            <p style="font-size: 12px; color: var(--plex-orange); font-weight: bold; margin:0;">JUDGE DAVID</p>
-            <h4 class="system-title">Court Stream</h4>
-        </div>
-        <div class="status-container">
-            <span id="court-dot" class="dot"></span>
-            <span id="court-text" class="status-text">OFF AIR</span>
-        </div>
-        <div id="debug-msg">INITIALIZING...</div>
+    <div class="timer-stage">
+        <iframe src="https://board.multitimer.net/view/?q=6z0n8w08m0"></iframe>
     </div>
 
-    <iframe id="court-bridge" src="https://video.ibm.com/embed/23891775?autoplay=true&volume=0&api=1&mute=1" allow="autoplay"></iframe>
-
-    <script>
-        const dot = document.getElementById('court-dot');
-        const text = document.getElementById('court-text');
-        const box = document.getElementById('court-box');
-        const debug = document.getElementById('debug-msg');
-        const iframe = document.getElementById('court-bridge');
-
-        function updateUI(isLive) {
-            if (isLive) {
-                dot.classList.add('live');
-                text.innerText = "LIVE NOW";
-                text.style.color = "#ff3333";
-                box.style.borderColor = "#ff3333";
-                debug.innerText = "BRIDGE: ONLINE";
-            } else {
-                dot.classList.remove('live');
-                text.innerText = "OFF AIR";
-                text.style.color = "#8b949e";
-                box.style.borderColor = "#30363d";
-                debug.innerText = "BRIDGE: OFFLINE";
-            }
-        }
-
-        window.addEventListener('message', function(event) {
-            try {
-                const data = JSON.parse(event.data);
-                
-                // Catch standard IBM "live" event
-                if (data.event === 'live') {
-                    updateUI(data.args[0] === true || data.args[0] === 'live');
-                }
-                
-                // Catch manual property check response
-                if (data.property === 'live') {
-                    updateUI(data.value === true || data.value === 'live');
-                }
-            } catch (e) {}
-        });
-
-        // The "Handshake" - Keeps the connection awake
-        function poke() {
-            if (iframe.contentWindow) {
-                debug.innerText = "POKING SERVER...";
-                iframe.contentWindow.postMessage(JSON.stringify({
-                    "event": "command",
-                    "func": "getProperty",
-                    "args": ["live"]
-                }), '*');
-            }
-        }
-
-        // Run every 10 seconds
-        setInterval(poke, 10000);
-        
-        iframe.onload = () => {
-            debug.innerText = "BRIDGE READY";
-            poke();
-        };
-    </script>
-</body>
-</html>
+    <div class="counter-grid">
