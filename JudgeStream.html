@@ -3,31 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Court System v7.7.0</title>
+    <title>Court System v7.7.1</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         :root {
-            --bg-color: #0d1117; --card-bg: #161b22; --border-color: #30363d;
-            --text-main: #ffffff; --text-dim: #8b949e; --plex-orange: #e5a00d;
+            --bg-color: #0d1117; 
+            --card-bg: #161b22; 
+            --border-inactive: #30363d;
+            --text-bright: #ffffff; /* Pure white for readability */
+            --text-dim: #c9d1d9;    /* Light grey instead of dark grey */
+            --plex-orange: #ffb515; /* Brightened orange */
+            --status-off: #8b949e;
+            --debug-yellow: #eaff00;
         }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: var(--text-main); display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: var(--text-bright); display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        
         .counter-item { 
-            background: var(--card-bg); border: 2px solid var(--border-color); border-radius: 12px; 
+            background: var(--card-bg); border: 2px solid var(--border-inactive); border-radius: 12px; 
             width: 320px; height: 160px; position: relative; overflow: hidden;
             display: flex; flex-direction: column; justify-content: center; padding-left: 25px;
-            transition: all 0.5s ease;
+            transition: all 0.3s ease;
         }
-        .box-logo { position: absolute; top: 15px; right: 20px; font-size: 22px; color: var(--plex-orange); }
-        .court-name { font-size: 11px; color: var(--text-dim); text-transform: uppercase; font-weight: bold; margin: 0; letter-spacing: 1px; }
-        .system-title { font-size: 24px; font-weight: 800; margin: 5px 0; letter-spacing: -1px; }
-        .status-container { display: flex; align-items: center; gap: 8px; margin-top: 5px; }
-        .dot { height: 10px; width: 10px; background-color: #484f58; border-radius: 50%; }
-        .dot.live { background-color: #ff0000; box-shadow: 0 0 12px #ff0000; animation: blink 1.5s infinite; }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-        .status-text { font-size: 12px; font-weight: bold; color: var(--text-dim); text-transform: uppercase; }
-        #debug-msg { position: absolute; bottom: 25px; left: 25px; font-size: 8px; color: #30363d; font-family: monospace; }
+
+        .box-logo { position: absolute; top: 15px; right: 20px; font-size: 24px; color: var(--plex-orange); }
+
+        .court-name { font-size: 12px; color: var(--plex-orange); text-transform: uppercase; font-weight: bold; margin: 0; letter-spacing: 1.5px; }
+        .system-title { font-size: 26px; font-weight: 800; margin: 5px 0; letter-spacing: -1px; color: var(--text-bright); }
+
+        .status-container { display: flex; align-items: center; gap: 10px; margin-top: 8px; background: rgba(0,0,0,0.3); width: fit-content; padding: 5px 12px; border-radius: 20px; }
+        .dot { height: 12px; width: 12px; background-color: var(--status-off); border-radius: 50%; border: 1px solid rgba(255,255,255,0.2); }
+        
+        /* High-Vis Live State */
+        .dot.live { background-color: #ff0000; box-shadow: 0 0 15px #ff0000; animation: blink 1s infinite; }
+        @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.2; } 100% { opacity: 1; } }
+        
+        .status-text { font-size: 14px; font-weight: 900; color: var(--text-dim); text-transform: uppercase; }
+
+        /* Debug text - High Visibility */
+        #debug-msg { position: absolute; bottom: 28px; left: 25px; font-size: 10px; color: var(--debug-yellow); font-family: 'Courier New', monospace; font-weight: bold; }
+        
         #court-iframe { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
-        .version { position: absolute; bottom: 8px; right: 12px; font-size: 9px; color: #30363d; font-weight: bold; }
+        .version { position: absolute; bottom: 8px; right: 12px; font-size: 10px; color: #484f58; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -42,9 +58,9 @@
             <span id="court-dot" class="dot"></span>
             <span id="court-text" class="status-text">OFF AIR</span>
         </div>
-        <div id="debug-msg">Waiting for Signal...</div>
+        <div id="debug-msg">SCANNING...</div>
         <iframe id="court-iframe" src="https://video.ibm.com/embed/23891775?autoplay=true&volume=0&api=1" allow="autoplay"></iframe>
-        <div class="version">v7.7.0</div>
+        <div class="version">v7.7.1</div>
     </div>
 
     <script>
@@ -58,41 +74,11 @@
             if (isLive) {
                 dot.classList.add('live');
                 text.innerText = "LIVE NOW";
-                text.style.color = "#ff0000";
-                box.style.borderColor = "#ff0000";
+                text.style.color = "#ff3333"; // Vibrant Red
+                box.style.borderColor = "#ff3333";
+                box.style.background = "#1a0505"; // Dark red tint
             } else {
                 dot.classList.remove('live');
                 text.innerText = "OFF AIR";
-                text.style.color = "var(--text-dim)";
-                box.style.borderColor = "var(--border-color)";
-            }
-        }
-
-        window.addEventListener('message', function(event) {
-            try {
-                const data = JSON.parse(event.data);
-                debug.innerText = "Signal Recv: " + (data.event || data.cmd || "Property");
-
-                // Check for every possible way IBM reports 'live'
-                if (data.event === 'live') {
-                    updateStatus(data.args[0] === true || data.args[0] === 'live');
-                } else if (data.property === 'live' || (data.args && data.args[0] === 'live')) {
-                    updateStatus(data.value === true || data.result === true || data.value === 'live');
-                }
-            } catch (e) {}
-        });
-
-        // The "Handshake"
-        function pingIBM() {
-            if (iframe.contentWindow) {
-                // Sending both common command formats
-                iframe.contentWindow.postMessage(JSON.stringify({cmd: 'getProperty', args: ['live']}), '*');
-                iframe.contentWindow.postMessage(JSON.stringify({call: 'getProperty', args: ['live']}), '*');
-            }
-        }
-
-        setInterval(pingIBM, 10000);
-        iframe.onload = pingIBM;
-    </script>
-</body>
-</html>
+                text.style.color = "#c9d1d9"; 
+                box.style.borderColor = "#303
