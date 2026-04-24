@@ -2,33 +2,47 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Court Stream Hybrid v7.8.7</title>
+    <title>Court Stream v7.8.8</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         :root { --bg: #0d1117; --card: #161b22; --border: #30363d; --text: #ffffff; --orange: #ffb515; }
         body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        
         .counter-item { 
             background: var(--card); border: 2px solid var(--border); border-radius: 12px; 
             width: 320px; height: 160px; position: relative; padding-left: 25px;
-            display: flex; flex-direction: column; justify-content: center; overflow: hidden;
+            display: flex; flex-direction: column; justify-content: center; transition: all 0.5s ease;
         }
+
+        /* Version Label - High Visibility */
+        .version-tag { 
+            position: absolute; top: 12px; right: 50px; 
+            font-size: 10px; font-weight: 900; color: var(--orange); 
+            background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 4px;
+        }
+
+        .box-logo { position: absolute; top: 12px; right: 15px; font-size: 22px; color: var(--orange); }
         .dot { height: 12px; width: 12px; background: #484f58; border-radius: 50%; display: inline-block; transition: 0.3s; }
         .dot.live { background: #ff0000; box-shadow: 0 0 10px #ff0000; animation: blink 1s infinite; }
         @keyframes blink { 50% { opacity: 0.3; } }
-        /* The Secret Listener - 1px invisible video player */
+        
         #ibm-bridge { position: absolute; bottom: 0; right: 0; width: 1px; height: 1px; opacity: 0.01; }
     </style>
 </head>
 <body>
 
     <div class="counter-item" id="court-box">
-        <i class="fa-solid fa-gavel" style="position:absolute; top:15px; right:20px; color:var(--orange); font-size:24px;"></i>
+        <div class="version-tag">v7.8.8</div>
+        <i class="fa-solid fa-gavel box-logo"></i>
+        
         <p style="font-size:11px; color:var(--orange); font-weight:bold; margin:0;">JUDGE DAVID</p>
         <h4 style="font-size:26px; margin:5px 0;">Court Stream</h4>
+        
         <div style="display:flex; align-items:center; gap:10px;">
             <span id="court-dot" class="dot"></span>
             <span id="court-text" style="font-size:14px; font-weight:bold; color:#8b949e;">OFF AIR</span>
         </div>
+
         <iframe id="ibm-bridge" src="https://video.ibm.com/embed/23891775?autoplay=true&volume=0&api=1" allow="autoplay"></iframe>
     </div>
 
@@ -49,7 +63,6 @@
             }
         }
 
-        // Listen for the "playing" signal from the hidden video
         window.addEventListener('message', function(e) {
             try {
                 const d = JSON.parse(e.data);
@@ -58,15 +71,15 @@
             } catch(err) {}
         });
 
-        // Backup: Check Google Script every 60s
         async function backupCheck() {
             try {
-                const r = await fetch('YOUR_SCRIPT_URL_HERE?t=' + Date.now());
+                const r = await fetch('https://script.google.com/macros/s/AKfycbxvKbJqw6_JoYtWlKwV1t5Kav2w4HBRrtxsZUU-PzkAPxd7kd_tWuj165mLhkwLfhE/exec?t=' + Date.now());
                 const data = await r.json();
                 if (data.judgeLive) setStatus(true);
             } catch(e) {}
         }
-        setInterval(backupCheck, 60000);
+        setInterval(backupCheck, 45000);
+        backupCheck();
     </script>
 </body>
 </html>
