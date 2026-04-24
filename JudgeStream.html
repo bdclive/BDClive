@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Court Stream Standalone v7.8.4</title>
+    <title>Court Stream Standalone v7.8.5</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         :root { --bg: #0d1117; --card: #161b22; --border: #30363d; --text: #ffffff; --orange: #ffb515; }
@@ -12,7 +12,7 @@
             width: 320px; height: 160px; position: relative; padding-left: 25px;
             display: flex; flex-direction: column; justify-content: center; transition: all 0.5s ease;
         }
-        .box-logo { position: absolute; top: 15px; right: 20px; font-size: 24px; color: var(--orange); }
+        .box-logo { position: absolute; top: 15px; right: 20px; font-size: 24px; color: var(--orange); cursor: pointer; }
         .dot { height: 12px; width: 12px; background: #484f58; border-radius: 50%; display: inline-block; }
         .dot.live { background: #ff0000; box-shadow: 0 0 10px #ff0000; animation: blink 1s infinite; }
         @keyframes blink { 50% { opacity: 0.3; } }
@@ -20,22 +20,21 @@
     </style>
 </head>
 <body>
-
     <div class="counter-item" id="court-box">
-        <i class="fa-solid fa-gavel box-logo"></i>
+        <i class="fa-solid fa-gavel box-logo" onclick="updateCourt()" title="Manual Refresh"></i>
         <p style="font-size: 11px; color: var(--orange); font-weight: bold; margin: 0;">JUDGE DAVID</p>
         <h4 style="font-size: 26px; margin: 5px 0;">Court Stream</h4>
         <div style="display: flex; align-items: center; gap: 10px; margin-top: 5px;">
             <span id="court-dot" class="dot"></span>
-            <span id="court-text" style="font-size: 14px; font-weight: bold; color: #8b949e;">CONNECTING...</span>
+            <span id="court-text" style="font-size: 14px; font-weight: bold; color: #8b949e;">SYNCING...</span>
         </div>
-        <div id="sync-status">v7.8.4</div>
+        <div id="sync-status">v7.8.5</div>
     </div>
 
     <script>
         async function updateCourt() {
-            // PASTE YOUR SCRIPT URL HERE
             const api = 'https://script.google.com/macros/s/AKfycbxvKbJqw6_JoYtWlKwV1t5Kav2w4HBRrtxsZUU-PzkAPxd7kd_tWuj165mLhkwLfhE/exec';
+            document.getElementById('court-text').innerText = "REFRESHING...";
             
             try {
                 const res = await fetch(api + '?t=' + Date.now());
@@ -61,10 +60,8 @@
                 document.getElementById('sync-status').innerText = "Last Sync: " + new Date().toLocaleTimeString();
             } catch (e) {
                 document.getElementById('court-text').innerText = "SYNC ERROR";
-                console.error(e);
             }
         }
-
         setInterval(updateCourt, 30000);
         updateCourt();
     </script>
