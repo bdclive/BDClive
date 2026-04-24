@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Command Center v7.4.6</title>
+    <title>Live Command Center v7.4.7</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://video.ibm.com/embed-api/v1/ustream-embedapi.min.js"></script>
 
@@ -50,7 +50,7 @@
                     <div class="movie-label">Now Playing</div>
                     <div id="cell-now" class="movie-title">Syncing...</div>
                     <div id="cell-left" class="movie-meta">--:--</div>
-                    <div id="cell-stats" class="movie-stats">v7.4.6 Active</div>
+                    <div id="cell-stats" class="movie-stats">Checking v7.4.7</div>
                 </div>
                 <div class="movie-col" style="border-left: 1px solid #30363d; padding-left: 10px;">
                     <div class="movie-label" style="color: #d29922;">Up Next</div>
@@ -68,6 +68,7 @@
     </div>
 
     <script>
+        // Court Logic
         const viewer = UstreamEmbed('court-player');
         viewer.addListener('live', (isLive) => {
             const dot = document.getElementById('live-dot');
@@ -79,12 +80,13 @@
             }
         });
 
+        // Movie Sync Logic
         async function updateMovieTracker() {
-            // Added ?t= variable to the URL to bypass browser cache
-            const url = 'https://script.google.com/macros/s/AKfycbxvKbJqw6_JoYtWlKwV1t5Kav2w4HBRrtxsZUU-PzkAPxd7kd_tWuj165mLhkwLfhE/exec?t=' + Date.now();
+            const url = 'https://script.google.com/macros/s/AKfycbxvKbJqw6_JoYtWlKwV1t5Kav2w4HBRrtxsZUU-PzkAPxd7kd_tWuj165mLhkwLfhE/exec';
             
             try {
-                const res = await fetch(url);
+                // We use 'follow' to handle Google's redirect
+                const res = await fetch(url, { redirect: 'follow' });
                 const data = await res.json();
                 
                 document.getElementById('cell-now').innerText = data.nowPlaying || "None";
@@ -93,12 +95,10 @@
                 document.getElementById('cell-next').innerText = data.nextTitle || "--";
                 document.getElementById('cell-time').innerText = data.nextTime || "--";
             } catch (e) { 
-                console.error("Sync error:", e);
-                document.getElementById('cell-now').innerText = "Sync Error"; 
+                document.getElementById('cell-now').innerText = "Update Error"; 
             }
         }
         
-        // Initial run + 60s interval
         updateMovieTracker();
         setInterval(updateMovieTracker, 60000);
     </script>
