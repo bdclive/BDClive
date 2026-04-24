@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Command Center v7.4.0</title>
+    <title>Live Command Center v7.4.1</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://video.ibm.com/embed-api/v1/ustream-embedapi.min.js"></script>
 
@@ -49,6 +49,7 @@
             pointer-events: none;
         }
 
+        /* STATUS DOT */
         .status-container {
             display: flex;
             align-items: center;
@@ -67,6 +68,7 @@
         @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
         .status-text { font-size: 11px; font-weight: bold; text-transform: uppercase; color: #8b949e; }
 
+        /* IFRAME COORDINATES */
         .counter-item iframe {
             filter: invert(1) hue-rotate(180deg);
             border: 0;
@@ -78,12 +80,13 @@
 
         .instagram-fix iframe { width: 500px; height: 400px; top: 35px; left: -80px; transform: scale(1.0); }
 
+        /* MOVIE BOX */
         .movie-info { padding: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; height: 100%; }
         .movie-col { display: flex; flex-direction: column; }
         .movie-label { font-size: 10px; color: #2ea043; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; }
         .movie-title { font-size: 13px; font-weight: bold; margin-top: 4px; color: #ffffff; line-height: 1.2; }
         .movie-meta { font-size: 11px; color: #8b949e; margin-top: 4px; }
-        .movie-stats { font-size: 10px; color: #d29922; margin-top: auto; border-top: 1px solid #30363d; padding-top: 5px; }
+        .movie-stats { font-size: 10px; color: #d29922; margin-top: auto; border-top: 1px solid #30363d; padding-top: 5px; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -109,7 +112,7 @@
                     <div class="movie-label">Now Playing</div>
                     <div id="cell-L4" class="movie-title">Syncing...</div>
                     <div id="cell-J5" class="movie-meta">--:--</div>
-                    <div id="cell-J4K4" class="movie-stats">Loading Stats...</div>
+                    <div id="cell-J4K4" class="movie-stats" onclick="updateCinemaTracker()">Click to retry</div>
                 </div>
                 <div class="movie-col" style="border-left: 1px solid #30363d; padding-left: 10px;">
                     <div class="movie-label" style="color: #d29922;">Up Next</div>
@@ -139,41 +142,48 @@
             }
         });
 
-        // 2. BULLETPROOF CINEMA SYNC
+        // 2. DOUBLE-PROXY CINEMA SYNC
         async function updateCinemaTracker() {
             const spreadsheetId = '1vTDBg7MHhfjy_RnLnminYsNDndA3c5x7sxTIwyEZtfx5TQ9Km8q7HiC0mk5nAbj1Oz6ePLZf68N1V42';
             const gid = '428404608';
-            // Using Gviz for direct data access + Cache Buster
             const csvUrl = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?tqx=out:csv&gid=${gid}&t=${Date.now()}`;
-            const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(csvUrl)}`;
+            
+            const proxies = [
+                `https://api.allorigins.win/get?url=${encodeURIComponent(csvUrl)}`,
+                `https://corsproxy.io/?${encodeURIComponent(csvUrl)}`
+            ];
 
-            try {
-                const response = await fetch(proxyUrl);
-                if (!response.ok) throw new Error('Network Error');
-                
-                const text = await response.text();
-                if (!text || text.includes('<!DOCTYPE html>')) throw new Error('Private Sheet');
+            for (let proxy of proxies) {
+                try {
+                    const response = await fetch(proxy);
+                    if (!response.ok) continue;
+                    
+                    let text;
+                    if (proxy.includes('allorigins')) {
+                        const json = await response.json();
+                        text = json.contents;
+                    } else {
+                        text = await response.text();
+                    }
 
-                // Advanced CSV Parser
-                const rows = text.split('\n').map(row => {
-                    return row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(cell => cell.replace(/^"(.*)"$/, '$1').trim());
-                });
+                    if (!text || text.includes('<!DOCTYPE html>')) continue;
 
-                const r4 = rows[3]; // Row 4
-                const r5 = rows[4]; // Row 5
+                    const rows = text.split('\n').map(row => {
+                        return row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(cell => cell.replace(/^"(.*)"$/, '$1').trim());
+                    });
 
-                if (r4 && r5) {
-                    document.getElementById('cell-L4').innerText = r4[11] || "None";
-                    document.getElementById('cell-J4K4').innerText = `Movies/TV: ${r4[9]} | Open: ${r4[10]}`;
-                    document.getElementById('cell-J5').innerText = `Time Left: ${r5[9]}`;
-                    document.getElementById('cell-K5').innerText = r5[10] || "--";
-                    document.getElementById('cell-L5').innerText = r5[11] || "--";
-                }
-            } catch (e) {
-                console.error("Dashboard Debug:", e);
-                document.getElementById('cell-L4').innerText = "Access Blocked";
-                document.getElementById('cell-J4K4').innerText = "Check Sheet Sharing";
+                    const r4 = rows[3]; const r5 = rows[4];
+                    if (r4 && r5) {
+                        document.getElementById('cell-L4').innerText = r4[11] || "None";
+                        document.getElementById('cell-J4K4').innerText = `Movies/TV: ${r4[9]} | Open: ${r4[10]}`;
+                        document.getElementById('cell-J5').innerText = `Time Left: ${r5[9]}`;
+                        document.getElementById('cell-K5').innerText = r5[10] || "--";
+                        document.getElementById('cell-L5').innerText = r5[11] || "--";
+                        return; // Exit if successful
+                    }
+                } catch (e) { console.error("Proxy failed, trying next..."); }
             }
+            document.getElementById('cell-L4').innerText = "CORS Blocked";
         }
 
         setInterval(updateCinemaTracker, 60000);
