@@ -2,67 +2,71 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Court Box Standalone v7.8.3</title>
+    <title>Court Stream Standalone v7.8.4</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
-        :root { --bg: #0d1117; --card: #161b22; --text: #ffffff; --orange: #ffb515; }
+        :root { --bg: #0d1117; --card: #161b22; --border: #30363d; --text: #ffffff; --orange: #ffb515; }
         body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
         .counter-item { 
-            background: var(--card); border: 2px solid #30363d; border-radius: 12px; 
+            background: var(--card); border: 2px solid var(--border); border-radius: 12px; 
             width: 320px; height: 160px; position: relative; padding-left: 25px;
-            display: flex; flex-direction: column; justify-content: center;
+            display: flex; flex-direction: column; justify-content: center; transition: all 0.5s ease;
         }
         .box-logo { position: absolute; top: 15px; right: 20px; font-size: 24px; color: var(--orange); }
         .dot { height: 12px; width: 12px; background: #484f58; border-radius: 50%; display: inline-block; }
         .dot.live { background: #ff0000; box-shadow: 0 0 10px #ff0000; animation: blink 1s infinite; }
         @keyframes blink { 50% { opacity: 0.3; } }
-        #sync-time { position: absolute; bottom: 8px; right: 12px; font-size: 9px; color: #8b949e; }
+        #sync-status { position: absolute; bottom: 8px; right: 12px; font-size: 9px; color: #8b949e; }
     </style>
 </head>
 <body>
+
     <div class="counter-item" id="court-box">
         <i class="fa-solid fa-gavel box-logo"></i>
         <p style="font-size: 11px; color: var(--orange); font-weight: bold; margin: 0;">JUDGE DAVID</p>
         <h4 style="font-size: 26px; margin: 5px 0;">Court Stream</h4>
         <div style="display: flex; align-items: center; gap: 10px; margin-top: 5px;">
             <span id="court-dot" class="dot"></span>
-            <span id="court-text" style="font-size: 14px; font-weight: bold; color: #8b949e;">CHECKING...</span>
+            <span id="court-text" style="font-size: 14px; font-weight: bold; color: #8b949e;">CONNECTING...</span>
         </div>
-        <div id="sync-time">v7.8.3</div>
+        <div id="sync-status">v7.8.4</div>
     </div>
 
     <script>
-        async function check() {
-            // BE SURE TO REPLACE THIS URL
+        async function updateCourt() {
+            // PASTE YOUR SCRIPT URL HERE
             const api = 'https://script.google.com/macros/s/AKfycbxvKbJqw6_JoYtWlKwV1t5Kav2w4HBRrtxsZUU-PzkAPxd7kd_tWuj165mLhkwLfhE/exec';
             
             try {
                 const res = await fetch(api + '?t=' + Date.now());
-                if (!res.ok) throw new Error('Network response was not ok');
+                const d = await res.json();
                 
-                const data = await res.json();
                 const dot = document.getElementById('court-dot');
                 const txt = document.getElementById('court-text');
                 const box = document.getElementById('court-box');
-                
-                if (data.judgeLive) {
+
+                if (d.judgeLive) {
                     dot.className = 'dot live';
-                    txt.innerText = "LIVE NOW"; txt.style.color = "#ff3333";
+                    txt.innerText = "LIVE NOW";
+                    txt.style.color = "#ff3333";
                     box.style.borderColor = "#ff3333";
+                    box.style.background = "#1a0505";
                 } else {
                     dot.className = 'dot';
-                    txt.innerText = "OFF AIR"; txt.style.color = "#8b949e";
+                    txt.innerText = "OFF AIR";
+                    txt.style.color = "#8b949e";
                     box.style.borderColor = "#30363d";
+                    box.style.background = "#161b22";
                 }
-                document.getElementById('sync-time').innerText = "Last Sync: " + new Date().toLocaleTimeString();
-            } catch (e) { 
+                document.getElementById('sync-status').innerText = "Last Sync: " + new Date().toLocaleTimeString();
+            } catch (e) {
                 document.getElementById('court-text').innerText = "SYNC ERROR";
-                document.getElementById('court-text').style.color = "yellow";
-                console.error("Dashboard Error:", e);
+                console.error(e);
             }
         }
-        setInterval(check, 30000);
-        check();
+
+        setInterval(updateCourt, 30000);
+        updateCourt();
     </script>
 </body>
 </html>
