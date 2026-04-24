@@ -3,85 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Command Center v7.4.3</title>
+    <title>Live Command Center v7.4.5</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
     <script src="https://video.ibm.com/embed-api/v1/ustream-embedapi.min.js"></script>
 
     <style>
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background-color: #0d1117;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 50px 20px;
-            margin: 0;
-            color: white;
-        }
-
-        .counter-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 20px;
-            max-width: 1400px;
-            width: 100%;
-            justify-items: center;
-        }
-
-        .counter-item {
-            background: #161b22;
-            border-radius: 12px;
-            width: 320px; 
-            height: 160px; 
-            overflow: hidden; 
-            border: 1px solid #30363d;
-            position: relative;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-        }
-
-        .box-logo {
-            position: absolute !important;
-            top: 12px !important;
-            right: 12px !important;
-            font-size: 20px;
-            z-index: 100; 
-            opacity: 0.8;
-            pointer-events: none;
-        }
-
-        /* STATUS DOT */
-        .status-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            position: absolute;
-            bottom: 15px;
-            left: 15px;
-            background: rgba(0,0,0,0.4);
-            padding: 5px 12px;
-            border-radius: 20px;
-            border: 1px solid #30363d;
-        }
-
+        body { font-family: 'Segoe UI', sans-serif; background-color: #0d1117; display: flex; flex-direction: column; align-items: center; padding: 50px 20px; margin: 0; color: white; }
+        .counter-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; max-width: 1400px; width: 100%; justify-items: center; }
+        .counter-item { background: #161b22; border-radius: 12px; width: 320px; height: 160px; overflow: hidden; border: 1px solid #30363d; position: relative; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        .box-logo { position: absolute !important; top: 12px !important; right: 12px !important; font-size: 20px; z-index: 100; opacity: 0.8; }
+        .status-container { display: flex; align-items: center; gap: 10px; position: absolute; bottom: 15px; left: 15px; background: rgba(0,0,0,0.4); padding: 5px 12px; border-radius: 20px; border: 1px solid #30363d; }
         .dot { height: 10px; width: 10px; background-color: #484f58; border-radius: 50%; display: inline-block; }
         .dot.live { background-color: #ff0000; box-shadow: 0 0 10px #ff0000; animation: blink 1.5s infinite; }
         @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
         .status-text { font-size: 11px; font-weight: bold; text-transform: uppercase; color: #8b949e; }
-
-        /* IFRAMES (Counters) */
-        .counter-item iframe {
-            filter: invert(1) hue-rotate(180deg);
-            border: 0;
-            width: 500px; height: 250px;
-            position: absolute;
-            top: 5px; left: -88px;  
-            transform: scale(1.1); transform-origin: top left;
-        }
-
+        .counter-item iframe { filter: invert(1) hue-rotate(180deg); border: 0; width: 500px; height: 250px; position: absolute; top: 5px; left: -88px; transform: scale(1.1); transform-origin: top left; }
         .instagram-fix iframe { width: 500px; height: 400px; top: 35px; left: -80px; transform: scale(1.0); }
-
-        /* MOVIE TRACKER (J4:L5) */
         .movie-info { padding: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; height: 100%; }
         .movie-col { display: flex; flex-direction: column; }
         .movie-label { font-size: 10px; color: #2ea043; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; }
@@ -93,27 +30,17 @@
 <body>
 
     <div class="counter-grid">
-        <div class="counter-item"><i class="fa-brands fa-x-twitter box-logo"></i><iframe scrolling="no" src="https://livecounts.io/embed/twitter-live-follower-counter/briandivacox"></iframe></div>
-        
-        <div class="counter-item"><i class="fa-brands fa-twitch box-logo" style="color:#9146FF"></i><iframe scrolling="no" src="https://livecounts.io/embed/twitch-live-follower-counter/briandivacox"></iframe></div>
-        
-        <div class="counter-item"><i class="fa-brands fa-youtube box-logo" style="color:#FF0000"></i><iframe scrolling="no" src="https://livecounts.io/embed/youtube-live-subscriber-counter/UCMuv7PfbLVm8IZsd6Bgqqzg"></iframe></div>
-        
-        <div class="counter-item"><i class="fa-brands fa-tiktok box-logo" style="color:#00f2ea"></i><iframe scrolling="no" src="https://livecounts.io/embed/tiktok-live-follower-counter/briandivacox"></iframe></div>
-        
-        <div class="counter-item instagram-fix"><i class="fa-brands fa-instagram box-logo" style="color:#E1306C"></i><iframe scrolling="no" src="https://livecounts.nl/instagram-realtime/embed/?u=briandivacox"></iframe></div>
+        <div class="counter-item"><i class="fa-brands fa-x-twitter box-logo"></i><iframe src="https://livecounts.io/embed/twitter-live-follower-counter/briandivacox"></iframe></div>
+        <div class="counter-item"><i class="fa-brands fa-twitch box-logo" style="color:#9146FF"></i><iframe src="https://livecounts.io/embed/twitch-live-follower-counter/briandivacox"></iframe></div>
+        <div class="counter-item"><i class="fa-brands fa-youtube box-logo" style="color:#FF0000"></i><iframe src="https://livecounts.io/embed/youtube-live-subscriber-counter/UCMuv7PfbLVm8IZsd6Bgqqzg"></iframe></div>
+        <div class="counter-item"><i class="fa-brands fa-tiktok box-logo" style="color:#00f2ea"></i><iframe src="https://livecounts.io/embed/tiktok-live-follower-counter/briandivacox"></iframe></div>
+        <div class="counter-item instagram-fix"><i class="fa-brands fa-instagram box-logo" style="color:#E1306C"></i><iframe src="https://livecounts.nl/instagram-realtime/embed/?u=briandivacox"></iframe></div>
 
-        <div class="counter-item" style="background: linear-gradient(145deg, #1c2128, #161b22);">
+        <div class="counter-item" style="background: #1c2128;">
             <i class="fa-solid fa-gavel box-logo" style="color: #d29922;"></i>
-            <div style="padding: 20px;">
-                <h4 style="margin: 0; color: #c9d1d9;">Court Stream</h4>
-                <p style="font-size: 13px; color: #8b949e; margin-top: 5px;">Judge David</p>
-            </div>
+            <div style="padding: 20px;"><h4>Court Stream</h4><p style="font-size: 13px; color: #8b949e;">Judge David</p></div>
             <iframe id="court-player" src="https://video.ibm.com/embed/23891775" style="display:none;"></iframe>
-            <div class="status-container">
-                <span id="live-dot" class="dot"></span>
-                <span id="status-label" class="status-text">OFF AIR</span>
-            </div>
+            <div class="status-container"><span id="live-dot" class="dot"></span><span id="status-label" class="status-text">OFF AIR</span></div>
         </div>
 
         <div class="counter-item" style="border-color: #238636;">
@@ -121,18 +48,51 @@
             <div class="movie-info">
                 <div class="movie-col">
                     <div class="movie-label">Now Playing</div>
-                    <div id="cell-L4" class="movie-title">Syncing...</div>
-                    <div id="cell-J5" class="movie-meta">--:--</div>
-                    <div id="cell-J4K4" class="movie-stats">Movies/TV: -</div>
+                    <div id="cell-now" class="movie-title">Syncing...</div>
+                    <div id="cell-left" class="movie-meta">--:--</div>
+                    <div id="cell-stats" class="movie-stats">Loading...</div>
                 </div>
                 <div class="movie-col" style="border-left: 1px solid #30363d; padding-left: 10px;">
                     <div class="movie-label" style="color: #d29922;">Up Next</div>
-                    <div id="cell-K5" class="movie-title">--</div>
-                    <div id="cell-L5" class="movie-meta">--</div>
+                    <div id="cell-next" class="movie-title">--</div>
+                    <div id="cell-time" class="movie-meta">--</div>
                 </div>
             </div>
         </div>
 
         <div class="counter-item"><div style="padding:20px; color:#484f58;">[Box 8]</div></div>
         <div class="counter-item"><div style="padding:20px; color:#484f58;">[Box 9]</div></div>
-        <div class="counter-item"><div style="padding:20px; color:#484f58;">[Box
+        <div class="counter-item"><div style="padding:20px; color:#484f58;">[Box 10]</div></div>
+        <div class="counter-item"><div style="padding:20px; color:#484f58;">[Box 11]</div></div>
+        <div class="counter-item"><div style="padding:20px; color:#484f58;">[Box 12]</div></div>
+    </div>
+
+    <script>
+        const viewer = UstreamEmbed('court-player');
+        viewer.addListener('live', (isLive) => {
+            const dot = document.getElementById('live-dot');
+            const label = document.getElementById('status-label');
+            if (isLive === true || isLive === 'live') {
+                dot.classList.add('live'); label.innerText = "LIVE NOW"; label.style.color = "#ff0000";
+            } else {
+                dot.classList.remove('live'); label.innerText = "OFF AIR"; label.style.color = "#8b949e";
+            }
+        });
+
+        async function updateMovieTracker() {
+            const url = 'https://script.google.com/macros/s/AKfycbxvKbJqw6_JoYtWlKwV1t5Kav2w4HBRrtxsZUU-PzkAPxd7kd_tWuj165mLhkwLfhE/exec';
+            try {
+                const res = await fetch(url);
+                const data = await res.json();
+                document.getElementById('cell-now').innerText = data.nowPlaying || "None";
+                document.getElementById('cell-left').innerText = "Left: " + data.timeLeft;
+                document.getElementById('cell-stats').innerText = "Movies: " + data.moviesTv + " | Day: " + data.daysOpen;
+                document.getElementById('cell-next').innerText = data.nextTitle || "--";
+                document.getElementById('cell-time').innerText = data.nextTime || "--";
+            } catch (e) { document.getElementById('cell-now').innerText = "Sync Error"; }
+        }
+        setInterval(updateMovieTracker, 60000);
+        updateMovieTracker();
+    </script>
+</body>
+</html>
