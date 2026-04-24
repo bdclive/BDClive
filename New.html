@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Command Center v7.3.9</title>
+    <title>Live Command Center v7.4.0</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
     <script src="https://video.ibm.com/embed-api/v1/ustream-embedapi.min.js"></script>
 
     <style>
@@ -50,7 +49,6 @@
             pointer-events: none;
         }
 
-        /* STATUS DOT */
         .status-container {
             display: flex;
             align-items: center;
@@ -69,7 +67,6 @@
         @keyframes blink { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
         .status-text { font-size: 11px; font-weight: bold; text-transform: uppercase; color: #8b949e; }
 
-        /* IFRAMES */
         .counter-item iframe {
             filter: invert(1) hue-rotate(180deg);
             border: 0;
@@ -81,7 +78,6 @@
 
         .instagram-fix iframe { width: 500px; height: 400px; top: 35px; left: -80px; transform: scale(1.0); }
 
-        /* CINEMA TRACKER */
         .movie-info { padding: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; height: 100%; }
         .movie-col { display: flex; flex-direction: column; }
         .movie-label { font-size: 10px; color: #2ea043; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; }
@@ -93,11 +89,11 @@
 <body>
 
     <div class="counter-grid">
-        <div class="counter-item"><i class="fa-brands fa-x-twitter box-logo"></i><iframe scrolling="no" src="https://livecounts.io/embed/twitter-live-follower-counter/briandivacox"></iframe></div>
-        <div class="counter-item"><i class="fa-brands fa-twitch box-logo" style="color:#9146FF"></i><iframe scrolling="no" src="https://livecounts.io/embed/twitch-live-follower-counter/briandivacox"></iframe></div>
-        <div class="counter-item"><i class="fa-brands fa-youtube box-logo" style="color:#FF0000"></i><iframe scrolling="no" src="https://livecounts.io/embed/youtube-live-subscriber-counter/UCMuv7PfbLVm8IZsd6Bgqqzg"></iframe></div>
-        <div class="counter-item"><i class="fa-brands fa-tiktok box-logo" style="color:#00f2ea"></i><iframe scrolling="no" src="https://livecounts.io/embed/tiktok-live-follower-counter/briandivacox"></iframe></div>
-        <div class="counter-item instagram-fix"><i class="fa-brands fa-instagram box-logo" style="color:#E1306C"></i><iframe scrolling="no" src="https://livecounts.nl/instagram-realtime/embed/?u=briandivacox"></iframe></div>
+        <div class="counter-item"><i class="fa-brands fa-x-twitter box-logo"></i><iframe src="https://livecounts.io/embed/twitter-live-follower-counter/briandivacox"></iframe></div>
+        <div class="counter-item"><i class="fa-brands fa-twitch box-logo" style="color:#9146FF"></i><iframe src="https://livecounts.io/embed/twitch-live-follower-counter/briandivacox"></iframe></div>
+        <div class="counter-item"><i class="fa-brands fa-youtube box-logo" style="color:#FF0000"></i><iframe src="https://livecounts.io/embed/youtube-live-subscriber-counter/UCMuv7PfbLVm8IZsd6Bgqqzg"></iframe></div>
+        <div class="counter-item"><i class="fa-brands fa-tiktok box-logo" style="color:#00f2ea"></i><iframe src="https://livecounts.io/embed/tiktok-live-follower-counter/briandivacox"></iframe></div>
+        <div class="counter-item instagram-fix"><i class="fa-brands fa-instagram box-logo" style="color:#E1306C"></i><iframe src="https://livecounts.nl/instagram-realtime/embed/?u=briandivacox"></iframe></div>
 
         <div class="counter-item" style="background: linear-gradient(145deg, #1c2128, #161b22);">
             <i class="fa-solid fa-gavel box-logo" style="color: #d29922;"></i>
@@ -113,7 +109,7 @@
                     <div class="movie-label">Now Playing</div>
                     <div id="cell-L4" class="movie-title">Syncing...</div>
                     <div id="cell-J5" class="movie-meta">--:--</div>
-                    <div id="cell-J4K4" class="movie-stats">Movies/TV: - | Days: -</div>
+                    <div id="cell-J4K4" class="movie-stats">Loading Stats...</div>
                 </div>
                 <div class="movie-col" style="border-left: 1px solid #30363d; padding-left: 10px;">
                     <div class="movie-label" style="color: #d29922;">Up Next</div>
@@ -131,7 +127,7 @@
     </div>
 
     <script>
-        // 1. IBM PLAYER (COURT ALERT)
+        // 1. COURT API
         const viewer = UstreamEmbed('court-player');
         viewer.addListener('live', (isLive) => {
             const dot = document.getElementById('live-dot');
@@ -143,25 +139,28 @@
             }
         });
 
-        // 2. CINEMA SYNC (GIHUB PAGES + GVIZ + PROXY)
+        // 2. BULLETPROOF CINEMA SYNC
         async function updateCinemaTracker() {
             const spreadsheetId = '1vTDBg7MHhfjy_RnLnminYsNDndA3c5x7sxTIwyEZtfx5TQ9Km8q7HiC0mk5nAbj1Oz6ePLZf68N1V42';
             const gid = '428404608';
-            const csvUrl = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?tqx=out:csv&gid=${gid}`;
+            // Using Gviz for direct data access + Cache Buster
+            const csvUrl = `https://docs.google.com/spreadsheets/d/${spreadsheetId}/gviz/tq?tqx=out:csv&gid=${gid}&t=${Date.now()}`;
             const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(csvUrl)}`;
 
             try {
                 const response = await fetch(proxyUrl);
-                const text = await response.text();
+                if (!response.ok) throw new Error('Network Error');
                 
-                // Detailed CSV parsing for GitHub compatibility
+                const text = await response.text();
+                if (!text || text.includes('<!DOCTYPE html>')) throw new Error('Private Sheet');
+
+                // Advanced CSV Parser
                 const rows = text.split('\n').map(row => {
                     return row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(cell => cell.replace(/^"(.*)"$/, '$1').trim());
                 });
 
-                // Row 4 = index 3 | J=9, K=10, L=11
-                const r4 = rows[3]; 
-                const r5 = rows[4];
+                const r4 = rows[3]; // Row 4
+                const r5 = rows[4]; // Row 5
 
                 if (r4 && r5) {
                     document.getElementById('cell-L4').innerText = r4[11] || "None";
@@ -171,8 +170,9 @@
                     document.getElementById('cell-L5').innerText = r5[11] || "--";
                 }
             } catch (e) {
-                console.error("Sync error:", e);
-                document.getElementById('cell-L4').innerText = "Link Blocked";
+                console.error("Dashboard Debug:", e);
+                document.getElementById('cell-L4').innerText = "Access Blocked";
+                document.getElementById('cell-J4K4').innerText = "Check Sheet Sharing";
             }
         }
 
