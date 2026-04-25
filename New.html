@@ -3,110 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v7.6.5</title>
+    <title>Cloud Dashboard v7.6.6</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         :root {
             --bg-color: #0d1117; --card-bg: #161b22; --border-color: #30363d;
-            --text-main: #ffffff; --text-dim: #8b949e; --snap-yellow: #eaff00; --bsky-blue: #1185FE;
-            --light-purple: #bc95ff; --plex-orange: #e5a00d; --cinema-green: #238636;
+            --text-main: #ffffff; --text-dim: #8b949e; --plex-orange: #e5a00d; --cinema-green: #238636;
         }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: var(--text-main); display: flex; flex-direction: column; align-items: center; padding: 15px; margin: 0; min-height: 100vh; overflow-x: hidden; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: var(--text-main); display: flex; flex-direction: column; align-items: center; padding: 15px; margin: 0; min-height: 100vh; }
 
-        .timer-stage { 
-            width: 100%; max-width: 1400px; height: 195px; 
-            margin-bottom: 25px; border-radius: 12px; border: 1px solid var(--border-color); 
-            overflow: hidden; background: #000; position: relative;
-        }
-        .timer-stage iframe { 
-            width: 100%; height: 350px; border: none; 
-            position: absolute; top: -92px; left: 0; border-radius: 12px;
-        }
+        .counter-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; width: 100%; max-width: 900px; margin-top: 20px; }
+        .counter-item { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 20px; position: relative; min-height: 140px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .full-width { grid-column: span 2; }
 
-        .counter-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; width: 100%; max-width: 1400px; }
-
-        .counter-item { 
-            background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; 
-            height: 150px; position: relative; display: flex; flex-direction: column; 
-            justify-content: center; padding-left: 25px; padding-bottom: 10px; overflow: hidden; 
-        }
-
-        .box-logo { position: absolute; top: 12px; right: 15px; width: 22px; height: 22px; z-index: 20; font-size: 20px; }
-        .counter-item iframe { filter: invert(1) hue-rotate(180deg); border: 0; width: 450px; height: 220px; position: absolute; top: 10px; left: -85px; pointer-events: none; }
+        .box-logo { position: absolute; top: 15px; right: 15px; font-size: 20px; color: var(--plex-orange); }
+        .header-tag { font-size: 11px; color: var(--text-dim); text-transform: uppercase; font-weight: bold; margin-bottom: 10px; display: block; }
+        .main-val { font-size: 28px; font-weight: 800; color: #ffffff; margin: 5px 0; }
         
-        .header-tag { font-size: 11px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 5px; font-weight: bold; }
-        .main-number { font-size: 3.1rem; font-weight: 800; color: #ffffff; margin: 0; white-space: nowrap; letter-spacing: -2px; line-height: 1.1; }
-
-        .mirror-box { justify-content: space-evenly !important; padding-left: 0 !important; text-align: center; }
-        .mirror-row { display: flex; justify-content: space-around; width: 100%; margin-top: 5px; }
-        .mirror-label { font-size: 9px; color: var(--light-purple); text-transform: uppercase; font-weight: bold; margin: 0; }
-        .mirror-stat { font-size: 2rem; font-weight: 800; color: #ffffff; margin-bottom: 2px; }
-
-        .cinema-info { padding: 12px 20px 12px 15px; display: grid; grid-template-columns: 1.2fr 1fr; gap: 8px; height: 100%; text-align: left; }
-        .cinema-label { font-size: 9px; color: var(--cinema-green); text-transform: uppercase; font-weight: bold; }
-        .cinema-title { font-size: 13px; font-weight: bold; color: #ffffff; line-height: 1.2; margin-top: 2px; height: 32px; overflow: hidden; }
-        .cinema-meta { font-size: 10px; color: var(--text-dim); margin-top: 2px; }
-        .cinema-footer { position: absolute; bottom: 0; left: 0; right: 0; background: #0d1117; padding: 6px 12px; border-top: 1px solid var(--border-color); display: flex; flex-direction: column; }
-        .cinema-stats-line { font-size: 10px; color: var(--plex-orange); display: flex; justify-content: space-between; font-weight: bold; }
-        .cinema-sub-footer { font-size: 9px; color: var(--text-dim); margin-top: 1px; display: flex; justify-content: space-between; }
-        #sync-timer { color: var(--cinema-green); font-weight: bold; }
+        /* Cinema Specifics */
+        .cinema-info { display: flex; justify-content: space-between; gap: 15px; border-bottom: 1px solid var(--border-color); padding-bottom: 15px; margin-bottom: 15px; }
+        .cinema-col { flex: 1; }
+        .cinema-label { font-size: 10px; color: var(--cinema-green); font-weight: bold; text-transform: uppercase; }
+        .cinema-title { font-size: 18px; font-weight: 800; margin-top: 5px; height: 24px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+        .cinema-stats-row { display: flex; justify-content: space-between; font-size: 12px; font-weight: bold; color: var(--plex-orange); }
+        #sync-timer { color: var(--cinema-green); }
     </style>
 </head>
 <body>
 
-    <div class="timer-stage">
-        <iframe src="https://board.multitimer.net/view/?q=6z0n8w08m0"></iframe>
-    </div>
-
     <div class="counter-grid">
-        <div class="counter-item mirror-box">
-            <i class="fa-solid fa-wand-magic-sparkles box-logo" style="color:var(--light-purple);"></i>
-            <div><p class="mirror-label">✨ Tales Detected</p><div id="totalViewsCounter" class="mirror-stat" style="font-size: 2.5rem;">0</div></div>
-            <div class="mirror-row">
-                <div><p class="mirror-label">👥 Online</p><div id="visitorCounter" class="mirror-stat">0</div></div>
-                <div><p class="mirror-label" style="color:var(--plex-orange);">🎬 Plex</p><div id="plex-count-num" class="mirror-stat">0</div></div>
-            </div>
+        
+        <div class="counter-item">
+            <i class="fa-solid fa-wand-magic-sparkles box-logo" style="color:#bc95ff;"></i>
+            <span class="header-tag">Tales Detected</span>
+            <div id="totalViewsCounter" class="main-val">0</div>
+            <div style="font-size: 12px; color: var(--text-dim);">Live Visitors: <span id="visitorCounter" style="color:white;">0</span></div>
         </div>
-
-        <div class="counter-item"><svg class="box-logo" viewBox="0 0 24 24" fill="white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.045 4.126H5.078z"/></svg><iframe scrolling="no" src="https://livecounts.io/embed/twitter-live-follower-counter/briandivacox"></iframe></div>
-        <div class="counter-item"><i class="fa-brands fa-twitch box-logo" style="color:#9146FF;"></i><iframe scrolling="no" src="https://livecounts.io/embed/twitch-live-follower-counter/briandivacox"></iframe></div>
-        <div class="counter-item"><i class="fa-brands fa-youtube box-logo" style="color:#FF0000;"></i><iframe scrolling="no" src="https://livecounts.io/embed/youtube-live-subscriber-counter/UCMuv7PfbLVm8IZsd6Bgqqzg"></iframe></div>
-        <div class="counter-item"><i class="fa-brands fa-tiktok box-logo" style="color:#00f2ea;"></i><iframe scrolling="no" src="https://livecounts.io/embed/tiktok-live-follower-counter/briandivacox"></iframe></div>
-        <div class="counter-item"><i class="fa-brands fa-instagram box-logo" style="color:#E1306C;"></i><iframe scrolling="no" src="https://livecounts.nl/instagram-realtime/embed/?u=briandivacox"></iframe></div>
 
         <div class="counter-item">
-            <svg class="box-logo" viewBox="0 0 566 500" fill="var(--bsky-blue)"><path d="M121.2 35.6C191.6 86.9 282.9 178.1 282.9 178.1S374.2 86.9 444.7 35.6C502.9-6.8 566 -20.3 566 49.3c0 19.3-11.2 121.1-17.8 144.6-21 75-52.2 89.8-118.4 104.8 134.5 25.3 152.9 70.6 152.9 101.7 0 71-65.4 63.3-119 31.9-74.5-43.8-139.8-138.8-179.9-195.1-40.1 56.3-105.4 151.3-179.9 195.1-53.6 31.5-119 39.1-119-31.9 0-31.1 18.4-76.4 152.9-101.7C46.2 283.7 15 268.9 0 193.9c-6.6-23.5-17.8-125.3-17.8-144.6 0-69.6 63.1-56.1 121.2-13.7z"/></svg>
-            <span class="header-tag">Bluesky</span><div id="bsky-num" class="main-number">---</div>
+            <i class="fa-solid fa-play box-logo"></i>
+            <span class="header-tag">Plex Activity</span>
+            <div id="plex-count-num" class="main-val">0</div>
+            <div style="font-size: 12px; color: var(--text-dim);">Active Streams</div>
         </div>
 
-        <div class="counter-item"><i class="fa-brands fa-snapchat box-logo" style="color:var(--snap-yellow);"></i><span class="header-tag">Snapchat</span><div id="snap-fol-num" class="main-number">---</div></div>
-        <div class="counter-item"><i class="fa-brands fa-facebook box-logo" style="color:#0866ff;"></i><span class="header-tag">FB Page</span><div id="fb-page-num" class="main-number">---</div></div>
-
-        <div class="counter-item" style="border-color: var(--cinema-green); padding-left: 0;">
+        <div class="counter-item full-width">
             <i class="fa-solid fa-film box-logo" style="color: var(--cinema-green);"></i>
+            <span class="header-tag">Cinema Status</span>
+            
             <div class="cinema-info">
-                <div>
+                <div class="cinema-col">
                     <div class="cinema-label">Now Playing</div>
                     <div id="m-now" class="cinema-title">Syncing...</div>
-                    <div id="m-left" class="cinema-meta">--</div>
+                    <div id="m-left" style="font-size: 11px; color: var(--text-dim);">--:-- remaining</div>
                 </div>
-                <div style="border-left: 1px solid var(--border-color); padding-left: 10px;">
+                <div class="cinema-col" style="border-left: 1px solid var(--border-color); padding-left: 15px;">
                     <div class="cinema-label" style="color: var(--plex-orange);">Up Next</div>
                     <div id="m-next" class="cinema-title">--</div>
-                    <div id="m-time" class="cinema-meta">--</div>
+                    <div id="m-time" style="font-size: 11px; color: var(--text-dim);">Starts at --</div>
                 </div>
             </div>
-            <div class="cinema-footer">
-                <div class="cinema-stats-line">
-                    <span>Movies: <span id="m-count">--</span></span>
-                    <span>TV: <span id="tv-count">--</span></span>
-                </div>
-                <div class="cinema-sub-footer">
-                    <span>Open For: <span id="m-open">--</span></span>
-                    <span>Sync: <span id="sync-timer">60</span>s</span>
-                </div>
+
+            <div class="cinema-stats-row">
+                <span>Movies: <span id="m-count">0</span></span>
+                <span>TV: <span id="tv-count">0</span></span>
+                <span>Days Online: <span id="m-open">0</span></span>
+                <span>Sync in: <span id="sync-timer">60</span>s</span>
             </div>
         </div>
+
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -121,47 +86,31 @@
 
         vDb.ref("totalViewCount").on("value", s => document.getElementById("totalViewsCounter").innerText = s.val() || 0);
         vDb.ref("visitorsConnected").on("value", s => document.getElementById("visitorCounter").innerText = s.numChildren() || 0);
-
-        sDb.ref('labData').on('value', (s) => {
-            const d = s.val();
-            if (d) {
-                document.getElementById('snap-fol-num').innerText = d.snapFol || "0";
-                document.getElementById('fb-page-num').innerText = d.fbPage || "0";
-                document.getElementById('plex-count-num').innerText = d.plexCount || "0";
-            }
-        });
-
-        async function getBsky() {
-            try {
-                const r = await fetch('https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=briandivacox.bsky.social');
-                const p = await r.json();
-                if (p.followersCount !== undefined) document.getElementById('bsky-num').innerText = p.followersCount.toLocaleString();
-            } catch (e) {}
-        }
-        getBsky(); setInterval(getBsky, 300000);
+        sDb.ref('labData/plexCount').on('value', s => document.getElementById('plex-count-num').innerText = s.val() || 0);
 
         let countdown = 60;
-        const timerDisplay = document.getElementById('sync-timer');
-
         async function syncCinema() {
             const api = 'https://script.google.com/macros/s/AKfycbxvKbJqw6_JoYtWlKwV1t5Kav2w4HBRrtxsZUU-PzkAPxd7kd_tWuj165mLhkwLfhE/exec';
             try {
-                const res = await fetch(api + '?cb=' + Date.now()); // Cache Buster added here
+                const res = await fetch(api + '?t=' + Date.now());
                 const d = await res.json();
-                document.getElementById('m-now').innerText = d.nowPlaying;
-                document.getElementById('m-left').innerText = "Left: " + d.timeLeft;
-                document.getElementById('m-count').innerText = d.moviesCount;
-                document.getElementById('tv-count').innerText = d.tvCount;
-                document.getElementById('m-next').innerText = d.nextTitle;
-                document.getElementById('m-time').innerText = d.nextTime;
-                document.getElementById('m-open').innerText = d.daysOpen;
-            } catch (e) { document.getElementById('m-now').innerText = "Sync Error"; }
+                document.getElementById('m-now').innerText = d.nowPlaying || "Offline";
+                document.getElementById('m-left').innerText = (d.timeLeft || "--") + " remaining";
+                document.getElementById('m-count').innerText = d.moviesCount || "0";
+                document.getElementById('tv-count').innerText = d.tvCount || "0";
+                document.getElementById('m-next').innerText = d.nextTitle || "None";
+                document.getElementById('m-time').innerText = "Starts at " + (d.nextTime || "--");
+                document.getElementById('m-open').innerText = d.daysOpen || "0";
+                countdown = 60;
+            } catch (e) { 
+                document.getElementById('m-now').innerText = "Sync Error"; 
+            }
         }
 
         setInterval(() => {
             countdown--;
             if (countdown <= 0) { syncCinema(); countdown = 60; }
-            timerDisplay.innerText = countdown;
+            document.getElementById('sync-timer').innerText = countdown;
         }, 1000);
 
         syncCinema(); 
