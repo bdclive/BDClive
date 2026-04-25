@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Brian's Theater v0.0.13</title>
+    <title>Brian's Theater v0.0.16</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         :root { --bg: #0d1117; --card: #161b22; --border: #30363d; --plex: #ffb515; --live: #238636; --txt: #ffffff; --dim: #8b949e; }
@@ -10,7 +10,6 @@
         .theater-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; width: 400px; padding: 25px; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .v-tag { position: absolute; top: 15px; right: 55px; font-size: 9px; font-weight: 900; color: var(--dim); background: rgba(255,255,255,0.05); padding: 2px 6px; border-radius: 4px; }
         .icon { position: absolute; top: 15px; right: 20px; font-size: 20px; color: var(--plex); cursor: pointer; transition: 0.3s; }
-        .icon:hover { transform: rotate(90deg); }
         h2 { color: var(--plex); font-size: 12px; text-transform: uppercase; letter-spacing: 2px; margin: 0 0 15px 0; }
         .box { margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
         .lab { font-size: 10px; color: var(--live); font-weight: bold; text-transform: uppercase; }
@@ -18,7 +17,7 @@
         .sub { font-size: 13px; color: var(--dim); margin-top: 5px; }
         .stats { display: flex; justify-content: space-between; margin-top: 15px; }
         .s-box { text-align: center; }
-        .s-val { font-size: 18px; font-weight: bold; display: block; }
+        .s-val { font-size: 18px; font-weight: bold; display: block; color: var(--txt); }
         .s-lab { font-size: 9px; color: var(--dim); text-transform: uppercase; }
         #sync { position: absolute; bottom: 10px; right: 20px; font-size: 9px; color: var(--live); font-family: monospace; font-weight: bold; }
         .cd-live { color: var(--live); font-weight: bold; font-family: monospace; }
@@ -28,7 +27,7 @@
 <body>
 
     <div class="theater-card">
-        <div class="v-tag">v0.0.13</div>
+        <div class="v-tag">v0.0.16</div>
         <i class="fa-solid fa-arrows-rotate icon" onclick="sync()"></i>
         <h2>Brian's Theater</h2>
         
@@ -53,7 +52,7 @@
     </div>
 
     <script>
-        let nextInterval, nowInterval;
+        let nowInt, nextInt;
 
         async function sync() {
             const url = 'https://script.google.com/macros/s/AKfycbxvKbJqw6_JoYtWlKwV1t5Kav2w4HBRrtxsZUU-PzkAPxd7kd_tWuj165mLhkwLfhE/exec';
@@ -67,7 +66,7 @@
                 document.getElementById('m-now').innerText = m.nowPlaying || "Offline";
                 document.getElementById('m-next').innerText = m.nextTitle || "None";
                 
-                // Logic for Real-Time Sync
+                // Absolute Syncing Logic
                 startTimer('playing-timer', m.nowPlayingEnds, true);
                 startTimer('next-timer', m.nextTime, false);
                 
@@ -81,24 +80,24 @@
             }
         }
 
-        function startTimer(elementId, dateStr, isNowPlaying) {
-            if (isNowPlaying) clearInterval(nowInterval); else clearInterval(nextInterval);
+        function startTimer(id, dateStr, isNow) {
+            if (isNow) clearInterval(nowInt); else clearInterval(nextInt);
+            const el = document.getElementById(id);
             
-            const el = document.getElementById(elementId);
-            if (!dateStr || dateStr === "N/A" || dateStr === "None") {
-                el.innerText = isNowPlaying ? "Cinema Idle" : "Scheduled Off";
+            if (!dateStr || dateStr.includes("N/A") || dateStr.includes("None")) {
+                el.innerText = isNow ? "Cinema Idle" : "Scheduled Off";
                 return;
             }
 
-            // Ensure consistent 2026 handling
-            let cleanDate = dateStr.includes("202") ? dateStr : dateStr.replace(",", " 2026,");
-            const target = new Date(cleanDate);
+            // Force 2026 if year is missing
+            let clean = dateStr.includes("202") ? dateStr : dateStr.replace(",", " 2026,");
+            const target = new Date(clean);
 
-            const timer = setInterval(() => {
+            const t = setInterval(() => {
                 const diff = target - new Date();
                 if (diff <= 0) {
-                    el.innerText = isNowPlaying ? "Finishing..." : "Starting Now!";
-                    clearInterval(timer);
+                    el.innerText = isNow ? "Finishing..." : "Starting Now!";
+                    clearInterval(t);
                     return;
                 }
                 const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -107,7 +106,7 @@
                 el.innerText = `${h}h ${m}m ${s}s`;
             }, 1000);
             
-            if (isNowPlaying) nowInterval = timer; else nextInterval = timer;
+            if (isNow) nowInt = t; else nextInt = t;
         }
 
         setInterval(sync, 60000);
