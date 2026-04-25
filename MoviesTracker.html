@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Brian's Theater v0.0.12</title>
+    <title>Brian's Theater v0.0.13</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         :root { --bg: #0d1117; --card: #161b22; --border: #30363d; --plex: #ffb515; --live: #238636; --txt: #ffffff; --dim: #8b949e; }
@@ -10,6 +10,7 @@
         .theater-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; width: 400px; padding: 25px; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .v-tag { position: absolute; top: 15px; right: 55px; font-size: 9px; font-weight: 900; color: var(--dim); background: rgba(255,255,255,0.05); padding: 2px 6px; border-radius: 4px; }
         .icon { position: absolute; top: 15px; right: 20px; font-size: 20px; color: var(--plex); cursor: pointer; transition: 0.3s; }
+        .icon:hover { transform: rotate(90deg); }
         h2 { color: var(--plex); font-size: 12px; text-transform: uppercase; letter-spacing: 2px; margin: 0 0 15px 0; }
         .box { margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
         .lab { font-size: 10px; color: var(--live); font-weight: bold; text-transform: uppercase; }
@@ -27,7 +28,7 @@
 <body>
 
     <div class="theater-card">
-        <div class="v-tag">v0.0.12</div>
+        <div class="v-tag">v0.0.13</div>
         <i class="fa-solid fa-arrows-rotate icon" onclick="sync()"></i>
         <h2>Brian's Theater</h2>
         
@@ -66,9 +67,9 @@
                 document.getElementById('m-now').innerText = m.nowPlaying || "Offline";
                 document.getElementById('m-next').innerText = m.nextTitle || "None";
                 
-                // Both timers now use the same 'Target Date' logic
-                startTimer('playing-timer', m.nowPlayingEnds, nowInterval, true);
-                startTimer('next-timer', m.nextTime, nextInterval, false);
+                // Logic for Real-Time Sync
+                startTimer('playing-timer', m.nowPlayingEnds, true);
+                startTimer('next-timer', m.nextTime, false);
                 
                 document.getElementById('m-count').innerText = m.moviesCount || "0";
                 document.getElementById('tv-count').innerText = m.tvCount || "0";
@@ -80,15 +81,16 @@
             }
         }
 
-        function startTimer(elementId, dateStr, intervalVar, isNowPlaying) {
-            if (intervalVar) clearInterval(intervalVar);
+        function startTimer(elementId, dateStr, isNowPlaying) {
+            if (isNowPlaying) clearInterval(nowInterval); else clearInterval(nextInterval);
+            
             const el = document.getElementById(elementId);
             if (!dateStr || dateStr === "N/A" || dateStr === "None") {
                 el.innerText = isNowPlaying ? "Cinema Idle" : "Scheduled Off";
                 return;
             }
 
-            // Standardize date to 2026 for consistency
+            // Ensure consistent 2026 handling
             let cleanDate = dateStr.includes("202") ? dateStr : dateStr.replace(",", " 2026,");
             const target = new Date(cleanDate);
 
