@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Brian's Theater v0.0.39</title>
+    <title>Brian's Theater v0.0.40</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         :root { --bg: #0d1117; --card: #161b22; --border: #30363d; --plex: #ffb515; --live: #238636; --txt: #ffffff; --dim: #8b949e; }
@@ -17,13 +17,13 @@
         .sub { font-size: 13px; color: var(--dim); margin-top: 5px; }
         #sync-status { position: absolute; bottom: 10px; right: 20px; font-size: 9px; color: var(--live); font-family: monospace; font-weight: bold; }
         .debug-container { width: 400px; margin-top: 20px; background: #000; border: 1px solid var(--border); border-radius: 8px; padding: 10px; font-family: monospace; font-size: 11px; color: #00ff00; }
-        #log { height: 100px; overflow-y: auto; white-space: pre-wrap; font-size: 10px; }
+        #log { height: 80px; overflow-y: auto; white-space: pre-wrap; font-size: 10px; }
     </style>
 </head>
 <body>
 
     <div class="theater-card">
-        <div class="v-tag">v0.0.39</div>
+        <div class="v-tag">v0.0.40</div>
         <i class="fa-solid fa-arrows-rotate icon" onclick="sync()"></i>
         <h2>Brian's Theater</h2>
         
@@ -48,8 +48,7 @@
 
     <script>
         let nextInt;
-        let lastKnownMovie = "";
-        let lastKnownTime = "";
+        let ghostTimeout;
 
         function addLog(msg) {
             const logEl = document.getElementById('log');
@@ -63,25 +62,21 @@
                 const data = await response.json();
                 const m = data.movie;
 
-                addLog(`Handshake: ${m.nowPlaying} | ${m.timeLeft}`);
+                addLog(`Inbound: ${m.nowPlaying}`);
 
-                // Persistence Check: Don't overwrite with "Cinema Idle" if we just had a movie
-                if ((!m.nowPlaying || m.nowPlaying === "" || m.nowPlaying === "N/A") && lastKnownMovie !== "") {
-                    addLog("Warning: Sheet returned empty. Holding last known data.");
+                // If sheet is empty, wait 30 seconds before clearing the UI
+                if (!m.nowPlaying || m.nowPlaying === "N/A" || m.nowPlaying === "") {
+                    addLog("Sheet empty. Waiting for recovery...");
+                    ghostTimeout = setTimeout(() => {
+                        document.getElementById('m-now').innerText = "Offline";
+                        document.getElementById('playing-timer').innerText = "Cinema Idle";
+                        document.getElementById('playing-status').innerText = "";
+                    }, 30000);
                 } else {
-                    lastKnownMovie = m.nowPlaying || "Offline";
-                    lastKnownTime = m.timeLeft || "Cinema Idle";
-                    document.getElementById('m-now').innerText = lastKnownMovie;
-                }
-
-                // Update Now Playing UI (J11 Mirror)
-                const timerEl = document.getElementById('playing-timer');
-                if (lastKnownTime !== "Cinema Idle" && !lastKnownTime.includes("N/A")) {
-                    timerEl.innerText = lastKnownTime.replace(/Remaining:/i, "").trim();
+                    clearTimeout(ghostTimeout);
+                    document.getElementById('m-now').innerText = m.nowPlaying;
+                    document.getElementById('playing-timer').innerText = m.timeLeft.replace(/Remaining:/i, "").trim();
                     document.getElementById('playing-status').innerText = "Ends in:";
-                } else {
-                    timerEl.innerText = "Cinema Idle";
-                    document.getElementById('playing-status').innerText = "";
                 }
 
                 document.getElementById('m-next').innerText = m.nextTitle || "None";
@@ -95,17 +90,11 @@
             clearInterval(nextInt);
             const el = document.getElementById('next-timer');
             if (!dateStr || dateStr.includes("N/A")) { el.innerText = "Scheduled Off"; return; }
-
             let clean = dateStr.includes("202") ? dateStr : dateStr.replace(",", " 2026,");
             const target = new Date(clean);
-
             nextInt = setInterval(() => {
                 const diff = target - new Date();
-                if (diff <= 0) { 
-                    el.innerText = "Starting Now!"; 
-                    clearInterval(nextInt); 
-                    return; 
-                }
+                if (diff <= 0) { el.innerText = "Starting Now!"; clearInterval(nextInt); return; }
                 const d = Math.floor(diff / 86400000);
                 const h = Math.floor((diff % 86400000) / 3600000);
                 const m = Math.floor((diff % 3600000) / 60000);
