@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Brian's Theater v0.0.30</title>
+    <title>Brian's Theater v0.0.31</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         :root { --bg: #0d1117; --card: #161b22; --border: #30363d; --plex: #ffb515; --live: #238636; --txt: #ffffff; --dim: #8b949e; }
@@ -23,7 +23,7 @@
 <body>
 
     <div class="theater-card">
-        <div class="v-tag">v0.0.30</div>
+        <div class="v-tag">v0.0.31</div>
         <i class="fa-solid fa-arrows-rotate icon" onclick="sync()"></i>
         <h2>Brian's Theater</h2>
         
@@ -63,20 +63,19 @@
                 const data = await response.json();
                 const m = data.movie;
 
-                addLog("Raw Sync Successful", m.endTimeRaw);
+                addLog("ISO Received", m.endTimeRaw);
 
                 document.getElementById('m-now').innerText = m.nowPlaying || "Offline";
                 document.getElementById('m-next').innerText = m.nextTitle || "None";
                 
-                // Using the Absolute Raw Deadline from columns E and H
-                startAbsoluteTimer('playing-timer', m.endTimeRaw, true);
-                startAbsoluteTimer('next-timer', m.nextTime, false);
+                startTimer('playing-timer', m.endTimeRaw, true);
+                startTimer('next-timer', m.nextTime, false);
                 
                 document.getElementById('sync-status').innerText = "LIVE: " + new Date().toLocaleTimeString();
             } catch (e) { addLog("SYNC ERROR"); }
         }
 
-        function startAbsoluteTimer(id, targetStr, isNow) {
+        function startTimer(id, targetStr, isNow) {
             if (isNow) clearInterval(nowInt); else clearInterval(nextInt);
             const el = document.getElementById(id);
             
@@ -85,9 +84,7 @@
                 return;
             }
 
-            // Ensure consistent 2026 formatting
-            let clean = targetStr.includes("202") ? targetStr : targetStr.replace(",", " 2026,");
-            const target = new Date(clean);
+            const target = new Date(targetStr);
 
             const t = setInterval(() => {
                 const diff = target - new Date();
@@ -96,7 +93,7 @@
                     clearInterval(t);
                     return;
                 }
-                const h = Math.floor((diff % 86400000) / 3600000);
+                const h = Math.floor(diff / 3600000);
                 const m = Math.floor((diff % 3600000) / 60000);
                 const s = Math.floor((diff % 60000) / 1000);
                 el.innerText = `${h}h ${m}m ${s}s`;
