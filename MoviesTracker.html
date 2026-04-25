@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Brian's Theater v0.0.26</title>
+    <title>Brian's Theater v0.0.27</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         :root { --bg: #0d1117; --card: #161b22; --border: #30363d; --plex: #ffb515; --live: #238636; --txt: #ffffff; --dim: #8b949e; }
@@ -23,7 +23,7 @@
 <body>
 
     <div class="theater-card">
-        <div class="v-tag">v0.0.26</div>
+        <div class="v-tag">v0.0.27</div>
         <i class="fa-solid fa-arrows-rotate icon" onclick="sync()"></i>
         <h2>Brian's Theater</h2>
         
@@ -64,7 +64,7 @@
                 const data = await response.json();
                 const m = data.movie;
 
-                addLog("Syncing...", m);
+                addLog("Sync Successful", m);
 
                 document.getElementById('m-now').innerText = m.nowPlaying || "Offline";
                 document.getElementById('m-next').innerText = m.nextTitle || "None";
@@ -81,18 +81,20 @@
             const el = document.getElementById('playing-timer');
             if (!str || str.includes("N/A")) { el.innerText = "Cinema Idle"; return; }
 
-            // Plural-friendly extraction: matches "hour" or "hours" and "min" or "mins"
-            let hMatch = str.match(/(\d+)\s*hour/i);
-            let mMatch = str.match(/(\d+)\s*min/i);
+            // Target Lock: Only capture numbers followed by "hour" or "min"
+            // This ignores "1 year" or "Remaining: 1"
+            let hMatch = str.match(/(\d+)(?=\s*hour)/i);
+            let mMatch = str.match(/(\d+)(?=\s*min)/i);
             
-            let h = hMatch ? parseInt(hMatch[1]) : 0;
-            let m = mMatch ? parseInt(mMatch[1]) : 0;
+            let h = hMatch ? parseInt(hMatch[0]) : 0;
+            let m = mMatch ? parseInt(mMatch[0]) : 0;
             
             let total = (h * 3600) + (m * 60);
             
+            // Re-sync logic
             if (Math.abs(total - localSecs) > 59 || localSecs === 0) {
                 localSecs = total;
-                addLog(`Decoded: ${h}h ${m}m`);
+                addLog(`Target Locked: ${h}h ${m}m`);
             }
 
             nowInt = setInterval(() => {
