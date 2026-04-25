@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Brian's Theater v0.0.9</title>
+    <title>Brian's Theater v0.0.10</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         :root { --bg: #0d1117; --card: #161b22; --border: #30363d; --plex: #ffb515; --live: #238636; --txt: #ffffff; --dim: #8b949e; }
@@ -21,14 +21,14 @@
         .s-val { font-size: 18px; font-weight: bold; display: block; }
         .s-lab { font-size: 9px; color: var(--dim); text-transform: uppercase; }
         #sync { position: absolute; bottom: 10px; right: 20px; font-size: 9px; color: var(--live); font-family: monospace; font-weight: bold; }
-        .cd { color: var(--plex); font-weight: bold; font-family: monospace; }
         .cd-live { color: var(--live); font-weight: bold; font-family: monospace; }
+        .cd-next { color: var(--plex); font-weight: bold; font-family: monospace; }
     </style>
 </head>
 <body>
 
     <div class="theater-card">
-        <div class="v-tag">v0.0.9</div>
+        <div class="v-tag">v0.0.10</div>
         <i class="fa-solid fa-arrows-rotate icon" onclick="sync()"></i>
         <h2>Brian's Theater</h2>
         
@@ -41,7 +41,7 @@
         <div class="box" style="border:0; margin:0;">
             <div class="lab" style="color:var(--plex)">Up Next</div>
             <div id="m-next" class="val">--</div>
-            <div id="m-time" class="sub">Starts in: <span id="next-timer" class="cd">--:--:--</span></div>
+            <div id="m-time" class="sub">Starts in: <span id="next-timer" class="cd-next">--:--:--</span></div>
         </div>
 
         <div class="stats">
@@ -68,7 +68,6 @@
                 document.getElementById('m-now').innerText = m.nowPlaying || "Offline";
                 document.getElementById('m-next').innerText = m.nextTitle || "None";
                 
-                // Safety logic for Timers
                 handleNowTimer(m.timeLeft);
                 handleNextTimer(m.nextTime);
                 
@@ -86,14 +85,20 @@
             clearInterval(nowInterval);
             const el = document.getElementById('playing-timer');
             
-            // If the sheet says N/A or empty, don't start the clock
             if (!timeStr || timeStr === "N/A" || !timeStr.includes(':')) {
                 el.innerText = "Cinema Idle";
                 return;
             }
 
             const parts = timeStr.split(':');
-            let totalSecs = (+parts[0]) * 3600 + (+parts[1]) * 60 + (+parts[2] || 0);
+            let totalSecs = 0;
+
+            // Handle HH:MM (2 parts) or HH:MM:SS (3 parts)
+            if (parts.length === 2) {
+                totalSecs = (+parts[0]) * 3600 + (+parts[1]) * 60;
+            } else if (parts.length === 3) {
+                totalSecs = (+parts[0]) * 3600 + (+parts[1]) * 60 + (+parts[2]);
+            }
 
             nowInterval = setInterval(() => {
                 if (totalSecs <= 0) { el.innerText = "Finishing..."; clearInterval(nowInterval); return; }
