@@ -2,14 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Brian's Theater v0.0.17</title>
+    <title>Brian's Theater v0.0.19</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         :root { --bg: #0d1117; --card: #161b22; --border: #30363d; --plex: #ffb515; --live: #238636; --txt: #ffffff; --dim: #8b949e; }
-        body { background: var(--bg); color: var(--txt); font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        body { background: var(--bg); color: var(--txt); font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
         .theater-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; width: 400px; padding: 25px; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .v-tag { position: absolute; top: 15px; right: 55px; font-size: 9px; font-weight: 900; color: var(--dim); background: rgba(255,255,255,0.05); padding: 2px 6px; border-radius: 4px; }
         .icon { position: absolute; top: 15px; right: 20px; font-size: 20px; color: var(--plex); cursor: pointer; transition: 0.3s; }
+        .icon:hover { transform: rotate(90deg); }
         h2 { color: var(--plex); font-size: 12px; text-transform: uppercase; letter-spacing: 2px; margin: 0 0 15px 0; }
         .box { margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
         .lab { font-size: 10px; color: var(--live); font-weight: bold; text-transform: uppercase; }
@@ -19,29 +20,33 @@
         .s-box { text-align: center; }
         .s-val { font-size: 18px; font-weight: bold; display: block; color: var(--txt); }
         .s-lab { font-size: 9px; color: var(--dim); text-transform: uppercase; }
-        #sync { position: absolute; bottom: 10px; right: 20px; font-size: 9px; color: var(--live); font-family: monospace; font-weight: bold; }
-        .cd-live { color: var(--live); font-weight: bold; font-family: monospace; }
-        .cd-next { color: var(--plex); font-weight: bold; font-family: monospace; }
-        #debug { font-size: 8px; color: #444; position: absolute; bottom: -15px; left: 0; width: 100%; text-align: center; }
+        #sync-status { position: absolute; bottom: 10px; right: 20px; font-size: 9px; color: var(--live); font-family: monospace; font-weight: bold; }
+        
+        /* Debug Log Styles */
+        .debug-container { width: 400px; margin-top: 20px; background: #000; border: 1px solid var(--border); border-radius: 8px; padding: 10px; font-family: monospace; font-size: 11px; color: #00ff00; }
+        .debug-header { font-weight: bold; color: var(--plex); margin-bottom: 5px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; }
+        #log { height: 120px; overflow-y: auto; white-space: pre-wrap; word-break: break-all; }
+        .log-entry { margin-bottom: 4px; border-bottom: 1px hideen #111; padding-bottom: 2px; }
+        .log-time { color: var(--dim); margin-right: 5px; }
     </style>
 </head>
 <body>
 
     <div class="theater-card">
-        <div class="v-tag">v0.0.17</div>
+        <div class="v-tag">v0.0.19</div>
         <i class="fa-solid fa-arrows-rotate icon" onclick="sync()"></i>
         <h2>Brian's Theater</h2>
         
         <div class="box">
             <div class="lab">Now Playing</div>
             <div id="m-now" class="val">Syncing...</div>
-            <div id="m-left" class="sub">Ends in: <span id="playing-timer" class="cd-live">--:--:--</span></div>
+            <div id="m-left" class="sub">Ends in: <span id="playing-timer" style="color:var(--live); font-weight:bold;">--:--:--</span></div>
         </div>
 
         <div class="box" style="border:0; margin:0;">
             <div class="lab" style="color:var(--plex)">Up Next</div>
             <div id="m-next" class="val">--</div>
-            <div id="m-time" class="sub">Starts in: <span id="next-timer" class="cd-next">--:--:--</span></div>
+            <div id="m-time" class="sub">Starts in: <span id="next-timer" style="color:var(--plex); font-weight:bold;">--:--:--</span></div>
         </div>
 
         <div class="stats">
@@ -49,30 +54,43 @@
             <div class="s-box"><span id="tv-count" class="s-val">0</span><span class="s-lab">TV Shows</span></div>
             <div class="s-box"><span id="m-open" class="s-val">0</span><span class="s-lab">Days Open</span></div>
         </div>
-        <div id="sync">READY</div>
-        <div id="debug"></div>
+        <div id="sync-status">READY</div>
+    </div>
+
+    <div class="debug-container">
+        <div class="debug-header"><span>SYSTEM LOG</span><span style="cursor:pointer" onclick="document.getElementById('log').innerHTML=''">CLEAR</span></div>
+        <div id="log">Initializing tracker...</div>
     </div>
 
     <script>
         let nowInt, nextInt;
+        let localSecs = 0;
+
+        function addLog(msg, data = null) {
+            const logEl = document.getElementById('log');
+            const time = new Date().toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            let entry = `<div class="log-entry"><span class="log-time">[${time}]</span> ${msg}</div>`;
+            if (data) entry += `<div style="color:#888; padding-left:15px;">DATA: ${JSON.stringify(data)}</div>`;
+            logEl.innerHTML = entry + logEl.innerHTML;
+        }
 
         async function sync() {
             const url = 'https://script.google.com/macros/s/AKfycbxvKbJqw6_JoYtWlKwV1t5Kav2w4HBRrtxsZUU-PzkAPxd7kd_tWuj165mLhkwLfhE/exec';
-            const status = document.getElementById('sync');
-            const debug = document.getElementById('debug');
+            const status = document.getElementById('sync-status');
+            addLog("Pinging Google Script...");
             
             try {
                 const response = await fetch(url + '?t=' + Date.now());
                 const data = await response.json();
                 const m = data.movie;
 
+                addLog("Data received successfully.", m);
+
                 document.getElementById('m-now').innerText = m.nowPlaying || "Offline";
                 document.getElementById('m-next').innerText = m.nextTitle || "None";
                 
-                debug.innerText = "REC: " + m.nowPlayingEnds;
-
-                startTimer('playing-timer', m.nowPlayingEnds, true);
-                startTimer('next-timer', m.nextTime, false);
+                handleNowPlaying(m.nowPlayingEnds);
+                handleNextTimer(m.nextTime);
                 
                 document.getElementById('m-count').innerText = m.moviesCount || "0";
                 document.getElementById('tv-count').innerText = m.tvCount || "0";
@@ -80,36 +98,63 @@
                 
                 status.innerText = "LIVE: " + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
             } catch (e) {
+                addLog("ERROR: Fetch failed. Check Script URL/Deployment.");
                 status.innerText = "SYNC FAILED";
             }
         }
 
-        function startTimer(id, dateStr, isNow) {
-            if (isNow) clearInterval(nowInt); else clearInterval(nextInt);
-            const el = document.getElementById(id);
-            
-            if (!dateStr || dateStr.includes("N/A") || dateStr.includes("None")) {
-                el.innerText = isNow ? "Cinema Idle" : "Scheduled Off";
+        function handleNowPlaying(str) {
+            if (!str || str === "N/A" || str === "Offline") {
+                clearInterval(nowInt);
+                document.getElementById('playing-timer').innerText = "Cinema Idle";
+                localSecs = 0;
                 return;
             }
 
+            let hMatch = str.match(/(\d+)\s*hour/);
+            let mMatch = str.match(/(\d+)\s*min/);
+            let h = hMatch ? parseInt(hMatch[1]) : 0;
+            let m = mMatch ? parseInt(mMatch[1]) : 0;
+            let total = (h * 3600) + (m * 60);
+
+            if (Math.abs(total - localSecs) > 61 || localSecs === 0) {
+                addLog(`Updating Timer: ${h}h ${m}m`);
+                localSecs = total;
+                clearInterval(nowInt);
+                nowInt = setInterval(() => {
+                    if (localSecs <= 0) {
+                        document.getElementById('playing-timer').innerText = "Finishing...";
+                        clearInterval(nowInt);
+                        return;
+                    }
+                    localSecs--;
+                    let hh = Math.floor(localSecs / 3600);
+                    let mm = Math.floor((localSecs % 3600) / 60);
+                    let ss = localSecs % 60;
+                    document.getElementById('playing-timer').innerText = `${hh}h ${mm}m ${ss}s`;
+                }, 1000);
+            }
+        }
+
+        function handleNextTimer(dateStr) {
+            clearInterval(nextInt);
+            const el = document.getElementById('next-timer');
+            if (!dateStr || dateStr === "N/A" || dateStr === "None") {
+                el.innerText = "Scheduled Off";
+                return;
+            }
             let clean = dateStr.includes("202") ? dateStr : dateStr.replace(",", " 2026,");
             const target = new Date(clean);
 
-            const t = setInterval(() => {
+            nextInt = setInterval(() => {
                 const diff = target - new Date();
-                if (diff <= 0) {
-                    el.innerText = isNow ? "Finishing..." : "Starting Now!";
-                    clearInterval(t);
-                    return;
-                }
+                if (diff <= 0) { el.innerText = "Starting Now!"; clearInterval(nextInt); return; }
+                const d = Math.floor(diff / (1000 * 60 * 60 * 24));
                 const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                 const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
                 const s = Math.floor((diff % (1000 * 60)) / 1000);
-                el.innerText = `${h}h ${m}m ${s}s`;
+                el.innerText = (d > 0 ? d + "d " : "") + `${h}h ${m}m ${s}s`;
             }, 1000);
-            
-            if (isNow) nowInt = t; else nextInt = t;
         }
 
         setInterval(sync, 60000);
