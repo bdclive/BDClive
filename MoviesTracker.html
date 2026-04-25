@@ -2,23 +2,125 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Brian's Theater v0.0.38</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
-        :root { --bg: #0d1117; --card: #161b22; --border: #30363d; --plex: #ffb515; --live: #238636; --txt: #ffffff; --dim: #8b949e; }
-        body { background: var(--bg); color: var(--txt); font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .theater-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; width: 400px; padding: 25px; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .v-tag { position: absolute; top: 15px; right: 55px; font-size: 9px; font-weight: 900; color: var(--dim); background: rgba(255,255,255,0.05); padding: 2px 6px; border-radius: 4px; }
-        .icon { position: absolute; top: 15px; right: 20px; font-size: 20px; color: var(--plex); cursor: pointer; transition: 0.3s; }
+        :root { 
+            --bg: #0d1117; 
+            --card: #161b22; 
+            --border: #30363d; 
+            --plex: #ffb515; 
+            --live: #238636; 
+            --txt: #ffffff; 
+            --dim: #8b949e; 
+        }
+        body { 
+            background: var(--bg); 
+            color: var(--txt); 
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+            margin: 0; 
+        }
+        .theater-card { 
+            background: var(--card); 
+            border: 1px solid var(--border); 
+            border-radius: 16px; 
+            width: 400px; 
+            padding: 25px; 
+            position: relative; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
+        }
+        .v-tag { 
+            position: absolute; 
+            top: 15px; 
+            right: 55px; 
+            font-size: 9px; 
+            font-weight: 900; 
+            color: var(--dim); 
+            background: rgba(255,255,255,0.05); 
+            padding: 2px 6px; 
+            border-radius: 4px; 
+        }
+        .icon { 
+            position: absolute; 
+            top: 15px; 
+            right: 20px; 
+            font-size: 20px; 
+            color: var(--plex); 
+            cursor: pointer; 
+            transition: 0.3s; 
+        }
         .icon:hover { transform: rotate(90deg); }
-        h2 { color: var(--plex); font-size: 12px; text-transform: uppercase; letter-spacing: 2px; margin: 0 0 15px 0; }
-        .box { margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
-        .lab { font-size: 10px; color: var(--live); font-weight: bold; text-transform: uppercase; }
-        .val { font-size: 22px; font-weight: 800; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .sub { font-size: 13px; color: var(--dim); margin-top: 5px; }
-        #sync-status { position: absolute; bottom: 10px; right: 20px; font-size: 9px; color: var(--live); font-family: monospace; font-weight: bold; }
-        .debug-container { width: 400px; margin-top: 20px; background: #000; border: 1px solid var(--border); border-radius: 8px; padding: 10px; font-family: monospace; font-size: 11px; color: #00ff00; }
-        #log { height: 100px; overflow-y: auto; white-space: pre-wrap; }
+        h2 { 
+            color: var(--plex); 
+            font-size: 12px; 
+            text-transform: uppercase; 
+            letter-spacing: 2px; 
+            margin: 0 0 15px 0; 
+        }
+        .box { 
+            margin-bottom: 20px; 
+            border-bottom: 1px solid var(--border); 
+            padding-bottom: 15px; 
+        }
+        .lab { 
+            font-size: 10px; 
+            color: var(--live); 
+            font-weight: bold; 
+            text-transform: uppercase; 
+        }
+        .val { 
+            font-size: 22px; 
+            font-weight: 800; 
+            margin-top: 5px; 
+            white-space: nowrap; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+        }
+        .sub { 
+            font-size: 13px; 
+            color: var(--dim); 
+            margin-top: 5px; 
+        }
+        #sync-status { 
+            position: absolute; 
+            bottom: 10px; 
+            right: 20px; 
+            font-size: 9px; 
+            color: var(--live); 
+            font-family: monospace; 
+            font-weight: bold; 
+        }
+        .debug-container { 
+            width: 400px; 
+            margin-top: 20px; 
+            background: #000; 
+            border: 1px solid var(--border); 
+            border-radius: 8px; 
+            padding: 10px; 
+            font-family: monospace; 
+            font-size: 11px; 
+            color: #00ff00; 
+        }
+        .debug-header { 
+            font-weight: bold; 
+            color: var(--plex); 
+            margin-bottom: 5px; 
+            border-bottom: 1px solid #333; 
+            display: flex; 
+            justify-content: space-between; 
+        }
+        #log { 
+            height: 100px; 
+            overflow-y: auto; 
+            white-space: pre-wrap; 
+            word-break: break-all; 
+        }
     </style>
 </head>
 <body>
@@ -44,7 +146,8 @@
     </div>
 
     <div class="debug-container">
-        <div id="log">SYSTEM READY...</div>
+        <div class="debug-header"><span>SYSTEM LOG</span><span style="cursor:pointer" onclick="document.getElementById('log').innerHTML=''">CLEAR</span></div>
+        <div id="log">Rebuilding Tracker...</div>
     </div>
 
     <script>
@@ -52,8 +155,9 @@
 
         function addLog(msg, data = null) {
             const logEl = document.getElementById('log');
-            let entry = `[${new Date().toLocaleTimeString()}] ${msg}\n`;
-            if (data) entry += ` > ${JSON.stringify(data)}\n`;
+            const time = new Date().toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            let entry = `[${time}] ${msg}\n`;
+            if (data) entry += ` > DATA: ${JSON.stringify(data)}\n`;
             logEl.innerHTML = entry + logEl.innerHTML;
         }
 
@@ -64,15 +168,14 @@
                 const data = await response.json();
                 const m = data.movie;
 
-                addLog("Syncing J11 Mirror", m.timeLeft);
+                addLog("Sheet Handshake Successful", m.timeLeft);
 
                 document.getElementById('m-now').innerText = m.nowPlaying || "Offline";
                 document.getElementById('m-next').innerText = m.nextTitle || "None";
                 
-                // Pure Mirror for Now Playing (J11)
+                // MIRROR LOGIC: Display J11 exactly as it is in the sheet
                 const timerEl = document.getElementById('playing-timer');
                 if (m.timeLeft && !m.timeLeft.includes("N/A")) {
-                    // Strips the "Remaining:" prefix if it exists to keep it clean
                     timerEl.innerText = m.timeLeft.replace(/Remaining:/i, "").trim();
                     document.getElementById('playing-status').innerText = "Ends in:";
                 } else {
@@ -83,19 +186,28 @@
                 handleNextTimer(m.nextTime);
                 
                 document.getElementById('sync-status').innerText = "LIVE: " + new Date().toLocaleTimeString();
-            } catch (e) { addLog("SYNC ERROR"); }
+            } catch (e) { 
+                addLog("CRITICAL SYNC ERROR");
+                document.getElementById('sync-status').innerText = "OFFLINE";
+            }
         }
 
         function handleNextTimer(dateStr) {
             clearInterval(nextInt);
             const el = document.getElementById('next-timer');
-            if (!dateStr || dateStr.includes("N/A")) { el.innerText = "Scheduled Off"; return; }
+            
+            if (!dateStr || dateStr.includes("N/A") || dateStr === "None") { 
+                el.innerText = "Scheduled Off"; 
+                return; 
+            }
 
+            // Ensure valid date parsing for 2026
             let clean = dateStr.includes("202") ? dateStr : dateStr.replace(",", " 2026,");
             const target = new Date(clean);
 
             nextInt = setInterval(() => {
                 const diff = target - new Date();
+                
                 if (diff <= 0) { 
                     el.innerText = "Starting Now!"; 
                     clearInterval(nextInt); 
@@ -107,16 +219,17 @@
                 const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
                 const s = Math.floor((diff % (1000 * 60)) / 1000);
                 
-                let timeString = "";
-                if (d > 0) timeString += d + "d ";
-                timeString += `${h}h ${m}m ${s}s`;
+                let timeStr = "";
+                if (d > 0) timeStr += d + "d ";
+                timeStr += `${h}h ${m}m ${s}s`;
                 
-                el.innerText = timeString;
+                el.innerText = timeStr;
             }, 1000);
         }
 
-        setInterval(sync, 60000);
+        // Initialize and setup auto-refresh every 60 seconds
         sync();
+        setInterval(sync, 60000);
     </script>
 </body>
 </html>
