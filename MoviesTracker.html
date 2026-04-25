@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Brian's Theater v0.0.4</title>
+    <title>Brian's Theater v0.0.5</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         :root { --bg: #0d1117; --card: #161b22; --border: #30363d; --plex: #ffb515; --live: #238636; --txt: #ffffff; --dim: #8b949e; }
@@ -26,7 +26,7 @@
 <body>
 
     <div class="theater-card">
-        <div class="v-tag">v0.0.4</div>
+        <div class="v-tag">v0.0.5</div>
         <i class="fa-solid fa-arrows-rotate icon" onclick="sync()"></i>
         <h2>Brian's Theater</h2>
         
@@ -57,17 +57,20 @@
             status.innerText = "CONNECTING...";
             
             try {
-                // We fetch as text first to avoid CORS/JSON rejection
-                const response = await fetch(url + '?t=' + Date.now(), { mode: 'cors' });
+                const response = await fetch(url + '?t=' + Date.now());
                 const data = await response.json();
 
-                document.getElementById('m-now').innerText = data.nowPlaying || "Offline";
-                document.getElementById('m-left').innerText = (data.timeLeft || "--") + " left";
-                document.getElementById('m-next').innerText = data.nextTitle || "None";
-                document.getElementById('m-time').innerText = "Starts at " + (data.nextTime || "--");
-                document.getElementById('m-count').innerText = data.moviesCount || "0";
-                document.getElementById('tv-count').innerText = data.tvCount || "0";
-                document.getElementById('m-open').innerText = data.daysOpen || "0";
+                // Pointing to the "movie" object returned by your script
+                const m = data.movie;
+
+                document.getElementById('m-now').innerText = m.nowPlaying || "Offline";
+                document.getElementById('m-left').innerText = (m.timeLeft || "--") + " left";
+                document.getElementById('m-next').innerText = m.nextTitle || "None";
+                document.getElementById('m-time').innerText = "Starts at " + (m.nextTime || "--");
+                
+                document.getElementById('m-count').innerText = m.moviesCount || "0";
+                document.getElementById('tv-count').innerText = m.tvCount || "0";
+                document.getElementById('m-open').innerText = m.daysOpen || "0";
                 
                 status.innerText = "LIVE: " + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
             } catch (e) {
