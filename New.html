@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v7.6.2</title>
+    <title>Cloud Dashboard v7.6.3</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         :root {
@@ -32,23 +32,18 @@
         }
 
         .box-logo { position: absolute; top: 12px; right: 15px; width: 22px; height: 22px; z-index: 20; font-size: 20px; }
-
-        /* Embedded Counters */
         .counter-item iframe { filter: invert(1) hue-rotate(180deg); border: 0; width: 450px; height: 220px; position: absolute; top: 10px; left: -85px; pointer-events: none; }
         .instagram-fix { overflow: hidden !important; }
         .instagram-fix iframe { top: 38px !important; left: -75px !important; transform: scale(0.92); clip-path: inset(0px 0px 0px 80px); }
 
-        /* Labels & Numbers */
         .header-tag { font-size: 11px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 5px; font-weight: bold; }
         .main-number { font-size: 3.1rem; font-weight: 800; color: #ffffff; margin: 0; white-space: nowrap; letter-spacing: -2px; line-height: 1.1; }
 
-        /* Unified Stats Styles */
         .mirror-box { justify-content: space-evenly !important; padding-left: 0 !important; text-align: center; }
         .mirror-row { display: flex; justify-content: space-around; width: 100%; margin-top: 5px; }
         .mirror-label { font-size: 9px; color: var(--light-purple); text-transform: uppercase; font-weight: bold; margin: 0; }
         .mirror-stat { font-size: 2rem; font-weight: 800; color: #ffffff; margin-bottom: 2px; }
 
-        /* CINEMA TRACKER BOX */
         .cinema-info { padding: 12px 20px 12px 15px; display: grid; grid-template-columns: 1.2fr 1fr; gap: 8px; height: 100%; text-align: left; }
         .cinema-label { font-size: 9px; color: var(--cinema-green); text-transform: uppercase; font-weight: bold; }
         .cinema-title { font-size: 13px; font-weight: bold; color: #ffffff; line-height: 1.2; margin-top: 2px; height: 32px; overflow: hidden; }
@@ -83,4 +78,109 @@
         <div class="counter-item instagram-fix"><i class="fa-brands fa-instagram box-logo" style="color:#E1306C;"></i><iframe scrolling="no" src="https://livecounts.nl/instagram-realtime/embed/?u=briandivacox"></iframe></div>
 
         <div class="counter-item">
-            <svg class="box-logo" viewBox="0 0 566 500" fill="var(--bsky-blue)"><path d="M121.2 35.6C191.6 86.9 282.9 178.1 282.9 178.1S374.2 86.9 444.7 35.6C502.9-6.8 566 -20.3 566 49.3c0 19.3-11.2 121.1-17.8 144.6-21 75-
+            <svg class="box-logo" viewBox="0 0 566 500" fill="var(--bsky-blue)"><path d="M121.2 35.6C191.6 86.9 282.9 178.1 282.9 178.1S374.2 86.9 444.7 35.6C502.9-6.8 566 -20.3 566 49.3c0 19.3-11.2 121.1-17.8 144.6-21 75-52.2 89.8-118.4 104.8 134.5 25.3 152.9 70.6 152.9 101.7 0 71-65.4 63.3-119 31.9-74.5-43.8-139.8-138.8-179.9-195.1-40.1 56.3-105.4 151.3-179.9 195.1-53.6 31.5-119 39.1-119-31.9 0-31.1 18.4-76.4 152.9-101.7C46.2 283.7 15 268.9 0 193.9c-6.6-23.5-17.8-125.3-17.8-144.6 0-69.6 63.1-56.1 121.2-13.7z"/></svg>
+            <span class="header-tag">Bluesky</span><div id="bsky-num" class="main-number">---</div>
+        </div>
+
+        <div class="counter-item mirror-box">
+            <i class="fa-brands fa-threads box-logo" style="color:white;"></i>
+            <div><p class="mirror-label">🧵 Threads Views</p><div id="threads-view-num" class="mirror-stat" style="font-size: 2.5rem;">0</div></div>
+            <div class="mirror-row">
+                <div><p class="mirror-label">👥 Followers</p><div id="threads-fol-num" class="mirror-stat">0</div></div>
+            </div>
+        </div>
+
+        <div class="counter-item"><i class="fa-brands fa-snapchat box-logo" style="color:var(--snap-yellow);"></i><span class="header-tag">Snapchat</span><div id="snap-fol-num" class="main-number">---</div></div>
+        <div class="counter-item"><i class="fa-brands fa-facebook box-logo" style="color:#0866ff;"></i><span class="header-tag">FB Page</span><div id="fb-page-num" class="main-number">---</div></div>
+        <div class="counter-item"><i class="fa-brands fa-facebook-f box-logo" style="color:#0866ff;"></i><span class="header-tag">FB Personal</span><div id="fb-personal-num" class="main-number">---</div></div>
+
+        <div class="counter-item" style="border-color: var(--cinema-green); padding-left: 0;">
+            <i class="fa-solid fa-film box-logo" style="color: var(--cinema-green);"></i>
+            <div class="cinema-info">
+                <div>
+                    <div class="cinema-label">Now Playing</div>
+                    <div id="m-now" class="cinema-title">Syncing...</div>
+                    <div id="m-left" class="cinema-meta">--</div>
+                </div>
+                <div style="border-left: 1px solid var(--border-color); padding-left: 10px;">
+                    <div class="cinema-label" style="color: var(--plex-orange);">Up Next</div>
+                    <div id="m-next" class="cinema-title">--</div>
+                    <div id="m-time" class="cinema-meta">--</div>
+                </div>
+            </div>
+            <div class="cinema-footer">
+                <div class="cinema-stats-line">
+                    <span>Movies: <span id="m-count">--</span></span>
+                    <span>TV: <span id="tv-count">--</span></span>
+                </div>
+                <div class="cinema-sub-footer">
+                    <span>Open For: <span id="m-open">--</span></span>
+                    <span>Sync: <span id="sync-timer">60</span>s</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+    <script>
+        const sConf = { apiKey: atob("QUl6YVN5QXZ4ZktnX3NwUE52RTJ3Y1QtdlRsOFlUUXU0TDN0Xzd3"), authDomain: "livecounters-8eaa8.firebaseapp.com", projectId: "livecounters-8eaa8", databaseURL: "https://livecounters-8eaa8-default-rtdb.firebaseio.com/", appId: "1:386919719539:web:c60c0d185c3d7e97ecc006" };
+        const vConf = { apiKey: "AIzaSyCokXnEtboNuUIASBMz2ZzS0GuchemoJYI", authDomain: "lbbb-webcounter.firebaseapp.com", projectId: "lbbb-webcounter", databaseURL: "https://lbbb-webcounter-default-rtdb.firebaseio.com/", appId: "1:217634980859:web:49ef2b0aa7fe7d0bb1415e" };
+        const sApp = firebase.initializeApp(sConf, "sApp");
+        const vApp = firebase.initializeApp(vConf, "vApp");
+        const sDb = sApp.database();
+        const vDb = vApp.database();
+
+        vDb.ref("totalViewCount").on("value", s => { document.getElementById("totalViewsCounter").innerText = s.val() || 0; });
+        vDb.ref("visitorsConnected").on("value", s => { document.getElementById("visitorCounter").innerText = s.numChildren() || 0; });
+
+        sDb.ref('labData').on('value', (s) => {
+            const d = s.val();
+            if (d) {
+                document.getElementById('threads-fol-num').innerText = d.threadsFol || "0";
+                document.getElementById('threads-view-num').innerText = d.threadsViews || "0";
+                document.getElementById('snap-fol-num').innerText = d.snapFol || "0";
+                document.getElementById('fb-page-num').innerText = d.fbPage || "0";
+                document.getElementById('fb-personal-num').innerText = d.fbPersonal || "0";
+                document.getElementById('plex-count-num').innerText = d.plexCount || "0";
+            }
+        });
+
+        async function getBsky() {
+            try {
+                const r = await fetch('https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=briandivacox.bsky.social');
+                const p = await r.json();
+                if (p.followersCount !== undefined) document.getElementById('bsky-num').innerText = p.followersCount.toLocaleString();
+            } catch (e) {}
+        }
+        getBsky(); setInterval(getBsky, 300000);
+
+        let countdown = 60;
+        const timerDisplay = document.getElementById('sync-timer');
+
+        async function syncCinema() {
+            // VERIFY THIS URL MATCHES YOUR DEPLOYMENT
+            const api = 'https://script.google.com/macros/s/AKfycbxvKbJqw6_JoYtWlKwV1t5Kav2w4HBRrtxsZUU-PzkAPxd7kd_tWuj165mLhkwLfhE/exec';
+            try {
+                const res = await fetch(api + '?t=' + Date.now());
+                const d = await res.json();
+                document.getElementById('m-now').innerText = d.nowPlaying || "None";
+                document.getElementById('m-left').innerText = "Left: " + (d.timeLeft || "--");
+                document.getElementById('m-count').innerText = d.moviesCount || "0";
+                document.getElementById('tv-count').innerText = d.tvCount || "0";
+                document.getElementById('m-next').innerText = d.nextTitle || "None";
+                document.getElementById('m-time').innerText = d.nextTime || "--";
+                document.getElementById('m-open').innerText = d.daysOpen || "0";
+            } catch (e) { document.getElementById('m-now').innerText = "Sync Error"; }
+        }
+
+        setInterval(() => {
+            countdown--;
+            if (countdown <= 0) { syncCinema(); countdown = 60; }
+            timerDisplay.innerText = countdown;
+        }, 1000);
+
+        syncCinema(); 
+    </script>
+</body>
+</html>
