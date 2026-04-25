@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Brian's Theater v0.0.16</title>
+    <title>Brian's Theater v0.0.17</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         :root { --bg: #0d1117; --card: #161b22; --border: #30363d; --plex: #ffb515; --live: #238636; --txt: #ffffff; --dim: #8b949e; }
@@ -22,12 +22,13 @@
         #sync { position: absolute; bottom: 10px; right: 20px; font-size: 9px; color: var(--live); font-family: monospace; font-weight: bold; }
         .cd-live { color: var(--live); font-weight: bold; font-family: monospace; }
         .cd-next { color: var(--plex); font-weight: bold; font-family: monospace; }
+        #debug { font-size: 8px; color: #444; position: absolute; bottom: -15px; left: 0; width: 100%; text-align: center; }
     </style>
 </head>
 <body>
 
     <div class="theater-card">
-        <div class="v-tag">v0.0.16</div>
+        <div class="v-tag">v0.0.17</div>
         <i class="fa-solid fa-arrows-rotate icon" onclick="sync()"></i>
         <h2>Brian's Theater</h2>
         
@@ -49,6 +50,7 @@
             <div class="s-box"><span id="m-open" class="s-val">0</span><span class="s-lab">Days Open</span></div>
         </div>
         <div id="sync">READY</div>
+        <div id="debug"></div>
     </div>
 
     <script>
@@ -57,6 +59,7 @@
         async function sync() {
             const url = 'https://script.google.com/macros/s/AKfycbxvKbJqw6_JoYtWlKwV1t5Kav2w4HBRrtxsZUU-PzkAPxd7kd_tWuj165mLhkwLfhE/exec';
             const status = document.getElementById('sync');
+            const debug = document.getElementById('debug');
             
             try {
                 const response = await fetch(url + '?t=' + Date.now());
@@ -66,7 +69,8 @@
                 document.getElementById('m-now').innerText = m.nowPlaying || "Offline";
                 document.getElementById('m-next').innerText = m.nextTitle || "None";
                 
-                // Absolute Syncing Logic
+                debug.innerText = "REC: " + m.nowPlayingEnds;
+
                 startTimer('playing-timer', m.nowPlayingEnds, true);
                 startTimer('next-timer', m.nextTime, false);
                 
@@ -89,7 +93,6 @@
                 return;
             }
 
-            // Force 2026 if year is missing
             let clean = dateStr.includes("202") ? dateStr : dateStr.replace(",", " 2026,");
             const target = new Date(clean);
 
