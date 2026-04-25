@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Brian's Theater v0.0.10</title>
+    <title>Brian's Theater v0.0.11</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         :root { --bg: #0d1117; --card: #161b22; --border: #30363d; --plex: #ffb515; --live: #238636; --txt: #ffffff; --dim: #8b949e; }
@@ -28,7 +28,7 @@
 <body>
 
     <div class="theater-card">
-        <div class="v-tag">v0.0.10</div>
+        <div class="v-tag">v0.0.11</div>
         <i class="fa-solid fa-arrows-rotate icon" onclick="sync()"></i>
         <h2>Brian's Theater</h2>
         
@@ -81,24 +81,22 @@
             }
         }
 
-        function handleNowTimer(timeStr) {
+        function handleNowTimer(str) {
             clearInterval(nowInterval);
             const el = document.getElementById('playing-timer');
+            if (!str || str === "N/A" || str === "Offline") { el.innerText = "Cinema Idle"; return; }
+
+            // Extract numbers from "Remaining: X hours Y mins"
+            let hours = 0, mins = 0;
+            const hMatch = str.match(/(\d+)\s*hour/);
+            const mMatch = str.match(/(\d+)\s*min/);
             
-            if (!timeStr || timeStr === "N/A" || !timeStr.includes(':')) {
-                el.innerText = "Cinema Idle";
-                return;
-            }
+            if (hMatch) hours = parseInt(hMatch[1]);
+            if (mMatch) mins = parseInt(mMatch[1]);
 
-            const parts = timeStr.split(':');
-            let totalSecs = 0;
+            let totalSecs = (hours * 3600) + (mins * 60);
 
-            // Handle HH:MM (2 parts) or HH:MM:SS (3 parts)
-            if (parts.length === 2) {
-                totalSecs = (+parts[0]) * 3600 + (+parts[1]) * 60;
-            } else if (parts.length === 3) {
-                totalSecs = (+parts[0]) * 3600 + (+parts[1]) * 60 + (+parts[2]);
-            }
+            if (totalSecs <= 0) { el.innerText = "Finishing..."; return; }
 
             nowInterval = setInterval(() => {
                 if (totalSecs <= 0) { el.innerText = "Finishing..."; clearInterval(nowInterval); return; }
@@ -113,10 +111,7 @@
         function handleNextTimer(dateStr) {
             clearInterval(nextInterval);
             const el = document.getElementById('next-timer');
-            if (!dateStr || dateStr === "N/A" || dateStr === "None") {
-                el.innerText = "Scheduled Off";
-                return;
-            }
+            if (!dateStr || dateStr === "N/A" || dateStr === "None") { el.innerText = "Scheduled Off"; return; }
 
             let cleanDate = dateStr.includes("202") ? dateStr : dateStr.replace(",", " 2026,");
             const target = new Date(cleanDate);
@@ -125,12 +120,10 @@
             nextInterval = setInterval(() => {
                 const diff = target - new Date();
                 if (diff <= 0) { el.innerText = "Starting Now!"; clearInterval(nextInterval); return; }
-
                 const d = Math.floor(diff / (1000 * 60 * 60 * 24));
                 const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                 const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
                 const s = Math.floor((diff % (1000 * 60)) / 1000);
-
                 el.innerText = (d > 0 ? d + "d " : "") + `${h}h ${m}m ${s}s`;
             }, 1000);
         }
