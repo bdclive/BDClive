@@ -2,144 +2,72 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Brian's Theater v8.0.0</title>
+    <title>Brian's Theater v8.0.1</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
-        :root {
-            --bg: #0d1117;
-            --card: #161b22;
-            --border: #30363d;
-            --plex-orange: #ffb515;
-            --cinema-green: #238636;
-            --text: #ffffff;
-            --text-dim: #8b949e;
-        }
-
-        body {
-            background-color: var(--bg);
-            color: var(--text);
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            overflow: hidden;
-        }
-
-        .theater-card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            width: 400px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            position: relative;
-        }
-
-        .version-tag {
-            position: absolute;
-            top: 15px;
-            right: 55px;
-            font-size: 9px;
-            font-weight: bold;
-            color: var(--text-dim);
-            background: rgba(255,255,255,0.05);
-            padding: 2px 6px;
-            border-radius: 4px;
-        }
-
-        .icon-header {
-            position: absolute;
-            top: 15px;
-            right: 20px;
-            font-size: 20px;
-            color: var(--plex-orange);
-        }
-
+        :root { --bg: #0d1117; --card: #161b22; --border: #30363d; --plex-orange: #ffb515; --cinema-green: #238636; --text: #ffffff; --text-dim: #8b949e; }
+        body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .theater-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; width: 400px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); position: relative; }
+        .version-tag { position: absolute; top: 15px; right: 55px; font-size: 9px; font-weight: bold; color: var(--text-dim); background: rgba(255,255,255,0.05); padding: 2px 6px; border-radius: 4px; }
+        .icon-header { position: absolute; top: 15px; right: 20px; font-size: 20px; color: var(--plex-orange); }
         h2 { color: var(--plex-orange); font-size: 12px; text-transform: uppercase; letter-spacing: 2px; margin: 0 0 15px 0; }
-        
         .section { margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
-        .section:last-of-type { border-bottom: none; }
-
         .label { font-size: 10px; color: var(--cinema-green); font-weight: bold; text-transform: uppercase; margin-bottom: 5px; }
         .title { font-size: 22px; font-weight: 800; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .meta { font-size: 13px; color: var(--text-dim); margin-top: 5px; }
-
         .stats-grid { display: flex; justify-content: space-between; margin-top: 10px; }
         .stat-box { text-align: center; }
         .stat-val { font-size: 18px; font-weight: bold; display: block; color: var(--text); }
         .stat-lab { font-size: 9px; color: var(--text-dim); text-transform: uppercase; }
-
         #sync-status { position: absolute; bottom: 10px; right: 20px; font-size: 9px; color: var(--cinema-green); font-family: monospace; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <div class="theater-card">
-        <div class="version-tag">v8.0.0</div>
+        <div class="version-tag">v8.0.1</div>
         <i class="fa-solid fa-film icon-header"></i>
         <h2>Brian's Theater</h2>
-
         <div class="section">
             <div class="label">Now Playing</div>
             <div id="m-now" class="title">Syncing...</div>
             <div id="m-left" class="meta">-- remaining</div>
         </div>
-
-        <div class="section">
+        <div class="section" style="border:none;">
             <div class="label" style="color: var(--plex-orange);">Coming Up Next</div>
             <div id="m-next" class="title">--</div>
             <div id="m-time" class="meta">Starts at --</div>
         </div>
-
         <div class="stats-grid">
-            <div class="stat-box">
-                <span id="m-count" class="stat-val">0</span>
-                <span class="stat-lab">Movies</span>
-            </div>
-            <div class="stat-box">
-                <span id="tv-count" class="stat-val">0</span>
-                <span class="stat-lab">TV Shows</span>
-            </div>
-            <div class="stat-box">
-                <span id="m-open" class="stat-val">0</span>
-                <span class="stat-lab">Days Open</span>
-            </div>
+            <div class="stat-box"><span id="m-count" class="stat-val">0</span><span class="stat-lab">Movies</span></div>
+            <div class="stat-box"><span id="tv-count" class="stat-val">0</span><span class="stat-lab">TV Shows</span></div>
+            <div class="stat-box"><span id="m-open" class="stat-val">0</span><span class="stat-lab">Days Open</span></div>
         </div>
-
         <div id="sync-status">INITIALIZING</div>
     </div>
 
     <script>
         async function updateTheater() {
+            // PASTE THE NEW URL FROM STEP 2 BELOW
             const api = 'https://script.google.com/macros/s/AKfycbxvKbJqw6_JoYtWlKwV1t5Kav2w4HBRrtxsZUU-PzkAPxd7kd_tWuj165mLhkwLfhE/exec';
             const status = document.getElementById('sync-status');
             
             try {
                 const res = await fetch(api + '?t=' + Date.now());
                 const data = await res.json();
-
-                document.getElementById('m-now').innerText = data.nowPlaying || "Offline";
-                document.getElementById('m-left').innerText = (data.timeLeft || "--") + " remaining";
-                document.getElementById('m-next').innerText = data.nextTitle || "None";
-                document.getElementById('m-time').innerText = "Starts at " + (data.nextTime || "--");
-                
-                document.getElementById('m-count').innerText = data.moviesCount || "0";
-                document.getElementById('tv-count').innerText = data.tvCount || "0";
-                document.getElementById('m-open').innerText = data.daysOpen || "0";
-
+                document.getElementById('m-now').innerText = data.nowPlaying;
+                document.getElementById('m-left').innerText = data.timeLeft + " remaining";
+                document.getElementById('m-next').innerText = data.nextTitle;
+                document.getElementById('m-time').innerText = "Starts at " + data.nextTime;
+                document.getElementById('m-count').innerText = data.moviesCount;
+                document.getElementById('tv-count').innerText = data.tvCount;
+                document.getElementById('m-open').innerText = data.daysOpen;
                 status.innerText = "ONLINE: " + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-                status.style.color = "var(--cinema-green)";
             } catch (e) {
-                document.getElementById('m-now').innerText = "Sync Error";
-                status.innerText = "OFFLINE";
+                status.innerText = "LINK ERROR";
                 status.style.color = "red";
             }
         }
-
-        // Set to refresh every 30 seconds
         setInterval(updateTheater, 30000);
         updateTheater();
     </script>
