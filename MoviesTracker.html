@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Brian's Theater v8.0.1</title>
+    <title>Brian's Theater v8.0.2</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         :root { --bg: #0d1117; --card: #161b22; --border: #30363d; --plex-orange: #ffb515; --cinema-green: #238636; --text: #ffffff; --text-dim: #8b949e; }
@@ -25,7 +25,7 @@
 <body>
 
     <div class="theater-card">
-        <div class="version-tag">v8.0.1</div>
+        <div class="version-tag">v8.0.2</div>
         <i class="fa-solid fa-film icon-header"></i>
         <h2>Brian's Theater</h2>
         <div class="section">
@@ -48,23 +48,27 @@
 
     <script>
         async function updateTheater() {
-            // PASTE THE NEW URL FROM STEP 2 BELOW
             const api = 'https://script.google.com/macros/s/AKfycbxvKbJqw6_JoYtWlKwV1t5Kav2w4HBRrtxsZUU-PzkAPxd7kd_tWuj165mLhkwLfhE/exec';
             const status = document.getElementById('sync-status');
             
             try {
                 const res = await fetch(api + '?t=' + Date.now());
                 const data = await res.json();
-                document.getElementById('m-now').innerText = data.nowPlaying;
-                document.getElementById('m-left').innerText = data.timeLeft + " remaining";
-                document.getElementById('m-next').innerText = data.nextTitle;
-                document.getElementById('m-time').innerText = "Starts at " + data.nextTime;
-                document.getElementById('m-count').innerText = data.moviesCount;
-                document.getElementById('tv-count').innerText = data.tvCount;
-                document.getElementById('m-open').innerText = data.daysOpen;
+                
+                // Mapped 1:1 to the Google Script labels
+                document.getElementById('m-now').innerText = data.nowPlaying || "Offline";
+                document.getElementById('m-left').innerText = (data.timeLeft || "--") + " remaining";
+                document.getElementById('m-next').innerText = data.nextTitle || "None";
+                document.getElementById('m-time').innerText = "Starts at " + (data.nextTime || "--");
+                
+                document.getElementById('m-count').innerText = data.moviesCount || "0";
+                document.getElementById('tv-count').innerText = data.tvCount || "0";
+                document.getElementById('m-open').innerText = data.daysOpen || "0";
+                
                 status.innerText = "ONLINE: " + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                status.style.color = "var(--cinema-green)";
             } catch (e) {
-                status.innerText = "LINK ERROR";
+                status.innerText = "SYNC ERROR";
                 status.style.color = "red";
             }
         }
