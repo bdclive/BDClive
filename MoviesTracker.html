@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Brian's Theater v0.0.6</title>
+    <title>Brian's Theater v0.0.7</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         :root { --bg: #0d1117; --card: #161b22; --border: #30363d; --plex: #ffb515; --live: #238636; --txt: #ffffff; --dim: #8b949e; }
@@ -21,13 +21,13 @@
         .s-val { font-size: 18px; font-weight: bold; display: block; }
         .s-lab { font-size: 9px; color: var(--dim); text-transform: uppercase; }
         #sync { position: absolute; bottom: 10px; right: 20px; font-size: 9px; color: var(--live); font-family: monospace; font-weight: bold; }
-        .countdown-text { color: var(--plex); font-weight: bold; }
+        .countdown-text { color: var(--plex); font-weight: bold; font-family: monospace; }
     </style>
 </head>
 <body>
 
     <div class="theater-card">
-        <div class="v-tag">v0.0.6</div>
+        <div class="v-tag">v0.0.7</div>
         <i class="fa-solid fa-arrows-rotate icon" onclick="sync()"></i>
         <h2>Brian's Theater</h2>
         
@@ -57,7 +57,7 @@
         async function sync() {
             const url = 'https://script.google.com/macros/s/AKfycbxvKbJqw6_JoYtWlKwV1t5Kav2w4HBRrtxsZUU-PzkAPxd7kd_tWuj165mLhkwLfhE/exec';
             const status = document.getElementById('sync');
-            status.innerText = "CONNECTING...";
+            status.innerText = "REFRESHING...";
             
             try {
                 const response = await fetch(url + '?t=' + Date.now());
@@ -68,7 +68,7 @@
                 document.getElementById('m-left').innerText = (m.timeLeft || "--") + " left";
                 document.getElementById('m-next').innerText = m.nextTitle || "None";
                 
-                // Set up the countdown
+                // Smarter Time Handling
                 startCountdown(m.nextTime);
                 
                 document.getElementById('m-count').innerText = m.moviesCount || "0";
@@ -81,18 +81,25 @@
             }
         }
 
-        function startCountdown(targetDateStr) {
+        function startCountdown(dateStr) {
             clearInterval(countdownInterval);
             const timerEl = document.getElementById('timer');
             
-            const target = new Date(targetDateStr);
+            // Fix: If year is missing in "Apr 27, 7:00 PM", append 2026
+            let cleanDate = dateStr;
+            if (!dateStr.includes("202")) {
+                cleanDate = dateStr.replace(",", " 2026,");
+            }
+
+            const target = new Date(cleanDate);
+            
             if (isNaN(target)) {
-                timerEl.innerText = targetDateStr; // Just show text if date is weird
+                timerEl.innerText = dateStr; 
                 return;
             }
 
             countdownInterval = setInterval(() => {
-                const now = new Date().getTime();
+                const now = new Date();
                 const diff = target - now;
 
                 if (diff <= 0) {
@@ -101,11 +108,17 @@
                     return;
                 }
 
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
                 const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                 const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
                 const secs = Math.floor((diff % (1000 * 60)) / 1000);
 
-                timerEl.innerText = `${hours}h ${mins}m ${secs}s`;
+                // Show days only if it's more than 24 hours away
+                let display = "";
+                if (days > 0) display += days + "d ";
+                display += `${hours}h ${mins}m ${secs}s`;
+                
+                timerEl.innerText = display;
             }, 1000);
         }
 
