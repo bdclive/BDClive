@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v7.6.8</title>
+    <title>Cloud Dashboard v7.6.9</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     
     <script data-cfasync="false" src="https://video.ibm.com/embed-api/v1/ustream-embedapi.min.js"></script>
@@ -39,12 +39,14 @@
         /* Counter Embeds */
         .counter-item iframe { filter: invert(1) hue-rotate(180deg); border: 0; width: 450px; height: 220px; position: absolute; top: 10px; left: -85px; pointer-events: none; }
         
-        /* Twitch Custom Fit */
+        /* Twitch Custom Fit - Optimized for Total Followers */
         .twitch-fix iframe { 
             filter: invert(1) hue-rotate(180deg) !important; 
-            top: -110px !important; 
-            left: -130px !important; 
-            transform: scale(1.4); 
+            top: -105px !important; 
+            left: -125px !important; 
+            transform: scale(1.35); 
+            width: 500px;
+            height: 300px;
         }
 
         .instagram-fix { overflow: hidden !important; }
@@ -89,6 +91,7 @@
         <div class="counter-item"><svg class="box-logo" viewBox="0 0 24 24" fill="white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.045 4.126H5.078z"/></svg><iframe scrolling="no" src="https://livecounts.io/embed/twitter-live-follower-counter/briandivacox"></iframe></div>
         
         <div class="counter-item twitch-fix">
+            <span class="header-tag" style="position: absolute; top: 12px; left: 25px; z-index: 30;">Total Followers</span>
             <i class="fa-brands fa-twitch box-logo" style="color:#9146FF;"></i>
             <iframe scrolling="no" src="https://twitchtracker.com/briandivacox/subscribers/embed"></iframe>
         </div>
@@ -139,7 +142,7 @@
                 </div>
                 <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;">
                     <span>Open: <span id="m-open">--</span></span>
-                    <span>v7.6.8</span>
+                    <span>v7.6.9</span>
                 </div>
             </div>
         </div>
