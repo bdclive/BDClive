@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v7.7.5</title>
+    <title>Cloud Dashboard v7.7.6</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script data-cfasync="false" src="https://video.ibm.com/embed-api/v1/ustream-embedapi.min.js"></script>
     <style>
@@ -80,3 +80,120 @@
 
         <div class="counter-item"><i class="fa-brands fa-snapchat box-logo" style="color:var(--snap-yellow);"></i><span class="header-tag">Snapchat</span><div id="snap-fol-num" class="main-number">---</div></div>
         <div class="counter-item"><i class="fa-brands fa-facebook box-logo" style="color:#0866ff;"></i><span class="header-tag">FB Page</span><div id="fb-page-num" class="main-number">---</div></div>
+
+        <div class="counter-item" style="border-color: var(--cinema-green); padding-left: 0;">
+            <i class="fa-solid fa-film box-logo" style="color: var(--cinema-green);"></i>
+            <div class="cinema-info">
+                <div><div class="cinema-label">Now Playing</div><div id="m-now" class="cinema-title">Syncing...</div><div id="m-left" style="font-size: 10px; color: var(--text-dim);">--</div></div>
+                <div style="border-left: 1px solid var(--border-color); padding-left: 10px;">
+                    <div class="cinema-label" style="color: var(--plex-orange);">Up Next</div><div id="m-next" class="cinema-title">--</div><div id="m-time" style="font-size: 10px; color: var(--text-dim);">--</div>
+                </div>
+            </div>
+            <div class="cinema-footer">
+                <div class="cinema-stats-line"><span>M: <span id="m-count">--</span></span><span>TV: <span id="tv-count">--</span></span><span style="color: var(--cinema-green);">S: <span id="sync-timer">60</span>s</span></div>
+                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">--</span></span><span>v7.7.6</span></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+    <script>
+        // FIREBASE SETUP
+        const sConf = { apiKey: atob("QUl6YVN5QXZ4ZktnX3NwUE52RTJ3Y1QtdlRsOFlUUXU0TDN0Xzd3"), authDomain: "livecounters-8eaa8.firebaseapp.com", projectId: "livecounters-8eaa8", databaseURL: "https://livecounters-8eaa8-default-rtdb.firebaseio.com/", appId: "1:386919719539:web:c60c0d185c3d7e97ecc006" };
+        const vConf = { apiKey: "AIzaSyCokXnEtboNuUIASBMz2ZzS0GuchemoJYI", authDomain: "lbbb-webcounter.firebaseapp.com", projectId: "lbbb-webcounter", databaseURL: "https://lbbb-webcounter-default-rtdb.firebaseio.com/", appId: "1:217634980859:web:49ef2b0aa7fe7d0bb1415e" };
+        const sApp = firebase.initializeApp(sConf, "sApp"); const vApp = firebase.initializeApp(vConf, "vApp");
+        const sDb = sApp.database(); const vDb = vApp.database();
+
+        // REALTIME LISTENERS (Restored Snapchat, FB, Threads, Plex)
+        vDb.ref("totalViewCount").on("value", s => document.getElementById("totalViewsCounter").innerText = s.val() || 0);
+        vDb.ref("visitorsConnected").on("value", s => document.getElementById("visitorCounter").innerText = s.numChildren() || 0);
+        sDb.ref('labData').on('value', (s) => { 
+            const d = s.val(); 
+            if (d) { 
+                document.getElementById('threads-fol-num').innerText = d.threadsFol || "0"; 
+                document.getElementById('threads-view-num').innerText = d.threadsViews || "0"; 
+                document.getElementById('snap-fol-num').innerText = d.snapFol || "0"; 
+                document.getElementById('fb-page-num').innerText = d.fbPage || "0"; 
+                document.getElementById('plex-count-num').innerText = d.plexCount || "0"; 
+            } 
+        });
+
+        // BLUESKY
+        async function getBsky() { try { const r = await fetch('https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=briandivacox.bsky.social'); const p = await r.json(); if (p.followersCount !== undefined) document.getElementById('bsky-num').innerText = p.followersCount.toLocaleString(); } catch (e) {} }
+        getBsky(); setInterval(getBsky, 300000);
+
+        // COURT MONITOR
+        function monitorCourt() { 
+            if (typeof UstreamEmbed === 'undefined') { setTimeout(monitorCourt, 1000); return; } 
+            const viewer = UstreamEmbed('court-player'); 
+            const check = () => { 
+                viewer.getProperty('live', (isLive) => { 
+                    const active = (isLive === true || isLive === 'live'); 
+                    document.getElementById('court-dot').className = active ? 'dot live' : 'dot'; 
+                    document.getElementById('court-text').innerText = active ? "LIVE NOW" : "OFF AIR"; 
+                    document.getElementById('court-text').style.color = active ? "#ff0000" : "var(--text-dim)"; 
+                    document.getElementById('court-subtitle').innerText = active ? "Judge David Online" : "Judge David"; 
+                }); 
+            }; 
+            viewer.addListener('live', check); setInterval(check, 30000); check(); 
+        }
+        window.addEventListener('load', monitorCourt);
+
+        // DUAL SYNC ENGINE
+        const twitchLabApi = 'https://script.google.com/macros/s/AKfycby0ndGELJv0Q6yAR8PKMsvo3u-hZ2qAL80sVahxyeyrLy_qDXhkcYZkKBoq6HhdrhyO/exec';
+        const cinemaMasterApi = 'https://script.google.com/macros/s/AKfycbxvKbJqw6_JoYtWlKwV1t5Kav2w4HBRrtxsZUU-PzkAPxd7kd_tWuj165mLhkwLfhE/exec';
+        
+        let syncCount = 60; let nowInt, nextInt; let localNowSecs = 0;
+
+        async function syncTwitch() {
+            try {
+                const res = await fetch(twitchLabApi + '?t=' + Date.now(), { method: 'GET', redirect: 'follow' });
+                const data = await res.json();
+                if (data.twitch) document.getElementById('twitch-fol-num').innerText = data.twitch.followers || "---";
+            } catch (e) { console.error("Twitch Sync Failed"); }
+        }
+
+        async function syncCinema() {
+            try {
+                const res = await fetch(cinemaMasterApi + '?t=' + Date.now(), { method: 'GET', redirect: 'follow' });
+                const data = await res.json();
+                if (data.movie) {
+                    const m = data.movie;
+                    const isIdle = !m.nowPlaying || m.nowPlaying.toLowerCase() === "n/a" || m.nowPlaying.toLowerCase() === "offline";
+                    document.getElementById('m-now').innerText = isIdle ? "Off-Air" : m.nowPlaying;
+                    document.getElementById('m-count').innerText = m.moviesCount; document.getElementById('tv-count').innerText = m.tvCount;
+                    document.getElementById('m-next').innerText = m.nextTitle || "None"; document.getElementById('m-open').innerText = m.daysOpen;
+                    
+                    clearInterval(nowInt); 
+                    const nowEl = document.getElementById('m-left');
+                    if (isIdle || !m.timeLeft || m.timeLeft.toLowerCase().includes("n/a")) { nowEl.innerText = "Cinema Idle"; } else {
+                        let h = (m.timeLeft.match(/(\d+)\s*(?:hour|h)/i) || [0,0])[1];
+                        let mins = (m.timeLeft.match(/(\d+)\s*(?:min|m)/i) || [0,0])[1];
+                        let s = (m.timeLeft.match(/(\d+)\s*(?:sec|s)/i) || [0,0])[1];
+                        localNowSecs = (parseInt(h) * 3600) + (parseInt(mins) * 60) + parseInt(s);
+                        nowInt = setInterval(() => { if (localNowSecs <= 0) { nowEl.innerText = "Finishing..."; clearInterval(nowInt); return; } localNowSecs--; let hh = Math.floor(localNowSecs / 3600); let mm = Math.floor((localNowSecs % 3600) / 60); let ss = localNowSecs % 60; nowEl.innerText = `Left: ${hh}h ${mm}m ${ss}s`; }, 1000);
+                    }
+
+                    clearInterval(nextInt); 
+                    const nextEl = document.getElementById('m-time');
+                    if (!m.nextTime || m.nextTime.includes("N/A")) { nextEl.innerText = "--"; } else {
+                        let clean = m.nextTime.includes("202") ? m.nextTime : m.nextTime.replace(",", " 2026,");
+                        const target = new Date(clean);
+                        nextInt = setInterval(() => { const diff = target - new Date(); if (diff <= 0) { nextEl.innerText = "Starting Now!"; clearInterval(nextInt); return; } const dd = Math.floor(diff / 86400000); const hh = Math.floor((diff % 86400000) / 3600000); const mm = Math.floor((diff % 3600000) / 60000); const ss = Math.floor((diff % 60000) / 1000); nextEl.innerText = (dd > 0 ? dd + "d " : "") + `${hh}h ${mm}m ${ss}s`; }, 1000);
+                    }
+                }
+            } catch (e) { document.getElementById('m-now').innerText = "Sync Error"; }
+        }
+
+        async function syncMaster() {
+            syncTwitch();
+            syncCinema();
+            syncCount = 60; 
+        }
+
+        setInterval(() => { syncCount--; if (syncCount <= 0) syncMaster(); document.getElementById('sync-timer').innerText = syncCount; }, 1000);
+        syncMaster();
+    </script>
+</body>
+</html>
