@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Brian's Theater v0.0.40</title>
+    <title>Brian's Theater v0.0.44</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         :root { --bg: #0d1117; --card: #161b22; --border: #30363d; --plex: #ffb515; --live: #238636; --txt: #ffffff; --dim: #8b949e; }
@@ -23,7 +23,7 @@
 <body>
 
     <div class="theater-card">
-        <div class="v-tag">v0.0.40</div>
+        <div class="v-tag">v0.0.44</div>
         <i class="fa-solid fa-arrows-rotate icon" onclick="sync()"></i>
         <h2>Brian's Theater</h2>
         
@@ -43,12 +43,11 @@
     </div>
 
     <div class="debug-container">
-        <div id="log">Rebuilding Tracker...</div>
+        <div id="log">Initializing Ghost Filter v0.0.44...</div>
     </div>
 
     <script>
         let nextInt;
-        let ghostTimeout;
 
         function addLog(msg) {
             const logEl = document.getElementById('log');
@@ -62,26 +61,33 @@
                 const data = await response.json();
                 const m = data.movie;
 
-                addLog(`Inbound: ${m.nowPlaying}`);
+                addLog(`Raw Data: ${m.timeLeft}`);
 
-                // If sheet is empty, wait 30 seconds before clearing the UI
-                if (!m.nowPlaying || m.nowPlaying === "N/A" || m.nowPlaying === "") {
-                    addLog("Sheet empty. Waiting for recovery...");
-                    ghostTimeout = setTimeout(() => {
-                        document.getElementById('m-now').innerText = "Offline";
-                        document.getElementById('playing-timer').innerText = "Cinema Idle";
-                        document.getElementById('playing-status').innerText = "";
-                    }, 30000);
+                document.getElementById('m-now').innerText = m.nowPlaying || "Offline";
+                document.getElementById('m-next').innerText = m.nextTitle || "None";
+                
+                // GHOST FILTER LOGIC
+                let timeStr = m.timeLeft || "";
+                if (timeStr.includes("N/A") || timeStr === "") {
+                    document.getElementById('playing-timer').innerText = "Cinema Idle";
+                    document.getElementById('playing-status').innerText = "";
                 } else {
-                    clearTimeout(ghostTimeout);
-                    document.getElementById('m-now').innerText = m.nowPlaying;
-                    document.getElementById('playing-timer').innerText = m.timeLeft.replace(/Remaining:/i, "").trim();
+                    // Extract hours to check for the +4/+5 ghost offset
+                    let hMatch = timeStr.match(/(\d+)\s*hour/i);
+                    let h = hMatch ? parseInt(hMatch[1]) : 0;
+                    
+                    if (h >= 4) {
+                        addLog(`Ghost Hours Detected (${h}). Applying -4h Offset...`);
+                        let correctedH = h - 4;
+                        timeStr = timeStr.replace(h + " hours", correctedH + " hours");
+                        timeStr = timeStr.replace(h + " hour", correctedH + " hour");
+                    }
+                    
+                    document.getElementById('playing-timer').innerText = timeStr.replace(/Remaining:/i, "").trim();
                     document.getElementById('playing-status').innerText = "Ends in:";
                 }
 
-                document.getElementById('m-next').innerText = m.nextTitle || "None";
                 handleNextTimer(m.nextTime);
-                
                 document.getElementById('sync-status').innerText = "LIVE: " + new Date().toLocaleTimeString();
             } catch (e) { addLog("SYNC ERROR"); }
         }
@@ -90,15 +96,19 @@
             clearInterval(nextInt);
             const el = document.getElementById('next-timer');
             if (!dateStr || dateStr.includes("N/A")) { el.innerText = "Scheduled Off"; return; }
+            
             let clean = dateStr.includes("202") ? dateStr : dateStr.replace(",", " 2026,");
             const target = new Date(clean);
+            
             nextInt = setInterval(() => {
                 const diff = target - new Date();
                 if (diff <= 0) { el.innerText = "Starting Now!"; clearInterval(nextInt); return; }
+                
                 const d = Math.floor(diff / 86400000);
                 const h = Math.floor((diff % 86400000) / 3600000);
                 const m = Math.floor((diff % 3600000) / 60000);
                 const s = Math.floor((diff % 60000) / 1000);
+                
                 el.innerText = (d > 0 ? d + "d " : "") + `${h}h ${m}m ${s}s`;
             }, 1000);
         }
