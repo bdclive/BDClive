@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v7.6.4</title>
+    <title>Cloud Dashboard v7.6.5</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     
     <script data-cfasync="false" src="https://video.ibm.com/embed-api/v1/ustream-embedapi.min.js"></script>
@@ -110,14 +110,27 @@
         <div class="counter-item" style="border-color: var(--cinema-green); padding-left: 0;">
             <i class="fa-solid fa-film box-logo" style="color: var(--cinema-green);"></i>
             <div class="cinema-info">
-                <div><div class="cinema-label">Now Playing</div><div id="m-now" class="cinema-title">Syncing...</div><div id="m-left" style="font-size: 10px; color: var(--text-dim);">--</div></div>
+                <div>
+                    <div class="cinema-label">Now Playing</div>
+                    <div id="m-now" class="cinema-title">Syncing...</div>
+                    <div id="m-left" style="font-size: 10px; color: var(--text-dim);">--</div>
+                </div>
                 <div style="border-left: 1px solid var(--border-color); padding-left: 10px;">
-                    <div class="cinema-label" style="color: var(--plex-orange);">Up Next</div><div id="m-next" class="cinema-title">--</div><div id="m-time" style="font-size: 10px; color: var(--text-dim);">--</div>
+                    <div class="cinema-label" style="color: var(--plex-orange);">Up Next</div>
+                    <div id="m-next" class="cinema-title">--</div>
+                    <div id="m-time" style="font-size: 10px; color: var(--text-dim);">--</div>
                 </div>
             </div>
             <div class="cinema-footer">
-                <div class="cinema-stats-line"><span>M: <span id="m-count">--</span></span><span>TV: <span id="tv-count">--</span></span><span style="color: var(--cinema-green);">S: <span id="sync-timer">60</span>s</span></div>
-                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">--</span></span><span>v7.6.4</span></div>
+                <div class="cinema-stats-line">
+                    <span>M: <span id="m-count">--</span></span>
+                    <span>TV: <span id="tv-count">--</span></span>
+                    <span style="color: var(--cinema-green);">S: <span id="sync-timer">60</span>s</span>
+                </div>
+                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;">
+                    <span>Open: <span id="m-open">--</span></span>
+                    <span>v7.6.5</span>
+                </div>
             </div>
         </div>
     </div>
@@ -144,11 +157,9 @@
             }
         });
 
-        // Bluesky
         async function getBsky() { try { const r = await fetch('https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=briandivacox.bsky.social'); const p = await r.json(); if (p.followersCount !== undefined) document.getElementById('bsky-num').innerText = p.followersCount.toLocaleString(); } catch (e) {} }
         getBsky(); setInterval(getBsky, 300000);
 
-        // COURT MONITOR
         function monitorCourt() {
             if (typeof UstreamEmbed === 'undefined') { setTimeout(monitorCourt, 1000); return; }
             const viewer = UstreamEmbed('court-player');
@@ -165,23 +176,79 @@
         }
         window.addEventListener('load', monitorCourt);
 
-        // CINEMA SYNC
-        let count = 60;
+        // --- NEW INTEGRATED CINEMA SYNC ENGINE ---
+        let syncCount = 60;
+        let nowInt, nextInt;
+        let localNowSecs = 0;
+
         async function syncCinema() {
             const api = 'https://script.google.com/macros/s/AKfycbxvKbJqw6_JoYtWlKwV1t5Kav2w4HBRrtxsZUU-PzkAPxd7kd_tWuj165mLhkwLfhE/exec';
             try {
-                const res = await fetch(api + '?t=' + Date.now()); const d = await res.json();
-                document.getElementById('m-now').innerText = d.nowPlaying;
-                document.getElementById('m-left').innerText = "Left: " + d.timeLeft;
-                document.getElementById('m-count').innerText = d.moviesCount;
-                document.getElementById('tv-count').innerText = d.tvCount;
-                document.getElementById('m-next').innerText = d.nextTitle;
-                document.getElementById('m-time').innerText = d.nextTime;
-                document.getElementById('m-open').innerText = d.daysOpen;
-                count = 60;
-            } catch (e) { document.getElementById('m-now').innerText = "Sync Error"; }
+                const res = await fetch(api + '?t=' + Date.now()); 
+                const d = await res.json();
+                const m = d.movie;
+
+                // Update basic text
+                const isIdle = !m.nowPlaying || m.nowPlaying.toLowerCase() === "n/a" || m.nowPlaying.toLowerCase() === "offline";
+                document.getElementById('m-now').innerText = isIdle ? "Off-Air" : m.nowPlaying;
+                document.getElementById('m-count').innerText = m.moviesCount;
+                document.getElementById('tv-count').innerText = m.tvCount;
+                document.getElementById('m-next').innerText = m.nextTitle || "None";
+                document.getElementById('m-open').innerText = m.daysOpen;
+
+                // Live Now Playing Timer
+                clearInterval(nowInt);
+                const nowEl = document.getElementById('m-left');
+                if (isIdle || !m.timeLeft || m.timeLeft.toLowerCase().includes("n/a")) {
+                    nowEl.innerText = "Cinema Idle";
+                } else {
+                    let h = (m.timeLeft.match(/(\d+)\s*hour/i) || [0,0])[1];
+                    let mins = (m.timeLeft.match(/(\d+)\s*min/i) || [0,0])[1];
+                    let s = (m.timeLeft.match(/(\d+)\s*sec/i) || [0,0])[1];
+                    localNowSecs = (parseInt(h) * 3600) + (parseInt(mins) * 60) + parseInt(s);
+                    
+                    nowInt = setInterval(() => {
+                        if (localNowSecs <= 0) { nowEl.innerText = "Finishing..."; clearInterval(nowInt); return; }
+                        localNowSecs--;
+                        let hh = Math.floor(localNowSecs / 3600);
+                        let mm = Math.floor((localNowSecs % 3600) / 60);
+                        let ss = localNowSecs % 60;
+                        nowEl.innerText = `Left: ${hh}h ${mm}m ${ss}s`;
+                    }, 1000);
+                }
+
+                // Live Up Next Timer
+                clearInterval(nextInt);
+                const nextEl = document.getElementById('m-time');
+                if (!m.nextTime || m.nextTime.includes("N/A")) {
+                    nextEl.innerText = "--";
+                } else {
+                    let clean = m.nextTime.includes("202") ? m.nextTime : m.nextTime.replace(",", " 2026,");
+                    const target = new Date(clean);
+                    nextInt = setInterval(() => {
+                        const diff = target - new Date();
+                        if (diff <= 0) { nextEl.innerText = "Starting Now!"; clearInterval(nextInt); return; }
+                        const dd = Math.floor(diff / 86400000);
+                        const hh = Math.floor((diff % 86400000) / 3600000);
+                        const mm = Math.floor((diff % 3600000) / 60000);
+                        const ss = Math.floor((diff % 60000) / 1000);
+                        nextEl.innerText = (dd > 0 ? dd + "d " : "") + `${hh}h ${mm}m ${ss}s`;
+                    }, 1000);
+                }
+
+                syncCount = 60;
+            } catch (e) { 
+                document.getElementById('m-now').innerText = "Sync Error"; 
+            }
         }
-        setInterval(() => { count--; if (count <= 0) syncCinema(); document.getElementById('sync-timer').innerText = count; }, 1000);
+
+        // Global Sync Ticker
+        setInterval(() => { 
+            syncCount--; 
+            if (syncCount <= 0) syncCinema(); 
+            document.getElementById('sync-timer').innerText = syncCount; 
+        }, 1000);
+
         syncCinema();
     </script>
 </body>
