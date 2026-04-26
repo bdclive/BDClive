@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Brian's Theater v0.0.47</title>
+    <title>Brian's Theater v0.0.48</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         :root { --bg: #0d1117; --card: #161b22; --border: #30363d; --plex: #ffb515; --live: #238636; --txt: #ffffff; --dim: #8b949e; }
@@ -15,15 +15,23 @@
         .lab { font-size: 10px; color: var(--live); font-weight: bold; text-transform: uppercase; }
         .val { font-size: 22px; font-weight: 800; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .sub { font-size: 13px; color: var(--dim); margin-top: 5px; }
+        
+        /* Stats Row Styling */
+        .stats-row { display: flex; justify-content: space-between; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+        .stat-item { text-align: center; flex: 1; }
+        .stat-lab { font-size: 8px; color: var(--dim); text-transform: uppercase; margin-bottom: 4px; }
+        .stat-val { font-size: 12px; font-weight: bold; color: var(--plex); }
+        .stat-val i { margin-right: 4px; font-size: 10px; opacity: 0.7; }
+
         #sync-status { position: absolute; bottom: 10px; right: 20px; font-size: 9px; color: var(--live); font-family: monospace; font-weight: bold; }
         .debug-container { width: 400px; margin-top: 20px; background: #000; border: 1px solid var(--border); border-radius: 8px; padding: 10px; font-family: monospace; font-size: 11px; color: #00ff00; }
-        #log { height: 80px; overflow-y: auto; white-space: pre-wrap; font-size: 10px; }
+        #log { height: 60px; overflow-y: auto; white-space: pre-wrap; font-size: 10px; }
     </style>
 </head>
 <body>
 
     <div class="theater-card">
-        <div class="v-tag">v0.0.47</div>
+        <div class="v-tag">v0.0.48</div>
         <i class="fa-solid fa-arrows-rotate icon" onclick="sync()"></i>
         <h2>Brian's Theater</h2>
         
@@ -33,17 +41,32 @@
             <div id="m-left" class="sub"><span id="playing-status">Ends in:</span> <span id="playing-timer" style="color:var(--live); font-weight:bold;">--</span></div>
         </div>
 
-        <div class="box" style="border:0; margin:0;">
+        <div class="box">
             <div class="lab" style="color:var(--plex)">Up Next</div>
             <div id="m-next" class="val">--</div>
             <div id="m-time" class="sub">Starts in: <span id="next-timer" style="color:var(--plex); font-weight:bold;">--</span></div>
+        </div>
+
+        <div class="stats-row">
+            <div class="stat-item">
+                <div class="stat-lab">Movies</div>
+                <div id="stat-movies" class="stat-val"><i class="fa-solid fa-film"></i> --</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-lab">TV Shows</div>
+                <div id="stat-tv" class="stat-val"><i class="fa-solid fa-tv"></i> --</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-lab">Uptime</div>
+                <div id="stat-uptime" class="stat-val"><i class="fa-solid fa-clock"></i> --</div>
+            </div>
         </div>
 
         <div id="sync-status">READY</div>
     </div>
 
     <div class="debug-container">
-        <div id="log">Rebuilding with J3 Trigger...</div>
+        <div id="log">Restoring Library Stats...</div>
     </div>
 
     <script>
@@ -61,35 +84,35 @@
                 const data = await response.json();
                 const m = data.movie;
 
-                addLog(`Handshake: ${m.nowPlaying}`);
+                addLog(`Stats Handshake: ${m.moviesCount} films found.`);
 
+                // Update Main UI
                 const isIdle = !m.nowPlaying || m.nowPlaying.toLowerCase() === "n/a" || m.nowPlaying.toLowerCase() === "offline" || m.nowPlaying === "";
-
-                if (isIdle) {
-                    document.getElementById('m-now').innerText = "Theater Off-Air";
+                document.getElementById('m-now').innerText = isIdle ? "Theater Off-Air" : m.nowPlaying;
+                
+                let timeStr = m.timeLeft || "";
+                if (isIdle || timeStr.toLowerCase() === "n/a" || timeStr === "") {
                     document.getElementById('playing-timer').innerText = "Cinema Idle";
                     document.getElementById('playing-status').innerText = "";
                 } else {
-                    document.getElementById('m-now').innerText = m.nowPlaying;
-                    
-                    // GHOST HOUR FILTER
-                    let timeStr = m.timeLeft || "";
                     let hMatch = timeStr.match(/(\d+)\s*hour/i);
                     let h = hMatch ? parseInt(hMatch[1]) : 0;
-                    
-                    // If sheet sends 4+ hours, it's likely the timezone ghost
                     if (h >= 4) {
                         let correctedH = h - 4;
-                        timeStr = timeStr.replace(h + " hours", correctedH + " hours");
-                        timeStr = timeStr.replace(h + " hour", correctedH + " hour");
+                        timeStr = timeStr.replace(h + " hours", correctedH + " hours").replace(h + " hour", correctedH + " hour");
                     }
-
                     document.getElementById('playing-timer').innerText = timeStr.replace(/Remaining:/i, "").trim();
                     document.getElementById('playing-status').innerText = "Ends in:";
                 }
 
                 document.getElementById('m-next').innerText = m.nextTitle || "None";
                 handleNextTimer(m.nextTime);
+
+                // Update Stats Row
+                document.getElementById('stat-movies').innerHTML = `<i class="fa-solid fa-film"></i> ${m.moviesCount || 0}`;
+                document.getElementById('stat-tv').innerHTML = `<i class="fa-solid fa-tv"></i> ${m.tvCount || 0}`;
+                document.getElementById('stat-uptime').innerHTML = `<i class="fa-solid fa-clock"></i> ${m.daysOpen || "N/A"}`;
+                
                 document.getElementById('sync-status').innerText = "LIVE: " + new Date().toLocaleTimeString();
             } catch (e) { addLog("SYNC ERROR"); }
         }
@@ -98,10 +121,8 @@
             clearInterval(nextInt);
             const el = document.getElementById('next-timer');
             if (!dateStr || dateStr.includes("N/A") || dateStr === "None") { el.innerText = "Scheduled Off"; return; }
-            
             let clean = dateStr.includes("202") ? dateStr : dateStr.replace(",", " 2026,");
             const target = new Date(clean);
-            
             nextInt = setInterval(() => {
                 const diff = target - new Date();
                 if (diff <= 0) { el.innerText = "Starting Now!"; clearInterval(nextInt); return; }
