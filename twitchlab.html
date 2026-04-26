@@ -14,7 +14,7 @@
         .success { background: #238636; color: white; }
         .error { background: #da3633; color: white; }
         .log-box { margin-top: 25px; padding: 12px; background: #000; border-radius: 8px; font-family: 'Consolas', monospace; font-size: 10px; text-align: left; border: 1px solid #30363d; height: 120px; overflow-y: auto; }
-        .log-entry { margin-bottom: 4px; border-bottom: 1px solid #161b22; padding-bottom: 2px; }
+        .log-entry { margin-bottom: 6px; border-bottom: 1px solid #1c2128; padding-bottom: 4px; }
         button { margin-top: 20px; background: #9146FF; color: white; border: none; padding: 15px; border-radius: 10px; cursor: pointer; font-weight: bold; width: 100%; font-size: 16px; }
         button:hover { background: #a970ff; }
     </style>
@@ -23,13 +23,13 @@
 
     <div class="lab-card">
         <i class="fa-brands fa-twitch twitch-icon"></i>
-        <div class="label">API Follower Sync</div>
+        <div class="label">Twitch API Follower Sync</div>
         <div id="follower-count" class="number">---</div>
         <div id="status-tag" class="status-pill">READY</div>
 
         <div class="log-box" id="changelog">
             <div class="log-entry" style="color: #bc95ff;"><b>[v1.0.7]</b> Switched to DecAPI (Public Twitch Resolver).</div>
-            <div class="log-entry" style="color: #ff7b72;"><b>[v1.0.6]</b> Social Blade Failed (403).</div>
+            <div class="log-entry" style="color: #ff7b72;"><b>[v1.0.6]</b> Social Blade Failed (Blocked 403).</div>
         </div>
 
         <button onclick="syncLab()">EXECUTE API SYNC</button>
@@ -37,7 +37,8 @@
 
     <script>
         async function syncLab() {
-            const api = 'YOUR_WEB_APP_URL_HERE';
+            // PASTE YOUR NEWEST /exec URL HERE
+            const api = 'https://script.google.com/macros/s/AKfycby0ndGELJv0Q6yAR8PKMsvo3u-hZ2qAL80sVahxyeyrLy_qDXhkcYZkKBoq6HhdrhyO/exec';
             
             const countEl = document.getElementById('follower-count');
             const statusEl = document.getElementById('status-tag');
