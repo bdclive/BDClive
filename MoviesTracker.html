@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Brian's Theater v0.0.49</title>
+    <title>Brian's Theater v0.0.50</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         :root { --bg: #0d1117; --card: #161b22; --border: #30363d; --plex: #ffb515; --live: #238636; --txt: #ffffff; --dim: #8b949e; }
@@ -31,7 +31,7 @@
 <body>
 
     <div class="theater-card">
-        <div class="v-tag">v0.0.49</div>
+        <div class="v-tag">v0.0.50</div>
         <i class="fa-solid fa-arrows-rotate icon" onclick="sync()"></i>
         <h2>Brian's Theater</h2>
         
@@ -66,11 +66,12 @@
     </div>
 
     <div class="debug-container">
-        <div id="log">Rebuilding Pure Mirror (Filter Disabled)...</div>
+        <div id="log">Activating Live Ticker Engine...</div>
     </div>
 
     <script>
-        let nextInt;
+        let nextInt, nowInt;
+        let localRemainingSeconds = 0;
 
         function addLog(msg) {
             const logEl = document.getElementById('log');
@@ -84,26 +85,47 @@
                 const data = await response.json();
                 const m = data.movie;
 
-                addLog(`Syncing Pure Data: ${m.nowPlaying}`);
+                addLog(`Sync: ${m.nowPlaying}`);
 
-                // Update UI
                 const isIdle = !m.nowPlaying || m.nowPlaying.toLowerCase() === "n/a" || m.nowPlaying.toLowerCase() === "offline" || m.nowPlaying === "";
                 document.getElementById('m-now').innerText = isIdle ? "Theater Off-Air" : m.nowPlaying;
                 
-                let timeStr = m.timeLeft || "";
-                if (isIdle || timeStr.toLowerCase() === "n/a" || timeStr === "") {
-                    document.getElementById('playing-timer').innerText = "Cinema Idle";
+                // --- NOW PLAYING LIVE TICKER LOGIC ---
+                clearInterval(nowInt);
+                const timerEl = document.getElementById('playing-timer');
+                
+                if (isIdle || !m.timeLeft || m.timeLeft.toLowerCase().includes("n/a")) {
+                    timerEl.innerText = "Cinema Idle";
                     document.getElementById('playing-status').innerText = "";
                 } else {
-                    // PURE MIRROR: No more ghost hour math
-                    document.getElementById('playing-timer').innerText = timeStr.replace(/Remaining:/i, "").trim();
                     document.getElementById('playing-status').innerText = "Ends in:";
+                    
+                    // Parse "X hours Y mins Z secs" into total seconds
+                    let h = (m.timeLeft.match(/(\d+)\s*hour/i) || [0,0])[1];
+                    let mins = (m.timeLeft.match(/(\d+)\s*min/i) || [0,0])[1];
+                    let s = (m.timeLeft.match(/(\d+)\s*sec/i) || [0,0])[1];
+                    
+                    localRemainingSeconds = (parseInt(h) * 3600) + (parseInt(mins) * 60) + parseInt(s);
+                    
+                    nowInt = setInterval(() => {
+                        if (localRemainingSeconds <= 0) {
+                            timerEl.innerText = "Finishing...";
+                            clearInterval(nowInt);
+                            return;
+                        }
+                        localRemainingSeconds--;
+                        let hh = Math.floor(localRemainingSeconds / 3600);
+                        let mm = Math.floor((localRemainingSeconds % 3600) / 60);
+                        let ss = localRemainingSeconds % 60;
+                        timerEl.innerText = `${hh}h ${mm}m ${ss}s`;
+                    }, 1000);
                 }
 
+                // --- UP NEXT TIMER ---
                 document.getElementById('m-next').innerText = m.nextTitle || "None";
                 handleNextTimer(m.nextTime);
 
-                // Update Stats
+                // --- STATS ---
                 document.getElementById('stat-movies').innerHTML = `<i class="fa-solid fa-film"></i> ${m.moviesCount || 0}`;
                 document.getElementById('stat-tv').innerHTML = `<i class="fa-solid fa-tv"></i> ${m.tvCount || 0}`;
                 document.getElementById('stat-uptime').innerHTML = `<i class="fa-solid fa-clock"></i> ${m.daysOpen || "N/A"}`;
