@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Twitch Scraper Lab</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        body { 
+            background: #0d1117; 
+            color: white; 
+            font-family: 'Segoe UI', sans-serif; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            height: 100vh; 
+            margin: 0; 
+        }
+        .test-card { 
+            background: #161b22; 
+            border: 1px solid #30363d; 
+            padding: 30px; 
+            border-radius: 15px; 
+            text-align: center; 
+            width: 320px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .twitch-icon { 
+            color: #9146FF; 
+            font-size: 40px; 
+            margin-bottom: 10px; 
+        }
+        .label { 
+            color: #8b949e; 
+            text-transform: uppercase; 
+            font-size: 12px; 
+            letter-spacing: 1px; 
+            margin-bottom: 5px;
+        }
+        .number { 
+            font-size: 3.5rem; 
+            font-weight: 800; 
+            margin: 0; 
+        }
+        .debug-box {
+            margin-top: 20px;
+            padding: 10px;
+            background: #000;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 11px;
+            color: #00ff00;
+            text-align: left;
+        }
+        .btn {
+            margin-top: 20px;
+            background: #238636;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .btn:hover { background: #2ea043; }
+    </style>
+</head>
+<body>
+
+    <div class="test-card">
+        <i class="fa-brands fa-twitch twitch-icon"></i>
+        <div class="label">Total Followers</div>
+        <div id="twitch-count" class="number">---</div>
+        
+        <div class="debug-box">
+            <div>Status: <span id="debug-status">Waiting...</span></div>
+            <div>Last Sync: <span id="debug-time">Never</span></div>
+        </div>
+        
+        <button class="btn" onclick="runTest()">Run Test Sync</button>
+    </div>
+
+    <script>
+        async function runTest() {
+            // THE LAB URL (Your v0.0.53 Script URL)
+            const api = 'https://script.google.com/macros/s/AKfycbxvKbJqw6_JoYtWlKwV1t5Kav2w4HBRrtxsZUU-PzkAPxd7kd_tWuj165mLhkwLfhE/exec';
+            
+            document.getElementById('debug-status').innerText = "Connecting...";
+            document.getElementById('twitch-count').style.opacity = "0.5";
+
+            try {
+                const res = await fetch(api + '?t=' + Date.now());
+                const data = await res.json();
+                
+                // Pulling from the new movie.twitchFollowers field
+                document.getElementById('twitch-count').innerText = data.movie.twitchFollowers || "0";
+                document.getElementById('debug-status').innerText = data.movie.debug || "Success";
+                document.getElementById('debug-time').innerText = new Date().toLocaleTimeString();
+                document.getElementById('twitch-count').style.opacity = "1";
+                
+            } catch (e) {
+                document.getElementById('debug-status').innerText = "Fetch Error!";
+                console.error(e);
+            }
+        }
+
+        // Run once on load
+        runTest();
+    </script>
+</body>
+</html>
