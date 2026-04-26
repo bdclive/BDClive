@@ -2,53 +2,48 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Twitch Scraper Lab v1.0.6</title>
+    <title>Twitch Lab v1.0.7 - API Move</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         body { background: #0d1117; color: white; font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        .lab-card { background: #161b22; border: 1px solid #30363d; padding: 40px; border-radius: 20px; text-align: center; width: 400px; box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
+        .lab-card { background: #161b22; border: 1px solid #30363d; padding: 40px; border-radius: 20px; text-align: center; width: 400px; box-shadow: 0 10px 40px rgba(0,0,0,0.6); border-top: 4px solid #9146FF; }
         .twitch-icon { color: #9146FF; font-size: 50px; margin-bottom: 15px; }
-        .label { color: #8b949e; text-transform: uppercase; font-size: 13px; font-weight: bold; letter-spacing: 1.5px; }
-        .number { font-size: 4rem; font-weight: 800; margin: 10px 0; color: #ffffff; }
-        .status-pill { display: inline-block; padding: 5px 15px; border-radius: 20px; font-size: 11px; font-weight: bold; background: #30363d; color: #8b949e; margin-top: 10px; }
+        .label { color: #8b949e; text-transform: uppercase; font-size: 11px; font-weight: bold; letter-spacing: 2px; }
+        .number { font-size: 4.5rem; font-weight: 800; margin: 5px 0; color: #ffffff; letter-spacing: -2px; }
+        .status-pill { display: inline-block; padding: 4px 12px; border-radius: 10px; font-size: 10px; font-weight: bold; background: #30363d; color: #8b949e; margin-top: 5px; }
         .success { background: #238636; color: white; }
         .error { background: #da3633; color: white; }
-        .log-box { margin-top: 25px; padding: 12px; background: #000; border-radius: 8px; font-family: monospace; font-size: 10px; text-align: left; border: 1px solid #30363d; height: 100px; overflow-y: auto; }
-        .log-entry { margin-bottom: 5px; color: #8b949e; }
-        .log-entry b { color: #ffffff; }
-        button { margin-top: 25px; background: #9146FF; color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.2s; width: 100%; }
-        button:hover { background: #a970ff; transform: translateY(-2px); }
+        .log-box { margin-top: 25px; padding: 12px; background: #000; border-radius: 8px; font-family: 'Consolas', monospace; font-size: 10px; text-align: left; border: 1px solid #30363d; height: 120px; overflow-y: auto; }
+        .log-entry { margin-bottom: 4px; border-bottom: 1px solid #161b22; padding-bottom: 2px; }
+        button { margin-top: 20px; background: #9146FF; color: white; border: none; padding: 15px; border-radius: 10px; cursor: pointer; font-weight: bold; width: 100%; font-size: 16px; }
+        button:hover { background: #a970ff; }
     </style>
 </head>
 <body>
 
     <div class="lab-card">
         <i class="fa-brands fa-twitch twitch-icon"></i>
-        <div class="label">Twitch Followers (Lab v1.0.6)</div>
+        <div class="label">API Follower Sync</div>
         <div id="follower-count" class="number">---</div>
         <div id="status-tag" class="status-pill">READY</div>
 
         <div class="log-box" id="changelog">
-            <div class="log-entry"><b>[System]</b> Lab initialized.</div>
-            <div class="log-entry"><b>[v1.0.6 Update]</b> Pivoted to Social Blade; Added error code logging.</div>
-            <div class="log-entry"><b>[v1.0.5 Update]</b> Added Changelog UI.</div>
+            <div class="log-entry" style="color: #bc95ff;"><b>[v1.0.7]</b> Switched to DecAPI (Public Twitch Resolver).</div>
+            <div class="log-entry" style="color: #ff7b72;"><b>[v1.0.6]</b> Social Blade Failed (403).</div>
         </div>
 
-        <button onclick="syncLab()">RUN LAB SYNC</button>
+        <button onclick="syncLab()">EXECUTE API SYNC</button>
     </div>
 
     <script>
         async function syncLab() {
-            // YOUR WEB APP URL
-            const api = 'https://script.google.com/macros/s/AKfycby0ndGELJv0Q6yAR8PKMsvo3u-hZ2qAL80sVahxyeyrLy_qDXhkcYZkKBoq6HhdrhyO/exec';
+            const api = 'YOUR_WEB_APP_URL_HERE';
             
             const countEl = document.getElementById('follower-count');
             const statusEl = document.getElementById('status-tag');
             const logEl = document.getElementById('changelog');
 
-            statusEl.innerText = "CONNECTING...";
-            statusEl.className = "status-pill";
-
+            statusEl.innerText = "QUERYING API...";
             try {
                 const response = await fetch(api + '?t=' + Date.now(), { method: 'GET', redirect: 'follow' });
                 const data = await response.json();
@@ -59,16 +54,12 @@
 
                 const entry = document.createElement('div');
                 entry.className = 'log-entry';
-                entry.innerHTML = `<b>[${data.twitch.timestamp}]</b> v${data.twitch.scriptVersion}: ${data.twitch.status}`;
+                entry.innerHTML = `<span style="color:#8b949e">[${data.twitch.timestamp}]</span> <b>v${data.twitch.scriptVersion}:</b> ${data.twitch.status}`;
                 logEl.prepend(entry);
 
             } catch (err) {
-                statusEl.innerText = "SYNC FAILED";
+                statusEl.innerText = "FETCH FAIL";
                 statusEl.className = "status-pill error";
-                const entry = document.createElement('div');
-                entry.className = 'log-entry';
-                entry.innerHTML = `<b>[ERROR]</b> Fetch failed. Check Deployment.`;
-                logEl.prepend(entry);
             }
         }
         syncLab();
