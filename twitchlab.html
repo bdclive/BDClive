@@ -2,49 +2,53 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Twitch Lab v1.0.7 - API Move</title>
+    <title>Twitch Lab v1.0.8 - Auto-Sync</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         body { background: #0d1117; color: white; font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        .lab-card { background: #161b22; border: 1px solid #30363d; padding: 40px; border-radius: 20px; text-align: center; width: 400px; box-shadow: 0 10px 40px rgba(0,0,0,0.6); border-top: 4px solid #9146FF; }
+        .lab-card { background: #161b22; border: 1px solid #30363d; padding: 40px; border-radius: 20px; text-align: center; width: 400px; box-shadow: 0 10px 40px rgba(0,0,0,0.6); border-top: 4px solid #9146FF; position: relative; }
         .twitch-icon { color: #9146FF; font-size: 50px; margin-bottom: 15px; }
         .label { color: #8b949e; text-transform: uppercase; font-size: 11px; font-weight: bold; letter-spacing: 2px; }
         .number { font-size: 4.5rem; font-weight: 800; margin: 5px 0; color: #ffffff; letter-spacing: -2px; }
         .status-pill { display: inline-block; padding: 4px 12px; border-radius: 10px; font-size: 10px; font-weight: bold; background: #30363d; color: #8b949e; margin-top: 5px; }
         .success { background: #238636; color: white; }
         .error { background: #da3633; color: white; }
-        .log-box { margin-top: 25px; padding: 12px; background: #000; border-radius: 8px; font-family: 'Consolas', monospace; font-size: 10px; text-align: left; border: 1px solid #30363d; height: 120px; overflow-y: auto; }
+        .log-box { margin-top: 25px; padding: 12px; background: #000; border-radius: 8px; font-family: 'Consolas', monospace; font-size: 10px; text-align: left; border: 1px solid #30363d; height: 100px; overflow-y: auto; }
         .log-entry { margin-bottom: 6px; border-bottom: 1px solid #1c2128; padding-bottom: 4px; }
-        button { margin-top: 20px; background: #9146FF; color: white; border: none; padding: 15px; border-radius: 10px; cursor: pointer; font-weight: bold; width: 100%; font-size: 16px; }
-        button:hover { background: #a970ff; }
+        .sync-timer-ui { position: absolute; top: 15px; right: 20px; font-size: 10px; color: #8b949e; font-weight: bold; }
+        button { margin-top: 20px; background: #30363d; color: white; border: none; padding: 12px; border-radius: 10px; cursor: pointer; font-weight: bold; width: 100%; font-size: 14px; }
+        button:hover { background: #3d444d; }
     </style>
 </head>
 <body>
 
     <div class="lab-card">
+        <div class="sync-timer-ui">Next Sync: <span id="timer-val">60</span>s</div>
         <i class="fa-brands fa-twitch twitch-icon"></i>
-        <div class="label">Twitch API Follower Sync</div>
+        <div class="label">Twitch Auto-Sync (v1.0.8)</div>
         <div id="follower-count" class="number">---</div>
         <div id="status-tag" class="status-pill">READY</div>
 
         <div class="log-box" id="changelog">
-            <div class="log-entry" style="color: #bc95ff;"><b>[v1.0.7]</b> Switched to DecAPI (Public Twitch Resolver).</div>
-            <div class="log-entry" style="color: #ff7b72;"><b>[v1.0.6]</b> Social Blade Failed (Blocked 403).</div>
+            <div class="log-entry" style="color: #bc95ff;"><b>[v1.0.8]</b> Added 60s Heartbeat Auto-Sync.</div>
+            <div class="log-entry" style="color: #238636;"><b>[v1.0.7]</b> DecAPI Connection Verified.</div>
         </div>
 
-        <button onclick="syncLab()">EXECUTE API SYNC</button>
+        <button onclick="syncLab()">FORCE MANUAL SYNC</button>
     </div>
 
     <script>
+        // PASTE YOUR /exec URL HERE
+        const api = 'https://script.google.com/macros/s/AKfycby0ndGELJv0Q6yAR8PKMsvo3u-hZ2qAL80sVahxyeyrLy_qDXhkcYZkKBoq6HhdrhyO/exec';
+        
+        let timeLeft = 60;
+
         async function syncLab() {
-            // PASTE YOUR NEWEST /exec URL HERE
-            const api = 'https://script.google.com/macros/s/AKfycby0ndGELJv0Q6yAR8PKMsvo3u-hZ2qAL80sVahxyeyrLy_qDXhkcYZkKBoq6HhdrhyO/exec';
-            
             const countEl = document.getElementById('follower-count');
             const statusEl = document.getElementById('status-tag');
             const logEl = document.getElementById('changelog');
 
-            statusEl.innerText = "QUERYING API...";
+            statusEl.innerText = "SYNCING...";
             try {
                 const response = await fetch(api + '?t=' + Date.now(), { method: 'GET', redirect: 'follow' });
                 const data = await response.json();
@@ -55,14 +59,27 @@
 
                 const entry = document.createElement('div');
                 entry.className = 'log-entry';
-                entry.innerHTML = `<span style="color:#8b949e">[${data.twitch.timestamp}]</span> <b>v${data.twitch.scriptVersion}:</b> ${data.twitch.status}`;
+                entry.innerHTML = `<span style="color:#8b949e">[${data.twitch.timestamp}]</span> Auto-Sync Successful.`;
                 logEl.prepend(entry);
+                
+                timeLeft = 60; // Reset countdown
 
             } catch (err) {
                 statusEl.innerText = "FETCH FAIL";
                 statusEl.className = "status-pill error";
             }
         }
+
+        // The Heartbeat Countdown
+        setInterval(() => {
+            timeLeft--;
+            document.getElementById('timer-val').innerText = timeLeft;
+            if (timeLeft <= 0) {
+                syncLab();
+            }
+        }, 1000);
+
+        // Initial Load
         syncLab();
     </script>
 </body>
