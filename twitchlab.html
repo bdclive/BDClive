@@ -38,9 +38,7 @@
     </div>
 
     <script>
-        // PASTE YOUR /exec URL HERE
         const api = 'https://script.google.com/macros/s/AKfycby0ndGELJv0Q6yAR8PKMsvo3u-hZ2qAL80sVahxyeyrLy_qDXhkcYZkKBoq6HhdrhyO/exec';
-        
         let timeLeft = 60;
 
         async function syncLab() {
@@ -62,7 +60,7 @@
                 entry.innerHTML = `<span style="color:#8b949e">[${data.twitch.timestamp}]</span> Auto-Sync Successful.`;
                 logEl.prepend(entry);
                 
-                timeLeft = 60; // Reset countdown
+                timeLeft = 60; 
 
             } catch (err) {
                 statusEl.innerText = "FETCH FAIL";
@@ -70,16 +68,12 @@
             }
         }
 
-        // The Heartbeat Countdown
         setInterval(() => {
             timeLeft--;
             document.getElementById('timer-val').innerText = timeLeft;
-            if (timeLeft <= 0) {
-                syncLab();
-            }
+            if (timeLeft <= 0) { syncLab(); }
         }, 1000);
 
-        // Initial Load
         syncLab();
     </script>
 </body>
