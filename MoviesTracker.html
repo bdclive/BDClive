@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Brian's Theater v0.0.48</title>
+    <title>Brian's Theater v0.0.49</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         :root { --bg: #0d1117; --card: #161b22; --border: #30363d; --plex: #ffb515; --live: #238636; --txt: #ffffff; --dim: #8b949e; }
@@ -10,13 +10,13 @@
         .theater-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; width: 400px; padding: 25px; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .v-tag { position: absolute; top: 15px; right: 55px; font-size: 9px; font-weight: 900; color: var(--dim); background: rgba(255,255,255,0.05); padding: 2px 6px; border-radius: 4px; }
         .icon { position: absolute; top: 15px; right: 20px; font-size: 20px; color: var(--plex); cursor: pointer; transition: 0.3s; }
+        .icon:hover { transform: rotate(90deg); }
         h2 { color: var(--plex); font-size: 12px; text-transform: uppercase; letter-spacing: 2px; margin: 0 0 15px 0; }
         .box { margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
         .lab { font-size: 10px; color: var(--live); font-weight: bold; text-transform: uppercase; }
         .val { font-size: 22px; font-weight: 800; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .sub { font-size: 13px; color: var(--dim); margin-top: 5px; }
         
-        /* Stats Row Styling */
         .stats-row { display: flex; justify-content: space-between; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
         .stat-item { text-align: center; flex: 1; }
         .stat-lab { font-size: 8px; color: var(--dim); text-transform: uppercase; margin-bottom: 4px; }
@@ -31,7 +31,7 @@
 <body>
 
     <div class="theater-card">
-        <div class="v-tag">v0.0.48</div>
+        <div class="v-tag">v0.0.49</div>
         <i class="fa-solid fa-arrows-rotate icon" onclick="sync()"></i>
         <h2>Brian's Theater</h2>
         
@@ -66,7 +66,7 @@
     </div>
 
     <div class="debug-container">
-        <div id="log">Restoring Library Stats...</div>
+        <div id="log">Rebuilding Pure Mirror (Filter Disabled)...</div>
     </div>
 
     <script>
@@ -84,9 +84,9 @@
                 const data = await response.json();
                 const m = data.movie;
 
-                addLog(`Stats Handshake: ${m.moviesCount} films found.`);
+                addLog(`Syncing Pure Data: ${m.nowPlaying}`);
 
-                // Update Main UI
+                // Update UI
                 const isIdle = !m.nowPlaying || m.nowPlaying.toLowerCase() === "n/a" || m.nowPlaying.toLowerCase() === "offline" || m.nowPlaying === "";
                 document.getElementById('m-now').innerText = isIdle ? "Theater Off-Air" : m.nowPlaying;
                 
@@ -95,12 +95,7 @@
                     document.getElementById('playing-timer').innerText = "Cinema Idle";
                     document.getElementById('playing-status').innerText = "";
                 } else {
-                    let hMatch = timeStr.match(/(\d+)\s*hour/i);
-                    let h = hMatch ? parseInt(hMatch[1]) : 0;
-                    if (h >= 4) {
-                        let correctedH = h - 4;
-                        timeStr = timeStr.replace(h + " hours", correctedH + " hours").replace(h + " hour", correctedH + " hour");
-                    }
+                    // PURE MIRROR: No more ghost hour math
                     document.getElementById('playing-timer').innerText = timeStr.replace(/Remaining:/i, "").trim();
                     document.getElementById('playing-status').innerText = "Ends in:";
                 }
@@ -108,7 +103,7 @@
                 document.getElementById('m-next').innerText = m.nextTitle || "None";
                 handleNextTimer(m.nextTime);
 
-                // Update Stats Row
+                // Update Stats
                 document.getElementById('stat-movies').innerHTML = `<i class="fa-solid fa-film"></i> ${m.moviesCount || 0}`;
                 document.getElementById('stat-tv').innerHTML = `<i class="fa-solid fa-tv"></i> ${m.tvCount || 0}`;
                 document.getElementById('stat-uptime').innerHTML = `<i class="fa-solid fa-clock"></i> ${m.daysOpen || "N/A"}`;
