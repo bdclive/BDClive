@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v7.6.6</title>
+    <title>Cloud Dashboard v7.6.8</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     
     <script data-cfasync="false" src="https://video.ibm.com/embed-api/v1/ustream-embedapi.min.js"></script>
@@ -16,7 +16,6 @@
         }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: var(--text-main); display: flex; flex-direction: column; align-items: center; padding: 15px; margin: 0; min-height: 100vh; overflow-x: hidden; }
 
-        /* Top Stage (Timer) */
         .timer-stage { 
             width: 100%; max-width: 1400px; height: 195px; 
             margin-bottom: 25px; border-radius: 12px; border: 1px solid var(--border-color); 
@@ -39,10 +38,18 @@
 
         /* Counter Embeds */
         .counter-item iframe { filter: invert(1) hue-rotate(180deg); border: 0; width: 450px; height: 220px; position: absolute; top: 10px; left: -85px; pointer-events: none; }
+        
+        /* Twitch Custom Fit */
+        .twitch-fix iframe { 
+            filter: invert(1) hue-rotate(180deg) !important; 
+            top: -110px !important; 
+            left: -130px !important; 
+            transform: scale(1.4); 
+        }
+
         .instagram-fix { overflow: hidden !important; }
         .instagram-fix iframe { top: 38px !important; left: -75px !important; transform: scale(0.92); clip-path: inset(0px 0px 0px 80px); }
 
-        /* Labels & Stats */
         .header-tag { font-size: 11px; color: var(--text-dim); text-transform: uppercase; margin-bottom: 5px; font-weight: bold; }
         .main-number { font-size: 3.1rem; font-weight: 800; color: #ffffff; margin: 0; white-space: nowrap; letter-spacing: -2px; line-height: 1.1; }
         .mirror-box { justify-content: space-evenly !important; padding-left: 0 !important; text-align: center; }
@@ -50,14 +57,12 @@
         .mirror-label { font-size: 9px; color: var(--light-purple); text-transform: uppercase; font-weight: bold; margin: 0; }
         .mirror-stat { font-size: 2rem; font-weight: 800; color: #ffffff; margin-bottom: 2px; }
 
-        /* Status Dot */
         .status-container { display: flex; align-items: center; gap: 8px; position: absolute; bottom: 12px; left: 12px; background: rgba(0,0,0,0.5); padding: 4px 10px; border-radius: 20px; border: 1px solid var(--border-color); }
         .dot { height: 8px; width: 8px; background-color: #484f58; border-radius: 50%; }
         .dot.live { background-color: #ff0000; box-shadow: 0 0 8px #ff0000; animation: blink 1.5s infinite; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
         .status-text { font-size: 10px; font-weight: bold; color: var(--text-dim); }
 
-        /* Cinema Hub */
         .cinema-info { padding: 12px 20px 12px 15px; display: grid; grid-template-columns: 1.2fr 1fr; gap: 8px; height: 100%; text-align: left; }
         .cinema-label { font-size: 9px; color: var(--cinema-green); text-transform: uppercase; font-weight: bold; }
         .cinema-title { font-size: 13px; font-weight: bold; color: #ffffff; line-height: 1.2; margin-top: 2px; height: 32px; overflow: hidden; }
@@ -83,7 +88,10 @@
 
         <div class="counter-item"><svg class="box-logo" viewBox="0 0 24 24" fill="white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.045 4.126H5.078z"/></svg><iframe scrolling="no" src="https://livecounts.io/embed/twitter-live-follower-counter/briandivacox"></iframe></div>
         
-        <div class="counter-item"><i class="fa-brands fa-twitch box-logo" style="color:#9146FF;"></i><iframe scrolling="no" src="https://socialcounts.org/twitch-live-follower-counter/briandivacox/embed"></iframe></div>
+        <div class="counter-item twitch-fix">
+            <i class="fa-brands fa-twitch box-logo" style="color:#9146FF;"></i>
+            <iframe scrolling="no" src="https://twitchtracker.com/briandivacox/subscribers/embed"></iframe>
+        </div>
         
         <div class="counter-item"><i class="fa-brands fa-youtube box-logo" style="color:#FF0000;"></i><iframe scrolling="no" src="https://livecounts.io/embed/youtube-live-subscriber-counter/UCMuv7PfbLVm8IZsd6Bgqqzg"></iframe></div>
         
@@ -131,7 +139,7 @@
                 </div>
                 <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;">
                     <span>Open: <span id="m-open">--</span></span>
-                    <span>v7.6.6</span>
+                    <span>v7.6.8</span>
                 </div>
             </div>
         </div>
@@ -140,7 +148,6 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
     <script>
-        // CONFIG & FIREBASE
         const sConf = { apiKey: atob("QUl6YVN5QXZ4ZktnX3NwUE52RTJ3Y1QtdlRsOFlUUXU0TDN0Xzd3"), authDomain: "livecounters-8eaa8.firebaseapp.com", projectId: "livecounters-8eaa8", databaseURL: "https://livecounters-8eaa8-default-rtdb.firebaseio.com/", appId: "1:386919719539:web:c60c0d185c3d7e97ecc006" };
         const vConf = { apiKey: "AIzaSyCokXnEtboNuUIASBMz2ZzS0GuchemoJYI", authDomain: "lbbb-webcounter.firebaseapp.com", projectId: "lbbb-webcounter", databaseURL: "https://lbbb-webcounter-default-rtdb.firebaseio.com/", appId: "1:217634980859:web:49ef2b0aa7fe7d0bb1415e" };
         const sApp = firebase.initializeApp(sConf, "sApp");
@@ -178,7 +185,6 @@
         }
         window.addEventListener('load', monitorCourt);
 
-        // --- CINEMA SYNC ENGINE ---
         let syncCount = 60;
         let nowInt, nextInt;
         let localNowSecs = 0;
