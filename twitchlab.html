@@ -2,19 +2,19 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Twitch Scraper Lab v1.0.3</title>
+    <title>Twitch Scraper Lab v1.0.4</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         body { background: #0d1117; color: white; font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        .lab-card { background: #161b22; border: 1px solid #30363d; padding: 40px; border-radius: 20px; text-align: center; width: 350px; box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
+        .lab-card { background: #161b22; border: 1px solid #30363d; padding: 40px; border-radius: 20px; text-align: center; width: 380px; box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
         .twitch-icon { color: #9146FF; font-size: 50px; margin-bottom: 15px; }
         .label { color: #8b949e; text-transform: uppercase; font-size: 13px; font-weight: bold; letter-spacing: 1.5px; }
         .number { font-size: 4rem; font-weight: 800; margin: 10px 0; color: #ffffff; }
         .status-pill { display: inline-block; padding: 5px 15px; border-radius: 20px; font-size: 11px; font-weight: bold; background: #30363d; color: #8b949e; margin-top: 10px; }
         .success { background: #238636; color: white; }
         .error { background: #da3633; color: white; }
-        .json-viewer { margin-top: 25px; padding: 15px; background: #000; border-radius: 8px; font-family: monospace; font-size: 11px; color: #00ff00; text-align: left; width: 100%; box-sizing: border-box; border: 1px solid #30363d; overflow-x: auto; }
-        button { margin-top: 25px; background: #9146FF; color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        .json-viewer { margin-top: 25px; padding: 15px; background: #000; border-radius: 8px; font-family: monospace; font-size: 11px; color: #00ff00; text-align: left; width: 100%; box-sizing: border-box; border: 1px solid #30363d; overflow-x: auto; min-height: 80px; }
+        button { margin-top: 25px; background: #9146FF; color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: 0.2s; width: 100%; }
         button:hover { background: #a970ff; transform: translateY(-2px); }
     </style>
 </head>
@@ -27,8 +27,7 @@
         <div id="status-tag" class="status-pill">READY</div>
 
         <div class="json-viewer">
-            <div style="color: #8b949e; margin-bottom: 5px;">// RAW SCRIPT DATA</div>
-            <span id="raw-output">Waiting for sync...</span>
+            <span id="raw-output">// WAITING FOR SYNC...</span>
         </div>
 
         <button onclick="syncLab()">RUN LAB SYNC</button>
@@ -36,7 +35,7 @@
 
     <script>
         async function syncLab() {
-            // PASTE YOUR NEWEST WEB APP URL BELOW
+            // PASTE YOUR /exec URL BELOW
             const api = 'https://script.google.com/macros/s/AKfycby0ndGELJv0Q6yAR8PKMsvo3u-hZ2qAL80sVahxyeyrLy_qDXhkcYZkKBoq6HhdrhyO/exec';
             
             const countEl = document.getElementById('follower-count');
@@ -47,25 +46,28 @@
             statusEl.className = "status-pill";
             
             try {
-                // We add a timestamp to prevent the browser from showing "old" cached data
-                const response = await fetch(api + '?t=' + Date.now());
+                // FIXED FETCH: Now explicitly following Google's redirect
+                const response = await fetch(api + '?t=' + Date.now(), {
+                    method: 'GET',
+                    redirect: 'follow'
+                });
+                
                 const data = await response.json();
 
-                // Displaying the data from your script's JSON structure
                 countEl.innerText = data.twitch.followers || "0";
                 statusEl.innerText = data.twitch.status.toUpperCase();
                 statusEl.className = data.twitch.status === "Success" ? "status-pill success" : "status-pill error";
                 rawEl.innerText = JSON.stringify(data, null, 2);
 
             } catch (err) {
-                statusEl.innerText = "FETCH ERROR";
+                statusEl.innerText = "SYNC FAILED";
                 statusEl.className = "status-pill error";
-                rawEl.innerText = "Error Details: " + err.message;
-                console.error("Lab Sync failed:", err);
+                rawEl.innerText = "Error: " + err.message + "\nCheck if Deployment is set to 'Anyone'";
+                console.error("Lab Error:", err);
             }
         }
 
-        // Auto-run once on load
+        // Auto-run once
         syncLab();
     </script>
 </body>
