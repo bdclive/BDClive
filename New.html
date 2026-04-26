@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v7.6.5</title>
+    <title>Cloud Dashboard v7.6.6</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     
     <script data-cfasync="false" src="https://video.ibm.com/embed-api/v1/ustream-embedapi.min.js"></script>
@@ -82,7 +82,9 @@
         </div>
 
         <div class="counter-item"><svg class="box-logo" viewBox="0 0 24 24" fill="white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.045 4.126H5.078z"/></svg><iframe scrolling="no" src="https://livecounts.io/embed/twitter-live-follower-counter/briandivacox"></iframe></div>
-        <div class="counter-item"><i class="fa-brands fa-twitch box-logo" style="color:#9146FF;"></i><iframe scrolling="no" src="https://livecounts.io/embed/twitch-live-follower-counter/briandivacox"></iframe></div>
+        
+        <div class="counter-item"><i class="fa-brands fa-twitch box-logo" style="color:#9146FF;"></i><iframe scrolling="no" src="https://socialcounts.org/twitch-live-follower-counter/briandivacox/embed"></iframe></div>
+        
         <div class="counter-item"><i class="fa-brands fa-youtube box-logo" style="color:#FF0000;"></i><iframe scrolling="no" src="https://livecounts.io/embed/youtube-live-subscriber-counter/UCMuv7PfbLVm8IZsd6Bgqqzg"></iframe></div>
         
         <div class="counter-item"><i class="fa-brands fa-tiktok box-logo" style="color:#00f2ea;"></i><iframe scrolling="no" src="https://livecounts.io/embed/tiktok-live-follower-counter/briandivacox"></iframe></div>
@@ -129,7 +131,7 @@
                 </div>
                 <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;">
                     <span>Open: <span id="m-open">--</span></span>
-                    <span>v7.6.5</span>
+                    <span>v7.6.6</span>
                 </div>
             </div>
         </div>
@@ -176,7 +178,7 @@
         }
         window.addEventListener('load', monitorCourt);
 
-        // --- NEW INTEGRATED CINEMA SYNC ENGINE ---
+        // --- CINEMA SYNC ENGINE ---
         let syncCount = 60;
         let nowInt, nextInt;
         let localNowSecs = 0;
@@ -188,7 +190,6 @@
                 const d = await res.json();
                 const m = d.movie;
 
-                // Update basic text
                 const isIdle = !m.nowPlaying || m.nowPlaying.toLowerCase() === "n/a" || m.nowPlaying.toLowerCase() === "offline";
                 document.getElementById('m-now').innerText = isIdle ? "Off-Air" : m.nowPlaying;
                 document.getElementById('m-count').innerText = m.moviesCount;
@@ -196,7 +197,6 @@
                 document.getElementById('m-next').innerText = m.nextTitle || "None";
                 document.getElementById('m-open').innerText = m.daysOpen;
 
-                // Live Now Playing Timer
                 clearInterval(nowInt);
                 const nowEl = document.getElementById('m-left');
                 if (isIdle || !m.timeLeft || m.timeLeft.toLowerCase().includes("n/a")) {
@@ -217,7 +217,6 @@
                     }, 1000);
                 }
 
-                // Live Up Next Timer
                 clearInterval(nextInt);
                 const nextEl = document.getElementById('m-time');
                 if (!m.nextTime || m.nextTime.includes("N/A")) {
@@ -235,14 +234,10 @@
                         nextEl.innerText = (dd > 0 ? dd + "d " : "") + `${hh}h ${mm}m ${ss}s`;
                     }, 1000);
                 }
-
                 syncCount = 60;
-            } catch (e) { 
-                document.getElementById('m-now').innerText = "Sync Error"; 
-            }
+            } catch (e) { document.getElementById('m-now').innerText = "Sync Error"; }
         }
 
-        // Global Sync Ticker
         setInterval(() => { 
             syncCount--; 
             if (syncCount <= 0) syncCinema(); 
