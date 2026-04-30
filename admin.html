@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Admin v3.9.0</title>
+    <title>Cloud Admin v3.9.1</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         body { font-family: 'Segoe UI', sans-serif; background: #0d1117; color: white; display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; min-height: 100vh; }
@@ -11,19 +11,17 @@
         .card-content { padding: 20px; }
         #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0d1117; display: flex; justify-content: center; align-items: center; z-index: 100; }
         .login-box { background: #161b22; padding: 40px 30px; border-radius: 15px; border: 1px solid #30363d; width: 90%; max-width: 350px; text-align: center; }
-        #google-btn { background: #fff; color: #444; width: 100%; padding: 12px; border-radius: 5px; border: none; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 14px; transition: 0.2s; }
-        #google-btn:hover { background: #eee; }
+        input { width: 100%; padding: 12px; background: #000; border: 1px solid #444; color: #0f0; border-radius: 8px; box-sizing: border-box; font-size: 16px; font-family: monospace; margin-bottom: 15px; }
+        #login-btn { width: 100%; padding: 15px; background: #58a6ff; color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 16px; }
         .quick-links { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 20px; width: 100%; }
         .link-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px 5px; border-radius: 8px; text-decoration: none; font-size: 9px; font-weight: bold; color: white; border: 1px solid rgba(255,255,255,0.1); transition: 0.2s; }
         .link-btn i { font-size: 18px; margin-bottom: 5px; }
         .row { margin-bottom: 12px; }
         .label { font-size: 10px; text-transform: uppercase; color: #8b949e; letter-spacing: 1px; margin-bottom: 5px; display: block; }
-        input { width: 100%; padding: 12px; background: #000; border: 1px solid #444; color: #0f0; border-radius: 8px; box-sizing: border-box; font-size: 16px; font-family: monospace; }
         #push-btn { width: 100%; padding: 15px; background: #238636; color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 16px; }
         .section-title { border-bottom: 1px solid #333; padding-bottom: 5px; margin-bottom: 15px; color: #58a6ff; font-size: 14px; margin-top: 10px; display: flex; justify-content: space-between; align-items: center; }
         .card-footer { background: #0d1117; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #30363d; }
         .version-badge { background: #30363d; color: #58a6ff; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; font-family: monospace; }
-        .status-dot { width: 8px; height: 8px; background: #238636; border-radius: 50%; display: inline-block; margin-right: 5px; }
     </style>
 </head>
 <body>
@@ -31,12 +29,11 @@
     <div id="login-overlay">
         <div class="login-box">
             <h3 style="margin-top:0">Cloud Command Login</h3>
-            <p style="font-size: 12px; color: #8b949e; margin-bottom: 30px;">Authorized Access Only (v3.9.0)</p>
-            <button id="google-btn" onclick="loginWithGoogle()">
-                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18">
-                Sign in with Google
-            </button>
-            <p id="login-err" style="color: #ff7b72; font-size: 11px; margin-top: 20px; display: none;"></p>
+            <p style="font-size: 12px; color: #8b949e; margin-bottom: 20px;">v3.9.1 Admin Access</p>
+            <input type="email" id="admin-email" placeholder="Email">
+            <input type="password" id="admin-pass" placeholder="Password">
+            <button id="login-btn" onclick="loginManual()">AUTHENTICATE</button>
+            <p id="login-err" style="color: #ff7b72; font-size: 11px; margin-top: 15px; display: none;"></p>
         </div>
     </div>
 
@@ -46,7 +43,7 @@
         <div class="card-content">
             <div class="section-title">
                 <span>Quick Launch Sources</span>
-                <span style="color:#238636; font-size: 10px; font-weight: bold;"><span class="status-dot"></span>Verified ✅</span>
+                <span style="color:#238636; font-size: 10px; font-weight: bold;">Verified ✅</span>
             </div>
             <div class="quick-links">
                 <a href="https://www.threads.net/@briandivacox" target="_blank" class="link-btn" style="background: #000;"><i class="fa-brands fa-threads"></i>Threads</a>
@@ -55,7 +52,7 @@
                 <a href="https://bsky.app/profile/briandivacox.bsky.social" target="_blank" class="link-btn" style="background: #1185FE;"><i class="fa-solid fa-square-poll-vertical"></i>Bsky</a>
             </div>
             <div class="section-title">Update Numbers</div>
-            <div class="row"><span class="label">Plex Stream Count</span><input type="text" id="plex-count" placeholder="0" oninput="formatInput(this)"></div>
+            <div class="row"><span class="label">Plex Stream Count</span><input type="text" id="plex-count" oninput="formatInput(this)"></div>
             <div class="row"><span class="label">Threads Followers</span><input type="text" id="threads-fol" oninput="formatInput(this)"></div>
             <div class="row"><span class="label">Threads Views</span><input type="text" id="threads-views" oninput="formatInput(this)"></div>
             <div class="row"><span class="label">Snapchat</span><input type="text" id="snap-fol" oninput="formatInput(this)"></div>
@@ -64,8 +61,8 @@
             <button id="push-btn" onclick="cloudPush()">PUSH TO CLOUD</button>
         </div>
         <div class="card-footer">
-            <span style="font-size: 10px; color: #8b949e;">Build: Stable Production</span>
-            <span class="version-badge">v3.9.0</span>
+            <span style="font-size: 10px; color: #8b949e;">Build: Manual Secure Branch</span>
+            <span class="version-badge">v3.9.1</span>
         </div>
     </div>
 
@@ -77,23 +74,25 @@
         const _k = "QUl6YVN5QXZ4ZktnX3NwUE52RTJ3Y1QtdlRsOFlUUXU0TDN0Xzd3";
         const _p = "bGl2ZWNvdW50ZXJzLThlYWE4";
         
-        const firebaseConfig = {
+        firebase.initializeApp({
             apiKey: atob(_k),
             authDomain: "livecounters-8eaa8.firebaseapp.com",
             projectId: "livecounters-8eaa8",
             databaseURL: "https://livecounters-8eaa8-default-rtdb.firebaseio.com/",
             appId: "1:386919719539:web:c60c0d185c3d7e97ecc006"
-        };
+        });
 
-        firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
         const auth = firebase.auth();
-        const provider = new firebase.auth.GoogleAuthProvider();
 
-        function loginWithGoogle() {
-            auth.signInWithPopup(provider).catch(err => {
-                document.getElementById('login-err').innerText = "Denied: " + err.message;
-                document.getElementById('login-err').style.display = 'block';
+        function loginManual() {
+            const email = document.getElementById('admin-email').value;
+            const pass = document.getElementById('admin-pass').value;
+            const errEl = document.getElementById('login-err');
+
+            auth.signInWithEmailAndPassword(email, pass).catch(err => {
+                errEl.innerText = "Error: " + err.message;
+                errEl.style.display = 'block';
             });
         }
 
@@ -129,7 +128,6 @@
             const btn = document.getElementById('push-btn');
             btn.innerText = "SYNCING...";
             btn.disabled = true;
-
             const data = {
                 plexCount: document.getElementById('plex-count').value,
                 threadsFol: document.getElementById('threads-fol').value,
@@ -138,7 +136,6 @@
                 fbPage: document.getElementById('fb-page').value,
                 fbPersonal: document.getElementById('fb-personal').value
             };
-
             database.ref('labData').set(data, (err) => {
                 btn.disabled = false;
                 btn.innerText = "PUSH TO CLOUD";
