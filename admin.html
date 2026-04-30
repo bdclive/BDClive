@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Admin v3.8.1</title>
+    <title>Cloud Admin v3.8.2</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         body { font-family: 'Segoe UI', sans-serif; background: #0d1117; color: white; display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; }
@@ -23,7 +23,12 @@
         .label { font-size: 10px; text-transform: uppercase; color: #8b949e; letter-spacing: 1px; margin-bottom: 5px; display: block; }
         input { width: 100%; padding: 12px; background: #000; border: 1px solid #444; color: #0f0; border-radius: 8px; box-sizing: border-box; font-size: 16px; font-family: monospace; }
         #push-btn { width: 100%; padding: 15px; background: #238636; color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; margin-top: 10px; font-size: 16px; }
-        .section-title { border-bottom: 1px solid #333; padding-bottom: 5px; margin-bottom: 15px; color: #58a6ff; font-size: 14px; margin-top: 10px; }
+        #push-btn:disabled { background: #444; cursor: not-allowed; }
+        
+        .section-title { border-bottom: 1px solid #333; padding-bottom: 5px; margin-bottom: 15px; color: #58a6ff; font-size: 14px; margin-top: 10px; display: flex; justify-content: space-between; }
+        .auth-status { font-size: 10px; color: #8b949e; font-weight: normal; }
+        
+        .version-tag { margin-top: 15px; font-size: 11px; color: #30363d; font-family: monospace; }
     </style>
 </head>
 <body>
@@ -31,7 +36,10 @@
     <h2 style="margin-bottom: 15px;">Cloud Command</h2>
 
     <div class="admin-card">
-        <div class="section-title">Quick Launch Sources</div>
+        <div class="section-title">
+            <span>Quick Launch Sources</span>
+            <span id="auth-msg" class="auth-status">Authenticating...</span>
+        </div>
         <div class="quick-links">
             <a href="https://www.threads.net/@briandivacox" target="_blank" class="link-btn" style="background: #000;">
                 <i class="fa-brands fa-threads"></i>Threads
@@ -58,11 +66,20 @@
         <button id="push-btn" onclick="cloudPush()">PUSH TO CLOUD</button>
     </div>
 
+    <div class="version-tag">v3.8.2-auth-stable</div>
+
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+
     <script>
+        // Version Source of Truth
+        const VERSION = "3.8.2";
+
+        // Configuration
         const _k = "QUl6YVN5QXZ4ZktnX3NwUE52RTJ3Y1QtdlRsOFlUUXU0TDN0Xzd3";
         const _p = "bGl2ZWNvdW50ZXJzLThlYWE4";
+        
         const firebaseConfig = {
             apiKey: atob(_k),
             authDomain: `${atob(_p)}.firebaseapp.com`,
@@ -70,43 +87,8 @@
             databaseURL: `https://${atob(_p)}-default-rtdb.firebaseio.com`,
             appId: "1:386919719539:web:c60c0d185c3d7e97ecc006"
         };
+
+        // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
-
-        // Memory Logic: Load last entered data
-        window.onload = function() {
-            const saved = localStorage.getItem('lastAdminPush');
-            if (saved) {
-                const d = JSON.parse(saved);
-                document.getElementById('plex-count').value = d.plexCount || "";
-                document.getElementById('threads-fol').value = d.threadsFol || "";
-                document.getElementById('threads-views').value = d.threadsViews || "";
-                document.getElementById('snap-fol').value = d.snapFol || "";
-                document.getElementById('fb-page').value = d.fbPage || "";
-                document.getElementById('fb-personal').value = d.fbPersonal || "";
-            }
-        };
-
-        function cloudPush() {
-            const btn = document.getElementById('push-btn');
-            btn.innerText = "SENDING...";
-            const data = {
-                plexCount: document.getElementById('plex-count').value,
-                threadsFol: document.getElementById('threads-fol').value,
-                threadsViews: document.getElementById('threads-views').value,
-                snapFol: document.getElementById('snap-fol').value,
-                fbPage: document.getElementById('fb-page').value,
-                fbPersonal: document.getElementById('fb-personal').value
-            };
-            database.ref('labData').set(data, (err) => {
-                if (err) { alert("Error: " + err); btn.innerText = "RETRY"; }
-                else { 
-                    localStorage.setItem('lastAdminPush', JSON.stringify(data));
-                    alert("Cloud Sync Successful!"); 
-                    btn.innerText = "PUSH TO CLOUD"; 
-                }
-            });
-        }
-    </script>
-</body>
-</html>
+        const auth = firebase.auth();
