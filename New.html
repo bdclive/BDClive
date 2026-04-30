@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v7.8.6</title>
+    <title>Cloud Dashboard v7.8.7</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script data-cfasync="false" src="https://video.ibm.com/embed-api/v1/ustream-embedapi.min.js"></script>
     <style>
@@ -20,11 +20,8 @@
         .timer-stage iframe { width: 100%; height: 350px; border: none; position: absolute; top: -92px; left: 0; border-radius: 12px; }
         .counter-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; width: 100%; max-width: 1400px; }
         .counter-item { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; height: 150px; position: relative; display: flex; flex-direction: column; justify-content: center; padding-left: 25px; padding-bottom: 10px; overflow: hidden; transition: 0.3s; }
-        
-        /* Fixed Mini Logo Alignment */
         .box-logo { position: absolute; top: 12px; right: 15px; width: 22px; height: 22px; z-index: 20; display: flex; align-items: center; justify-content: center; }
         .box-logo svg { width: 100%; height: 100%; }
-        
         .counter-item iframe { filter: invert(1) hue-rotate(180deg); border: 0; width: 450px; height: 220px; position: absolute; top: 10px; left: -85px; pointer-events: none; }
         .main-number { font-size: 3.1rem; font-weight: 800; color: #ffffff; margin: 0; white-space: nowrap; letter-spacing: -2px; line-height: 1.1; }
         .mirror-box { justify-content: space-evenly !important; padding-left: 0 !important; text-align: center; }
@@ -131,8 +128,8 @@
                 </div>
             </div>
             <div class="cinema-footer">
-                <div class="cinema-stats-line"><span>M: <span id="m-count">--</span></span><span>TV: <span id="tv-count">--</span></span><span style="color: var(--cinema-green);">S: <span id="sync-timer">60</span>s</span></div>
-                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">--</span></span><span>v7.8.6</span></div>
+                <div class="cinema-stats-line"><span>M: <span id="m-count">--</span></span><span>TV: <span id="tv-count">--</span></span><span style="color: var(--cinema-green);">S: <span id="sync-timer">LIVE</span></span></div>
+                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">--</span></span><span>v7.8.7</span></div>
             </div>
         </div>
     </div>
@@ -147,6 +144,7 @@
 
         vDb.ref("totalViewCount").on("value", s => document.getElementById("totalViewsCounter").innerText = s.val() || 0);
         vDb.ref("visitorsConnected").on("value", s => document.getElementById("visitorCounter").innerText = s.numChildren() || 0);
+        
         sDb.ref('labData').on('value', (s) => { 
             const d = s.val(); 
             if (d) { 
@@ -159,6 +157,37 @@
             } 
         });
 
+        let nowInt, nextInt, localNowSecs = 0;
+        sDb.ref('theaterSync').on('value', (snapshot) => {
+            const m = snapshot.val(); if (!m) return;
+            const isIdle = !m.nowPlaying || m.nowPlaying.toLowerCase() === "offline" || m.nowPlaying === "";
+            document.getElementById('m-now').innerText = isIdle ? "Off-Air" : m.nowPlaying;
+            document.getElementById('m-count').innerText = m.moviesCount || "0";
+            document.getElementById('tv-count').innerText = m.tvCount || "0";
+            document.getElementById('m-next').innerText = m.nextTitle || "None";
+            document.getElementById('m-open').innerText = m.daysOpen || "0";
+
+            clearInterval(nowInt); const nowEl = document.getElementById('m-left');
+            if (isIdle || !m.timeLeft || m.timeLeft.toLowerCase().includes("n/a")) { nowEl.innerText = "Cinema Idle"; } else {
+                let h = (m.timeLeft.match(/(\d+)\s*(?:hour|h)/i) || [0,0])[1], mins = (m.timeLeft.match(/(\d+)\s*(?:min|m)/i) || [0,0])[1], s = (m.timeLeft.match(/(\d+)\s*(?:sec|s)/i) || [0,0])[1];
+                localNowSecs = (parseInt(h) * 3600) + (parseInt(mins) * 60) + parseInt(s);
+                nowInt = setInterval(() => {
+                    if (localNowSecs <= 0) { nowEl.innerText = "Finishing..."; clearInterval(nowInt); return; }
+                    localNowSecs--; let hh = Math.floor(localNowSecs / 3600), mm = Math.floor((localNowSecs % 3600) / 60), ss = localNowSecs % 60;
+                    nowEl.innerText = `Left: ${hh}h ${mm}m ${ss}s`;
+                }, 1000);
+            }
+            clearInterval(nextInt); const nextEl = document.getElementById('m-time');
+            if (!m.nextTime || m.nextTime.includes("N/A") || m.nextTime === "None") { nextEl.innerText = "--"; } else {
+                let clean = m.nextTime.includes("202") ? m.nextTime : m.nextTime.replace(",", " 2026,"); const target = new Date(clean);
+                nextInt = setInterval(() => {
+                    const diff = target - new Date(); if (diff <= 0) { nextEl.innerText = "Starting Now!"; clearInterval(nextInt); return; }
+                    const dd = Math.floor(diff / 86400000), hh = Math.floor((diff % 86400000) / 3600000), mm = Math.floor((diff % 3600000) / 60000), ss = Math.floor((diff % 60000) / 1000);
+                    nextEl.innerText = (dd > 0 ? dd + "d " : "") + `${hh}h ${mm}m ${ss}s`;
+                }, 1000);
+            }
+        });
+
         async function getBsky() { try { const r = await fetch('https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=briandivacox.bsky.social'); const p = await r.json(); if (p.followersCount !== undefined) document.getElementById('bsky-num').innerText = p.followersCount.toLocaleString(); } catch (e) {} }
         getBsky(); setInterval(getBsky, 300000);
 
@@ -166,16 +195,8 @@
         window.addEventListener('load', monitorCourt);
 
         const twitchLabApi = 'https://script.google.com/macros/s/AKfycby0ndGELJv0Q6yAR8PKMsvo3u-hZ2qAL80sVahxyeyrLy_qDXhkcYZkKBoq6HhdrhyO/exec';
-        const cinemaMasterApi = 'https://script.google.com/macros/s/AKfycbxvKbJqw6_JoYtWlKwV1t5Kav2w4HBRrtxsZUU-PzkAPxd7kd_tWuj165mLhkwLfhE/exec';
-        
-        let syncCount = 60; let nowInt, nextInt; let localNowSecs = 0;
-
-        async function syncTwitch() { try { const res = await fetch(twitchLabApi + '?t=' + Date.now(), { method: 'GET', redirect: 'follow' }); const data = await res.json(); if (data.twitch) { document.getElementById('twitch-fol-num').innerText = data.twitch.followers || "---"; document.getElementById('twitch-view-num').innerText = data.twitch.viewers || "0"; } } catch (e) {} }
-        async function syncCinema() { try { const res = await fetch(cinemaMasterApi + '?t=' + Date.now(), { method: 'GET', redirect: 'follow' }); const data = await res.json(); if (data.movie) { const m = data.movie; const isIdle = !m.nowPlaying || m.nowPlaying.toLowerCase() === "n/a" || m.nowPlaying.toLowerCase() === "offline"; document.getElementById('m-now').innerText = isIdle ? "Off-Air" : m.nowPlaying; document.getElementById('m-count').innerText = m.moviesCount; document.getElementById('tv-count').innerText = m.tvCount; document.getElementById('m-next').innerText = m.nextTitle || "None"; document.getElementById('m-open').innerText = m.daysOpen; clearInterval(nowInt); const nowEl = document.getElementById('m-left'); if (isIdle || !m.timeLeft || m.timeLeft.toLowerCase().includes("n/a")) { nowEl.innerText = "Cinema Idle"; } else { let h = (m.timeLeft.match(/(\d+)\s*(?:hour|h)/i) || [0,0])[1]; let mins = (m.timeLeft.match(/(\d+)\s*(?:min|m)/i) || [0,0])[1]; let s = (m.timeLeft.match(/(\d+)\s*(?:sec|s)/i) || [0,0])[1]; localNowSecs = (parseInt(h) * 3600) + (parseInt(mins) * 60) + parseInt(s); nowInt = setInterval(() => { if (localNowSecs <= 0) { nowEl.innerText = "Finishing..."; clearInterval(nowInt); return; } localNowSecs--; let hh = Math.floor(localNowSecs / 3600); let mm = Math.floor((localNowSecs % 3600) / 60); let ss = localNowSecs % 60; nowEl.innerText = `Left: ${hh}h ${mm}m ${ss}s`; }, 1000); } clearInterval(nextInt); const nextEl = document.getElementById('m-time'); if (!m.nextTime || m.nextTime.includes("N/A")) { nextEl.innerText = "--"; } else { let clean = m.nextTime.includes("202") ? m.nextTime : m.nextTime.replace(",", " 2026,"); const target = new Date(clean); nextInt = setInterval(() => { const diff = target - new Date(); if (diff <= 0) { nextEl.innerText = "Starting Now!"; clearInterval(nextInt); return; } const dd = Math.floor(diff / 86400000); const hh = Math.floor((diff % 86400000) / 3600000); const mm = Math.floor((diff % 3600000) / 60000); const ss = Math.floor((diff % 60000) / 1000); nextEl.innerText = (dd > 0 ? dd + "d " : "") + `${hh}h ${mm}m ${ss}s`; }, 1000); } } } catch (e) {} }
-
-        async function syncMaster() { syncTwitch(); syncCinema(); syncCount = 60; }
-        setInterval(() => { syncCount--; if (syncCount <= 0) syncMaster(); document.getElementById('sync-timer').innerText = syncCount; }, 1000);
-        syncMaster();
+        async function syncTwitch() { try { const res = await fetch(twitchLabApi + '?t=' + Date.now()); const data = await res.json(); if (data.twitch) { document.getElementById('twitch-fol-num').innerText = data.twitch.followers || "---"; document.getElementById('twitch-view-num').innerText = data.twitch.viewers || "0"; } } catch (e) {} }
+        setInterval(syncTwitch, 60000); syncTwitch();
     </script>
 </body>
 </html>
