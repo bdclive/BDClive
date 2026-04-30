@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Brian's Theater v0.0.50</title>
+    <title>Brian's Theater v0.0.51</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         :root { --bg: #0d1117; --card: #161b22; --border: #30363d; --plex: #ffb515; --live: #238636; --txt: #ffffff; --dim: #8b949e; }
@@ -16,13 +16,11 @@
         .lab { font-size: 10px; color: var(--live); font-weight: bold; text-transform: uppercase; }
         .val { font-size: 22px; font-weight: 800; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .sub { font-size: 13px; color: var(--dim); margin-top: 5px; }
-        
         .stats-row { display: flex; justify-content: space-between; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
         .stat-item { text-align: center; flex: 1; }
         .stat-lab { font-size: 8px; color: var(--dim); text-transform: uppercase; margin-bottom: 4px; }
         .stat-val { font-size: 12px; font-weight: bold; color: var(--plex); }
         .stat-val i { margin-right: 4px; font-size: 10px; opacity: 0.7; }
-
         #sync-status { position: absolute; bottom: 10px; right: 20px; font-size: 9px; color: var(--live); font-family: monospace; font-weight: bold; }
         .debug-container { width: 400px; margin-top: 20px; background: #000; border: 1px solid var(--border); border-radius: 8px; padding: 10px; font-family: monospace; font-size: 11px; color: #00ff00; }
         #log { height: 60px; overflow-y: auto; white-space: pre-wrap; font-size: 10px; }
@@ -31,13 +29,13 @@
 <body>
 
     <div class="theater-card">
-        <div class="v-tag">v0.0.50</div>
-        <i class="fa-solid fa-arrows-rotate icon" onclick="sync()"></i>
+        <div class="v-tag">v0.0.51</div>
+        <i class="fa-solid fa-arrows-rotate icon" onclick="location.reload()"></i>
         <h2>Brian's Theater</h2>
         
         <div class="box">
             <div class="lab">Now Playing</div>
-            <div id="m-now" class="val">Syncing...</div>
+            <div id="m-now" class="val">Connecting...</div>
             <div id="m-left" class="sub"><span id="playing-status">Ends in:</span> <span id="playing-timer" style="color:var(--live); font-weight:bold;">--</span></div>
         </div>
 
@@ -48,28 +46,36 @@
         </div>
 
         <div class="stats-row">
-            <div class="stat-item">
-                <div class="stat-lab">Movies</div>
-                <div id="stat-movies" class="stat-val"><i class="fa-solid fa-film"></i> --</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-lab">TV Shows</div>
-                <div id="stat-tv" class="stat-val"><i class="fa-solid fa-tv"></i> --</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-lab">Uptime</div>
-                <div id="stat-uptime" class="stat-val"><i class="fa-solid fa-clock"></i> --</div>
-            </div>
+            <div class="stat-item"><div class="stat-lab">Movies</div><div id="stat-movies" class="stat-val"><i class="fa-solid fa-film"></i> --</div></div>
+            <div class="stat-item"><div class="stat-lab">TV Shows</div><div id="stat-tv" class="stat-val"><i class="fa-solid fa-tv"></i> --</div></div>
+            <div class="stat-item"><div class="stat-lab">Uptime</div><div id="stat-uptime" class="stat-val"><i class="fa-solid fa-clock"></i> --</div></div>
         </div>
 
-        <div id="sync-status">READY</div>
+        <div id="sync-status">DISCONNECTED</div>
     </div>
 
     <div class="debug-container">
-        <div id="log">Activating Live Ticker Engine...</div>
+        <div id="log">Initializing Firebase Sync Engine...</div>
     </div>
 
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+
     <script>
+        const _k = "QUl6YVN5QXZ4ZktnX3NwUE52RTJ3Y1QtdlRsOFlUUXU0TDN0Xzd3";
+        const _p = "bGl2ZWNvdW50ZXJzLThlYWE4";
+        
+        const firebaseConfig = {
+            apiKey: atob(_k),
+            authDomain: "livecounters-8eaa8.firebaseapp.com",
+            projectId: "livecounters-8eaa8",
+            databaseURL: "https://livecounters-8eaa8-default-rtdb.firebaseio.com/",
+            appId: "1:386919719539:web:c60c0d185c3d7e97ecc006"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
         let nextInt, nowInt;
         let localRemainingSeconds = 0;
 
@@ -78,61 +84,60 @@
             logEl.innerHTML = `[${new Date().toLocaleTimeString()}] ${msg}\n` + logEl.innerHTML;
         }
 
-        async function sync() {
-            const url = 'https://script.google.com/macros/s/AKfycbxvKbJqw6_JoYtWlKwV1t5Kav2w4HBRrtxsZUU-PzkAPxd7kd_tWuj165mLhkwLfhE/exec';
-            try {
-                const response = await fetch(url + '?t=' + Date.now());
-                const data = await response.json();
-                const m = data.movie;
+        // --- LIVE DATA LISTENER ---
+        database.ref('theaterSync').on('value', (snapshot) => {
+            const m = snapshot.val();
+            if (!m) {
+                addLog("No Data Found in theaterSync");
+                return;
+            }
 
-                addLog(`Sync: ${m.nowPlaying}`);
+            addLog(`Theater Sync: ${m.nowPlaying}`);
+            document.getElementById('sync-status').innerText = "LIVE: " + new Date().toLocaleTimeString();
 
-                const isIdle = !m.nowPlaying || m.nowPlaying.toLowerCase() === "n/a" || m.nowPlaying.toLowerCase() === "offline" || m.nowPlaying === "";
-                document.getElementById('m-now').innerText = isIdle ? "Theater Off-Air" : m.nowPlaying;
+            const isIdle = !m.nowPlaying || m.nowPlaying.toLowerCase() === "offline" || m.nowPlaying === "";
+            document.getElementById('m-now').innerText = isIdle ? "Theater Off-Air" : m.nowPlaying;
+            
+            // --- NOW PLAYING TICKER ---
+            clearInterval(nowInt);
+            const timerEl = document.getElementById('playing-timer');
+            
+            if (isIdle || !m.timeLeft || m.timeLeft.toLowerCase().includes("n/a")) {
+                timerEl.innerText = "Cinema Idle";
+                document.getElementById('playing-status').innerText = "";
+            } else {
+                document.getElementById('playing-status').innerText = "Ends in:";
                 
-                // --- NOW PLAYING LIVE TICKER LOGIC ---
-                clearInterval(nowInt);
-                const timerEl = document.getElementById('playing-timer');
+                // If your admin pushes seconds directly, use that. Otherwise, this parses strings:
+                let h = (m.timeLeft.match(/(\d+)\s*hour/i) || [0,0])[1];
+                let mins = (m.timeLeft.match(/(\d+)\s*min/i) || [0,0])[1];
+                let s = (m.timeLeft.match(/(\d+)\s*sec/i) || [0,0])[1];
                 
-                if (isIdle || !m.timeLeft || m.timeLeft.toLowerCase().includes("n/a")) {
-                    timerEl.innerText = "Cinema Idle";
-                    document.getElementById('playing-status').innerText = "";
-                } else {
-                    document.getElementById('playing-status').innerText = "Ends in:";
-                    
-                    // Parse "X hours Y mins Z secs" into total seconds
-                    let h = (m.timeLeft.match(/(\d+)\s*hour/i) || [0,0])[1];
-                    let mins = (m.timeLeft.match(/(\d+)\s*min/i) || [0,0])[1];
-                    let s = (m.timeLeft.match(/(\d+)\s*sec/i) || [0,0])[1];
-                    
-                    localRemainingSeconds = (parseInt(h) * 3600) + (parseInt(mins) * 60) + parseInt(s);
-                    
-                    nowInt = setInterval(() => {
-                        if (localRemainingSeconds <= 0) {
-                            timerEl.innerText = "Finishing...";
-                            clearInterval(nowInt);
-                            return;
-                        }
-                        localRemainingSeconds--;
-                        let hh = Math.floor(localRemainingSeconds / 3600);
-                        let mm = Math.floor((localRemainingSeconds % 3600) / 60);
-                        let ss = localRemainingSeconds % 60;
-                        timerEl.innerText = `${hh}h ${mm}m ${ss}s`;
-                    }, 1000);
-                }
-
-                // --- UP NEXT TIMER ---
-                document.getElementById('m-next').innerText = m.nextTitle || "None";
-                handleNextTimer(m.nextTime);
-
-                // --- STATS ---
-                document.getElementById('stat-movies').innerHTML = `<i class="fa-solid fa-film"></i> ${m.moviesCount || 0}`;
-                document.getElementById('stat-tv').innerHTML = `<i class="fa-solid fa-tv"></i> ${m.tvCount || 0}`;
-                document.getElementById('stat-uptime').innerHTML = `<i class="fa-solid fa-clock"></i> ${m.daysOpen || "N/A"}`;
+                localRemainingSeconds = (parseInt(h) * 3600) + (parseInt(mins) * 60) + parseInt(s);
                 
-                document.getElementById('sync-status').innerText = "LIVE: " + new Date().toLocaleTimeString();
-            } catch (e) { addLog("SYNC ERROR"); }
-        }
+                nowInt = setInterval(() => {
+                    if (localRemainingSeconds <= 0) {
+                        timerEl.innerText = "Finishing...";
+                        clearInterval(nowInt);
+                        return;
+                    }
+                    localRemainingSeconds--;
+                    let hh = Math.floor(localRemainingSeconds / 3600);
+                    let mm = Math.floor((localRemainingSeconds % 3600) / 60);
+                    let ss = localRemainingSeconds % 60;
+                    timerEl.innerText = `${hh}h ${mm}m ${ss}s`;
+                }, 1000);
+            }
+
+            // --- UP NEXT ---
+            document.getElementById('m-next').innerText = m.nextTitle || "None";
+            handleNextTimer(m.nextTime);
+
+            // --- STATS ---
+            document.getElementById('stat-movies').innerHTML = `<i class="fa-solid fa-film"></i> ${m.moviesCount || 0}`;
+            document.getElementById('stat-tv').innerHTML = `<i class="fa-solid fa-tv"></i> ${m.tvCount || 0}`;
+            document.getElementById('stat-uptime').innerHTML = `<i class="fa-solid fa-clock"></i> ${m.daysOpen || "N/A"}`;
+        });
 
         function handleNextTimer(dateStr) {
             clearInterval(nextInt);
@@ -150,9 +155,6 @@
                 el.innerText = (d > 0 ? d + "d " : "") + `${h}h ${m}m ${s}s`;
             }, 1000);
         }
-
-        setInterval(sync, 60000);
-        sync();
     </script>
 </body>
 </html>
