@@ -3,26 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Admin v3.8.7</title>
+    <title>Cloud Admin v3.8.8</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         body { font-family: 'Segoe UI', sans-serif; background: #0d1117; color: white; display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; min-height: 100vh; }
         .admin-card { background: #161b22; border: 1px solid #30363d; padding: 0; border-radius: 15px; width: 100%; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: none; overflow: hidden; }
         .card-content { padding: 20px; }
         #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0d1117; display: flex; justify-content: center; align-items: center; z-index: 100; }
-        .login-box { background: #161b22; padding: 30px; border-radius: 15px; border: 1px solid #30363d; width: 90%; max-width: 350px; text-align: center; }
+        .login-box { background: #161b22; padding: 40px 30px; border-radius: 15px; border: 1px solid #30363d; width: 90%; max-width: 350px; text-align: center; }
+        
+        /* GOOGLE BUTTON STYLE */
+        #google-btn { background: #fff; color: #444; width: 100%; padding: 12px; border-radius: 5px; border: none; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 14px; transition: 0.2s; }
+        #google-btn:hover { background: #eee; }
+        
         .quick-links { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 20px; width: 100%; }
         .link-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px 5px; border-radius: 8px; text-decoration: none; font-size: 9px; font-weight: bold; color: white; border: 1px solid rgba(255,255,255,0.1); transition: 0.2s; }
         .link-btn i { font-size: 18px; margin-bottom: 5px; }
         .row { margin-bottom: 12px; }
         .label { font-size: 10px; text-transform: uppercase; color: #8b949e; letter-spacing: 1px; margin-bottom: 5px; display: block; }
-        input { width: 100%; padding: 12px; background: #000; border: 1px solid #444; color: #0f0; border-radius: 8px; box-sizing: border-box; font-size: 16px; font-family: monospace; margin-bottom: 10px; }
-        #push-btn, #login-btn { width: 100%; padding: 15px; background: #238636; color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 16px; }
-        #login-btn { background: #58a6ff; }
+        input { width: 100%; padding: 12px; background: #000; border: 1px solid #444; color: #0f0; border-radius: 8px; box-sizing: border-box; font-size: 16px; font-family: monospace; }
+        #push-btn { width: 100%; padding: 15px; background: #238636; color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 16px; }
         .section-title { border-bottom: 1px solid #333; padding-bottom: 5px; margin-bottom: 15px; color: #58a6ff; font-size: 14px; margin-top: 10px; display: flex; justify-content: space-between; align-items: center; }
         .card-footer { background: #0d1117; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #30363d; }
         .version-badge { background: #30363d; color: #58a6ff; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; font-family: monospace; }
-        .status-dot { width: 8px; height: 8px; background: #238636; border-radius: 50%; display: inline-block; margin-right: 5px; }
     </style>
 </head>
 <body>
@@ -30,11 +33,14 @@
     <div id="login-overlay">
         <div class="login-box">
             <h3 style="margin-top:0">Cloud Command Login</h3>
-            <p style="font-size: 12px; color: #8b949e; margin-bottom: 20px;">v3.8.7 Restricted Access</p>
-            <input type="email" id="email-input" placeholder="Admin Email">
-            <input type="password" id="pass-input" placeholder="Password">
-            <button id="login-btn" onclick="handleLogin()">AUTHENTICATE</button>
-            <p id="login-err" style="color: #ff7b72; font-size: 12px; margin-top: 15px; display: none; background: rgba(255,0,0,0.1); padding: 10px; border-radius: 5px;"></p>
+            <p style="font-size: 12px; color: #8b949e; margin-bottom: 30px;">Authorized Access Only (v3.8.8)</p>
+            
+            <button id="google-btn" onclick="loginWithGoogle()">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18">
+                Sign in with Google
+            </button>
+
+            <p id="login-err" style="color: #ff7b72; font-size: 11px; margin-top: 20px; display: none;"></p>
         </div>
     </div>
 
@@ -44,7 +50,7 @@
         <div class="card-content">
             <div class="section-title">
                 <span>Quick Launch Sources</span>
-                <span style="color:#238636; font-size: 10px; font-weight: bold;"><span class="status-dot"></span>Online</span>
+                <span style="color:#238636; font-size: 10px; font-weight: bold;">Verified ✅</span>
             </div>
             <div class="quick-links">
                 <a href="https://www.threads.net/@briandivacox" target="_blank" class="link-btn" style="background: #000;"><i class="fa-brands fa-threads"></i>Threads</a>
@@ -52,7 +58,6 @@
                 <a href="https://www.facebook.com/briandivacox" target="_blank" class="link-btn" style="background: #0866FF;"><i class="fa-brands fa-facebook"></i>FB</a>
                 <a href="https://bsky.app/profile/briandivacox.bsky.social" target="_blank" class="link-btn" style="background: #1185FE;"><i class="fa-solid fa-square-poll-vertical"></i>Bsky</a>
             </div>
-            <div class="section-title">Update Numbers</div>
             <div class="row"><span class="label">Plex Stream Count</span><input type="text" id="plex-count" placeholder="0" oninput="formatInput(this)"></div>
             <div class="row"><span class="label">Threads Followers</span><input type="text" id="threads-fol" oninput="formatInput(this)"></div>
             <div class="row"><span class="label">Threads Views</span><input type="text" id="threads-views" oninput="formatInput(this)"></div>
@@ -62,8 +67,8 @@
             <button id="push-btn" onclick="cloudPush()">PUSH TO CLOUD</button>
         </div>
         <div class="card-footer">
-            <span style="font-size: 10px; color: #8b949e;">Build: Stable Branch</span>
-            <span class="version-badge">v3.8.7</span>
+            <span style="font-size: 10px; color: #8b949e;">Build: Google Auth Branch</span>
+            <span class="version-badge">v3.8.8</span>
         </div>
     </div>
 
@@ -85,38 +90,15 @@
 
         const database = firebase.database();
         const auth = firebase.auth();
+        const provider = new firebase.auth.GoogleAuthProvider();
 
-        function handleLogin() {
-            const email = document.getElementById('email-input').value;
-            const pass = document.getElementById('pass-input').value;
-            const errEl = document.getElementById('login-err');
-            const btn = document.getElementById('login-btn');
-
-            if(!email || !pass) {
-                errEl.innerText = "Please enter both email and password.";
-                errEl.style.display = 'block';
-                return;
-            }
-
-            btn.innerText = "VERIFYING...";
-            btn.disabled = true;
-
-            auth.signInWithEmailAndPassword(email, pass)
-                .then((userCredential) => {
-                    console.log("Success:", userCredential.user.uid);
-                    document.getElementById('login-overlay').style.display = 'none';
-                    document.getElementById('main-admin').style.display = 'block';
-                })
-                .catch(err => {
-                    console.error("Auth Error:", err.code);
-                    btn.innerText = "AUTHENTICATE";
-                    btn.disabled = false;
-                    errEl.innerText = "Denied: " + err.message;
-                    errEl.style.display = 'block';
-                });
+        function loginWithGoogle() {
+            auth.signInWithPopup(provider).catch(err => {
+                document.getElementById('login-err').innerText = "Auth Denied: " + err.message;
+                document.getElementById('login-err').style.display = 'block';
+            });
         }
 
-        // Auto-check if already logged in
         auth.onAuthStateChanged(user => {
             if (user) {
                 document.getElementById('login-overlay').style.display = 'none';
