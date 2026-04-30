@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Admin v3.9.1</title>
+    <title>Cloud Admin v3.9.2</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         body { font-family: 'Segoe UI', sans-serif; background: #0d1117; color: white; display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; min-height: 100vh; }
@@ -29,7 +29,7 @@
     <div id="login-overlay">
         <div class="login-box">
             <h3 style="margin-top:0">Cloud Command Login</h3>
-            <p style="font-size: 12px; color: #8b949e; margin-bottom: 20px;">v3.9.1 Admin Access</p>
+            <p style="font-size: 12px; color: #8b949e; margin-bottom: 20px;">v3.9.2 Admin Access</p>
             <input type="email" id="admin-email" placeholder="Email">
             <input type="password" id="admin-pass" placeholder="Password">
             <button id="login-btn" onclick="loginManual()">AUTHENTICATE</button>
@@ -61,8 +61,8 @@
             <button id="push-btn" onclick="cloudPush()">PUSH TO CLOUD</button>
         </div>
         <div class="card-footer">
-            <span style="font-size: 10px; color: #8b949e;">Build: Manual Secure Branch</span>
-            <span class="version-badge">v3.9.1</span>
+            <span style="font-size: 10px; color: #8b949e;">Build: Secure Admin v2</span>
+            <span class="version-badge">v3.9.2</span>
         </div>
     </div>
 
@@ -88,9 +88,8 @@
         function loginManual() {
             const email = document.getElementById('admin-email').value;
             const pass = document.getElementById('admin-pass').value;
-            const errEl = document.getElementById('login-err');
-
             auth.signInWithEmailAndPassword(email, pass).catch(err => {
+                const errEl = document.getElementById('login-err');
                 errEl.innerText = "Error: " + err.message;
                 errEl.style.display = 'block';
             });
@@ -105,7 +104,7 @@
 
         function formatNumber(val) {
             if (!val) return "";
-            let num = val.toString().replace(/[^0-9]/g, '');
+            let num = val.toString().replace(/[^0-9,]/g, '').replace(/,/g, '');
             return num === "" ? "" : parseInt(num).toLocaleString();
         }
 
@@ -128,19 +127,24 @@
             const btn = document.getElementById('push-btn');
             btn.innerText = "SYNCING...";
             btn.disabled = true;
+
             const data = {
                 plexCount: document.getElementById('plex-count').value,
                 threadsFol: document.getElementById('threads-fol').value,
                 threadsViews: document.getElementById('threads-views').value,
                 snapFol: document.getElementById('snap-fol').value,
                 fbPage: document.getElementById('fb-page').value,
-                fbPersonal: document.getElementById('fb-personal').value
+                fbPersonal: document.getElementById('fb-personal').value,
+                timestamp: Date.now()
             };
+
+            // Use .set() to completely replace labData with your new admin numbers
             database.ref('labData').set(data, (err) => {
                 btn.disabled = false;
                 btn.innerText = "PUSH TO CLOUD";
-                if (err) alert("Sync Denied: " + err.message); 
-                else { 
+                if (err) {
+                    alert("Sync Denied: " + err.message + "\nCheck your Database Rules!");
+                } else { 
                     localStorage.setItem('lastAdminPush', JSON.stringify(data));
                     alert("Cloud Sync Successful!"); 
                 }
