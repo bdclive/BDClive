@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v7.8.9</title>
+    <title>Cloud Dashboard v7.9.0</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script data-cfasync="false" src="https://video.ibm.com/embed-api/v1/ustream-embedapi.min.js"></script>
     <style>
@@ -129,7 +129,7 @@
             </div>
             <div class="cinema-footer">
                 <div class="cinema-stats-line"><span>M: <span id="m-count">--</span></span><span>TV: <span id="tv-count">--</span></span><span style="color: var(--cinema-green);">S: <span id="sync-timer">LIVE</span></span></div>
-                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">--</span></span><span>v7.8.9</span></div>
+                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">--</span></span><span>v7.9.0</span></div>
             </div>
         </div>
     </div>
@@ -145,12 +145,14 @@
         vDb.ref("totalViewCount").on("value", s => document.getElementById("totalViewsCounter").innerText = s.val() || 0);
         vDb.ref("visitorsConnected").on("value", s => document.getElementById("visitorCounter").innerText = s.numChildren() || 0);
         
-        // REBUILT LAB DATA & PLEX LISTENER
+        // REINFORCED LAB DATA & PLEX LISTENER
         sDb.ref('labData').on('value', (s) => { 
             const d = s.val(); 
             if (d) { 
-                // Checks all common plex naming variations from your bridge
-                document.getElementById('plex-count-num').innerText = d.plexCount || d.plex_sessions || d.watching || "0";
+                // Check multiple possible keys sent by your Python bridge
+                const plexCount = d.plexCount || d.plex_sessions || d.watching || d.plex || 0;
+                document.getElementById('plex-count-num').innerText = plexCount;
+                
                 document.getElementById('threads-fol-num').innerText = d.threadsFol || "0"; 
                 document.getElementById('threads-view-num').innerText = d.threadsViews || "0"; 
                 document.getElementById('snap-fol-num').innerText = d.snapFol || "0"; 
