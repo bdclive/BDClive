@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v7.9.1</title>
+    <title>Cloud Dashboard v7.9.2</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script data-cfasync="false" src="https://video.ibm.com/embed-api/v1/ustream-embedapi.min.js"></script>
     <style>
@@ -27,21 +27,21 @@
         .mirror-box { justify-content: space-evenly !important; padding-left: 0 !important; text-align: center; }
         .mirror-row { display: flex; justify-content: space-around; width: 100%; margin-top: 5px; }
         .mirror-label { font-size: 9px; color: var(--text-dim); text-transform: uppercase; font-weight: bold; margin: 0; }
-        .mirror-stat { font-size: 2 rem; font-weight: 800; color: #ffffff; margin-bottom: 2px; }
+        .mirror-stat { font-size: 2rem; font-weight: 800; color: #ffffff; margin-bottom: 2px; }
         .cinema-info { padding: 12px 20px 12px 15px; display: grid; grid-template-columns: 1.2fr 1fr; gap: 8px; height: 100%; text-align: left; }
         .cinema-label { font-size: 9px; color: var(--cinema-green); text-transform: uppercase; font-weight: bold; }
         .cinema-title { font-size: 13px; font-weight: bold; color: #ffffff; line-height: 1.2; margin-top: 2px; height: 32px; overflow: hidden; }
         .cinema-footer { position: absolute; bottom: 0; left: 0; right: 0; background: #0d1117; padding: 6px 12px; border-top: 1px solid var(--border-color); display: flex; flex-direction: column; }
         .cinema-stats-line { font-size: 10px; color: var(--plex-orange); display: flex; justify-content: space-between; font-weight: bold; }
-        .status-container { display: flex; align-items: center; gap: 8px; position: absolute; bottom: 12px; left: 12px; background: rgba(0, 0, 0, 0.5); padding: 4px 10px; border-radius: 20px; border: 1px solid var(--border-color); }
+        .status-container { display: flex; align-items: center; gap: 8px; position: absolute; bottom: 12px; left: 12px; background: rgba(0,0,0,0.5); padding: 4px 10px; border-radius: 20px; border: 1px solid var(--border-color); }
         .dot { height: 8px; width: 8px; background-color: #484f58; border-radius: 50%; }
-        .dot.live { background-color: #ff0000; box-shadow: 0 0 8 px #ff0000; animation: blink 1.5s infinite; }
+        .dot.live { background-color: #ff0000; box-shadow: 0 0 8px #ff0000; animation: blink 1.5s infinite; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
         .status-text { font-size: 10px; font-weight: bold; color: var(--text-dim); }
 
-        /* MODAL SYSTEM */
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.85); backdrop-filter: blur(5px); }
-        .modal-content { background-color: #161b22; margin: 5% auto; padding: 20px; border: 1px solid var(--plex-orange); width: 85%; max-width: 900px; border-radius: 12px; position: relative; box-shadow: 0 0 20 px rgba(0, 0, 0, 0.5); }
+        /* MODAL POPUP */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); backdrop-filter: blur(5px); }
+        .modal-content { background-color: #161b22; margin: 5% auto; padding: 20px; border: 1px solid var(--plex-orange); width: 85%; max-width: 900px; border-radius: 12px; position: relative; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
         .close-modal { position: absolute; top: 10px; right: 20px; color: var(--text-dim); font-size: 35px; font-weight: bold; cursor: pointer; }
         .close-modal:hover { color: #fff; }
     </style>
@@ -108,7 +108,7 @@
         <div class="counter-item" id="court-box" style="border-top: 3px solid var(--plex-orange); background: #000; cursor: pointer; padding: 0; display: block;" onclick="openCourt()">
             <div style="width: 100%; height: 100%; overflow: hidden; position: relative; border-radius: 10px;">
                 <iframe id="court-player" src="https://video.ibm.com/embed/23891775?showtitle=false&volume=0" 
-                    style="width: 800px; height: 450px; border: none; position: absolute; top: -50px; left: -180px; transform: scale(0.35); transform-origin: top left; pointer-events: none;">
+                    style="width: 600px; height: 338px; border: none; position: absolute; top: -15px; left: -25px; transform: scale(0.48); transform-origin: top left; pointer-events: none;">
                 </iframe>
                 
                 <div style="position: absolute; top: 10px; left: 15px; z-index: 30; text-shadow: 2px 2px 4px #000;">
@@ -148,7 +148,7 @@
             </div>
             <div class="cinema-footer">
                 <div class="cinema-stats-line"><span>M: <span id="m-count">--</span></span><span>TV: <span id="tv-count">--</span></span><span style="color: var(--cinema-green);">S: <span id="sync-timer">LIVE</span></span></div>
-                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">--</span></span><span>v7.9.1</span></div>
+                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">--</span></span><span>v7.9.2</span></div>
             </div>
         </div>
     </div>
@@ -218,6 +218,10 @@
             const player = document.getElementById('modal-player');
             player.src = ""; 
             modal.style.display = "none";
+        }
+        window.onclick = function(event) {
+            const modal = document.getElementById('courtModal');
+            if (event.target == modal) { closeCourt(); }
         }
 
         async function getBsky() { try { const r = await fetch('https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=briandivacox.bsky.social'); const p = await r.json(); if (p.followersCount !== undefined) document.getElementById('bsky-num').innerText = p.followersCount.toLocaleString(); } catch (e) {} }
