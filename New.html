@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v9.0.2</title>
+    <title>Cloud Dashboard v9.0.3</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script data-cfasync="false" src="https://video.ibm.com/embed-api/v1/ustream-embedapi.min.js"></script>
     <style>
@@ -42,15 +42,15 @@
         .cinema-footer { position: absolute; bottom: 0; left: 0; right: 0; background: #0d1117; padding: 6px 12px; border-top: 1px solid var(--border-color); display: flex; flex-direction: column; }
         .cinema-stats-line { font-size: 10px; color: var(--plex-orange); display: flex; justify-content: space-between; font-weight: bold; }
 
-        /* --- COURT STREAM (PROTECTED ZONE) --- */
+        /* --- COURT STREAM (FACTORY RESET) --- */
         #court-box { padding: 0 !important; border-top: 3px solid var(--plex-orange); background: #000; cursor: pointer; display: block; }
         .court-wrapper { width: 100%; height: 100%; overflow: hidden; position: relative; border-radius: 10px; }
         .court-iframe { 
             width: 1200px; height: 675px; border: none; position: absolute; 
-            top: -10px; left: 0px; 
-            transform: scale(0.32); transform-origin: 0 0;
+            top: -5px; left: 0px; 
+            transform: scale(0.30); transform-origin: 0 0;
             pointer-events: none; 
-            filter: none !important; /* PREVENTS DISTORTION */
+            filter: none !important; /* FORCES TRUE COLOR */
         }
         .status-container { display: flex; align-items: center; gap: 8px; position: absolute; bottom: 8px; left: 8px; background: rgba(0,0,0,0.5); padding: 4px 10px; border-radius: 20px; border: 1px solid var(--border-color); z-index: 30; }
         .dot { height: 8px; width: 8px; background-color: #484f58; border-radius: 50%; }
@@ -58,7 +58,6 @@
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
         .status-text { font-size: 10px; font-weight: bold; color: var(--text-dim); }
 
-        /* Modal Styles */
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); backdrop-filter: blur(5px); }
         .modal-content { background-color: #161b22; margin: 5% auto; padding: 20px; border: 1px solid var(--plex-orange); width: 85%; max-width: 900px; border-radius: 12px; position: relative; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
         .close-modal { position: absolute; top: 10px; right: 20px; color: var(--text-dim); font-size: 35px; font-weight: bold; cursor: pointer; }
@@ -122,7 +121,7 @@
         <div class="counter-item" id="court-box" onclick="openCourt()">
             <div class="court-wrapper">
                 <iframe id="court-player" class="court-iframe" src="https://video.ibm.com/embed/23891775?showtitle=false&volume=0"></iframe>
-                <div style="position: absolute; top: 10px; left: 800px; z-index: 30; text-shadow: 2px 2px 4px #000;">
+                <div style="position: absolute; top: 10px; left: 15px; z-index: 30; text-shadow: 2px 2px 4px #000;">
                     <h4 style="margin: 0; font-size: 14px; color: #fff;">Court Stream</h4>
                     <p id="court-subtitle" style="font-size: 11px; color: var(--plex-orange); margin: 0;">Judge David</p>
                 </div>
@@ -157,7 +156,7 @@
             </div>
             <div class="cinema-footer">
                 <div class="cinema-stats-line"><span>M: <span id="m-count">--</span></span><span>TV: <span id="tv-count">--</span></span><span style="color: var(--cinema-green);">S: <span id="sync-timer">LIVE</span></span></div>
-                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">--</span></span><span>v9.0.2</span></div>
+                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">--</span></span><span>v9.0.3</span></div>
             </div>
         </div>
     </div>
@@ -191,7 +190,7 @@
             document.getElementById('fb-personal-num').innerText = d.fbPersonal || "0";
         });
 
-        let nowInt, nextInt, localNowSecs = 0;
+        let nowInt, localNowSecs = 0;
         sDb.ref('theaterSync').on('value', (snapshot) => {
             const m = snapshot.val(); if (!m) return;
             const isIdle = !m.nowPlaying || m.nowPlaying.toLowerCase() === "offline" || m.nowPlaying === "" || m.nowPlaying === "No Movie Playing";
