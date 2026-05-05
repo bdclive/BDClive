@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v7.9.8</title>
+    <title>Cloud Dashboard v8.0.0</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script data-cfasync="false" src="https://video.ibm.com/embed-api/v1/ustream-embedapi.min.js"></script>
     <style>
@@ -39,7 +39,10 @@
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
         .status-text { font-size: 10px; font-weight: bold; color: var(--text-dim); }
 
-        /* MODAL POPUP */
+        /* --- COURT PIP ALIGNMENT --- */
+        .court-wrapper { width: 100%; height: 100%; overflow: hidden; position: relative; border-radius: 10px; background: #000; }
+        .court-iframe { width: 640px; height: 360px; border: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.45); pointer-events: none; }
+
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); backdrop-filter: blur(5px); }
         .modal-content { background-color: #161b22; margin: 5% auto; padding: 20px; border: 1px solid var(--plex-orange); width: 85%; max-width: 900px; border-radius: 12px; position: relative; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
         .close-modal { position: absolute; top: 10px; right: 20px; color: var(--text-dim); font-size: 35px; font-weight: bold; cursor: pointer; }
@@ -89,11 +92,7 @@
         </div>
         
         <div class="counter-item" style="border-top: 3px solid var(--bsky-electric);">
-            <div class="box-logo">
-                <svg viewBox="0 0 566 500" preserveAspectRatio="xMidYMid meet">
-                    <path fill="var(--bsky-electric)" d="M121.2 35.6C191.6 86.9 282.9 178.1 282.9 178.1S374.2 86.9 444.7 35.6C502.9-6.8 566 -20.3 566 49.3c0 19.3-11.2 121.1-17.8 144.6-21 75-52.2 89.8-118.4 104.8 134.5 25.3 152.9 70.6 152.9 101.7 0 71-65.4 63.3-119 31.9-74.5-43.8-139.8-138.8-179.9-195.1-40.1 56.3-105.4 151.3-179.9 195.1-53.6 31.5-119 39.1-119-31.9 0-31.1 18.4-76.4 152.9-101.7C46.2 283.7 15 268.9 0 193.9c-6.6-23.5-17.8-125.3-17.8-144.6 0-69.6 63.1-56.1 121.2-13.7z"/>
-                </svg>
-            </div>
+            <div class="box-logo"><svg viewBox="0 0 566 500"><path fill="var(--bsky-electric)" d="M121.2 35.6C191.6 86.9 282.9 178.1 282.9 178.1S374.2 86.9 444.7 35.6C502.9-6.8 566 -20.3 566 49.3c0 19.3-11.2 121.1-17.8 144.6-21 75-52.2 89.8-118.4 104.8 134.5 25.3 152.9 70.6 152.9 101.7 0 71-65.4 63.3-119 31.9-74.5-43.8-139.8-138.8-179.9-195.1-40.1 56.3-105.4 151.3-179.9 195.1-53.6 31.5-119 39.1-119-31.9 0-31.1 18.4-76.4 152.9-101.7C46.2 283.7 15 268.9 0 193.9c-6.6-23.5-17.8-125.3-17.8-144.6 0-69.6 63.1-56.1 121.2-13.7z"/></svg></div>
             <div id="bsky-num" class="main-number">---</div>
         </div>
 
@@ -106,10 +105,8 @@
         </div>
 
         <div class="counter-item" id="court-box" style="border-top: 3px solid var(--plex-orange); background: #000; cursor: pointer; padding: 0; display: block;" onclick="openCourt()">
-            <div style="width: 100%; height: 100%; overflow: hidden; position: relative; border-radius: 10px;">
-                <iframe id="court-player" src="https://video.ibm.com/embed/23891775?showtitle=false&volume=0" 
-                    style="width: 600px; height: 338px; border: none; position: absolute; top: -12px; left: -5px; transform: scale(0.48); transform-origin: top left; pointer-events: none;">
-                </iframe>
+            <div class="court-wrapper">
+                <iframe id="court-player" class="court-iframe" src="https://video.ibm.com/embed/23891775?showtitle=false&volume=0"></iframe>
                 <div style="position: absolute; top: 10px; left: 15px; z-index: 30; text-shadow: 2px 2px 4px #000;">
                     <h4 style="margin: 0; font-size: 14px; color: #fff;">Court Stream</h4>
                     <p id="court-subtitle" style="font-size: 11px; color: var(--plex-orange); margin: 0;">Judge David</p>
@@ -145,7 +142,7 @@
             </div>
             <div class="cinema-footer">
                 <div class="cinema-stats-line"><span>M: <span id="m-count">--</span></span><span>TV: <span id="tv-count">--</span></span><span style="color: var(--cinema-green);">S: <span id="sync-timer">LIVE</span></span></div>
-                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">--</span></span><span>v7.9.8</span></div>
+                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">--</span></span><span>v8.0.0</span></div>
             </div>
         </div>
     </div>
@@ -171,8 +168,7 @@
         
         sDb.ref('labData').on('value', (s) => {
             const d = s.val(); if (!d) return;
-            const plexCount = d.plexCount || d.plex_sessions || d.watching || d.plex || 0;
-            document.getElementById('plex-count-num').innerText = plexCount;
+            document.getElementById('plex-count-num').innerText = d.plexCount || 0;
             document.getElementById('threads-fol-num').innerText = d.threadsFol || "0"; 
             document.getElementById('threads-view-num').innerText = d.threadsViews || "0"; 
             document.getElementById('snap-fol-num').innerText = d.snapFol || "0"; 
@@ -189,8 +185,10 @@
             document.getElementById('m-count').innerText = m.moviesCount || "0";
             document.getElementById('tv-count').innerText = m.tvCount || "0";
             document.getElementById('m-open').innerText = m.daysOpen || "0";
+            document.getElementById('m-next').innerText = m.nextTitle || "None";
 
-            clearInterval(nowInt); const nowEl = document.getElementById('m-left');
+            clearInterval(nowInt); 
+            const nowEl = document.getElementById('m-left');
             if (isIdle || !m.timeLeft || m.timeLeft.includes("--") || m.timeLeft.includes("N/A")) {
                 nowEl.innerText = "Cinema Idle";
             } else {
@@ -199,31 +197,50 @@
                 localNowSecs = (parseInt(h) * 3600) + (parseInt(mins) * 60);
                 nowInt = setInterval(() => {
                     if (localNowSecs <= 0) { nowEl.innerText = "Refreshing..."; clearInterval(nowInt); return; }
-                    localNowSecs--; let hh = Math.floor(localNowSecs / 3600), mm = Math.floor((localNowSecs % 3600) / 60), ss = localNowSecs % 60;
+                    localNowSecs--; 
+                    let hh = Math.floor(localNowSecs / 3600), mm = Math.floor((localNowSecs % 3600) / 60), ss = localNowSecs % 60;
                     nowEl.innerText = `Left: ${hh}h ${mm}m ${ss}s`;
+                }, 1000);
+            }
+
+            clearInterval(nextInt); 
+            const nextEl = document.getElementById('m-time');
+            if (!m.nextTime || m.nextTime.includes("--") || m.nextTime.includes("N/A")) {
+                nextEl.innerText = "--";
+            } else {
+                let clean = m.nextTime.includes("202") ? m.nextTime : m.nextTime.replace(",", " 2026,");
+                const target = new Date(clean);
+                nextInt = setInterval(() => {
+                    const diff = target - new Date();
+                    if (diff <= 0) { nextEl.innerText = "Starting Now!"; clearInterval(nextInt); return; }
+                    const dd = Math.floor(diff / 86400000), hh = Math.floor((diff % 86400000) / 3600000), mm = Math.floor((diff % 3600000) / 60000), ss = Math.floor((diff % 60000) / 1000);
+                    nextEl.innerText = (dd > 0 ? dd + "d " : "") + `${hh}h ${mm}m ${ss}s`;
                 }, 1000);
             }
         });
 
         const twitchLabApi = 'https://script.google.com/macros/s/AKfycby0ndGELJv0Q6yAR8PKMsvo3u-hZ2qAL80sVahxyeyrLy_qDXhkcYZkKBoq6HhdrhyO/exec';
-        async function syncTwitch() { try { const res = await fetch(twitchLabApi + '?t=' + Date.now()); const data = await res.json(); if (data.twitch) { document.getElementById('twitch-fol-num').innerText = data.twitch.followers || "---"; document.getElementById('twitch-view-num').innerText = data.twitch.viewers || "0"; } } catch (e) {} }
+        async function syncTwitch() { 
+            try { 
+                const res = await fetch(twitchLabApi + '?t=' + Date.now()); 
+                const data = await res.json(); 
+                if (data.twitch) { 
+                    document.getElementById('twitch-fol-num').innerText = data.twitch.followers || "---"; 
+                    document.getElementById('twitch-view-num').innerText = data.twitch.viewers || "0"; 
+                } 
+            } catch (e) {} 
+        }
         setInterval(syncTwitch, 60000); syncTwitch();
 
         function openCourt() {
-            const modal = document.getElementById('courtModal');
-            const player = document.getElementById('modal-player');
-            player.src = "https://video.ibm.com/embed/23891775?autoplay=1";
-            modal.style.display = "block";
+            document.getElementById('modal-player').src = "https://video.ibm.com/embed/23891775?autoplay=1";
+            document.getElementById('courtModal').style.display = "block";
         }
         function closeCourt() {
-            const modal = document.getElementById('courtModal');
-            const player = document.getElementById('modal-player');
-            player.src = ""; modal.style.display = "none";
+            document.getElementById('modal-player').src = ""; 
+            document.getElementById('courtModal').style.display = "none";
         }
-        window.onclick = function(event) {
-            const modal = document.getElementById('courtModal');
-            if (event.target == modal) { closeCourt(); }
-        }
+        window.onclick = (e) => { if (e.target == document.getElementById('courtModal')) closeCourt(); }
 
         async function getBsky() { try { const r = await fetch('https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=briandivacox.bsky.social'); const p = await r.json(); if (p.followersCount !== undefined) document.getElementById('bsky-num').innerText = p.followersCount.toLocaleString(); } catch (e) {} }
         getBsky(); setInterval(getBsky, 300000);
