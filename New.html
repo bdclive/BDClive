@@ -13,94 +13,41 @@
             --plex-orange: #e5a00d; --cinema-green: #238636;
         }
 
-        body { 
-            font-family: 'Segoe UI', sans-serif; 
-            background: var(--bg-color); 
-            color: var(--text-main); 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            padding: 15px; 
-            margin: 0; 
-        }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: var(--text-main); display: flex; flex-direction: column; align-items: center; padding: 15px; margin: 0; }
 
-        /* Container for the whole dashboard */
-        .counter-grid { 
-            display: grid; 
-            grid-template-columns: repeat(4, 1fr); 
-            gap: 15px; 
-            width: 100%; 
-            max-width: 1400px; 
-        }
+        .counter-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; width: 100%; max-width: 1400px; }
 
-        /* Generic Tile Style */
         .counter-item { 
-            background: var(--card-bg); 
-            border: 1px solid var(--border-color); 
-            border-radius: 10px; 
-            height: 150px; 
-            position: relative; 
-            overflow: hidden; 
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
+            background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; 
+            height: 150px; position: relative; overflow: hidden; 
+            display: flex; flex-direction: column; justify-content: center;
         }
 
-        /* Standard Counter Inversion (Twitter, YT, etc.) */
-        .counter-item iframe { 
-            filter: invert(1) hue-rotate(180deg); 
-            border: 0; 
-            width: 450px; 
-            height: 220px; 
-            position: absolute; 
-            top: 10px; 
-            left: -85px; 
-            pointer-events: none; 
-        }
+        /* Generic counters (Twitter, YT, etc.) get inverted */
+        .counter-item iframe { filter: invert(1) hue-rotate(180deg); border: 0; width: 450px; height: 220px; position: absolute; top: 10px; left: -85px; pointer-events: none; }
 
-        /* --- THE COURT STREAM (PROTECTED ZONE) --- */
-        #court-box { 
-            padding: 0 !important; 
-            border-top: 3px solid var(--plex-orange);
-            background: #000;
-            cursor: pointer;
-        }
-
-        .court-wrapper { 
-            width: 100%; 
-            height: 100%; 
-            overflow: hidden; 
-            position: relative; 
-        }
-
-        /* Reset alignment to 0,0 for the fresh start */
+        /* --- COURT STREAM RESTART (v9.0.0) --- */
+        #court-box { padding: 0 !important; border-top: 3px solid var(--plex-orange); background: #000; cursor: pointer; }
+        .court-wrapper { width: 100%; height: 100%; overflow: hidden; position: relative; }
+        
         .court-iframe { 
-            width: 1200px; 
-            height: 675px; 
-            border: none; 
-            position: absolute; 
-            top: 0; 
-            left: 0; 
-            transform: scale(0.30); 
-            transform-origin: 0 0;
+            width: 1200px; height: 675px; border: none; position: absolute; 
+            top: -5px; left: 0; 
+            transform: scale(0.30); transform-origin: 0 0;
             pointer-events: none; 
-            filter: none !important; /* PREVENTS DISTORTION */
+            filter: none !important; /* PROTECTS COLORS FROM GLOBAL INVERT */
         }
 
-        /* Overlays */
         .status-container { 
-            display: flex; align-items: center; gap: 8px; 
-            position: absolute; bottom: 12px; left: 12px; 
-            background: rgba(0,0,0,0.6); padding: 4px 10px; 
-            border-radius: 20px; border: 1px solid var(--border-color);
-            z-index: 10;
+            display: flex; align-items: center; gap: 8px; position: absolute; bottom: 12px; left: 12px; 
+            background: rgba(0,0,0,0.6); padding: 4px 10px; border-radius: 20px; border: 1px solid var(--border-color); z-index: 10;
         }
         .dot { height: 8px; width: 8px; background-color: #484f58; border-radius: 50%; }
         .dot.live { background-color: #ff0000; box-shadow: 0 0 8px #ff0000; animation: blink 1.5s infinite; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
         .status-text { font-size: 10px; font-weight: bold; color: var(--text-dim); }
 
-        /* Modal Styles */
+        /* Popup Modal */
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); backdrop-filter: blur(5px); }
         .modal-content { background-color: #161b22; margin: 5% auto; padding: 20px; border: 1px solid var(--plex-orange); width: 85%; max-width: 900px; border-radius: 12px; position: relative; }
         .close-modal { position: absolute; top: 10px; right: 20px; color: var(--text-dim); font-size: 35px; font-weight: bold; cursor: pointer; }
@@ -112,12 +59,10 @@
         <div class="counter-item" id="court-box" onclick="openCourt()">
             <div class="court-wrapper">
                 <iframe id="court-player" class="court-iframe" src="https://video.ibm.com/embed/23891775?showtitle=false&volume=0"></iframe>
-                
                 <div style="position: absolute; top: 10px; left: 15px; z-index: 20; text-shadow: 2px 2px 4px #000;">
                     <h4 style="margin: 0; font-size: 14px; color: #fff;">Court Stream</h4>
                     <p id="court-subtitle" style="font-size: 11px; color: var(--plex-orange); margin: 0;">Judge David</p>
                 </div>
-
                 <div class="status-container">
                     <span id="court-dot" class="dot"></span>
                     <span id="court-text" class="status-text">OFF AIR</span>
@@ -125,8 +70,14 @@
             </div>
         </div>
 
-        <div class="counter-item" style="border-top: 3px solid #ffffff; padding-left: 25px;">
+        <div class="counter-item" style="border-top: 3px solid #ffffff;">
             <iframe scrolling="no" src="https://livecounts.io/embed/twitter-live-follower-counter/briandivacox"></iframe>
+        </div>
+        <div class="counter-item" style="border-top: 3px solid #ff0000;">
+            <iframe scrolling="no" src="https://livecounts.io/embed/youtube-live-subscriber-counter/UCMuv7PfbLVm8IZsd6Bgqqzg"></iframe>
+        </div>
+        <div class="counter-item" style="border-top: 3px solid #00f2ea;">
+            <iframe scrolling="no" src="https://livecounts.io/embed/tiktok-live-follower-counter/briandivacox"></iframe>
         </div>
     </div>
 
@@ -139,7 +90,6 @@
     </div>
 
     <script>
-        // Popup Controls
         function openCourt() {
             document.getElementById('modal-player').src = "https://video.ibm.com/embed/23891775?autoplay=1";
             document.getElementById('courtModal').style.display = "block";
@@ -150,7 +100,6 @@
         }
         window.onclick = (e) => { if (e.target == document.getElementById('courtModal')) closeCourt(); }
 
-        // Live Monitor Logic
         function monitorCourt() {
             if (typeof UstreamEmbed === 'undefined') { setTimeout(monitorCourt, 1000); return; }
             const viewer = UstreamEmbed('court-player');
