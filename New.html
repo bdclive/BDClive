@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v8.0.3</title>
+    <title>Cloud Dashboard v8.0.4</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script data-cfasync="false" src="https://video.ibm.com/embed-api/v1/ustream-embedapi.min.js"></script>
     <style>
@@ -39,13 +39,9 @@
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
         .status-text { font-size: 10px; font-weight: bold; color: var(--text-dim); }
 
-        /* --- STABLE COURT PIP (NO AUTO DETECT) --- */
-        .court-wrapper { width: 100%; height: 100%; overflow: hidden; position: relative; border-radius: 10px; background: #000; }
-        .court-iframe { 
-            width: 800px; height: 450px; border: none; position: absolute; 
-            top: 50%; left: 50%; 
-            transform: translate(-50%, -50%) scale(0.38); pointer-events: none; 
-        }
+        /* --- FLEX-CENTERED COURT v8.0.4 --- */
+        .court-wrapper { width: 100%; height: 100%; overflow: hidden; position: relative; border-radius: 10px; background: #000; display: flex; justify-content: center; align-items: center; }
+        .court-iframe { width: 800px; height: 450px; border: none; transform: scale(0.35); pointer-events: none; flex-shrink: 0; }
 
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); backdrop-filter: blur(5px); }
         .modal-content { background-color: #161b22; margin: 5% auto; padding: 20px; border: 1px solid var(--plex-orange); width: 85%; max-width: 900px; border-radius: 12px; position: relative; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
@@ -140,130 +136,4 @@
             <i class="fa-solid fa-film box-logo" style="color: var(--cinema-green);"></i>
             <div class="cinema-info">
                 <div><div class="cinema-label">Now Playing</div><div id="m-now" class="cinema-title">Syncing...</div><div id="m-left" style="font-size: 10px; color: var(--text-dim);">--</div></div>
-                <div style="border-left: 1px solid var(--border-color); padding-left: 10px;">
-                    <div class="cinema-label" style="color: var(--plex-orange);">Up Next</div><div id="m-next" class="cinema-title">--</div><div id="m-time" style="font-size: 10px; color: var(--text-dim);">--</div>
-                </div>
-            </div>
-            <div class="cinema-footer">
-                <div class="cinema-stats-line"><span>M: <span id="m-count">--</span></span><span>TV: <span id="tv-count">--</span></span><span style="color: var(--cinema-green);">S: <span id="sync-timer">LIVE</span></span></div>
-                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">--</span></span><span>v8.0.3</span></div>
-            </div>
-        </div>
-    </div>
-
-    <div id="courtModal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal" onclick="closeCourt()">&times;</span>
-            <h3 style="margin-top: 0; color: var(--plex-orange);">Live Court Feed</h3>
-            <iframe id="modal-player" width="100%" height="500" src="" frameborder="0" allowfullscreen></iframe>
-        </div>
-    </div>
-
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-    <script>
-        const sConf = { apiKey: atob("QUl6YVN5QXZ4ZktnX3NwUE52RTJ3Y1QtdlRsOFlUUXU0TDN0Xzd3"), authDomain: "livecounters-8eaa8.firebaseapp.com", projectId: "livecounters-8eaa8", databaseURL: "https://livecounters-8eaa8-default-rtdb.firebaseio.com/", appId: "1:386919719539:web:c60c0d185c3d7e97ecc006" };
-        const vConf = { apiKey: "AIzaSyCokXnEtboNuUIASBMz2ZzS0GuchemoJYI", authDomain: "lbbb-webcounter.firebaseapp.com", projectId: "lbbb-webcounter", databaseURL: "https://lbbb-webcounter-default-rtdb.firebaseio.com/", appId: "1:217634980859:web:49ef2b0aa7fe7d0bb1415e" };
-        const sApp = firebase.initializeApp(sConf, "sApp"); const vApp = firebase.initializeApp(vConf, "vApp");
-        const sDb = sApp.database(); const vDb = vApp.database();
-
-        vDb.ref("totalViewCount").on("value", s => document.getElementById("totalViewsCounter").innerText = s.val() || 0);
-        vDb.ref("visitorsConnected").on("value", s => document.getElementById("visitorCounter").innerText = s.numChildren() || 0);
-        
-        sDb.ref('labData').on('value', (s) => {
-            const d = s.val(); if (!d) return;
-            document.getElementById('plex-count-num').innerText = d.plexCount || 0;
-            document.getElementById('threads-fol-num').innerText = d.threadsFol || "0"; 
-            document.getElementById('threads-view-num').innerText = d.threadsViews || "0"; 
-            document.getElementById('snap-fol-num').innerText = d.snapFol || "0"; 
-            document.getElementById('fb-page-num').innerText = d.fbPage || "0";
-            document.getElementById('fb-personal-num').innerText = d.fbPersonal || "0";
-        });
-
-        let nowInt, nextInt, localNowSecs = 0;
-        sDb.ref('theaterSync').on('value', (snapshot) => {
-            const m = snapshot.val(); if (!m) return;
-            const isIdle = !m.nowPlaying || m.nowPlaying.toLowerCase() === "offline" || m.nowPlaying === "" || m.nowPlaying === "No Movie Playing";
-            
-            document.getElementById('m-now').innerText = isIdle ? "Off-Air" : m.nowPlaying;
-            document.getElementById('m-count').innerText = m.moviesCount || "0";
-            document.getElementById('tv-count').innerText = m.tvCount || "0";
-            document.getElementById('m-open').innerText = m.daysOpen || "0";
-            document.getElementById('m-next').innerText = m.nextTitle || "None";
-
-            clearInterval(nowInt); 
-            const nowEl = document.getElementById('m-left');
-            if (isIdle || !m.timeLeft || m.timeLeft.includes("--") || m.timeLeft.includes("N/A")) {
-                nowEl.innerText = "Cinema Idle";
-            } else {
-                let h = (m.timeLeft.match(/(\d+)\s*h/i) || [0,0])[1];
-                let mins = (m.timeLeft.match(/(\d+)\s*m/i) || [0,0])[1];
-                localNowSecs = (parseInt(h) * 3600) + (parseInt(mins) * 60);
-                nowInt = setInterval(() => {
-                    if (localNowSecs <= 0) { nowEl.innerText = "Refreshing..."; clearInterval(nowInt); return; }
-                    localNowSecs--; 
-                    let hh = Math.floor(localNowSecs / 3600), mm = Math.floor((localNowSecs % 3600) / 60), ss = localNowSecs % 60;
-                    nowEl.innerText = `Left: ${hh}h ${mm}m ${ss}s`;
-                }, 1000);
-            }
-
-            clearInterval(nextInt); 
-            const nextEl = document.getElementById('m-time');
-            if (!m.nextTime || m.nextTime.includes("--") || m.nextTime.includes("N/A")) {
-                nextEl.innerText = "--";
-            } else {
-                let clean = m.nextTime.includes("202") ? m.nextTime : m.nextTime.replace(",", " 2026,");
-                const target = new Date(clean);
-                nextInt = setInterval(() => {
-                    const diff = target - new Date();
-                    if (diff <= 0) { nextEl.innerText = "Starting Now!"; clearInterval(nextInt); return; }
-                    const dd = Math.floor(diff / 86400000), hh = Math.floor((diff % 86400000) / 3600000), mm = Math.floor((diff % 3600000) / 60000), ss = Math.floor((diff % 60000) / 1000);
-                    nextEl.innerText = (dd > 0 ? dd + "d " : "") + `${hh}h ${mm}m ${ss}s`;
-                }, 1000);
-            }
-        });
-
-        const twitchLabApi = 'https://script.google.com/macros/s/AKfycby0ndGELJv0Q6yAR8PKMsvo3u-hZ2qAL80sVahxyeyrLy_qDXhkcYZkKBoq6HhdrhyO/exec';
-        async function syncTwitch() { 
-            try { 
-                const res = await fetch(twitchLabApi + '?t=' + Date.now()); 
-                const data = await res.json(); 
-                if (data.twitch) { 
-                    document.getElementById('twitch-fol-num').innerText = data.twitch.followers || "---"; 
-                    document.getElementById('twitch-view-num').innerText = data.twitch.viewers || "0"; 
-                } 
-            } catch (e) {} 
-        }
-        setInterval(syncTwitch, 60000); syncTwitch();
-
-        function openCourt() {
-            document.getElementById('modal-player').src = "https://video.ibm.com/embed/23891775?autoplay=1";
-            document.getElementById('courtModal').style.display = "block";
-        }
-        function closeCourt() {
-            document.getElementById('modal-player').src = ""; 
-            document.getElementById('courtModal').style.display = "none";
-        }
-        window.onclick = (e) => { if (e.target == document.getElementById('courtModal')) closeCourt(); }
-
-        async function getBsky() { try { const r = await fetch('https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=briandivacox.bsky.social'); const p = await r.json(); if (p.followersCount !== undefined) document.getElementById('bsky-num').innerText = p.followersCount.toLocaleString(); } catch (e) { } }
-        getBsky(); setInterval(getBsky, 300000);
-
-        function monitorCourt() {
-            if (typeof UstreamEmbed === 'undefined') { setTimeout(monitorCourt, 1000); return; }
-            const viewer = UstreamEmbed('court-player');
-            const check = () => {
-                viewer.getProperty('live', (isLive) => {
-                    const active = (isLive === true || isLive === 'live');
-                    document.getElementById('court-dot').className = active ? 'dot live' : 'dot';
-                    document.getElementById('court-text').innerText = active ? "LIVE NOW" : "OFF AIR";
-                    document.getElementById('court-text').style.color = active ? "#ff0000" : "var(--text-dim)";
-                    document.getElementById('court-subtitle').innerText = active ? "Judge David Online" : "Judge David";
-                });
-            };
-            viewer.addListener('live', check); setInterval(check, 30000); check();
-        }
-        window.addEventListener('load', monitorCourt);
-    </script>
-</body>
-</html>
+                <div style="border-left: 1px solid var(--border-color); padding
