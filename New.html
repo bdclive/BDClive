@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v8.1.4</title>
+    <title>Cloud Dashboard v8.1.5</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script data-cfasync="false" src="https://video.ibm.com/embed-api/v1/ustream-embedapi.min.js"></script>
     <style>
@@ -22,7 +22,10 @@
         .counter-item { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; height: 150px; position: relative; display: flex; flex-direction: column; justify-content: center; padding-left: 25px; padding-bottom: 10px; overflow: hidden; transition: 0.3s; }
         .box-logo { position: absolute; top: 12px; right: 15px; width: 22px; height: 22px; z-index: 20; display: flex; align-items: center; justify-content: center; }
         .box-logo svg { width: 100%; height: 100%; }
+        
+        /* Standard counters get inverted, but we will exclude the court below */
         .counter-item iframe { filter: invert(1) hue-rotate(180deg); border: 0; width: 450px; height: 220px; position: absolute; top: 10px; left: -85px; pointer-events: none; }
+        
         .main-number { font-size: 3.1rem; font-weight: 800; color: #ffffff; margin: 0; white-space: nowrap; letter-spacing: -2px; line-height: 1.1; }
         .mirror-box { justify-content: space-evenly !important; padding-left: 0 !important; text-align: center; }
         .mirror-row { display: flex; justify-content: space-around; width: 100%; margin-top: 5px; }
@@ -39,13 +42,14 @@
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
         .status-text { font-size: 10px; font-weight: bold; color: var(--text-dim); }
 
-        /* --- v1.0.6 ALIGNMENT SYNC --- */
+        /* --- COURT STREAM SYNC v1.0.6 --- */
         .court-wrapper { width: 100%; height: 100%; overflow: hidden; position: relative; border-radius: 10px; background: #000; }
         .court-iframe { 
             width: 1200px; height: 675px; border: none; position: absolute; 
             top: -5px; left: 0px; 
             transform: scale(0.30); transform-origin: 0 0;
             pointer-events: none; 
+            filter: none !important; /* Forces True Color vs Inversion */
         }
 
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); backdrop-filter: blur(5px); }
@@ -147,7 +151,7 @@
             </div>
             <div class="cinema-footer">
                 <div class="cinema-stats-line"><span>M: <span id="m-count">--</span></span><span>TV: <span id="tv-count">--</span></span><span style="color: var(--cinema-green);">S: <span id="sync-timer">LIVE</span></span></div>
-                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">--</span></span><span>v8.1.4</span></div>
+                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">--</span></span><span>v8.1.5</span></div>
             </div>
         </div>
     </div>
@@ -163,11 +167,13 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
     <script>
+        // Firebase Configuration
         const sConf = { apiKey: atob("QUl6YVN5QXZ4ZktnX3NwUE52RTJ3Y1QtdlRsOFlUUXU0TDN0Xzd3"), authDomain: "livecounters-8eaa8.firebaseapp.com", projectId: "livecounters-8eaa8", databaseURL: "https://livecounters-8eaa8-default-rtdb.firebaseio.com/", appId: "1:386919719539:web:c60c0d185c3d7e97ecc006" };
         const vConf = { apiKey: "AIzaSyCokXnEtboNuUIASBMz2ZzS0GuchemoJYI", authDomain: "lbbb-webcounter.firebaseapp.com", projectId: "lbbb-webcounter", databaseURL: "https://lbbb-webcounter-default-rtdb.firebaseio.com/", appId: "1:217634980859:web:49ef2b0aa7fe7d0bb1415e" };
         const sApp = firebase.initializeApp(sConf, "sApp"); const vApp = firebase.initializeApp(vConf, "vApp");
         const sDb = sApp.database(); const vDb = vApp.database();
 
+        // Main Counters
         vDb.ref("totalViewCount").on("value", s => document.getElementById("totalViewsCounter").innerText = s.val() || 0);
         vDb.ref("visitorsConnected").on("value", s => document.getElementById("visitorCounter").innerText = s.numChildren() || 0);
         
@@ -181,6 +187,7 @@
             document.getElementById('fb-personal-num').innerText = d.fbPersonal || "0";
         });
 
+        // Cinema Logic
         let nowInt, nextInt, localNowSecs = 0;
         sDb.ref('theaterSync').on('value', (snapshot) => {
             const m = snapshot.val(); if (!m) return;
@@ -224,6 +231,7 @@
             }
         });
 
+        // Twitch Monitoring
         const twitchLabApi = 'https://script.google.com/macros/s/AKfycby0ndGELJv0Q6yAR8PKMsvo3u-hZ2qAL80sVahxyeyrLy_qDXhkcYZkKBoq6HhdrhyO/exec';
         async function syncTwitch() { 
             try { 
@@ -237,6 +245,7 @@
         }
         setInterval(syncTwitch, 60000); syncTwitch();
 
+        // Popup Functions
         function openCourt() {
             document.getElementById('modal-player').src = "https://video.ibm.com/embed/23891775?autoplay=1";
             document.getElementById('courtModal').style.display = "block";
@@ -247,9 +256,11 @@
         }
         window.onclick = (e) => { if (e.target == document.getElementById('courtModal')) closeCourt(); }
 
+        // Bluesky Stats
         async function getBsky() { try { const r = await fetch('https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=briandivacox.bsky.social'); const p = await r.json(); if (p.followersCount !== undefined) document.getElementById('bsky-num').innerText = p.followersCount.toLocaleString(); } catch (e) { } }
         getBsky(); setInterval(getBsky, 300000);
 
+        // Court Stream Monitor
         function monitorCourt() {
             if (typeof UstreamEmbed === 'undefined') { setTimeout(monitorCourt, 1000); return; }
             const viewer = UstreamEmbed('court-player');
