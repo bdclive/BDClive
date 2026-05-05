@@ -38,6 +38,22 @@
         .dot.live { background-color: #ff0000; box-shadow: 0 0 8px #ff0000; animation: blink 1.5s infinite; }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
         .status-text { font-size: 10px; font-weight: bold; color: var(--text-dim); }
+
+        /* --- COURT POPUP MODAL STYLES --- */
+        .modal {
+            display: none; position: fixed; z-index: 1000; left: 0; top: 0; 
+            width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            background-color: #161b22; margin: 5% auto; padding: 20px;
+            border: 1px solid var(--plex-orange); width: 85%; max-width: 900px;
+            border-radius: 12px; position: relative; box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+        .close-modal {
+            position: absolute; top: 10px; right: 20px; color: var(--text-dim);
+            font-size: 35px; font-weight: bold; cursor: pointer;
+        }
+        .close-modal:hover { color: #fff; }
     </style>
 </head>
 <body>
@@ -99,7 +115,7 @@
             </div>
         </div>
 
-        <div class="counter-item" id="court-box" style="border-top: 3px solid var(--plex-orange); background: #1c2128;">
+        <div class="counter-item" id="court-box" style="border-top: 3px solid var(--plex-orange); background: #1c2128; cursor: pointer;" onclick="openCourt()">
             <i class="fa-solid fa-gavel box-logo" style="color: var(--plex-orange);"></i>
             <div style="padding: 15px;"><h4 style="margin: 0; font-size: 14px;">Court Stream</h4><p id="court-subtitle" style="font-size: 11px; color: var(--text-dim);">Checking...</p></div>
             <div style="position: absolute; width: 1px; height: 1px; opacity: 0;"><iframe id="court-player" src="https://video.ibm.com/embed/23891775"></iframe></div>
@@ -134,6 +150,14 @@
         </div>
     </div>
 
+    <div id="courtModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeCourt()">&times;</span>
+            <h3 style="margin-top: 0; color: var(--plex-orange);">Live Court Feed</h3>
+            <iframe id="modal-player" width="100%" height="500" src="" frameborder="0" allowfullscreen></iframe>
+        </div>
+    </div>
+
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
     <script>
@@ -149,10 +173,8 @@
         sDb.ref('labData').on('value', (s) => { 
             const d = s.val(); 
             if (d) { 
-                // Check multiple possible keys sent by your Python bridge
                 const plexCount = d.plexCount || d.plex_sessions || d.watching || d.plex || 0;
                 document.getElementById('plex-count-num').innerText = plexCount;
-                
                 document.getElementById('threads-fol-num').innerText = d.threadsFol || "0"; 
                 document.getElementById('threads-view-num').innerText = d.threadsViews || "0"; 
                 document.getElementById('snap-fol-num').innerText = d.snapFol || "0"; 
@@ -166,6 +188,8 @@
         sDb.ref('theaterSync').on('value', (snapshot) => {
             const m = snapshot.val(); if (!m) return;
             const isIdle = !m.nowPlaying || m.nowPlaying.toLowerCase() === "offline" || m.nowPlaying === "";
+            
+            // Plural/CamelCase updates
             document.getElementById('m-now').innerText = isIdle ? "Off-Air" : m.nowPlaying;
             document.getElementById('m-count').innerText = m.moviesCount || "0";
             document.getElementById('tv-count').innerText = m.tvCount || "0";
@@ -192,6 +216,24 @@
                 }, 1000);
             }
         });
+
+        // COURT POPUP FUNCTIONS
+        function openCourt() {
+            const modal = document.getElementById('courtModal');
+            const player = document.getElementById('modal-player');
+            player.src = "https://video.ibm.com/embed/23891775?autoplay=1";
+            modal.style.display = "block";
+        }
+        function closeCourt() {
+            const modal = document.getElementById('courtModal');
+            const player = document.getElementById('modal-player');
+            player.src = ""; 
+            modal.style.display = "none";
+        }
+        window.onclick = function(event) {
+            const modal = document.getElementById('courtModal');
+            if (event.target == modal) { closeCourt(); }
+        }
 
         async function getBsky() { try { const r = await fetch('https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=briandivacox.bsky.social'); const p = await r.json(); if (p.followersCount !== undefined) document.getElementById('bsky-num').innerText = p.followersCount.toLocaleString(); } catch (e) {} }
         getBsky(); setInterval(getBsky, 300000);
