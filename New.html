@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v9.0.3</title>
+    <title>Cloud Dashboard v9.0.4</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script data-cfasync="false" src="https://video.ibm.com/embed-api/v1/ustream-embedapi.min.js"></script>
     <style>
@@ -27,7 +27,6 @@
         .box-logo { position: absolute; top: 12px; right: 15px; width: 22px; height: 22px; z-index: 20; display: flex; align-items: center; justify-content: center; }
         .box-logo svg { width: 100%; height: 100%; }
 
-        /* Generic counters (Twitter, YT, etc.) get inverted */
         .counter-item iframe { filter: invert(1) hue-rotate(180deg); border: 0; width: 450px; height: 220px; position: absolute; top: 10px; left: -85px; pointer-events: none; }
         
         .main-number { font-size: 3.1rem; font-weight: 800; color: #ffffff; margin: 0; white-space: nowrap; letter-spacing: -2px; line-height: 1.1; }
@@ -42,7 +41,7 @@
         .cinema-footer { position: absolute; bottom: 0; left: 0; right: 0; background: #0d1117; padding: 6px 12px; border-top: 1px solid var(--border-color); display: flex; flex-direction: column; }
         .cinema-stats-line { font-size: 10px; color: var(--plex-orange); display: flex; justify-content: space-between; font-weight: bold; }
 
-        /* --- COURT STREAM (FACTORY RESET) --- */
+        /* --- COURT STREAM (CLEAN RESET) --- */
         #court-box { padding: 0 !important; border-top: 3px solid var(--plex-orange); background: #000; cursor: pointer; display: block; }
         .court-wrapper { width: 100%; height: 100%; overflow: hidden; position: relative; border-radius: 10px; }
         .court-iframe { 
@@ -50,13 +49,8 @@
             top: -5px; left: 0px; 
             transform: scale(0.30); transform-origin: 0 0;
             pointer-events: none; 
-            filter: none !important; /* FORCES TRUE COLOR */
+            filter: none !important; 
         }
-        .status-container { display: flex; align-items: center; gap: 8px; position: absolute; bottom: 8px; left: 8px; background: rgba(0,0,0,0.5); padding: 4px 10px; border-radius: 20px; border: 1px solid var(--border-color); z-index: 30; }
-        .dot { height: 8px; width: 8px; background-color: #484f58; border-radius: 50%; }
-        .dot.live { background-color: #ff0000; box-shadow: 0 0 8px #ff0000; animation: blink 1.5s infinite; }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-        .status-text { font-size: 10px; font-weight: bold; color: var(--text-dim); }
 
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); backdrop-filter: blur(5px); }
         .modal-content { background-color: #161b22; margin: 5% auto; padding: 20px; border: 1px solid var(--plex-orange); width: 85%; max-width: 900px; border-radius: 12px; position: relative; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
@@ -121,14 +115,6 @@
         <div class="counter-item" id="court-box" onclick="openCourt()">
             <div class="court-wrapper">
                 <iframe id="court-player" class="court-iframe" src="https://video.ibm.com/embed/23891775?showtitle=false&volume=0"></iframe>
-                <div style="position: absolute; top: 10px; left: 15px; z-index: 30; text-shadow: 2px 2px 4px #000;">
-                    <h4 style="margin: 0; font-size: 14px; color: #fff;">Court Stream</h4>
-                    <p id="court-subtitle" style="font-size: 11px; color: var(--plex-orange); margin: 0;">Judge David</p>
-                </div>
-                <div class="status-container">
-                    <span id="court-dot" class="dot"></span>
-                    <span id="court-text" class="status-text">OFF AIR</span>
-                </div>
                 <i class="fa-solid fa-expand box-logo" style="color: rgba(255,255,255,0.5); font-size: 14px;"></i>
             </div>
         </div>
@@ -156,7 +142,7 @@
             </div>
             <div class="cinema-footer">
                 <div class="cinema-stats-line"><span>M: <span id="m-count">--</span></span><span>TV: <span id="tv-count">--</span></span><span style="color: var(--cinema-green);">S: <span id="sync-timer">LIVE</span></span></div>
-                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">--</span></span><span>v9.0.3</span></div>
+                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">--</span></span><span>v9.0.4</span></div>
             </div>
         </div>
     </div>
@@ -242,21 +228,6 @@
 
         async function getBsky() { try { const r = await fetch('https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=briandivacox.bsky.social'); const p = await r.json(); if (p.followersCount !== undefined) document.getElementById('bsky-num').innerText = p.followersCount.toLocaleString(); } catch (e) { } }
         getBsky(); setInterval(getBsky, 300000);
-
-        function monitorCourt() {
-            if (typeof UstreamEmbed === 'undefined') { setTimeout(monitorCourt, 1000); return; }
-            const viewer = UstreamEmbed('court-player');
-            const check = () => {
-                viewer.getProperty('live', (isLive) => {
-                    const active = (isLive === true || isLive === 'live');
-                    document.getElementById('court-dot').className = active ? 'dot live' : 'dot';
-                    document.getElementById('court-text').innerText = active ? "LIVE NOW" : "OFF AIR";
-                    document.getElementById('court-text').style.color = active ? "#ff0000" : "#8b949e";
-                });
-            };
-            viewer.addListener('live', check); setInterval(check, 30000); check();
-        }
-        window.addEventListener('load', monitorCourt);
     </script>
 </body>
 </html>
