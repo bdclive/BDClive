@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v7.9.2</title>
+    <title>Cloud Dashboard v7.9.3</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script data-cfasync="false" src="https://video.ibm.com/embed-api/v1/ustream-embedapi.min.js"></script>
     <style>
@@ -108,7 +108,7 @@
         <div class="counter-item" id="court-box" style="border-top: 3px solid var(--plex-orange); background: #000; cursor: pointer; padding: 0; display: block;" onclick="openCourt()">
             <div style="width: 100%; height: 100%; overflow: hidden; position: relative; border-radius: 10px;">
                 <iframe id="court-player" src="https://video.ibm.com/embed/23891775?showtitle=false&volume=0" 
-                    style="width: 600px; height: 338px; border: none; position: absolute; top: -15px; left: -25px; transform: scale(0.48); transform-origin: top left; pointer-events: none;">
+                    style="width: 600px; height: 338px; border: none; position: absolute; top: -15px; left: -45px; transform: scale(0.48); transform-origin: top left; pointer-events: none;">
                 </iframe>
                 
                 <div style="position: absolute; top: 10px; left: 15px; z-index: 30; text-shadow: 2px 2px 4px #000;">
@@ -148,7 +148,7 @@
             </div>
             <div class="cinema-footer">
                 <div class="cinema-stats-line"><span>M: <span id="m-count">--</span></span><span>TV: <span id="tv-count">--</span></span><span style="color: var(--cinema-green);">S: <span id="sync-timer">LIVE</span></span></div>
-                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">--</span></span><span>v7.9.2</span></div>
+                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">--</span></span><span>v7.9.3</span></div>
             </div>
         </div>
     </div>
@@ -185,64 +185,4 @@
             } 
         });
 
-        sDb.ref('theaterSync').on('value', (snapshot) => {
-            const m = snapshot.val(); if (!m) return;
-            const isIdle = !m.nowPlaying || m.nowPlaying.toLowerCase() === "offline" || m.nowPlaying === "";
-            
-            document.getElementById('m-now').innerText = isIdle ? "Off-Air" : m.nowPlaying;
-            document.getElementById('m-count').innerText = m.moviesCount || "0";
-            document.getElementById('tv-count').innerText = m.tvCount || "0";
-            document.getElementById('m-next').innerText = m.nextTitle || "None";
-            document.getElementById('m-open').innerText = m.daysOpen || "0";
-
-            clearInterval(nowInt); const nowEl = document.getElementById('m-left');
-            if (isIdle || !m.timeLeft || m.timeLeft.includes("N/A")) { nowEl.innerText = "Cinema Idle"; } else {
-                let h = (m.timeLeft.match(/(\d+)\s*h/i) || [0,0])[1], mins = (m.timeLeft.match(/(\d+)\s*m/i) || [0,0])[1];
-                localNowSecs = (parseInt(h) * 3600) + (parseInt(mins) * 60);
-                nowInt = setInterval(() => {
-                    if (localNowSecs <= 0) { nowEl.innerText = "Refreshing..."; clearInterval(nowInt); return; }
-                    localNowSecs--; let hh = Math.floor(localNowSecs / 3600), mm = Math.floor((localNowSecs % 3600) / 60), ss = localNowSecs % 60;
-                    nowEl.innerText = `Left: ${hh}h ${mm}m ${ss}s`;
-                }, 1000);
-            }
-        });
-
-        function openCourt() {
-            const modal = document.getElementById('courtModal');
-            const player = document.getElementById('modal-player');
-            player.src = "https://video.ibm.com/embed/23891775?autoplay=1";
-            modal.style.display = "block";
-        }
-        function closeCourt() {
-            const modal = document.getElementById('courtModal');
-            const player = document.getElementById('modal-player');
-            player.src = ""; 
-            modal.style.display = "none";
-        }
-        window.onclick = function(event) {
-            const modal = document.getElementById('courtModal');
-            if (event.target == modal) { closeCourt(); }
-        }
-
-        async function getBsky() { try { const r = await fetch('https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=briandivacox.bsky.social'); const p = await r.json(); if (p.followersCount !== undefined) document.getElementById('bsky-num').innerText = p.followersCount.toLocaleString(); } catch (e) {} }
-        getBsky(); setInterval(getBsky, 300000);
-
-        function monitorCourt() { 
-            if (typeof UstreamEmbed === 'undefined') { setTimeout(monitorCourt, 1000); return; } 
-            const viewer = UstreamEmbed('court-player'); 
-            const check = () => { 
-                viewer.getProperty('live', (isLive) => { 
-                    const active = (isLive === true || isLive === 'live'); 
-                    document.getElementById('court-dot').className = active ? 'dot live' : 'dot'; 
-                    document.getElementById('court-text').innerText = active ? "LIVE NOW" : "OFF AIR"; 
-                    document.getElementById('court-text').style.color = active ? "#ff0000" : "var(--text-dim)"; 
-                    document.getElementById('court-subtitle').innerText = active ? "Judge David Online" : "Judge David"; 
-                }); 
-            }; 
-            viewer.addListener('live', check); 
-            setInterval(check, 30000); check(); 
-        }
-        window.addEventListener('load', monitorCourt);
-    </script>
-</body>
-</html>
+        sDb.ref('theater
