@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v9.1.1</title>
+    <title>Cloud Dashboard v9.1.2</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script data-cfasync="false" src="https://video.ibm.com/embed-api/v1/ustream-embedapi.min.js"></script>
     <style>
@@ -145,7 +145,7 @@
             </div>
             <div class="cinema-footer">
                 <div class="cinema-stats-line"><span>M: <span id="m-count">0</span></span><span>TV: <span id="tv-count">0</span></span><span style="color: var(--cinema-green);">S: <span id="sync-timer">LIVE</span></span></div>
-                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v9.1.1</span></div>
+                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v9.1.2</span></div>
             </div>
         </div>
     </div>
@@ -178,29 +178,6 @@
             return isNaN(num) ? val : nForm.format(num);
         };
 
-        // REAL-TIME THEATER OPEN COUNTER (Years, Months, Days)
-        const theaterStartDate = new Date("October 13, 2025"); // Change this to your actual start date
-        function updateTheaterAge() {
-            const now = new Date();
-            let years = now.getFullYear() - theaterStartDate.getFullYear();
-            let months = now.getMonth() - theaterStartDate.getMonth();
-            let days = now.getDate() - theaterStartDate.getDate();
-
-            if (days < 0) {
-                months--;
-                const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
-                days += prevMonth.getDate();
-            }
-            if (months < 0) {
-                years--;
-                months += 12;
-            }
-            
-            document.getElementById('m-open').innerText = `${years}y ${months}m ${days}d`;
-        }
-        setInterval(updateTheaterAge, 86400000); // Update daily
-        updateTheaterAge();
-
         vDb.ref("totalViewCount").on("value", s => document.getElementById("totalViewsCounter").innerText = fNum(s.val()));
         vDb.ref("visitorsConnected").on("value", s => document.getElementById("visitorCounter").innerText = fNum(s.numChildren()));
         
@@ -221,6 +198,7 @@
             
             document.getElementById('m-now').innerText = isIdle ? "No Movie Playing" : m.nowPlaying;
             document.getElementById('m-count').innerText = fNum(m.moviesCount);
+            document.getElementById('m-open').innerText = m.daysOpen || "0"; // RESTORED REALTIME DATA FROM FIREBASE
             document.getElementById('tv-count').innerText = fNum(m.tvCount);
             document.getElementById('m-next').innerText = m.nextTitle || "None";
 
