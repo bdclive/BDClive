@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v9.0.8</title>
+    <title>Cloud Dashboard v9.0.9.2</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script data-cfasync="false" src="https://video.ibm.com/embed-api/v1/ustream-embedapi.min.js"></script>
     <style>
@@ -41,7 +41,7 @@
         .cinema-footer { position: absolute; bottom: 0; left: 0; right: 0; background: #0d1117; padding: 6px 12px; border-top: 1px solid var(--border-color); display: flex; flex-direction: column; }
         .cinema-stats-line { font-size: 10px; color: var(--plex-orange); display: flex; justify-content: space-between; font-weight: bold; }
 
-        /* COURT BOX (Fixed Monitor) */
+        /* COURT BOX */
         #court-box { padding: 0 !important; border-top: 3px solid var(--plex-orange); background: #000; cursor: pointer; display: block; }
         .court-wrapper { width: 100%; height: 100%; overflow: hidden; position: relative; background: #000; }
         .court-iframe { width: 1200px; height: 675px; border: none; position: absolute; top: 0px; left: 0px; transform: scale(0.28); transform-origin: 0 0; pointer-events: none; }
@@ -147,7 +147,7 @@
             </div>
             <div class="cinema-footer">
                 <div class="cinema-stats-line"><span>M: <span id="m-count">0</span></span><span>TV: <span id="tv-count">0</span></span><span style="color: var(--cinema-green);">S: <span id="sync-timer">LIVE</span></span></div>
-                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v9.0.8</span></div>
+                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v9.0.9.2</span></div>
             </div>
         </div>
     </div>
@@ -181,16 +181,19 @@
             document.getElementById('fb-personal-num').innerText = d.fbPersonal || "0";
         });
 
-        // BriansTheater Sync
+        // BriansTheater Sync (v9.0.9.2 - Corrected keys)
         let nowInt, nextInt, localNowSecs = 0;
         sDb.ref('theaterSync').on('value', (snapshot) => {
             const m = snapshot.val(); if (!m) return;
-            const isIdle = !m.nowPlaying || m.nowPlaying.toLowerCase() === "offline" || m.nowPlaying.toLowerCase() === "no movie playing" || m.nowPlaying === "";
+            const isIdle = !m.nowPlaying || m.nowPlaying.toLowerCase().includes("no movie playing") || m.nowPlaying === "";
             
             document.getElementById('m-now').innerText = isIdle ? "No Movie Playing" : m.nowPlaying;
+            
+            // Map specifically to moviesCount and daysOpen
             document.getElementById('m-count').innerText = m.moviesCount || "0";
-            document.getElementById('tv-count').innerText = m.tvCount || "0";
             document.getElementById('m-open').innerText = m.daysOpen || "0";
+            
+            document.getElementById('tv-count').innerText = m.tvCount || "0";
             document.getElementById('m-next').innerText = m.nextTitle || "None";
 
             clearInterval(nowInt); 
@@ -198,9 +201,11 @@
             if (isIdle || !m.timeLeft || m.timeLeft.includes("--") || m.timeLeft.includes("N/A")) {
                 nowEl.innerText = "Cinema Idle";
             } else {
-                let h = (m.timeLeft.match(/(\d+)\s*h/i) || [0,0])[1];
-                let mins = (m.timeLeft.match(/(\d+)\s*m/i) || [0,0])[1];
-                localNowSecs = (parseInt(h) * 3600) + (parseInt(mins) * 60);
+                let hMatch = m.timeLeft.match(/(\d+)\s*hour/i);
+                let mMatch = m.timeLeft.match(/(\d+)\s*min/i);
+                let sMatch = m.timeLeft.match(/(\d+)\s*sec/i);
+                let h = hMatch ? hMatch[1] : 0, mins = mMatch ? mMatch[1] : 0, secs = sMatch ? sMatch[1] : 0;
+                localNowSecs = (parseInt(h) * 3600) + (parseInt(mins) * 60) + parseInt(secs);
                 nowInt = setInterval(() => {
                     if (localNowSecs <= 0) { nowEl.innerText = "Syncing..."; clearInterval(nowInt); return; }
                     localNowSecs--; 
@@ -211,16 +216,20 @@
 
             clearInterval(nextInt);
             const nextEl = document.getElementById('m-time');
-            if (!m.nextTime || m.nextTime.includes("N/A")) {
+            if (!m.nextTime || m.nextTime.includes("N/A") || m.nextTime === "") {
                 nextEl.innerText = "--";
             } else {
-                let clean = m.nextTime.includes("202") ? m.nextTime : m.nextTime.replace(",", " 2026,");
-                const target = new Date(clean);
+                let dateStr = m.nextTime;
+                if (!dateStr.includes("202")) dateStr = dateStr.replace(",", " 2026");
+                const target = new Date(dateStr);
+                if (isNaN(target.getTime())) { nextEl.innerText = "Date Error"; return; }
                 nextInt = setInterval(() => {
                     const diff = target - new Date();
                     if (diff <= 0) { nextEl.innerText = "Starting Now!"; clearInterval(nextInt); return; }
-                    const hh = Math.floor((diff % 86400000) / 3600000), mm = Math.floor((diff % 3600000) / 60000), ss = Math.floor((diff % 60000) / 1000);
-                    nextEl.innerText = `${hh}h ${mm}m ${ss}s`;
+                    const days = Math.floor(diff / 86400000), hh = Math.floor((diff % 86400000) / 3600000), mm = Math.floor((diff % 3600000) / 60000), ss = Math.floor((diff % 60000) / 1000);
+                    let display = days > 0 ? days + "d " : "";
+                    display += `${hh}h ${mm}m ${ss}s`;
+                    nextEl.innerText = display;
                 }, 1000);
             }
         });
