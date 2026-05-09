@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v9.1.2</title>
+    <title>Cloud Dashboard v9.1.3</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script data-cfasync="false" src="https://video.ibm.com/embed-api/v1/ustream-embedapi.min.js"></script>
     <style>
@@ -26,8 +26,14 @@
         .box-logo { position: absolute; top: 12px; right: 15px; width: 22px; height: 22px; z-index: 40; display: flex; align-items: center; justify-content: center; pointer-events: none; }
         .box-logo svg { width: 100%; height: 100%; }
 
-        .counter-item iframe:not(.court-iframe) { filter: invert(1) hue-rotate(180deg); border: 0; width: 450px; height: 220px; position: absolute; top: 10px; left: -85px; pointer-events: none; }
+        /* General Iframe Positioning */
+        .counter-item iframe:not(.court-iframe) { filter: invert(1) hue-rotate(180deg); border: 0; width: 450px; height: 220px; position: absolute; left: -85px; pointer-events: none; }
         
+        /* Cropping names for YouTube, TikTok, IG */
+        #yt-box iframe { top: -25px; } /* Pulls the YouTube name up out of view */
+        #tt-box iframe { top: -25px; } /* Pulls the TikTok name up out of view */
+        #ig-box iframe { top: -45px; left: -110px !important; } /* Crops IG username */
+
         .main-number { font-size: 3.1rem; font-weight: 800; color: #ffffff; margin: 0; white-space: nowrap; letter-spacing: -2px; line-height: 1.1; }
         .mirror-box { justify-content: space-evenly !important; padding-left: 0 !important; text-align: center; }
         .mirror-row { display: flex; justify-content: space-around; width: 100%; margin-top: 5px; }
@@ -80,22 +86,22 @@
             </div>
         </div>
 
-        <div class="counter-item" style="border-top: 3px solid var(--yt-red);">
+        <div class="counter-item" id="yt-box" style="border-top: 3px solid var(--yt-red);">
             <i class="fa-brands fa-youtube box-logo" style="color:var(--yt-red);"></i>
             <iframe scrolling="no" src="https://livecounts.io/embed/youtube-live-subscriber-counter/UCMuv7PfbLVm8IZsd6Bgqqzg"></iframe>
         </div>
 
-        <div class="counter-item" style="border-top: 3px solid var(--tt-cyan);">
+        <div class="counter-item" id="tt-box" style="border-top: 3px solid var(--tt-cyan);">
             <i class="fa-brands fa-tiktok box-logo" style="color:var(--tt-cyan);"></i>
             <iframe scrolling="no" src="https://livecounts.io/embed/tiktok-live-follower-counter/briandivacox"></iframe>
         </div>
 
-        <div class="counter-item" style="border-top: 3px solid var(--ig-pink);">
+        <div class="counter-item" id="ig-box" style="border-top: 3px solid var(--ig-pink);">
             <i class="fa-brands fa-instagram box-logo" style="color:var(--ig-pink);"></i>
             <iframe scrolling="no" src="https://livecounts.nl/instagram-realtime/embed/?u=briandivacox"></iframe>
         </div>
         
-        <div class="counter-item" style="border-top: 3px solid var(--bsky-electric);">
+        <div class="counter-item mirror-box" style="border-top: 3px solid var(--bsky-electric);">
             <div class="box-logo"><svg viewBox="0 0 566 500"><path fill="var(--bsky-electric)" d="M121.2 35.6C191.6 86.9 282.9 178.1 282.9 178.1S374.2 86.9 444.7 35.6C502.9-6.8 566 -20.3 566 49.3c0 19.3-11.2 121.1-17.8 144.6-21 75-52.2 89.8-118.4 104.8 134.5 25.3 152.9 70.6 152.9 101.7 0 71-65.4 63.3-119 31.9-74.5-43.8-139.8-138.8-179.9-195.1-40.1 56.3-105.4 151.3-179.9 195.1-53.6 31.5-119 39.1-119-31.9 0-31.1 18.4-76.4 152.9-101.7C46.2 283.7 15 268.9 0 193.9c-6.6-23.5-17.8-125.3-17.8-144.6 0-69.6 63.1-56.1 121.2-13.7z"/></svg></div>
             <div id="bsky-num" class="main-number">---</div>
         </div>
@@ -122,7 +128,7 @@
             </div>
         </div>
 
-        <div class="counter-item" style="border-top: 3px solid var(--snap-yellow);">
+        <div class="counter-item mirror-box" style="border-top: 3px solid var(--snap-yellow);">
             <i class="fa-brands fa-snapchat box-logo" style="color:var(--snap-yellow);"></i>
             <div id="snap-fol-num" class="main-number">0</div>
         </div>
@@ -145,7 +151,7 @@
             </div>
             <div class="cinema-footer">
                 <div class="cinema-stats-line"><span>M: <span id="m-count">0</span></span><span>TV: <span id="tv-count">0</span></span><span style="color: var(--cinema-green);">S: <span id="sync-timer">LIVE</span></span></div>
-                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v9.1.2</span></div>
+                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v9.1.3</span></div>
             </div>
         </div>
     </div>
@@ -198,7 +204,7 @@
             
             document.getElementById('m-now').innerText = isIdle ? "No Movie Playing" : m.nowPlaying;
             document.getElementById('m-count').innerText = fNum(m.moviesCount);
-            document.getElementById('m-open').innerText = m.daysOpen || "0"; // RESTORED REALTIME DATA FROM FIREBASE
+            document.getElementById('m-open').innerText = m.daysOpen || "0";
             document.getElementById('tv-count').innerText = fNum(m.tvCount);
             document.getElementById('m-next').innerText = m.nextTitle || "None";
 
