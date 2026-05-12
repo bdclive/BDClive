@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v9.1.4</title>
+    <title>Cloud Dashboard v9.1.5</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script data-cfasync="false" src="https://video.ibm.com/embed-api/v1/ustream-embedapi.min.js"></script>
     <style>
@@ -26,18 +26,23 @@
         .box-logo { position: absolute; top: 12px; right: 15px; width: 22px; height: 22px; z-index: 40; display: flex; align-items: center; justify-content: center; pointer-events: none; }
         .box-logo svg { width: 100%; height: 100%; }
 
-        /* General Iframe Positioning */
-        .counter-item iframe:not(.court-iframe) { filter: invert(1) hue-rotate(180deg); border: 0; width: 450px; height: 220px; position: absolute; left: -85px; pointer-events: none; }
+        /* Unified Iframe Positioning Logic */
+        .counter-item iframe:not(.court-iframe) { filter: invert(1) hue-rotate(180deg); border: 0; width: 450px; height: 220px; position: absolute; pointer-events: none; }
         
-        /* Cropping names and centering numbers */
-        #yt-box iframe { top: -25px; } 
-        #tt-box iframe { top: -25px; } 
+        /* X (Twitter) Crop */
+        #x-box iframe { top: -25px; left: -85px; }
+
+        /* YouTube Crop */
+        #yt-box iframe { top: -25px; left: -85px; } 
+
+        /* TikTok Crop */
+        #tt-box iframe { top: -25px; left: -85px; } 
         
-        /* FIXED IG POSITIONING: Pulls the number back into center view */
+        /* INSTAGRAM RE-FIX: Shifts it right to hide the profile pic and center the number */
         #ig-box iframe { 
             top: -45px; 
-            left: -65px !important; /* Adjusted to bring the number back from the left edge */
-            transform: scale(0.9); /* Slightly smaller to fit content better */
+            left: -35px !important; /* Shifting right to push the number into the center */
+            transform: scale(0.95);
         } 
 
         .main-number { font-size: 3.1rem; font-weight: 800; color: #ffffff; margin: 0; white-space: nowrap; letter-spacing: -2px; line-height: 1.1; }
@@ -79,7 +84,7 @@
             </div>
         </div>
 
-        <div class="counter-item" style="border-top: 3px solid #ffffff;">
+        <div class="counter-item" id="x-box" style="border-top: 3px solid #ffffff;">
             <div class="box-logo"><svg viewBox="0 0 24 24" fill="white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.045 4.126H5.078z"/></svg></div>
             <iframe scrolling="no" src="https://livecounts.io/embed/twitter-live-follower-counter/briandivacox"></iframe>
         </div>
@@ -114,7 +119,7 @@
 
         <div class="counter-item mirror-box" style="border-top: 3px solid #8b949e;">
             <i class="fa-brands fa-threads box-logo" style="color:white;"></i>
-            <div><p class="mirror-label">🧵 Threads Views</p><div id="threads-view-num" class="mirror-stat" style="font-size: 2.5rem;">0</div></div>
+            <div><p class="mirror-label">🧵 Threads Views</p><div id="threads-view-num" class="mirror-stat" style="font-size: 2.5rem;">5.7M</div></div>
             <div class="mirror-row">
                 <div><p class="mirror-label">👥 Followers</p><div id="threads-fol-num" class="mirror-stat">0</div></div>
             </div>
@@ -157,7 +162,7 @@
             </div>
             <div class="cinema-footer">
                 <div class="cinema-stats-line"><span>M: <span id="m-count">0</span></span><span>TV: <span id="tv-count">0</span></span><span style="color: var(--cinema-green);">S: <span id="sync-timer">LIVE</span></span></div>
-                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v9.1.4</span></div>
+                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v9.1.5</span></div>
             </div>
         </div>
     </div>
