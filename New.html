@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v9.1.5</title>
+    <title>Cloud Dashboard v9.1.6</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script data-cfasync="false" src="https://video.ibm.com/embed-api/v1/ustream-embedapi.min.js"></script>
     <style>
@@ -29,19 +29,19 @@
         /* Unified Iframe Positioning Logic */
         .counter-item iframe:not(.court-iframe) { filter: invert(1) hue-rotate(180deg); border: 0; width: 450px; height: 220px; position: absolute; pointer-events: none; }
         
-        /* X (Twitter) Crop */
-        #x-box iframe { top: -25px; left: -85px; }
+        /* X (Twitter) - Centered */
+        #x-box iframe { top: 0px; left: -85px; }
 
-        /* YouTube Crop */
-        #yt-box iframe { top: -25px; left: -85px; } 
+        /* YouTube - Centered */
+        #yt-box iframe { top: 0px; left: -85px; } 
 
-        /* TikTok Crop */
-        #tt-box iframe { top: -25px; left: -85px; } 
+        /* TikTok - Centered */
+        #tt-box iframe { top: 0px; left: -85px; } 
         
-        /* INSTAGRAM RE-FIX: Shifts it right to hide the profile pic and center the number */
+        /* INSTAGRAM - Lowered and centered number */
         #ig-box iframe { 
-            top: -45px; 
-            left: -35px !important; /* Shifting right to push the number into the center */
+            top: -20px; /* Brought down from -45px */
+            left: -35px !important; 
             transform: scale(0.95);
         } 
 
@@ -119,7 +119,7 @@
 
         <div class="counter-item mirror-box" style="border-top: 3px solid #8b949e;">
             <i class="fa-brands fa-threads box-logo" style="color:white;"></i>
-            <div><p class="mirror-label">🧵 Threads Views</p><div id="threads-view-num" class="mirror-stat" style="font-size: 2.5rem;">5.7M</div></div>
+            <div><p class="mirror-label">🧵 Threads Views</p><div id="threads-view-num" class="mirror-stat" style="font-size: 2.5rem;">0</div></div>
             <div class="mirror-row">
                 <div><p class="mirror-label">👥 Followers</p><div id="threads-fol-num" class="mirror-stat">0</div></div>
             </div>
@@ -162,7 +162,7 @@
             </div>
             <div class="cinema-footer">
                 <div class="cinema-stats-line"><span>M: <span id="m-count">0</span></span><span>TV: <span id="tv-count">0</span></span><span style="color: var(--cinema-green);">S: <span id="sync-timer">LIVE</span></span></div>
-                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v9.1.5</span></div>
+                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v9.1.6</span></div>
             </div>
         </div>
     </div>
