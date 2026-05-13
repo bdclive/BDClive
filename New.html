@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v9.1.6</title>
+    <title>Cloud Dashboard v9.1.8</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script data-cfasync="false" src="https://video.ibm.com/embed-api/v1/ustream-embedapi.min.js"></script>
     <style>
@@ -26,23 +26,18 @@
         .box-logo { position: absolute; top: 12px; right: 15px; width: 22px; height: 22px; z-index: 40; display: flex; align-items: center; justify-content: center; pointer-events: none; }
         .box-logo svg { width: 100%; height: 100%; }
 
-        /* Unified Iframe Positioning Logic */
+        /* General Social Iframe Positioning */
         .counter-item iframe:not(.court-iframe) { filter: invert(1) hue-rotate(180deg); border: 0; width: 450px; height: 220px; position: absolute; pointer-events: none; }
         
-        /* X (Twitter) - Centered */
-        #x-box iframe { top: 0px; left: -85px; }
-
-        /* YouTube - Centered */
-        #yt-box iframe { top: 0px; left: -85px; } 
-
-        /* TikTok - Centered */
-        #tt-box iframe { top: 0px; left: -85px; } 
+        /* Unified Row Centering */
+        #x-box iframe, #yt-box iframe, #tt-box iframe { top: 15px; left: -85px; }
         
-        /* INSTAGRAM - Lowered and centered number */
+        /* INSTAGRAM DEEP FIX: Using Clip-Path and Margin-Top to force movement */
         #ig-box iframe { 
-            top: -20px; /* Brought down from -45px */
-            left: -35px !important; 
-            transform: scale(0.95);
+            margin-top: 55px !important; /* Forces the internal content down */
+            left: -40px !important; 
+            transform: scale(1.1);
+            clip-path: inset(0px 0px 50px 0px); /* Masks the bottom footer of the embed */
         } 
 
         .main-number { font-size: 3.1rem; font-weight: 800; color: #ffffff; margin: 0; white-space: nowrap; letter-spacing: -2px; line-height: 1.1; }
@@ -51,20 +46,18 @@
         .mirror-label { font-size: 9px; color: var(--text-dim); text-transform: uppercase; font-weight: bold; margin: 0; }
         .mirror-stat { font-size: 2rem; font-weight: 800; color: #ffffff; margin-bottom: 2px; }
 
+        /* THEATER */
         .cinema-info { padding: 12px 20px 12px 15px; display: grid; grid-template-columns: 1.2fr 1fr; gap: 8px; height: 100%; text-align: left; }
         .cinema-label { font-size: 9px; color: var(--cinema-green); text-transform: uppercase; font-weight: bold; }
         .cinema-title { font-size: 13px; font-weight: bold; color: #ffffff; line-height: 1.2; margin-top: 2px; height: 32px; overflow: hidden; }
         .cinema-footer { position: absolute; bottom: 0; left: 0; right: 0; background: #0d1117; padding: 6px 12px; border-top: 1px solid var(--border-color); display: flex; flex-direction: column; }
         .cinema-stats-line { font-size: 10px; color: var(--plex-orange); display: flex; justify-content: space-between; font-weight: bold; }
 
+        /* COURT MONITOR (Sync Pill Removed) */
         #court-box { padding: 0 !important; border-top: 3px solid var(--plex-orange); background: #000; cursor: pointer; display: block; }
         .court-wrapper { width: 100%; height: 100%; overflow: hidden; position: relative; background: #000; }
         .court-iframe { width: 1200px; height: 675px; border: none; position: absolute; top: 0px; left: 0px; transform: scale(0.28); transform-origin: 0 0; pointer-events: none; }
-        .status-container { display: flex; align-items: center; gap: 8px; position: absolute; bottom: 12px; left: 12px; background: rgba(0,0,0,0.8); padding: 4px 10px; border-radius: 20px; border: 1px solid var(--border-color); z-index: 50; }
-        .dot { height: 8px; width: 8px; background-color: #484f58; border-radius: 50%; }
-        .dot.live { background-color: #ff0000; box-shadow: 0 0 8px #ff0000; }
-        .status-text { font-size: 10px; font-weight: bold; color: var(--text-dim); }
-
+        
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); backdrop-filter: blur(5px); }
         .modal-content { background-color: #161b22; margin: 5% auto; padding: 20px; border: 1px solid var(--plex-orange); width: 85%; max-width: 900px; border-radius: 12px; position: relative; }
         .close-modal { position: absolute; top: 10px; right: 20px; color: var(--text-dim); font-size: 35px; font-weight: bold; cursor: pointer; }
@@ -131,10 +124,6 @@
                 <div style="position: absolute; top: 10px; left: 15px; z-index: 60; text-shadow: 2px 2px 4px #000;">
                     <h4 style="margin: 0; font-size: 14px; color: #fff;">Court Stream</h4>
                 </div>
-                <div class="status-container">
-                    <span id="court-dot" class="dot"></span>
-                    <span id="court-text" class="status-text">SYNCING</span>
-                </div>
                 <i class="fa-solid fa-expand" style="position: absolute; top: 12px; right: 15px; color: rgba(255,255,255,0.6); z-index: 60;"></i>
             </div>
         </div>
@@ -162,7 +151,7 @@
             </div>
             <div class="cinema-footer">
                 <div class="cinema-stats-line"><span>M: <span id="m-count">0</span></span><span>TV: <span id="tv-count">0</span></span><span style="color: var(--cinema-green);">S: <span id="sync-timer">LIVE</span></span></div>
-                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v9.1.6</span></div>
+                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v9.1.8</span></div>
             </div>
         </div>
     </div>
@@ -254,17 +243,6 @@
         }
         setInterval(syncTwitch, 60000); syncTwitch();
 
-        function monitorCourt() {
-            if (typeof UstreamEmbed === 'undefined') { setTimeout(monitorCourt, 500); return; }
-            const viewer = UstreamEmbed('court-player');
-            viewer.addListener('live', (isLive) => {
-                const active = (isLive === true || isLive === 'live');
-                document.getElementById('court-dot').className = active ? 'dot live' : 'dot';
-                document.getElementById('court-text').innerText = active ? "LIVE NOW" : "OFF AIR";
-                document.getElementById('court-text').style.color = active ? "#ff0000" : "#8b949e";
-            });
-        }
-        window.addEventListener('load', monitorCourt);
         function openCourt() { document.getElementById('modal-player').src = "https://video.ibm.com/embed/23891775?autoplay=1"; document.getElementById('courtModal').style.display = "block"; }
         function closeCourt() { document.getElementById('modal-player').src = ""; document.getElementById('courtModal').style.display = "none"; }
         async function getBsky() { try { const r = await fetch('https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=briandivacox.bsky.social'); const p = await r.json(); if (p.followersCount !== undefined) document.getElementById('bsky-num').innerText = fNum(p.followersCount); } catch (e) { } }
