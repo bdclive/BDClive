@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v9.4.9</title>
+    <title>Cloud Dashboard v9.5.0</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script data-cfasync="false" src="https://video.ibm.com/embed-api/v1/ustream-embedapi.min.js"></script>
     <style>
@@ -336,7 +336,7 @@
             </div>
             <div class="cinema-footer">
                 <div class="cinema-stats-line"><span>M: <span id="m-count">0</span></span><span>TV: <span id="tv-count">0</span></span><span style="color: var(--cinema-green);">S: <span id="sync-timer">LIVE</span></span></div>
-                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v9.4.9</span></div>
+                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v9.5.0</span></div>
             </div>
         </div>
     </div>
@@ -407,9 +407,8 @@
             document.getElementById('tv-count').innerText = fNum(m.tvCount || m.showCount);
             document.getElementById('m-next').innerText = m.nextTitle || m.nextPlaying || "None";
             
-            // TARGETED DYNAMIC TRACKING: Pull the real up-next start time mapping from Firebase properties
-            const rawNextTime = m.nextTime || m.nextStart || m.startTime;
-            document.getElementById('m-time').innerText = (isIdle || !rawNextTime) ? "Pending" : rawNextTime;
+            // FIXED HANDSHAKE MAP: Directly reference 'm.nextTime' property key strings to extract scheduling info
+            document.getElementById('m-time').innerText = (isIdle || !m.nextTime) ? "Pending" : m.nextTime;
             
             clearInterval(nowInt);
             const nowEl = document.getElementById('m-left');
