@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v9.3.8</title>
+    <title>Cloud Dashboard v9.4.0</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script data-cfasync="false" src="https://video.ibm.com/embed-api/v1/ustream-embedapi.min.js"></script>
     <style>
@@ -20,7 +20,7 @@
         .timer-stage { width: 100%; max-width: 1400px; height: 195px; margin-bottom: 25px; border-radius: 12px; border: 1px solid var(--border-color); overflow: hidden; background: #000; position: relative; }
         .timer-stage iframe { width: 100%; height: 350px; border: none; position: absolute; top: -92px; left: 0; border-radius: 12px; }
         
-        /* Spaciously structured back to the gorgeous 4-Column Responsive Grid array */
+        /* RESTORED: Spacious, clean 4-Column Grid alignment matrix */
         .counter-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; width: 100%; max-width: 1400px; }
         .counter-item { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; height: 150px; position: relative; display: flex; flex-direction: column; justify-content: center; padding-left: 25px; padding-bottom: 10px; overflow: hidden; transition: 0.3s; }
         
@@ -30,7 +30,6 @@
         /* General Social Iframe Positioning */
         .counter-item iframe:not(.court-iframe) { filter: invert(1) hue-rotate(180deg); border: 0; width: 450px; height: 220px; position: absolute; pointer-events: none; }
         #x-box iframe, #yt-box iframe, #tt-box iframe { top: 15px; left: -85px; }
-        #ig-box iframe { margin-top: 55px !important; left: -40px !important; transform: scale(1.1); clip-path: inset(0px 0px 50px 0px); } 
 
         .main-number { font-size: 3.1rem; font-weight: 800; color: #ffffff; margin: 0; white-space: nowrap; letter-spacing: -2px; line-height: 1.1; }
         .mirror-box { justify-content: space-evenly !important; padding-left: 0 !important; text-align: center; }
@@ -104,9 +103,12 @@
             <iframe scrolling="no" src="https://livecounts.io/embed/tiktok-live-follower-counter/briandivacox"></iframe>
         </div>
 
-        <div class="counter-item" id="ig-box" style="border-top: 3px solid var(--ig-pink);">
+        <div class="counter-item mirror-box" id="ig-box" style="border-top: 3px solid var(--ig-pink);">
             <i class="fa-brands fa-instagram box-logo" style="color:var(--ig-pink);"></i>
-            <iframe scrolling="no" src="https://livecounts.nl/instagram-realtime/embed/?u=briandivacox"></iframe>
+            <div><p class="mirror-label" style="color:var(--ig-pink);">📸 Instagram Feed</p><div id="ig-fol-num" class="mirror-stat" style="font-size: 2.5rem;">5,870</div></div>
+            <div class="mirror-row">
+                <div><p class="mirror-label">👥 Profile</p><div class="mirror-stat" style="font-size: 1.1rem; color: var(--text-dim);">@briandivacox</div></div>
+            </div>
         </div>
         
         <div class="counter-item mirror-box" style="border-top: 3px solid var(--bsky-electric);">
@@ -146,16 +148,16 @@
         </div>
 
         <div class="counter-item" style="border-top: 3px solid var(--cinema-green); padding-left: 0;">
-            <i class="fa-solid fa-film box-logo" style="color: var(--cinema-green);"></i>
+            <i class="fa-solid fa-film box-logo" style="color: var(--cinema-green); "></i>
             <div class="cinema-info">
                 <div><div class="cinema-label">Now Playing</div><div id="m-now" class="cinema-title">Syncing...</div><div id="m-left" style="font-size: 10px; color: var(--text-dim);">--</div></div>
-                <div style="border-left: 1px solid var(--border-color); padding-left: 10px;">
+                <div style="border-left: 1px solid var(--border-color); padding-left: 10px; ">
                     <div class="cinema-label" style="color: var(--plex-orange);">Up Next</div><div id="m-next" class="cinema-title">--</div><div id="m-time" style="font-size: 10px; color: var(--text-dim);">--</div>
                 </div>
             </div>
             <div class="cinema-footer">
                 <div class="cinema-stats-line"><span>M: <span id="m-count">0</span></span><span>TV: <span id="tv-count">0</span></span><span style="color: var(--cinema-green);">S: <span id="sync-timer">LIVE</span></span></div>
-                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v9.3.8</span></div>
+                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v9.4.0</span></div>
             </div>
         </div>
     </div>
@@ -186,7 +188,7 @@
         vDb.ref("totalViewCount").on("value", s => document.getElementById("totalViewsCounter").innerText = fNum(s.val()));
         vDb.ref("visitorsConnected").on("value", s => document.getElementById("visitorCounter").innerText = fNum(s.numChildren()));
         
-        // INTERACTIVE WEBSOCKET DATABASE ROUTER
+        // INTERACTIVE WEBSOCKET ENGINE
         let alertTimeout; let lastPulseTime = 0;
         sDb.ref('labData').on('value', (s) => {
             const d = s.val(); if (!d) return;
@@ -225,4 +227,55 @@
             if (isIdle || !m.timeLeft || m.timeLeft.includes("--") || m.timeLeft.includes("N/A")) {
                 nowEl.innerText = "Cinema Idle";
             } else {
-                let hMatch = m.timeLeft.match(/(\d+)\s*hour/i),
+                let hMatch = m.timeLeft.match(/(\d+)\s*hour/i), mMatch = m.timeLeft.match(/(\d+)\s*min/i), sMatch = m.timeLeft.match(/(\d+)\s*sec/i);
+                let h = hMatch ? hMatch[1] : 0, mins = mMatch ? mMatch[1] : 0, secs = sMatch ? sMatch[1] : 0;
+                localNowSecs = (parseInt(h) * 3600) + (parseInt(mins) * 60) + parseInt(secs);
+                nowInt = setInterval(() => {
+                    if (localNowSecs <= 0) { nowEl.innerText = "Syncing..."; clearInterval(nowInt); return; }
+                    localNowSecs--; let hh = Math.floor(localNowSecs / 3600), mm = Math.floor((localNowSecs % 3600) / 60), ss = localNowSecs % 60;
+                    nowEl.innerText = `Left: ${hh}h ${mm}m ${ss}s`;
+                }, 1000);
+            }
+            clearInterval(nextInt); const nextEl = document.getElementById('m-time');
+            if (!m.nextTime || m.nextTime.includes("N/A") || m.nextTime === "") { nextEl.innerText = "--"; } else {
+                let dateStr = m.nextTime; if (!dateStr.includes("202")) dateStr = dateStr.replace(",", " 2026");
+                const target = new Date(dateStr);
+                nextInt = setInterval(() => {
+                    const diff = target - new Date(); if (diff <= 0) { nextEl.innerText = "Starting Now!"; clearInterval(nextInt); return; }
+                    const days = Math.floor(diff / 86400000), hh = Math.floor((diff % 86400000) / 3600000), mm = Math.floor((diff % 3600000) / 60000), ss = Math.floor((diff % 60000) / 1000);
+                    nextEl.innerText = (days > 0 ? days + "d " : "") + `${hh}h ${mm}m ${ss}s`;
+                }, 1000);
+            }
+        });
+
+        const twitchLabApi = 'https://script.google.com/macros/s/AKfycby0ndGELJv0Q6yAR8PKMsvo3u-hZ2qAL80sVahxyeyrLy_qDXhkcYZkKBoq6HhdrhyO/exec';
+        async function syncTwitchFollowers() { try { const res = await fetch(twitchLabApi + '?t=' + Date.now()); const data = await res.json(); if (data.twitch) { document.getElementById('twitch-fol-num').innerText = fNum(data.twitch.followers); } } catch (e) {} }
+        setInterval(syncTwitchFollowers, 60000); syncTwitchFollowers();
+
+        function openCourt() { document.getElementById('modal-player').src = "https://video.ibm.com/embed/23891775?autoplay=1"; document.getElementById('courtModal').style.display = "block"; }
+        function closeCourt() { document.getElementById('modal-player').src = ""; document.getElementById('courtModal').style.display = "none"; }
+
+        // --- TWITCH STANDALONE APPLICATION WINDOW CONTROLLER ---
+        function openTwitch() {
+            const parentHost = window.location.hostname || "briandivacox.github.io";
+            document.getElementById('chat-alert-dot').classList.remove('pulse-active');
+            
+            // Computes perfect center positions based on widescreen display coordinates
+            const width = 1550;
+            const height = 800;
+            const left = (screen.width / 2) - (width / 2);
+            const top = (screen.height / 2) - (height / 2);
+            
+            // Deploys your clean isolated application file with active typing context
+            window.open(
+                `Live.html?host=${parentHost}`, 
+                'TwitchBroadcastStudio', 
+                `width=${width},height=${height},top=${top},left=${left},resizable=yes,scrollbars=no,toolbar=no,location=no,status=no,menubar=no`
+            );
+        }
+
+        async function getBsky() { try { const r = await fetch('https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=briandivacox.bsky.social'); const p = await r.json(); if (p.followersCount !== undefined) document.getElementById('bsky-num').innerText = fNum(p.followersCount); } catch (e) { } }
+        getBsky(); setInterval(getBsky, 300000);
+    </script>
+</body>
+</html>
