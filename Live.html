@@ -20,7 +20,7 @@
         .studio-header {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             padding-bottom: 12px;
             border-bottom: 1px solid #30363d;
             margin-bottom: 15px;
@@ -30,23 +30,29 @@
             color: #9146FF;
             font-size: 16px;
             letter-spacing: 0.5px;
+            text-transform: uppercase;
+            font-weight: 800;
         }
+        /* Master Studio Workspace Layout */
         .workspace-deck {
             display: flex;
             gap: 15px;
             flex: 1;
             width: 100%;
-            height: 100%;
+            height: calc(100% - 45px);
         }
+        /* Modern 70% Widescreen Player Section */
         .player-container {
-            flex: 2.5;
+            flex: 7;
             background: #000;
             border-radius: 8px;
             overflow: hidden;
             height: 100%;
+            border: 1px solid #30363d;
         }
+        /* Expanded 30% Chat Room Column */
         .chat-container {
-            flex: 1.3;
+            flex: 3;
             background: #1f1f23;
             border-radius: 8px;
             overflow: hidden;
@@ -78,13 +84,12 @@
     </div>
 
     <script>
-        // Automatically reads the URL parameters passed from the main dashboard
         const params = new URLSearchParams(window.location.search);
         const host = params.get('host') || "briandivacox.github.io";
         
-        // Inject the secure, verified handshake destinations directly into the frames
+        // Helix API Core Endpoints
         document.getElementById('studio-player').src = `https://player.twitch.tv/?channel=briandivacox&parent=${host}&parent=localhost&autoplay=1&muted=0`;
-        document.getElementById('studio-chat').src = `https://www.twitch.tv/embed/briandivacox/chat?parent=${host}&parent=localhost&darkpopout=true`;
+        document.getElementById('studio-chat').src = `https://twitch.tv/embed/v2/chat?channel=briandivacox&parent=${host}&parent=localhost&darkpopout=true`;
     </script>
 
 </body>
