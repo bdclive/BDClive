@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v9.3.6</title>
+    <title>Cloud Dashboard v9.3.8</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script data-cfasync="false" src="https://video.ibm.com/embed-api/v1/ustream-embedapi.min.js"></script>
     <style>
@@ -20,6 +20,7 @@
         .timer-stage { width: 100%; max-width: 1400px; height: 195px; margin-bottom: 25px; border-radius: 12px; border: 1px solid var(--border-color); overflow: hidden; background: #000; position: relative; }
         .timer-stage iframe { width: 100%; height: 350px; border: none; position: absolute; top: -92px; left: 0; border-radius: 12px; }
         
+        /* Spaciously structured back to the gorgeous 4-Column Responsive Grid array */
         .counter-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; width: 100%; max-width: 1400px; }
         .counter-item { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; height: 150px; position: relative; display: flex; flex-direction: column; justify-content: center; padding-left: 25px; padding-bottom: 10px; overflow: hidden; transition: 0.3s; }
         
@@ -49,47 +50,16 @@
         .court-wrapper { width: 100%; height: 100%; overflow: hidden; position: relative; background: #000; z-index: 1; }
         .court-iframe { width: 1200px; height: 675px; border: none; position: absolute; top: 0px; left: 0px; transform: scale(0.28); transform-origin: 0 0; pointer-events: none; z-index: 1; }
         
-        /* Modal Base Stacking Rules */
+        /* Baseline Court Modal Windows Stacking Rules */
         .modal { display: none; position: fixed; z-index: 9999999 !important; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); backdrop-filter: blur(5px); }
-        .modal-content { background-color: #161b22; margin: 2% auto; padding: 25px; border: 1px solid var(--twitch-purple); width: 92%; max-width: 1550px; border-radius: 16px; position: relative; z-index: 10000000 !important; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
-        
-        #courtModal .modal-content { border-color: var(--plex-orange); max-width: 900px; margin: 5% auto; }
-
-        /* ARMORED TWITCH LAYER ENGINE */
-        #twitchModal { 
-            display: block !important; 
-            position: fixed; 
-            z-index: 9999999 !important; 
-            left: 0; 
-            top: 0; 
-            width: 100%; 
-            height: 100%; 
-            background-color: rgba(0,0,0,0.85); 
-            backdrop-filter: blur(5px); 
-            opacity: 0; 
-            pointer-events: none; 
-            transition: opacity 0.22s ease-in-out; 
-        }
-
-        .close-modal { position: absolute; top: 15px; right: 22px; color: var(--text-dim); font-size: 35px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .modal-content { background-color: #161b22; margin: 5% auto; padding: 20px; border: 1px solid var(--plex-orange); width: 85%; max-width: 900px; border-radius: 12px; position: relative; }
+        .close-modal { position: absolute; top: 10px; right: 20px; color: var(--text-dim); font-size: 35px; font-weight: bold; cursor: pointer; }
         .close-modal:hover { color: #fff; }
 
-        /* Notification Dot Styling */
+        /* Real-Time Flashing Notification Dot Styling */
         .notification-dot { display: inline-block; width: 7px; height: 7px; background-color: #00FF66; border-radius: 50%; margin-left: 4px; vertical-align: middle; opacity: 0; transition: opacity 0.3s ease; }
         .pulse-active { opacity: 1; animation: flashAnimation 1.2s infinite alternate; }
         @keyframes flashAnimation { 0% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(0, 255, 102, 0.7); } 100% { transform: scale(1.2); box-shadow: 0 0 10px 4px rgba(0, 255, 102, 0); } }
-
-        /* --- MODERN LAB CHANGELOG UI --- */
-        .modern-changelog-container { margin-top: 20px; background: #0d1117; border: 1px solid var(--border-color); border-radius: 10px; padding: 15px; max-height: 140px; overflow-y: auto; }
-        .modern-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 12px; }
-        .modern-table th { color: #bc95ff; border-bottom: 2px solid var(--border-color); padding: 6px 12px; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
-        .modern-table td { color: #adbac7; border-bottom: 1px solid rgba(48, 54, 61, 0.4); padding: 8px 12px; vertical-align: middle; line-height: 1.4; }
-        .modern-table tr:last-child td { border-bottom: none; }
-        
-        .log-pill { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 9px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; text-align: center; }
-        .pill-core { background: rgba(145, 70, 255, 0.15); color: #bc95ff; border: 1px solid rgba(145, 70, 255, 0.3); }
-        .pill-ui { background: rgba(0, 210, 255, 0.1); color: #00D2FF; border: 1px solid rgba(0, 210, 255, 0.2); }
-        .pill-patch { background: rgba(35, 134, 54, 0.15); color: #58a6ff; border: 1px solid rgba(56, 139, 253, 0.3); }
     </style>
 </head>
 <body>
@@ -121,7 +91,7 @@
                     <div id="twitch-chatter-num" class="mirror-stat">0</div>
                 </div>
             </div>
-            <i class="fa-solid fa-expand" style="position: absolute; bottom: 12px; right: 15px; color: rgba(255,255,255,0.3); font-size: 11px;"></i>
+            <i class="fa-solid fa-arrow-up-right-from-square" style="position: absolute; bottom: 12px; right: 15px; color: rgba(255,255,255,0.3); font-size: 11px;"></i>
         </div>
 
         <div class="counter-item" id="yt-box" style="border-top: 3px solid var(--yt-red);">
@@ -185,7 +155,7 @@
             </div>
             <div class="cinema-footer">
                 <div class="cinema-stats-line"><span>M: <span id="m-count">0</span></span><span>TV: <span id="tv-count">0</span></span><span style="color: var(--cinema-green);">S: <span id="sync-timer">LIVE</span></span></div>
-                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v9.3.6</span></div>
+                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v9.3.8</span></div>
             </div>
         </div>
     </div>
@@ -195,52 +165,6 @@
             <span class="close-modal" onclick="closeCourt()">&times;</span>
             <h3 style="margin-top: 0; color: var(--plex-orange);">Live Court Feed</h3>
             <iframe id="modal-player" width="100%" height="500" src="" frameborder="0" allowfullscreen></iframe>
-        </div>
-    </div>
-
-    <div id="twitchModal">
-        <div class="modal-content">
-            <span class="close-modal" onclick="closeTwitch()">&times;</span>
-            <h3 style="margin-top: 0; color: var(--twitch-purple); display: flex; align-items: center; gap: 8px;">
-                <i class="fa-brands fa-twitch"></i> briandivacox Live Broadcast Studio
-            </h3>
-            <div class="twitch-workspace-deck" style="display: flex; gap: 15px; width: 100%; height: 580px; margin-top: 15px;">
-                <div style="flex: 2.5; background: #000; border-radius: 8px; overflow: hidden; height: 100%;">
-                    <iframe id="twitch-player-frame" width="100%" height="100%" src="" frameborder="0" allowfullscreen></iframe>
-                </div>
-                <div style="flex: 1.3; background: #1f1f23; border-radius: 8px; overflow: hidden; height: 100%; border: 1px solid var(--border-color); position: relative;">
-                    <iframe id="twitch-chat-frame" width="100%" height="100%" src="" frameborder="0" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;"></iframe>
-                </div>
-            </div>
-            
-            <div class="modern-changelog-container">
-                <table class="modern-table">
-                    <thead>
-                        <tr>
-                            <th style="width: 12%;">Build</th>
-                            <th style="width: 15%;">Department</th>
-                            <th>Applied Updates & Code Architecture Patches</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><b>v9.3.6</b></td>
-                            <td><span class="log-pill pill-ui">UI Engine</span></td>
-                            <td>Current Version. Expanded the pop-up chat window width tracking coordinates using widened flex-grow column allocations.</td>
-                        </tr>
-                        <tr>
-                            <td><b>v9.3.5</b></td>
-                            <td><span class="log-pill pill-patch">Security</span></td>
-                            <td>Switched popup deployment from geometric block changes to persistent background opacity mapping to permanently unlock keyboard selection metrics.</td>
-                        </tr>
-                        <tr>
-                            <td><b>v9.3.2</b></td>
-                            <td><span class="log-pill pill-ui">UI Engine</span></td>
-                            <td>Standardized query strings back to the secure interactive embed loop to drop gray iframe load rejections.</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
         </div>
     </div>
 
@@ -262,10 +186,8 @@
         vDb.ref("totalViewCount").on("value", s => document.getElementById("totalViewsCounter").innerText = fNum(s.val()));
         vDb.ref("visitorsConnected").on("value", s => document.getElementById("visitorCounter").innerText = fNum(s.numChildren()));
         
-        // DATABASE LISTENER CHANNEL MAPPING
-        let alertTimeout;
-        let lastPulseTime = 0;
-
+        // INTERACTIVE WEBSOCKET DATABASE ROUTER
+        let alertTimeout; let lastPulseTime = 0;
         sDb.ref('labData').on('value', (s) => {
             const d = s.val(); if (!d) return;
             document.getElementById('plex-count-num').innerText = fNum(d.plexCount);
@@ -278,17 +200,13 @@
             document.getElementById('twitch-view-num').innerText = fNum(d.twitchViewers);
             document.getElementById('twitch-chatter-num').innerText = fNum(d.twitchChatters);
 
-            // Chat pulse notification light module
+            // Neon Activity Alert Pulse Dot listener
             if (d.lastChatActivity && d.lastChatActivity > lastPulseTime) {
-                const isModalOpen = document.getElementById('twitchModal').style.opacity === "1";
-                if (lastPulseTime !== 0 && !isModalOpen) {
+                if (lastPulseTime !== 0) {
                     const dot = document.getElementById('chat-alert-dot');
                     dot.classList.add('pulse-active');
-                    
                     clearTimeout(alertTimeout);
-                    alertTimeout = setTimeout(() => {
-                        dot.classList.remove('pulse-active');
-                    }, 8000);
+                    alertTimeout = setTimeout(() => { dot.classList.remove('pulse-active'); }, 8000);
                 }
                 lastPulseTime = d.lastChatActivity;
             }
@@ -303,83 +221,8 @@
             document.getElementById('m-open').innerText = m.daysOpen || "0";
             document.getElementById('tv-count').innerText = fNum(m.tvCount);
             document.getElementById('m-next').innerText = m.nextTitle || "None";
-            clearInterval(nowInt); 
-            const nowEl = document.getElementById('m-left');
+            clearInterval(nowInt); const nowEl = document.getElementById('m-left');
             if (isIdle || !m.timeLeft || m.timeLeft.includes("--") || m.timeLeft.includes("N/A")) {
                 nowEl.innerText = "Cinema Idle";
             } else {
-                let hMatch = m.timeLeft.match(/(\d+)\s*hour/i), mMatch = m.timeLeft.match(/(\d+)\s*min/i), sMatch = m.timeLeft.match(/(\d+)\s*sec/i);
-                let h = hMatch ? hMatch[1] : 0, mins = mMatch ? mMatch[1] : 0, secs = sMatch ? sMatch[1] : 0;
-                localNowSecs = (parseInt(h) * 3600) + (parseInt(mins) * 60) + parseInt(secs);
-                nowInt = setInterval(() => {
-                    if (localNowSecs <= 0) { nowEl.innerText = "Syncing..."; clearInterval(nowInt); return; }
-                    localNowSecs--; 
-                    let hh = Math.floor(localNowSecs / 3600), mm = Math.floor((localNowSecs % 3600) / 60), ss = localNowSecs % 60;
-                    nowEl.innerText = `Left: ${hh}h ${mm}m ${ss}s`;
-                }, 1000);
-            }
-            clearInterval(nextInt);
-            const nextEl = document.getElementById('m-time');
-            if (!m.nextTime || m.nextTime.includes("N/A") || m.nextTime === "") { nextEl.innerText = "--"; } else {
-                let dateStr = m.nextTime; if (!dateStr.includes("202")) dateStr = dateStr.replace(",", " 2026");
-                const target = new Date(dateStr);
-                nextInt = setInterval(() => {
-                    const diff = target - new Date();
-                    if (diff <= 0) { nextEl.innerText = "Starting Now!"; clearInterval(nextInt); return; }
-                    const days = Math.floor(diff / 86400000), hh = Math.floor((diff % 86400000) / 3600000), mm = Math.floor((diff % 3600000) / 60000), ss = Math.floor((diff % 60000) / 1000);
-                    nextEl.innerText = (days > 0 ? days + "d " : "") + `${hh}h ${mm}m ${ss}s`;
-                }, 1000);
-            }
-        });
-
-        const twitchLabApi = 'https://script.google.com/macros/s/AKfycby0ndGELJv0Q6yAR8PKMsvo3u-hZ2qAL80sVahxyeyrLy_qDXhkcYZkKBoq6HhdrhyO/exec';
-        async function syncTwitchFollowers() { 
-            try { 
-                const res = await fetch(twitchLabApi + '?t=' + Date.now()); 
-                const data = await res.json(); 
-                if (data.twitch) { 
-                    document.getElementById('twitch-fol-num').innerText = fNum(data.twitch.followers); 
-                } 
-            } catch (e) {} 
-        }
-        setInterval(syncTwitchFollowers, 60000); syncTwitchFollowers();
-
-        function openCourt() { document.getElementById('modal-player').src = "https://video.ibm.com/embed/23891775?autoplay=1"; document.getElementById('courtModal').style.display = "block"; }
-        function closeCourt() { document.getElementById('modal-player').src = ""; document.getElementById('courtModal').style.display = "none"; }
-
-        // TWITCH INITIALIZATION HOOKS
-        function openTwitch() {
-            const parentHost = window.location.hostname || "briandivacox.github.io";
-            
-            document.querySelectorAll('.counter-grid, .timer-stage').forEach(el => {
-                el.style.pointerEvents = "none";
-            });
-            
-            document.getElementById('chat-alert-dot').classList.remove('pulse-active');
-            
-            // Connected iframe mapping setups
-            document.getElementById('twitch-player-frame').src = `https://player.twitch.tv/?channel=briandivacox&parent=${parentHost}&parent=localhost&autoplay=1&muted=0`;
-            document.getElementById('twitch-chat-frame').src = `https://www.twitch.tv/embed/briandivacox/chat?parent=${parentHost}&parent=localhost&darkpopout=true`;
-            
-            const modal = document.getElementById('twitchModal');
-            modal.style.opacity = "1";
-            modal.style.pointerEvents = "auto";
-        }
-        
-        function closeTwitch() {
-            document.querySelectorAll('.counter-grid, .timer-stage').forEach(el => {
-                el.style.pointerEvents = "auto";
-            });
-            document.getElementById('twitch-player-frame').src = "";
-            document.getElementById('twitch-chat-frame').src = "";
-            
-            const modal = document.getElementById('twitchModal');
-            modal.style.opacity = "0";
-            modal.style.pointerEvents = "none";
-        }
-
-        async function getBsky() { try { const r = await fetch('https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=briandivacox.bsky.social'); const p = await r.json(); if (p.followersCount !== undefined) document.getElementById('bsky-num').innerText = fNum(p.followersCount); } catch (e) { } }
-        getBsky(); setInterval(getBsky, 300000);
-    </script>
-</body>
-</html>
+                let hMatch = m.timeLeft.match(/(\d+)\s*hour/i),
