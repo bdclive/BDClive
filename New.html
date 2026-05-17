@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v9.4.5</title>
+    <title>Cloud Dashboard v9.4.6</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script data-cfasync="false" src="https://video.ibm.com/embed-api/v1/ustream-embedapi.min.js"></script>
     <style>
@@ -19,10 +19,10 @@
             --plex-orange: #e5a00d;
             --cinema-green: #238636;
             --twitch-purple: #9146FF;
-            --fb-vivid: #4d94ff; /* Lightened FB Blue */
+            --fb-vivid: #4d94ff; 
             --yt-red: #FF0000;
             --tt-cyan: #00f2ea;
-            --ig-vivid: #ff5c8d; /* Lightened IG Pink */
+            --ig-vivid: #ff5c8d; 
             --meta-blue: #58a6ff;
         }
         body {
@@ -271,9 +271,27 @@
         </div>
     </div>
 
-    <div class="counter-item" id="x-box" style="border-top: 3px solid #ffffff;">
-        <div class="box-logo"><svg viewBox="0 0 24 24" fill="white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.045 4.126H5.078z"/></svg></div>
-        <iframe scrolling="no" src="https://livecounts.io/embed/twitter-live-follower-counter/briandivacox"></iframe>
+    <div class="counter-item mirror-box" style="border-top: 3px solid var(--meta-blue);">
+        <i class="fa-brands fa-meta box-logo" style="color:var(--meta-blue); font-size: 18px;"></i>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 12px; width: 100%; align-items: center; padding: 0 0 0 28px;">
+            <div style="text-align: left;">
+                <p class="mirror-label" style="color:var(--ig-vivid);"><i class="fa-brands fa-instagram"></i> IG Fol</p>
+                <div id="ig-fol-num" class="mirror-stat" style="font-size: 1.5rem; line-height: 1;">0</div>
+            </div>
+            <div style="text-align: left;">
+                <p class="mirror-label" style="color:#fff;"><i class="fa-brands fa-threads"></i> Threads</p>
+                <div id="threads-fol-num" class="mirror-stat" style="font-size: 1.5rem; line-height: 1;">0</div>
+                <div id="threads-view-num" style="display:none;">0</div>
+            </div>
+            <div style="text-align: left;">
+                <p class="mirror-label" style="color:var(--fb-vivid);"><i class="fa-brands fa-facebook"></i> Page</p>
+                <div id="fb-page-num" class="mirror-stat" style="font-size: 1.5rem; line-height: 1;">0</div>
+            </div>
+            <div style="text-align: left;">
+                <p class="mirror-label" style="color:var(--fb-vivid);"><i class="fa-solid fa-user"></i> Profile</p>
+                <div id="fb-personal-num" class="mirror-stat" style="font-size: 1.5rem; line-height: 1;">0</div>
+            </div>
+        </div>
     </div>
 
     <div class="counter-item mirror-box" id="twitch-box" onclick="openTwitch()" style="border-top: 3px solid var(--twitch-purple); cursor: pointer;">
@@ -299,36 +317,9 @@
         <iframe scrolling="no" src="https://livecounts.io/embed/tiktok-live-follower-counter/briandivacox"></iframe>
     </div>
 
-    <div class="counter-item mirror-box" style="border-top: 3px solid var(--meta-blue); padding: 12px 0 8px 0; justify-content: flex-start;">
-        <i class="fa-brands fa-meta box-logo" style="color:var(--meta-blue); font-size: 18px;"></i>
-        
-        <div style="text-align: center; margin-bottom: 12px; width: 100%;">
-            <p class="mirror-label" style="color:var(--meta-blue); font-size: 10px; letter-spacing: 1px;">🌐 Meta Ecosystem</p>
-        </div>
-
-        <div style="display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 12px; width: 100%; align-items: center; padding: 0 0 0 28px;">
-            
-            <div style="text-align: left;">
-                <p class="mirror-label" style="color:var(--ig-vivid);"><i class="fa-brands fa-instagram"></i> IG Fol</p>
-                <div id="ig-fol-num" class="mirror-stat" style="font-size: 1.5rem; line-height: 1;">0</div>
-            </div>
-
-            <div style="text-align: left;">
-                <p class="mirror-label" style="color:#fff;"><i class="fa-brands fa-threads"></i> Threads</p>
-                <div id="threads-fol-num" class="mirror-stat" style="font-size: 1.5rem; line-height: 1;">0</div>
-                <div id="threads-view-num" style="display:none;">0</div>
-            </div>
-
-            <div style="text-align: left;">
-                <p class="mirror-label" style="color:var(--fb-vivid);"><i class="fa-brands fa-facebook"></i> Page</p>
-                <div id="fb-page-num" class="mirror-stat" style="font-size: 1.5rem; line-height: 1;">0</div>
-            </div>
-
-            <div style="text-align: left;">
-                <p class="mirror-label" style="color:var(--fb-vivid);"><i class="fa-solid fa-user"></i> Profile</p>
-                <div id="fb-personal-num" class="mirror-stat" style="font-size: 1.5rem; line-height: 1;">0</div>
-            </div>
-        </div>
+    <div class="counter-item" id="x-box" style="border-top: 3px solid #ffffff;">
+        <div class="box-logo"><svg viewBox="0 0 24 24" fill="white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.045 4.126H5.078z"/></svg></div>
+        <iframe scrolling="no" src="https://livecounts.io/embed/twitter-live-follower-counter/briandivacox"></iframe>
     </div>
 
     <div class="counter-item mirror-box" style="border-top: 3px solid var(--bsky-electric);">
@@ -351,7 +342,7 @@
         <div id="snap-fol-num" class="main-number">0</div>
     </div>
 
-    <div class="counter-item" style="border-top: 3px solid var(--cinema-green); padding-left: 0;">
+    <div class="counter-item" style="border-top: 3px solid var(--cinema-green); padding-left: 0; grid-column: 4;">
         <i class="fa-solid fa-film box-logo" style="color: var(--cinema-green);"></i>
         <div class="cinema-info">
             <div><div class="cinema-label">Now Playing</div><div id="m-now" class="cinema-title">Syncing...</div><div id="m-left" style="font-size: 10px; color: var(--text-dim);">--</div></div>
@@ -361,7 +352,7 @@
         </div>
         <div class="cinema-footer">
             <div class="cinema-stats-line"><span>M: <span id="m-count">0</span></span><span>TV: <span id="tv-count">0</span></span><span style="color: var(--cinema-green);">S: <span id="sync-timer">LIVE</span></span></div>
-            <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v9.4.5</span></div>
+            <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v9.4.6</span></div>
         </div>
     </div>
 </div>
