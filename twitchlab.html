@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Twitch Lab v1.2.0</title>
+    <title>Twitch Lab v1.2.2</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         body { background: #0d1117; color: white; font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
@@ -27,6 +27,27 @@
         .version-tag { font-size: 9px; color: #8b949e; margin-top: 15px; display: block; }
         button { margin-top: 10px; background: #30363d; color: white; border: none; padding: 12px; border-radius: 10px; cursor: pointer; font-weight: bold; width: 100%; font-size: 14px; }
         button:hover { background: #3d444d; }
+
+        /* Real-Time Flashing Notification Dot Styling */
+        .notification-dot {
+            display: inline-block;
+            width: 7px;
+            height: 7px;
+            background-color: #00FF66;
+            border-radius: 50%;
+            margin-left: 4px;
+            vertical-align: middle;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .pulse-active {
+            opacity: 1;
+            animation: flashAnimation 1.2s infinite alternate;
+        }
+        @keyframes flashAnimation {
+            0% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(0, 255, 102, 0.7); }
+            100% { transform: scale(1.2); box-shadow: 0 0 10px 4px rgba(0, 255, 102, 0); }
+        }
     </style>
 </head>
 <body>
@@ -44,24 +65,26 @@
                 <span id="viewers-status" class="status-pill">READY</span>
             </div>
             <div class="split-box">
-                <p class="split-label">💬 Chatters</p>
+                <p class="split-label">💬 Chatters<span id="chat-alert-dot" class="notification-dot"></span></p>
                 <span id="twitch-chatter-num" class="split-number">---</span>
                 <span id="chatters-status" class="status-pill">READY</span>
             </div>
         </div>
 
         <div class="log-box" id="changelog">
-            <div class="log-entry" style="color: #bc95ff;"><b>[System]</b> Multi-Pipeline Interface v1.2.0 restored successfully.</div>
+            <div class="log-entry" style="color: #bc95ff;"><b>[System]</b> Multi-Pipeline Interface v1.2.2 fully restored and running.</div>
         </div>
 
         <button onclick="syncLab()">FORCE MANUAL SYNC</button>
-        <span class="version-tag">Lab Interface: v1.2.0 | Script Engine: <span id="script-ver-ui">...</span></span>
+        <span class="version-tag">Lab Interface: v1.2.2 | Script Engine: <span id="script-ver-ui">...</span></span>
     </div>
 
     <script>
         const followerApi = 'https://script.google.com/macros/s/AKfycby0ndGELJv0Q6yAR8PKMsvo3u-hZ2qAL80sVahxyeyrLy_qDXhkcYZkKBoq6HhdrhyO/exec';
         const firebaseApi = 'https://livecounters-8eaa8-default-rtdb.firebaseio.com/labData.json';
         let timeLeft = 60;
+        let alertTimeout;
+        let lastPulseTime = 0;
 
         async function syncLab() {
             const countEl = document.getElementById('follower-count');
@@ -86,4 +109,63 @@
                 const firebaseData = await firebaseResponse.json();
 
                 // Viewers Parsing
-                if (firebaseData.twitchViewers !== undefined && !isNaN(firebaseData.twitch
+                if (firebaseData.twitchViewers !== undefined && !isNaN(firebaseData.twitchViewers)) {
+                    viewerEl.innerText = firebaseData.twitchViewers;
+                    vStatusEl.innerText = "LIVE";
+                    vStatusEl.className = "status-pill success";
+                } else {
+                    viewerEl.innerText = "0";
+                    vStatusEl.innerText = "OFFLINE";
+                    vStatusEl.className = "status-pill";
+                }
+
+                // Chatters Parsing (Mapped directly to twitchChatters)
+                if (firebaseData.twitchChatters !== undefined && firebaseData.twitchChatters !== "AUTH_ERR") {
+                    chatterEl.innerText = firebaseData.twitchChatters;
+                    cStatusEl.innerText = "CONNECTED";
+                    cStatusEl.className = "status-pill success";
+                } else {
+                    chatterEl.innerText = "---";
+                    cStatusEl.innerText = firebaseData.twitchChatters === "AUTH_ERR" ? "AUTH FAIL" : "OFFLINE";
+                    cStatusEl.className = "status-pill error";
+                }
+
+                // Live Pulse Notification Light Tracker
+                if (firebaseData.lastChatActivity && firebaseData.lastChatActivity > lastPulseTime) {
+                    if (lastPulseTime !== 0) {
+                        const dot = document.getElementById('chat-alert-dot');
+                        dot.classList.add('pulse-active');
+                        
+                        clearTimeout(alertTimeout);
+                        alertTimeout = setTimeout(() => {
+                            dot.classList.remove('pulse-active');
+                        }, 8000);
+                    }
+                    lastPulseTime = firebaseData.lastChatActivity;
+                }
+
+                const entry = document.createElement('div');
+                entry.className = 'log-entry';
+                entry.innerHTML = `<span style="color:#8b949e">[Sync]</span> F: ${followerData.twitch.followers} | V: ${firebaseData.twitchViewers} | C: ${firebaseData.twitchChatters}`;
+                logEl.prepend(entry);
+                
+                timeLeft = 60; 
+
+            } catch (err) {
+                vStatusEl.innerText = "FAIL";
+                vStatusEl.className = "status-pill error";
+                cStatusEl.innerText = "FAIL";
+                cStatusEl.className = "status-pill error";
+            }
+        }
+
+        setInterval(() => {
+            timeLeft--;
+            document.getElementById('timer-val').innerText = timeLeft;
+            if (timeLeft <= 0) { syncLab(); }
+        }, 1000);
+
+        syncLab();
+    </script>
+</body>
+</html>
