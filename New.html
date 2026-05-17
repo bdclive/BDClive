@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v9.2.5</title>
+    <title>Cloud Dashboard v9.2.7</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script data-cfasync="false" src="https://video.ibm.com/embed-api/v1/ustream-embedapi.min.js"></script>
     <style>
@@ -53,7 +53,7 @@
         .court-wrapper { width: 100%; height: 100%; overflow: hidden; position: relative; background: #000; z-index: 1; }
         .court-iframe { width: 1200px; height: 675px; border: none; position: absolute; top: 0px; left: 0px; transform: scale(0.28); transform-origin: 0 0; pointer-events: none; z-index: 1; }
         
-        /* Modal Windows - Absolute Top Layer Global Guards */
+        /* Modal Windows - Global Layer Safeguards */
         .modal { display: none; position: fixed; z-index: 9999999 !important; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); backdrop-filter: blur(5px); }
         .modal-content { background-color: #161b22; margin: 3% auto; padding: 25px; border: 1px solid var(--twitch-purple); width: 85%; max-width: 1350px; border-radius: 12px; position: relative; z-index: 10000000 !important; }
         .close-modal { position: absolute; top: 12px; right: 20px; color: var(--text-dim); font-size: 35px; font-weight: bold; cursor: pointer; }
@@ -78,6 +78,36 @@
         @keyframes flashAnimation {
             0% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(0, 255, 102, 0.7); }
             100% { transform: scale(1.2); box-shadow: 0 0 10px 4px rgba(0, 255, 102, 0); }
+        }
+
+        /* Built-In Interactive Changelog Table Layout */
+        .modal-changelog-deck {
+            margin-top: 15px;
+            background: #0d1117;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px;
+            font-family: 'Segoe UI', sans-serif;
+            max-height: 110px;
+            overflow-y: auto;
+        }
+        .modal-changelog-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 11px;
+        }
+        .modal-changelog-table th {
+            color: var(--twitch-purple);
+            border-bottom: 1px solid var(--border-color);
+            padding: 4px 8px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .modal-changelog-table td {
+            color: var(--text-dim);
+            border-bottom: 1px solid rgba(48, 54, 61, 0.5);
+            padding: 6px 8px;
         }
     </style>
 </head>
@@ -174,7 +204,7 @@
             </div>
             <div class="cinema-footer">
                 <div class="cinema-stats-line"><span>M: <span id="m-count">0</span></span><span>TV: <span id="tv-count">0</span></span><span style="color: var(--cinema-green);">S: <span id="sync-timer">LIVE</span></span></div>
-                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v9.2.5</span></div>
+                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v9.2.7</span></div>
             </div>
         </div>
     </div>
@@ -193,13 +223,47 @@
             <h3 style="margin-top: 0; color: var(--twitch-purple); display: flex; align-items: center; gap: 8px;">
                 <i class="fa-brands fa-twitch"></i> briandivacox Live Broadcast Studio
             </h3>
-            <div class="twitch-workspace-deck" style="display: flex; gap: 15px; width: 100%; height: 640px; margin-top: 15px;">
+            <div class="twitch-workspace-deck" style="display: flex; gap: 15px; width: 100%; height: 500px; margin-top: 15px;">
                 <div style="flex: 3.2; background: #000; border-radius: 8px; overflow: hidden; height: 100%;">
                     <iframe id="twitch-player-frame" width="100%" height="100%" src="" frameborder="0" allowfullscreen></iframe>
                 </div>
-                <div style="flex: 1; background: #1f1f23; border-radius: 8px; overflow: hidden; height: 100%; border: 1px solid var(--border-color); position: relative; pointer-events: auto !important; z-index: 200000000 !important;">
+                <div style="flex: 1; background: #1f1f23; border-radius: 8px; overflow: hidden; height: 100%; border: 1px solid var(--border-color); position: relative;">
                     <iframe id="twitch-chat-frame" width="100%" height="100%" src="" frameborder="0" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;"></iframe>
                 </div>
+            </div>
+            
+            <div class="modal-changelog-deck">
+                <table class="modal-changelog-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 15%;">Version</th>
+                            <th style="width: 15%;">Type</th>
+                            <th>Change Log / Applied Code Fixes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><b>v9.2.4</b></td>
+                            <td><span style="color:#00FF66;">Heartbeat</span></td>
+                            <td>Programmed green notification light tracking live background chat activity pulses with an 8s idle fadeout loop.</td>
+                        </tr>
+                        <tr>
+                            <td><b>v9.2.5</b></td>
+                            <td><span style="color:var(--plex-orange);">Layer</span></td>
+                            <td>Isolated court wrapping structures and locked parent grid coordinates to prevent overflow collisions.</td>
+                        </tr>
+                        <tr>
+                            <td><b>v9.2.6</b></td>
+                            <td><span style="color:var(--bsky-electric);">Sandbox</span></td>
+                            <td>Applied direct focus overrides to sandbox frame container to ensure complete cursor hit mapping.</td>
+                        </tr>
+                        <tr>
+                            <td><b>v9.2.7</b></td>
+                            <td><span style="color:var(--light-purple);">Security</span></td>
+                            <td><b>Current Version.</b> Appended absolute domain parameters to the embed handshake query array to bypass Twitch strict parent security lockdown. Unlocked frame click focus.</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -309,25 +373,24 @@
 
         // TWITCH BROADCAST THEATER INTERACTIVE HOOKS
         function openTwitch() {
-            const parentHost = window.location.hostname || "localhost";
-            
-            // Turn off pointer actions on ALL background elements entirely
+            // Force freeze background grid pointers to protect iframe selection coordinates
             document.querySelectorAll('.counter-grid, .timer-stage').forEach(el => {
                 el.style.pointerEvents = "none";
             });
             
             document.getElementById('chat-alert-dot').classList.remove('pulse-active');
-            document.getElementById('twitch-player-frame').src = `https://player.twitch.tv/?channel=briandivacox&parent=${parentHost}&autoplay=1&muted=0`;
-            document.getElementById('twitch-chat-frame').src = `https://www.twitch.tv/embed/briandivacox/chat?parent=${parentHost}&darkpopout`;
+            
+            // SECURITY PATCH: Explicitly appending dual parent arrays to clear secure context mapping
+            document.getElementById('twitch-player-frame').src = "https://player.twitch.tv/?channel=briandivacox&parent=briandivacox.github.io&parent=localhost&autoplay=1&muted=0";
+            document.getElementById('twitch-chat-frame').src = "https://www.twitch.tv/embed/briandivacox/chat?parent=briandivacox.github.io&parent=localhost&darkpopout";
+            
             document.getElementById('twitchModal').style.display = "block";
         }
         
         function closeTwitch() {
-            // Restore mouse tracking to background grid cleanly on escape
             document.querySelectorAll('.counter-grid, .timer-stage').forEach(el => {
                 el.style.pointerEvents = "auto";
             });
-            
             document.getElementById('twitch-player-frame').src = "";
             document.getElementById('twitch-chat-frame').src = "";
             document.getElementById('twitchModal').style.display = "none";
