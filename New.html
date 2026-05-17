@@ -3,279 +3,557 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v9.4.1</title>
+    <title>Cloud Dashboard v9.4.2</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script data-cfasync="false" src="https://video.ibm.com/embed-api/v1/ustream-embedapi.min.js"></script>
     <style>
         :root {
-            --bg-color: #0d1117; --card-bg: #161b22; --border-color: #30363d;
-            --text-main: #ffffff; --text-dim: #8b949e; 
-            --snap-yellow: #FFFC00; --bsky-electric: #00D2FF;
-            --light-purple: #bc95ff; --plex-orange: #e5a00d; --cinema-green: #238636;
-            --twitch-purple: #9146FF; --fb-blue: #0866ff;
-            --yt-red: #FF0000; --tt-cyan: #00f2ea; --ig-pink: #E1306C;
+            --bg-color: #0d1117;
+            --card-bg: #161b22;
+            --border-color: #30363d;
+            --text-main: #ffffff;
+            --text-dim: #8b949e;
+            --snap-yellow: #FFFC00;
+            --bsky-electric: #00D2FF;
+            --light-purple: #bc95ff;
+            --plex-orange: #e5a00d;
+            --cinema-green: #238636;
+            --twitch-purple: #9146FF;
+            --fb-blue: #0866ff;
+            --yt-red: #FF0000;
+            --tt-cyan: #00f2ea;
+            --ig-pink: #E1306C;
         }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: var(--text-main); display: flex; flex-direction: column; align-items: center; padding: 15px; margin: 0; min-height: 100vh; overflow-x: hidden; }
-        
-        .timer-stage { width: 100%; max-width: 1400px; height: 195px; margin-bottom: 25px; border-radius: 12px; border: 1px solid var(--border-color); overflow: hidden; background: #000; position: relative; }
-        .timer-stage iframe { width: 100%; height: 350px; border: none; position: absolute; top: -92px; left: 0; border-radius: 12px; }
-        
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px;
+            margin: 0;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        .timer-stage {
+            width: 100%;
+            max-width: 1400px;
+            height: 195px;
+            margin-bottom: 25px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            background: #000;
+            position: relative;
+        }
+        .timer-stage iframe {
+            width: 100%;
+            height: 350px;
+            border: none;
+            position: absolute;
+            top: -92px;
+            left: 0;
+            border-radius: 12px;
+        }
         /* Spacious, responsive 4-Column Grid system */
-        .counter-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; width: 100%; max-width: 1400px; }
-        .counter-item { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; height: 150px; position: relative; display: flex; flex-direction: column; justify-content: center; padding-left: 25px; padding-bottom: 10px; overflow: hidden; transition: 0.3s; }
-        
-        .box-logo { position: absolute; top: 12px; right: 15px; width: 22px; height: 22px; z-index: 40; display: flex; align-items: center; justify-content: center; pointer-events: none; }
-        .box-logo svg { width: 100%; height: 100%; }
-
+        .counter-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            width: 100%;
+            max-width: 1400px;
+        }
+        .counter-item {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            height: 150px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding-left: 25px;
+            padding-bottom: 10px;
+            overflow: hidden;
+            transition: 0.3s;
+        }
+        .box-logo {
+            position: absolute;
+            top: 12px;
+            right: 15px;
+            width: 22px;
+            height: 22px;
+            z-index: 40;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+        }
+        .box-logo svg {
+            width: 100%;
+            height: 100%;
+        }
         /* General Social Iframe Positioning */
-        .counter-item iframe:not(.court-iframe) { filter: invert(1) hue-rotate(180deg); border: 0; width: 450px; height: 220px; position: absolute; pointer-events: none; }
-        #x-box iframe, #yt-box iframe, #tt-box iframe { top: 15px; left: -85px; }
-
-        .main-number { font-size: 3.1rem; font-weight: 800; color: #ffffff; margin: 0; white-space: nowrap; letter-spacing: -2px; line-height: 1.1; }
-        .mirror-box { justify-content: space-evenly !important; padding-left: 0 !important; text-align: center; }
-        .mirror-row { display: flex; justify-content: space-around; width: 100%; margin-top: 5px; }
-        .mirror-label { font-size: 9px; color: var(--text-dim); text-transform: uppercase; font-weight: bold; margin: 0; }
-        .mirror-stat { font-size: 2rem; font-weight: 800; color: #ffffff; margin-bottom: 2px; }
-
+        .counter-item iframe:not(.court-iframe) {
+            filter: invert(1) hue-rotate(180deg);
+            border: 0;
+            width: 450px;
+            height: 220px;
+            position: absolute;
+            pointer-events: none;
+        }
+        #x-box iframe, #yt-box iframe, #tt-box iframe {
+            top: 15px;
+            left: -85px;
+        }
+        .main-number {
+            font-size: 3.1rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin: 0;
+            white-space: nowrap;
+            letter-spacing: -2px;
+            line-height: 1.1;
+        }
+        .mirror-box {
+            justify-content: space-evenly !important;
+            padding-left: 0 !important;
+            text-align: center;
+        }
+        .mirror-row {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            margin-top: 5px;
+        }
+        .mirror-label {
+            font-size: 9px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            font-weight: bold;
+            margin: 0;
+        }
+        .mirror-stat {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 2px;
+        }
         /* THEATER */
-        .cinema-info { padding: 12px 20px 12px 15px; display: grid; grid-template-columns: 1.2fr 1fr; gap: 8px; height: 100%; text-align: left; }
-        .cinema-label { font-size: 9px; color: var(--cinema-green); text-transform: uppercase; font-weight: bold; }
-        .cinema-title { font-size: 13px; font-weight: bold; color: #ffffff; line-height: 1.2; margin-top: 2px; height: 32px; overflow: hidden; }
-        .cinema-footer { position: absolute; bottom: 0; left: 0; right: 0; background: #0d1117; padding: 6px 12px; border-top: 1px solid var(--border-color); display: flex; flex-direction: column; }
-        .cinema-stats-line { font-size: 10px; color: var(--plex-orange); display: flex; justify-content: space-between; font-weight: bold; }
-
+        .cinema-info {
+            padding: 12px 20px 12px 15px;
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 8px;
+            height: 100%;
+            text-align: left;
+        }
+        .cinema-label {
+            font-size: 9px;
+            color: var(--cinema-green);
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+        .cinema-title {
+            font-size: 13px;
+            font-weight: bold;
+            color: #ffffff;
+            line-height: 1.2;
+            margin-top: 2px;
+            height: 32px;
+            overflow: hidden;
+        }
+        .cinema-footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #0d1117;
+            padding: 6px 12px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+        }
+        .cinema-stats-line {
+            font-size: 10px;
+            color: var(--plex-orange);
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+        }
         /* COURT MONITOR */
-        #court-box { padding: 0 !important; border-top: 3px solid var(--plex-orange); background: #000; cursor: pointer; display: block; z-index: 1; }
-        .court-wrapper { width: 100%; height: 100%; overflow: hidden; position: relative; background: #000; z-index: 1; }
-        .court-iframe { width: 1200px; height: 675px; border: none; position: absolute; top: 0px; left: 0px; transform: scale(0.28); transform-origin: 0 0; pointer-events: none; z-index: 1; }
-        
+        #court-box {
+            padding: 0 !important;
+            border-top: 3px solid var(--plex-orange);
+            background: #000;
+            cursor: pointer;
+            display: block;
+            z-index: 1;
+        }
+        .court-wrapper {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            position: relative;
+            background: #000;
+            z-index: 1;
+        }
+        .court-iframe {
+            width: 1200px;
+            height: 675px;
+            border: none;
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            transform: scale(0.28);
+            transform-origin: 0 0;
+            pointer-events: none;
+            z-index: 1;
+        }
         /* Baseline Court Modal Stacking Rules */
-        .modal { display: none; position: fixed; z-index: 9999999 !important; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); backdrop-filter: blur(5px); }
-        .modal-content { background-color: #161b22; margin: 5% auto; padding: 20px; border: 1px solid var(--plex-orange); width: 85%; max-width: 900px; border-radius: 12px; position: relative; }
-        .close-modal { position: absolute; top: 10px; right: 20px; color: var(--text-dim); font-size: 35px; font-weight: bold; cursor: pointer; }
-        .close-modal:hover { color: #fff; }
-
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 9999999 !important;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.85);
+            backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            background-color: #161b22;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid var(--plex-orange);
+            width: 85%;
+            max-width: 900px;
+            border-radius: 12px;
+            position: relative;
+        }
+        .close-modal {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            color: var(--text-dim);
+            font-size: 35px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close-modal:hover {
+            color: #fff;
+        }
         /* Real-Time Flashing Notification Dot Styling */
-        .notification-dot { display: inline-block; width: 7px; height: 7px; background-color: #00FF66; border-radius: 50%; margin-left: 4px; vertical-align: middle; opacity: 0; transition: opacity 0.3s ease; }
-        .pulse-active { opacity: 1; animation: flashAnimation 1.2s infinite alternate; }
-        @keyframes flashAnimation { 0% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(0, 255, 102, 0.7); } 100% { transform: scale(1.2); box-shadow: 0 0 10px 4px rgba(0, 255, 102, 0); } }
+        .notification-dot {
+            display: inline-block;
+            width: 7px;
+            height: 7px;
+            background-color: #00FF66;
+            border-radius: 50%;
+            margin-left: 4px;
+            vertical-align: middle;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .pulse-active {
+            opacity: 1;
+            animation: flashAnimation 1.2s infinite alternate;
+        }
+        @keyframes flashAnimation {
+            0% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(0, 255, 102, 0.7); }
+            100% { transform: scale(1.2); box-shadow: 0 0 10px 4px rgba(0, 255, 102, 0); }
+        }
     </style>
 </head>
 <body>
 
-    <div class="timer-stage"><iframe src="https://board.multitimer.net/view/?q=6z0n8w08m0"></iframe></div>
+<div class="timer-stage"><iframe src="https://board.multitimer.net/view/?q=6z0n8w08m0"></iframe></div>
+
+<div class="counter-grid">
+    <div class="counter-item mirror-box" style="border-top: 3px solid var(--light-purple);">
+        <i class="fa-solid fa-wand-magic-sparkles box-logo" style="color:var(--light-purple);"></i>
+        <div><p class="mirror-label" style="color:var(--light-purple);">✨ Tales Detected</p><div id="totalViewsCounter" class="mirror-stat" style="font-size: 2.5rem;">0</div></div>
+        <div class="mirror-row">
+            <div><p class="mirror-label">👥 Online</p><div id="visitorCounter" class="mirror-stat">0</div></div>
+            <div><p class="mirror-label" style="color:var(--plex-orange);">🎬 Plex</p><div id="plex-count-num" class="mirror-stat">0</div></div>
+        </div>
+    </div>
+
+    <div class="counter-item" id="x-box" style="border-top: 3px solid #ffffff;">
+        <div class="box-logo"><svg viewBox="0 0 24 24" fill="white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.045 4.126H5.078z"/></svg></div>
+        <iframe scrolling="no" src="https://livecounts.io/embed/twitter-live-follower-counter/briandivacox"></iframe>
+    </div>
+
+    <div class="counter-item mirror-box" id="twitch-box" onclick="openTwitch()" style="border-top: 3px solid var(--twitch-purple); cursor: pointer;">
+        <i class="fa-brands fa-twitch box-logo" style="color:var(--twitch-purple);"></i>
+        <div><p class="mirror-label" style="color:var(--twitch-purple);">🟣 Followers</p><div id="twitch-fol-num" class="mirror-stat" style="font-size: 2.5rem;">---</div></div>
+        <div class="mirror-row">
+            <div><p class="mirror-label">🎬 Viewers</p><div id="twitch-view-num" class="mirror-stat">0</div></div>
+            <div>
+                <p class="mirror-label">💬 Chatters<span id="chat-alert-dot" class="notification-dot"></span></p>
+                <div id="twitch-chatter-num" class="mirror-stat">0</div>
+            </div>
+        </div>
+        <i class="fa-solid fa-arrow-up-right-from-square" style="position: absolute; bottom: 12px; right: 15px; color: rgba(255,255,255,0.3); font-size: 11px;"></i>
+    </div>
+
+    <div class="counter-item" id="yt-box" style="border-top: 3px solid var(--yt-red);">
+        <i class="fa-brands fa-youtube box-logo" style="color:var(--yt-red);"></i>
+        <iframe scrolling="no" src="https://livecounts.io/embed/youtube-live-subscriber-counter/UCMuv7PfbLVm8IZsd6Bgqqzg"></iframe>
+    </div>
+
+    <div class="counter-item" id="tt-box" style="border-top: 3px solid var(--tt-cyan);">
+        <i class="fa-brands fa-tiktok box-logo" style="color:var(--tt-cyan);"></i>
+        <iframe scrolling="no" src="https://livecounts.io/embed/tiktok-live-follower-counter/briandivacox"></iframe>
+    </div>
+
+    <div class="counter-item mirror-box" style="border-top: 3px solid #0468FF; padding: 12px 15px 8px 15px; justify-content: flex-start;">
+        <i class="fa-brands fa-meta box-logo" style="color:#0468FF; font-size: 18px;"></i>
+        
+        <div style="text-align: left; margin-bottom: 8px; width: 100%;">
+            <p class="mirror-label" style="color:#0468FF; font-size: 10px;">🌐 Meta Ecosystem</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 10px; width: 100%; align-items: center;">
+            <div style="text-align: left;">
+                <p class="mirror-label" style="color:var(--ig-pink);"><i class="fa-brands fa-instagram"></i> IG Fol</p>
+                <div id="ig-fol-num" class="mirror-stat" style="font-size: 1.5rem; line-height: 1;">0</div>
+            </div>
+            <div style="text-align: left;">
+                <p class="mirror-label" style="color:#fff;"><i class="fa-brands fa-threads"></i> Threads</p>
+                <div id="threads-fol-num" class="mirror-stat" style="font-size: 1.5rem; line-height: 1;">0</div>
+                <div id="threads-view-num" style="display:none;">0</div>
+            </div>
+            <div style="text-align: left;">
+                <p class="mirror-label" style="color:var(--fb-blue);"><i class="fa-brands fa-facebook"></i> Page</p>
+                <div id="fb-page-num" class="mirror-stat" style="font-size: 1.5rem; line-height: 1;">0</div>
+            </div>
+            <div style="text-align: left;">
+                <p class="mirror-label" style="color:var(--fb-blue);"><i class="fa-solid fa-user"></i> Profile</p>
+                <div id="fb-personal-num" class="mirror-stat" style="font-size: 1.5rem; line-height: 1;">0</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="counter-item mirror-box" style="border-top: 3px solid var(--bsky-electric);">
+        <div class="box-logo"><svg viewBox="0 0 566 500"><path fill="var(--bsky-electric)" d="M121.2 35.6C191.6 86.9 282.9 178.1 282.9 178.1S374.2 86.9 444.7 35.6C502.9-6.8 566 -20.3 566 49.3c0 19.3-11.2 121.1-17.8 144.6-21 75-52.2 89.8-118.4 104.8 134.5 25.3 152.9 70.6 152.9 101.7 0 71-65.4 63.3-119 31.9-74.5-43.8-139.8-138.8-179.9-195.1-40.1 56.3-105.4 151.3-179.9 195.1-53.6 31.5-119 39.1-119-31.9 0-31.1 18.4-76.4 152.9-101.7C46.2 283.7 15 268.9 0 193.9c-6.6-23.5-17.8-125.3-17.8-144.6 0-69.6 63.1-56.1 121.2-13.7z"/></svg></div>
+        <div id="bsky-num" class="main-number">---</div>
+    </div>
+
+    <div class="counter-item" id="court-box" onclick="openCourt()">
+        <div class="court-wrapper">
+            <iframe id="court-player" class="court-iframe" src="https://video.ibm.com/embed/23891775?showtitle=false&volume=0&autoplay=0"></iframe>
+            <div style="position: absolute; top: 10px; left: 15px; z-index: 60; text-shadow: 2px 2px 4px #000;">
+                <h4 style="margin: 0; font-size: 14px; color: #fff;">Court Stream</h4>
+            </div>
+            <i class="fa-solid fa-expand" style="position: absolute; top: 12px; right: 15px; color: rgba(255,255,255,0.6); z-index: 60;"></i>
+        </div>
+    </div>
+
+    <div class="counter-item mirror-box" style="border-top: 3px solid var(--snap-yellow);">
+        <i class="fa-brands fa-snapchat box-logo" style="color:var(--snap-yellow);"></i>
+        <div id="snap-fol-num" class="main-number">0</div>
+    </div>
+
+    <div class="counter-item" style="border-top: 3px solid var(--cinema-green); padding-left: 0;">
+        <i class="fa-solid fa-film box-logo" style="color: var(--cinema-green);"></i>
+        <div class="cinema-info">
+            <div><div class="cinema-label">Now Playing</div><div id="m-now" class="cinema-title">Syncing...</div><div id="m-left" style="font-size: 10px; color: var(--text-dim);">--</div></div>
+            <div style="border-left: 1px solid var(--border-color); padding-left: 10px;">
+                <div class="cinema-label" style="color: var(--plex-orange);">Up Next</div><div id="m-next" class="cinema-title">--</div><div id="m-time" style="font-size: 10px; color: var(--text-dim);">--</div>
+            </div>
+        </div>
+        <div class="cinema-footer">
+            <div class="cinema-stats-line"><span>M: <span id="m-count">0</span></span><span>TV: <span id="tv-count">0</span></span><span style="color: var(--cinema-green);">S: <span id="sync-timer">LIVE</span></span></div>
+            <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v9.4.2</span></div>
+        </div>
+    </div>
+</div>
+
+<div id="courtModal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal" onclick="closeCourt()">&times;</span>
+        <h3 style="margin-top: 0; color: var(--plex-orange);">Live Court Feed</h3>
+        <iframe id="modal-player" width="100%" height="500" src="" frameborder="0" allowfullscreen></iframe>
+    </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+<script>
+    const sConf = {
+        apiKey: atob("QUl6YVN5QXZ4ZktnX3NwUE52RTJ3Y1QtdlRsOFlUUXU0TDN0Xzd3"),
+        authDomain: "livecounters-8eaa8.firebaseapp.com",
+        projectId: "livecounters-8eaa8",
+        databaseURL: "https://livecounters-8eaa8-default-rtdb.firebaseio.com/",
+        appId: "1:386919719539:web:c60c0d185c3d7e97ecc006"
+    };
+    const vConf = {
+        apiKey: "AIzaSyCokXnEtboNuUIASBMz2ZzS0GuchemoJYI",
+        authDomain: "lbbb-webcounter.firebaseapp.com",
+        projectId: "lbbb-webcounter",
+        databaseURL: "https://lbbb-webcounter-default-rtdb.firebaseio.com/",
+        appId: "1:217634980859:web:49ef2b0aa7fe7d0bb1415e"
+    };
+
+    const sApp = firebase.initializeApp(sConf, "sApp");
+    const vApp = firebase.initializeApp(vConf, "vApp");
+    const sDb = sApp.database();
+    const vDb = vApp.database();
+
+    const nForm = new Intl.NumberFormat('en-US', { notation: "compact", compactDisplay: "short", maximumFractionDigits: 1 });
+    const fNum = (val) => {
+        if (val === null || val === undefined || val === "---") return val || "0";
+        const num = parseFloat(val.toString().replace(/,/g, ''));
+        return isNaN(num) ? val : nForm.format(num);
+    };
+
+    vDb.ref("totalViewCount").on("value", s => document.getElementById("totalViewsCounter").innerText = fNum(s.val()));
+    vDb.ref("visitorsConnected").on("value", s => document.getElementById("visitorCounter").innerText = fNum(s.numChildren()));
+
+    // INTERACTIVE WEBSOCKET ENGINE
+    let alertTimeout;
+    let lastPulseTime = 0;
     
-    <div class="counter-grid">
-        <div class="counter-item mirror-box" style="border-top: 3px solid var(--light-purple);">
-            <i class="fa-solid fa-wand-magic-sparkles box-logo" style="color:var(--light-purple);"></i>
-            <div><p class="mirror-label" style="color:var(--light-purple);">✨ Tales Detected</p><div id="totalViewsCounter" class="mirror-stat" style="font-size: 2.5rem;">0</div></div>
-            <div class="mirror-row">
-                <div><p class="mirror-label">👥 Online</p><div id="visitorCounter" class="mirror-stat">0</div></div>
-                <div><p class="mirror-label" style="color:var(--plex-orange);">🎬 Plex</p><div id="plex-count-num" class="mirror-stat">0</div></div>
-            </div>
-        </div>
-
-        <div class="counter-item" id="x-box" style="border-top: 3px solid #ffffff;">
-            <div class="box-logo"><svg viewBox="0 0 24 24" fill="white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.045 4.126H5.078z"/></svg></div>
-            <iframe scrolling="no" src="https://livecounts.io/embed/twitter-live-follower-counter/briandivacox"></iframe>
-        </div>
-
-        <div class="counter-item mirror-box" id="twitch-box" onclick="openTwitch()" style="border-top: 3px solid var(--twitch-purple); cursor: pointer;">
-            <i class="fa-brands fa-twitch box-logo" style="color:var(--twitch-purple);"></i>
-            <div><p class="mirror-label" style="color:var(--twitch-purple);">🟣 Followers</p><div id="twitch-fol-num" class="mirror-stat" style="font-size: 2.5rem;">---</div></div>
-            <div class="mirror-row">
-                <div><p class="mirror-label">🎬 Viewers</p><div id="twitch-view-num" class="mirror-stat">0</div></div>
-                <div>
-                    <p class="mirror-label">💬 Chatters<span id="chat-alert-dot" class="notification-dot"></span></p>
-                    <div id="twitch-chatter-num" class="mirror-stat">0</div>
-                </div>
-            </div>
-            <i class="fa-solid fa-arrow-up-right-from-square" style="position: absolute; bottom: 12px; right: 15px; color: rgba(255,255,255,0.3); font-size: 11px;"></i>
-        </div>
-
-        <div class="counter-item" id="yt-box" style="border-top: 3px solid var(--yt-red);">
-            <i class="fa-brands fa-youtube box-logo" style="color:var(--yt-red);"></i>
-            <iframe scrolling="no" src="https://livecounts.io/embed/youtube-live-subscriber-counter/UCMuv7PfbLVm8IZsd6Bgqqzg"></iframe>
-        </div>
-
-        <div class="counter-item" id="tt-box" style="border-top: 3px solid var(--tt-cyan);">
-            <i class="fa-brands fa-tiktok box-logo" style="color:var(--tt-cyan);"></i>
-            <iframe scrolling="no" src="https://livecounts.io/embed/tiktok-live-follower-counter/briandivacox"></iframe>
-        </div>
-
-        <div class="counter-item mirror-box" id="ig-box" style="border-top: 3px solid var(--ig-pink);">
-            <i class="fa-brands fa-instagram box-logo" style="color:var(--ig-pink);"></i>
-            <div><p class="mirror-label" style="color:var(--ig-pink);">📸 Instagram Feed</p><div id="ig-fol-num" class="mirror-stat" style="font-size: 2.5rem;">5,870</div></div>
-            <div class="mirror-row">
-                <div><p class="mirror-label">👥 Profile</p><div class="mirror-stat" style="font-size: 1.1rem; color: var(--text-dim);">@briandivacox</div></div>
-            </div>
-        </div>
+    sDb.ref('labData').on('value', (s) => {
+        const d = s.val();
+        if (!d) return;
         
-        <div class="counter-item mirror-box" style="border-top: 3px solid var(--bsky-electric);">
-            <div class="box-logo"><svg viewBox="0 0 566 500"><path fill="var(--bsky-electric)" d="M121.2 35.6C191.6 86.9 282.9 178.1 282.9 178.1S374.2 86.9 444.7 35.6C502.9-6.8 566 -20.3 566 49.3c0 19.3-11.2 121.1-17.8 144.6-21 75-52.2 89.8-118.4 104.8 134.5 25.3 152.9 70.6 152.9 101.7 0 71-65.4 63.3-119 31.9-74.5-43.8-139.8-138.8-179.9-195.1-40.1 56.3-105.4 151.3-179.9 195.1-53.6 31.5-119 39.1-119-31.9 0-31.1 18.4-76.4 152.9-101.7C46.2 283.7 15 268.9 0 193.9c-6.6-23.5-17.8-125.3-17.8-144.6 0-69.6 63.1-56.1 121.2-13.7z"/></svg></div>
-            <div id="bsky-num" class="main-number">---</div>
-        </div>
+        document.getElementById('plex-count-num').innerText = fNum(d.plexCount);
+        document.getElementById('threads-fol-num').innerText = fNum(d.threadsFol);
+        document.getElementById('threads-view-num').innerText = fNum(d.threadsViews);
+        document.getElementById('snap-fol-num').innerText = fNum(d.snapFol);
+        document.getElementById('fb-page-num').innerText = fNum(d.fbPage);
+        document.getElementById('fb-personal-num').innerText = fNum(d.fbPersonal);
+        document.getElementById('twitch-view-num').innerText = fNum(d.twitchViewers);
+        document.getElementById('twitch-chatter-num').innerText = fNum(d.twitchChatters);
+        document.getElementById('ig-fol-num').innerText = fNum(d.igFol); // Added IG Hook Update
 
-        <div class="counter-item mirror-box" style="border-top: 3px solid #8b949e;">
-            <i class="fa-brands fa-threads box-logo" style="color:white;"></i>
-            <div><p class="mirror-label">🧵 Threads Views</p><div id="threads-view-num" class="mirror-stat" style="font-size: 2.5rem;">0</div></div>
-            <div class="mirror-row">
-                <div><p class="mirror-label">👥 Followers</p><div id="threads-fol-num" class="mirror-stat">0</div></div>
-            </div>
-        </div>
+        // Neon Activity Alert Pulse Dot listener
+        if (d.lastChatActivity && d.lastChatActivity > lastPulseTime) {
+            if (lastPulseTime !== 0) {
+                const dot = document.getElementById('chat-alert-dot');
+                dot.classList.add('pulse-active');
+                clearTimeout(alertTimeout);
+                alertTimeout = setTimeout(() => {
+                    dot.classList.remove('pulse-active');
+                }, 8000);
+            }
+            lastPulseTime = d.lastChatActivity;
+        }
+    });
 
-        <div class="counter-item" id="court-box" onclick="openCourt()">
-            <div class="court-wrapper">
-                <iframe id="court-player" class="court-iframe" src="https://video.ibm.com/embed/23891775?showtitle=false&volume=0&autoplay=0"></iframe>
-                <div style="position: absolute; top: 10px; left: 15px; z-index: 60; text-shadow: 2px 2px 4px #000;">
-                    <h4 style="margin: 0; font-size: 14px; color: #fff;">Court Stream</h4>
-                </div>
-                <i class="fa-solid fa-expand" style="position: absolute; top: 12px; right: 15px; color: rgba(255,255,255,0.6); z-index: 60;"></i>
-            </div>
-        </div>
-
-        <div class="counter-item mirror-box" style="border-top: 3px solid var(--snap-yellow);">
-            <i class="fa-brands fa-snapchat box-logo" style="color:var(--snap-yellow);"></i>
-            <div id="snap-fol-num" class="main-number">0</div>
-        </div>
-
-        <div class="counter-item mirror-box" style="border-top: 3px solid var(--fb-blue);">
-            <i class="fa-brands fa-facebook box-logo" style="color:var(--fb-blue);"></i>
-            <div><p class="mirror-label" style="color:var(--fb-blue);">🔵 FB Page</p><div id="fb-page-num" class="mirror-stat" style="font-size: 2.5rem;">0</div></div>
-            <div class="mirror-row">
-                <div><p class="mirror-label">👤 Personal</p><div id="fb-personal-num" class="mirror-stat">0</div></div>
-            </div>
-        </div>
-
-        <div class="counter-item" style="border-top: 3px solid var(--cinema-green); padding-left: 0;">
-            <i class="fa-solid fa-film box-logo" style="color: var(--cinema-green);"></i>
-            <div class="cinema-info">
-                <div><div class="cinema-label">Now Playing</div><div id="m-now" class="cinema-title">Syncing...</div><div id="m-left" style="font-size: 10px; color: var(--text-dim);">--</div></div>
-                <div style="border-left: 1px solid var(--border-color); padding-left: 10px;">
-                    <div class="cinema-label" style="color: var(--plex-orange);">Up Next</div><div id="m-next" class="cinema-title">--</div><div id="m-time" style="font-size: 10px; color: var(--text-dim);">--</div>
-                </div>
-            </div>
-            <div class="cinema-footer">
-                <div class="cinema-stats-line"><span>M: <span id="m-count">0</span></span><span>TV: <span id="tv-count">0</span></span><span style="color: var(--cinema-green);">S: <span id="sync-timer">LIVE</span></span></div>
-                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v9.4.1</span></div>
-            </div>
-        </div>
-    </div>
-
-    <div id="courtModal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal" onclick="closeCourt()">&times;</span>
-            <h3 style="margin-top: 0; color: var(--plex-orange);">Live Court Feed</h3>
-            <iframe id="modal-player" width="100%" height="500" src="" frameborder="0" allowfullscreen></iframe>
-        </div>
-    </div>
-
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-    <script>
-        const sConf = { apiKey: atob("QUl6YVN5QXZ4ZktnX3NwUE52RTJ3Y1QtdlRsOFlUUXU0TDN0Xzd3"), authDomain: "livecounters-8eaa8.firebaseapp.com", projectId: "livecounters-8eaa8", databaseURL: "https://livecounters-8eaa8-default-rtdb.firebaseio.com/", appId: "1:386919719539:web:c60c0d185c3d7e97ecc006" };
-        const vConf = { apiKey: "AIzaSyCokXnEtboNuUIASBMz2ZzS0GuchemoJYI", authDomain: "lbbb-webcounter.firebaseapp.com", projectId: "lbbb-webcounter", databaseURL: "https://lbbb-webcounter-default-rtdb.firebaseio.com/", appId: "1:217634980859:web:49ef2b0aa7fe7d0bb1415e" };
-        const sApp = firebase.initializeApp(sConf, "sApp"); const vApp = firebase.initializeApp(vConf, "vApp");
-        const sDb = sApp.database(); const vDb = vApp.database();
-
-        const nForm = new Intl.NumberFormat('en-US', { notation: "compact", compactDisplay: "short", maximumFractionDigits: 1 });
-        const fNum = (val) => {
-            if (val === null || val === undefined || val === "---") return val || "0";
-            const num = parseFloat(val.toString().replace(/,/g, ''));
-            return isNaN(num) ? val : nForm.format(num);
-        };
-
-        vDb.ref("totalViewCount").on("value", s => document.getElementById("totalViewsCounter").innerText = fNum(s.val()));
-        vDb.ref("visitorsConnected").on("value", s => document.getElementById("visitorCounter").innerText = fNum(s.numChildren()));
+    let nowInt, nextInt, localNowSecs = 0;
+    sDb.ref('theaterSync').on('value', (snapshot) => {
+        const m = snapshot.val();
+        if (!m) return;
         
-        // INTERACTIVE WEBSOCKET ENGINE
-        let alertTimeout; let lastPulseTime = 0;
-        sDb.ref('labData').on('value', (s) => {
-            const d = s.val(); if (!d) return;
-            document.getElementById('plex-count-num').innerText = fNum(d.plexCount);
-            document.getElementById('threads-fol-num').innerText = fNum(d.threadsFol); 
-            document.getElementById('threads-view-num').innerText = fNum(d.threadsViews); 
-            document.getElementById('snap-fol-num').innerText = fNum(d.snapFol); 
-            document.getElementById('fb-page-num').innerText = fNum(d.fbPage);
-            document.getElementById('fb-personal-num').innerText = fNum(d.fbPersonal);
+        const isIdle = !m.nowPlaying || m.nowPlaying.toLowerCase().includes("no movie playing") || m.nowPlaying === "";
+        document.getElementById('m-now').innerText = isIdle ? "No Movie Playing" : m.nowPlaying;
+        document.getElementById('m-count').innerText = fNum(m.moviesCount);
+        document.getElementById('m-open').innerText = m.daysOpen || "0";
+        document.getElementById('tv-count').innerText = fNum(m.tvCount);
+        document.getElementById('m-next').innerText = m.nextTitle || "None";
+        
+        clearInterval(nowInt);
+        const nowEl = document.getElementById('m-left');
+        if (isIdle || !m.timeLeft || m.timeLeft.includes("--") || m.timeLeft.includes("N/A")) {
+            nowEl.innerText = "Cinema Idle";
+        } else {
+            let hMatch = m.timeLeft.match(/(\d+)\s*hour/i),
+                mMatch = m.timeLeft.match(/(\d+)\s*min/i),
+                sMatch = m.timeLeft.match(/(\d+)\s*sec/i);
+            let h = hMatch ? hMatch[1] : 0,
+                mins = mMatch ? mMatch[1] : 0,
+                secs = sMatch ? sMatch[1] : 0;
+            localNowSecs = (parseInt(h) * 3600) + (parseInt(mins) * 60) + parseInt(secs);
             
-            document.getElementById('twitch-view-num').innerText = fNum(d.twitchViewers);
-            document.getElementById('twitch-chatter-num').innerText = fNum(d.twitchChatters);
-
-            // Neon Activity Alert Pulse Dot listener
-            if (d.lastChatActivity && d.lastChatActivity > lastPulseTime) {
-                if (lastPulseTime !== 0) {
-                    const dot = document.getElementById('chat-alert-dot');
-                    dot.classList.add('pulse-active');
-                    clearTimeout(alertTimeout);
-                    alertTimeout = setTimeout(() => { dot.classList.remove('pulse-active'); }, 8000);
+            nowInt = setInterval(() => {
+                if (localNowSecs <= 0) {
+                    nowEl.innerText = "Syncing...";
+                    clearInterval(nowInt);
+                    return;
                 }
-                lastPulseTime = d.lastChatActivity;
-            }
-        });
-
-        let nowInt, nextInt, localNowSecs = 0;
-        sDb.ref('theaterSync').on('value', (snapshot) => {
-            const m = snapshot.val(); if (!m) return;
-            const isIdle = !m.nowPlaying || m.nowPlaying.toLowerCase().includes("no movie playing") || m.nowPlaying === "";
-            document.getElementById('m-now').innerText = isIdle ? "No Movie Playing" : m.nowPlaying;
-            document.getElementById('m-count').innerText = fNum(m.moviesCount);
-            document.getElementById('m-open').innerText = m.daysOpen || "0";
-            document.getElementById('tv-count').innerText = fNum(m.tvCount);
-            document.getElementById('m-next').innerText = m.nextTitle || "None";
-            clearInterval(nowInt); const nowEl = document.getElementById('m-left');
-            if (isIdle || !m.timeLeft || m.timeLeft.includes("--") || m.timeLeft.includes("N/A")) {
-                nowEl.innerText = "Cinema Idle";
-            } else {
-                let hMatch = m.timeLeft.match(/(\d+)\s*hour/i), mMatch = m.timeLeft.match(/(\d+)\s*min/i), sMatch = m.timeLeft.match(/(\d+)\s*sec/i);
-                let h = hMatch ? hMatch[1] : 0, mins = mMatch ? mMatch[1] : 0, secs = sMatch ? sMatch[1] : 0;
-                localNowSecs = (parseInt(h) * 3600) + (parseInt(mins) * 60) + parseInt(secs);
-                nowInt = setInterval(() => {
-                    if (localNowSecs <= 0) { nowEl.innerText = "Syncing..."; clearInterval(nowInt); return; }
-                    localNowSecs--; let hh = Math.floor(localNowSecs / 3600), mm = Math.floor((localNowSecs % 3600) / 60), ss = localNowSecs % 60;
-                    nowEl.innerText = `Left: ${hh}h ${mm}m ${ss}s`;
-                }, 1000);
-            }
-            clearInterval(nextInt); const nextEl = document.getElementById('m-time');
-            if (!m.nextTime || m.nextTime.includes("N/A") || m.nextTime === "") { nextEl.innerText = "--"; } else {
-                let dateStr = m.nextTime; if (!dateStr.includes("202")) dateStr = dateStr.replace(",", " 2026");
-                const target = new Date(dateStr);
-                nextInt = setInterval(() => {
-                    const diff = target - new Date(); if (diff <= 0) { nextEl.innerText = "Starting Now!"; clearInterval(nextInt); return; }
-                    const days = Math.floor(diff / 86400000), hh = Math.floor((diff % 86400000) / 3600000), mm = Math.floor((diff % 3600000) / 60000), ss = Math.floor((diff % 60000) / 1000);
-                    nextEl.innerText = (days > 0 ? days + "d " : "") + `${hh}h ${mm}m ${ss}s`;
-                }, 1000);
-            }
-        });
-
-        const twitchLabApi = 'https://script.google.com/macros/s/AKfycby0ndGELJv0Q6yAR8PKMsvo3u-hZ2qAL80sVahxyeyrLy_qDXhkcYZkKBoq6HhdrhyO/exec';
-        async function syncTwitchFollowers() { try { const res = await fetch(twitchLabApi + '?t=' + Date.now()); const data = await res.json(); if (data.twitch) { document.getElementById('twitch-fol-num').innerText = fNum(data.twitch.followers); } } catch (e) {} }
-        setInterval(syncTwitchFollowers, 60000); syncTwitchFollowers();
-
-        function openCourt() { document.getElementById('modal-player').src = "https://video.ibm.com/embed/23891775?autoplay=1"; document.getElementById('courtModal').style.display = "block"; }
-        function closeCourt() { document.getElementById('modal-player').src = ""; document.getElementById('courtModal').style.display = "none"; }
-
-        // --- TWITCH STANDALONE APPLICATION WINDOW CONTROLLER ---
-        function openTwitch() {
-            const parentHost = window.location.hostname || "briandivacox.github.io";
-            document.getElementById('chat-alert-dot').classList.remove('pulse-active');
-            
-            // Computes perfect window boundaries centered based on monitor resolution coordinates
-            const width = 1480;
-            const height = 820;
-            const left = (screen.width / 2) - (width / 2);
-            const top = (screen.height / 2) - (height / 2);
-            
-            // Fires up your clean isolated browser workspace container popup
-            window.open(
-                `Live.html?host=${parentHost}`, 
-                'TwitchBroadcastStudio', 
-                `width=${width},height=${height},top=${top},left=${left},resizable=yes,scrollbars=no,toolbar=no,location=no,status=no,menubar=no`
-            );
+                localNowSecs--;
+                let hh = Math.floor(localNowSecs / 3600),
+                    mm = Math.floor((localNowSecs % 3600) / 60),
+                    ss = localNowSecs % 60;
+                nowEl.innerText = `Left: ${hh}h ${mm}m ${ss}s`;
+            }, 1000);
         }
 
-        async function getBsky() { try { const r = await fetch('https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=briandivacox.bsky.social'); const p = await r.json(); if (p.followersCount !== undefined) document.getElementById('bsky-num').innerText = fNum(p.followersCount); } catch (e) { } }
-        getBsky(); setInterval(getBsky, 300000);
-    </script>
+        clearInterval(nextInt);
+        const nextEl = document.getElementById('m-time');
+        if (!m.nextTime || m.nextTime.includes("N/A") || m.nextTime === "") {
+            nextEl.innerText = "--";
+        } else {
+            let dateStr = m.nextTime;
+            if (!dateStr.includes("202")) dateStr = dateStr.replace(",", " 2026");
+            const target = new Date(dateStr);
+            nextInt = setInterval(() => {
+                const diff = target - new Date();
+                if (diff <= 0) {
+                    nextEl.innerText = "Starting Now!";
+                    clearInterval(nextInt);
+                    return;
+                }
+                const days = Math.floor(diff / 86400000),
+                      hh = Math.floor((diff % 86400000) / 3600000),
+                      mm = Math.floor((diff % 3600000) / 60000),
+                      ss = Math.floor((diff % 60000) / 1000);
+                nextEl.innerText = (days > 0 ? days + "d " : "") + `${hh}h ${mm}m ${ss}s`;
+            }, 1000);
+        }
+    });
+
+    const twitchLabApi = 'https://script.google.com/macros/s/AKfycby0ndGELJv0Q6yAR8PKMsvo3u-hZ2qAL80sVahxyeyrLy_qDXhkcYZkKBoq6HhdrhyO/exec';
+    async function syncTwitchFollowers() {
+        try {
+            const res = await fetch(twitchLabApi + '?t=' + Date.now());
+            const data = await res.json();
+            if (data.twitch) {
+                document.getElementById('twitch-fol-num').innerText = fNum(data.twitch.followers);
+            }
+        } catch (e) {}
+    }
+    setInterval(syncTwitchFollowers, 60000);
+    syncTwitchFollowers();
+
+    function openCourt() {
+        document.getElementById('modal-player').src = "https://video.ibm.com/embed/23891775?autoplay=1";
+        document.getElementById('courtModal').style.display = "block";
+    }
+    function closeCourt() {
+        document.getElementById('modal-player').src = "";
+        document.getElementById('courtModal').style.display = "none";
+    }
+
+    // --- TWITCH STANDALONE APPLICATION WINDOW CONTROLLER ---
+    function openTwitch() {
+        const parentHost = window.location.hostname || "briandivacox.github.io";
+        document.getElementById('chat-alert-dot').classList.remove('pulse-active');
+        
+        // Computes perfect window boundaries centered based on monitor resolution coordinates
+        const width = 1480;
+        const height = 820;
+        const left = (screen.width / 2) - (width / 2);
+        const top = (screen.height / 2) - (height / 2);
+        
+        // Fires up your clean isolated browser workspace container popup
+        window.open(`Live.html?host=${parentHost}`, 'TwitchBroadcastStudio', `width=${width},height=${height},top=${top},left=${left},resizable=yes,scrollbars=no,toolbar=no,location=no,status=no,menubar=no`);
+    }
+
+    async function getBsky() {
+        try {
+            const r = await fetch('https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=briandivacox.bsky.social');
+            const p = await r.json();
+            if (p.followersCount !== undefined) document.getElementById('bsky-num').innerText = fNum(p.followersCount);
+        } catch (e) {}
+    }
+    getBsky();
+    setInterval(getBsky, 300000);
+</script>
 </body>
 </html>
