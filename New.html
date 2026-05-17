@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v9.3.0</title>
+    <title>Cloud Dashboard v9.3.1</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script data-cfasync="false" src="https://video.ibm.com/embed-api/v1/ustream-embedapi.min.js"></script>
     <style>
@@ -57,7 +57,6 @@
         .modal { display: none; position: fixed; z-index: 9999999 !important; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); backdrop-filter: blur(5px); }
         .modal-content { background-color: #161b22; margin: 2% auto; padding: 25px; border: 1px solid var(--twitch-purple); width: 88%; max-width: 1450px; border-radius: 16px; position: relative; z-index: 10000000 !important; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
         
-        /* Specific Reset Overrides for Court Modal Window Frame */
         #courtModal .modal-content { border-color: var(--plex-orange); max-width: 900px; margin: 5% auto; }
 
         .close-modal { position: absolute; top: 15px; right: 22px; color: var(--text-dim); font-size: 35px; font-weight: bold; cursor: pointer; transition: 0.2s; }
@@ -190,7 +189,7 @@
             </div>
             <div class="cinema-footer">
                 <div class="cinema-stats-line"><span>M: <span id="m-count">0</span></span><span>TV: <span id="tv-count">0</span></span><span style="color: var(--cinema-green);">S: <span id="sync-timer">LIVE</span></span></div>
-                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v9.3.0</span></div>
+                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v9.3.1</span></div>
             </div>
         </div>
     </div>
@@ -229,9 +228,14 @@
                     </thead>
                     <tbody>
                         <tr>
+                            <td><b>v9.3.1</b></td>
+                            <td><span class="log-pill pill-ui">UI Engine</span></td>
+                            <td>Current Build. Switched embedding layout to standard secure sandboxed popout endpoints. Restored typing focus.</td>
+                        </tr>
+                        <tr>
                             <td><b>v9.3.0</b></td>
                             <td><span class="log-pill pill-ui">UI Engine</span></td>
-                            <td>Current Build. Restructured modal wrapper overrides and repaired script routing tags to fix frozen numbers.</td>
+                            <td>Restructured modal wrapper overrides and repaired script routing tags to fix frozen numbers.</td>
                         </tr>
                         <tr>
                             <td><b>v9.2.9</b></td>
@@ -242,11 +246,6 @@
                             <td><b>v9.2.7</b></td>
                             <td><span class="log-pill pill-patch">Security</span></td>
                             <td>Appended domain arrays to query payloads to bypass explicit cross-origin layout context limits and unlock typing focus.</td>
-                        </tr>
-                        <tr>
-                            <td><b>v9.2.4</b></td>
-                            <td><span class="log-pill pill-core">Core Engine</span></td>
-                            <td>Wired real-time database listener channels to map viewer and chatter instances concurrently at WebSocket speeds.</td>
                         </tr>
                     </tbody>
                 </table>
@@ -359,8 +358,6 @@
 
         // TWITCH BROADCAST THEATER INTERACTIVE HOOKS
         function openTwitch() {
-            const parentHost = window.location.hostname || "briandivacox.github.io";
-            
             // Freeze pointer events globally across document background layers
             document.querySelectorAll('.counter-grid, .timer-stage').forEach(el => {
                 el.style.pointerEvents = "none";
@@ -368,9 +365,9 @@
             
             document.getElementById('chat-alert-dot').classList.remove('pulse-active');
             
-            // Force strict URL paths to bypass Twitch cross-origin layout context lockdowns
-            document.getElementById('twitch-player-frame').src = `https://player.twitch.tv/?channel=briandivacox&parent=${parentHost}&parent=localhost&autoplay=1&muted=0`;
-            document.getElementById('twitch-chat-frame').src = `https://www.twitch.tv/embed/briandivacox/chat?parent=${parentHost}&parent=localhost&darkpopout`;
+            // REMAPPED INTERACTIVE ROUTING: Switched from embed fallback logic to the custom sandboxed popup endpoint
+            document.getElementById('twitch-player-frame').src = "https://player.twitch.tv/?channel=briandivacox&parent=briandivacox.github.io&parent=localhost&autoplay=1&muted=0";
+            document.getElementById('twitch-chat-frame').src = "https://www.twitch.tv/popout/briandivacox/chat?darkpopout";
             
             document.getElementById('twitchModal').style.display = "block";
         }
