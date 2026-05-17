@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v9.2.4</title>
+    <title>Cloud Dashboard v9.2.5</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script data-cfasync="false" src="https://video.ibm.com/embed-api/v1/ustream-embedapi.min.js"></script>
     <style>
@@ -53,9 +53,9 @@
         .court-wrapper { width: 100%; height: 100%; overflow: hidden; position: relative; background: #000; z-index: 1; }
         .court-iframe { width: 1200px; height: 675px; border: none; position: absolute; top: 0px; left: 0px; transform: scale(0.28); transform-origin: 0 0; pointer-events: none; z-index: 1; }
         
-        /* Modal Windows - Absolute Top Layer Guard */
-        .modal { display: none; position: fixed; z-index: 999999 !important; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); backdrop-filter: blur(5px); }
-        .modal-content { background-color: #161b22; margin: 3% auto; padding: 25px; border: 1px solid var(--twitch-purple); width: 85%; max-width: 1300px; border-radius: 12px; position: relative; z-index: 1000000 !important; }
+        /* Modal Windows - Absolute Top Layer Global Guards */
+        .modal { display: none; position: fixed; z-index: 9999999 !important; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); backdrop-filter: blur(5px); }
+        .modal-content { background-color: #161b22; margin: 3% auto; padding: 25px; border: 1px solid var(--twitch-purple); width: 85%; max-width: 1350px; border-radius: 12px; position: relative; z-index: 10000000 !important; }
         .close-modal { position: absolute; top: 12px; right: 20px; color: var(--text-dim); font-size: 35px; font-weight: bold; cursor: pointer; }
         .close-modal:hover { color: #fff; }
 
@@ -136,7 +136,7 @@
         <div class="counter-item mirror-box" style="border-top: 3px solid #8b949e;">
             <i class="fa-brands fa-threads box-logo" style="color:white;"></i>
             <div><p class="mirror-label">🧵 Threads Views</p><div id="threads-view-num" class="mirror-stat" style="font-size: 2.5rem;">0</div></div>
-            <div class="threads-row">
+            <div class="mirror-row">
                 <div><p class="mirror-label">👥 Followers</p><div id="threads-fol-num" class="mirror-stat">0</div></div>
             </div>
         </div>
@@ -174,7 +174,7 @@
             </div>
             <div class="cinema-footer">
                 <div class="cinema-stats-line"><span>M: <span id="m-count">0</span></span><span>TV: <span id="tv-count">0</span></span><span style="color: var(--cinema-green);">S: <span id="sync-timer">LIVE</span></span></div>
-                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v9.2.4</span></div>
+                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v9.2.5</span></div>
             </div>
         </div>
     </div>
@@ -193,12 +193,12 @@
             <h3 style="margin-top: 0; color: var(--twitch-purple); display: flex; align-items: center; gap: 8px;">
                 <i class="fa-brands fa-twitch"></i> briandivacox Live Broadcast Studio
             </h3>
-            <div class="twitch-workspace-deck" style="display: flex; gap: 15px; width: 100%; height: 620px; margin-top: 15px;">
+            <div class="twitch-workspace-deck" style="display: flex; gap: 15px; width: 100%; height: 640px; margin-top: 15px;">
                 <div style="flex: 3.2; background: #000; border-radius: 8px; overflow: hidden; height: 100%;">
                     <iframe id="twitch-player-frame" width="100%" height="100%" src="" frameborder="0" allowfullscreen></iframe>
                 </div>
-                <div style="flex: 1; background: #1f1f23; border-radius: 8px; overflow: hidden; height: 100%; border: 1px solid var(--border-color);">
-                    <iframe id="twitch-chat-frame" width="100%" height="100%" src="" frameborder="0"></iframe>
+                <div style="flex: 1; background: #1f1f23; border-radius: 8px; overflow: hidden; height: 100%; border: 1px solid var(--border-color); position: relative; pointer-events: auto !important; z-index: 200000000 !important;">
+                    <iframe id="twitch-chat-frame" width="100%" height="100%" src="" frameborder="0" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;"></iframe>
                 </div>
             </div>
         </div>
@@ -311,9 +311,10 @@
         function openTwitch() {
             const parentHost = window.location.hostname || "localhost";
             
-            // CRITICAL EVENT LOCK: Neutralize background card hitboxes completely
-            document.getElementById('court-box').style.pointerEvents = "none";
-            document.getElementById('court-box').style.opacity = "0.1";
+            // Turn off pointer actions on ALL background elements entirely
+            document.querySelectorAll('.counter-grid, .timer-stage').forEach(el => {
+                el.style.pointerEvents = "none";
+            });
             
             document.getElementById('chat-alert-dot').classList.remove('pulse-active');
             document.getElementById('twitch-player-frame').src = `https://player.twitch.tv/?channel=briandivacox&parent=${parentHost}&autoplay=1&muted=0`;
@@ -322,9 +323,10 @@
         }
         
         function closeTwitch() {
-            // RELEASE EVENT LOCK: Restore background card hitboxes completely
-            document.getElementById('court-box').style.pointerEvents = "auto";
-            document.getElementById('court-box').style.opacity = "1";
+            // Restore mouse tracking to background grid cleanly on escape
+            document.querySelectorAll('.counter-grid, .timer-stage').forEach(el => {
+                el.style.pointerEvents = "auto";
+            });
             
             document.getElementById('twitch-player-frame').src = "";
             document.getElementById('twitch-chat-frame').src = "";
