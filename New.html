@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v9.6.8</title>
+    <title>Cloud Dashboard v9.7.1</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script data-cfasync="false" src="https://video.ibm.com/embed-api/v1/ustream-embedapi.min.js"></script>
     <style>
@@ -16,51 +16,28 @@
             --yt-red: #FF0000; --tt-cyan: #00f2ea; --ig-pink: #E1306C; --meta-blue: #58a6ff;
         }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: var(--text-main); display: flex; flex-direction: column; align-items: center; padding: 15px; margin: 0; min-height: 100vh; overflow-x: hidden; }
-        
-        /* Timer Stage */
         .timer-stage { width: 100%; max-width: 1400px; height: 195px; margin-bottom: 25px; border-radius: 12px; border: 1px solid var(--border-color); overflow: hidden; background: #000; position: relative; }
         .timer-stage iframe { width: 100%; height: 350px; border: none; position: absolute; top: -92px; left: 0; border-radius: 12px; }
-        
-        /* Grid Layout */
         .counter-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; width: 100%; max-width: 1400px; }
         .counter-item { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; height: 150px; position: relative; display: flex; flex-direction: column; justify-content: center; padding-left: 25px; padding-bottom: 10px; overflow: hidden; transition: 0.3s; }
-        
         .box-logo { position: absolute; top: 12px; right: 15px; width: 22px; height: 22px; z-index: 40; display: flex; align-items: center; justify-content: center; pointer-events: none; }
         .box-logo svg { width: 100%; height: 100%; }
-
-        /* General Social Iframe Center-Crop Positioning */
         .counter-item iframe:not(.court-iframe) { filter: invert(1) hue-rotate(180deg); border: 0; width: 450px; height: 220px; position: absolute; pointer-events: none; }
-        
-        /* Row 2 Social Alignments */
         #x-box iframe, #yt-box iframe, #tt-box iframe { top: 15px; left: -85px; }
-        
-        /* Instagram Mask Fix */
-        #ig-box iframe { 
-            margin-top: 55px !important; 
-            left: -40px !important; 
-            transform: scale(1.1);
-            clip-path: inset(0px 0px 50px 0px); 
-        } 
-
+        #ig-box iframe { margin-top: 55px !important; left: -40px !important; transform: scale(1.1); clip-path: inset(0px 0px 50px 0px); } 
         .main-number { font-size: 3.1rem; font-weight: 800; color: #ffffff; margin: 0; white-space: nowrap; letter-spacing: -2px; line-height: 1.1; }
         .mirror-box { justify-content: space-evenly !important; padding-left: 0 !important; text-align: center; }
         .mirror-row { display: flex; justify-content: space-around; width: 100%; margin-top: 5px; }
         .mirror-label { font-size: 9px; color: var(--text-dim); text-transform: uppercase; font-weight: bold; margin: 0; }
         .mirror-stat { font-size: 2rem; font-weight: 800; color: #ffffff; margin-bottom: 2px; }
-
-        /* Brian's Theater Styling */
         .cinema-info { padding: 12px 20px 12px 15px; display: grid; grid-template-columns: 1.2fr 1fr; gap: 8px; height: 100%; text-align: left; }
         .cinema-label { font-size: 9px; color: var(--cinema-green); text-transform: uppercase; font-weight: bold; }
         .cinema-title { font-size: 13px; font-weight: bold; color: #ffffff; line-height: 1.2; margin-top: 2px; height: 32px; overflow: hidden; }
         .cinema-footer { position: absolute; bottom: 0; left: 0; right: 0; background: #0d1117; padding: 6px 12px; border-top: 1px solid var(--border-color); display: flex; flex-direction: column; }
         .cinema-stats-line { font-size: 10px; color: var(--plex-orange); display: flex; justify-content: space-between; font-weight: bold; }
-
-        /* Court Stream Monitor */
         #court-box { padding: 0 !important; border-top: 3px solid var(--plex-orange); background: #000; cursor: pointer; display: block; }
         .court-wrapper { width: 100%; height: 100%; overflow: hidden; position: relative; background: #000; }
         .court-iframe { width: 1200px; height: 675px; border: none; position: absolute; top: 0px; left: 0px; transform: scale(0.28); transform-origin: 0 0; pointer-events: none; }
-        
-        /* Modals */
         .modal { display: none; position: fixed; z-index: 9999999 !important; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); backdrop-filter: blur(5px); }
         .modal-content { background-color: #161b22; margin: 5% auto; padding: 20px; border: 1px solid var(--plex-orange); width: 85%; max-width: 900px; border-radius: 12px; position: relative; }
         .close-modal { position: absolute; top: 10px; right: 20px; color: var(--text-dim); font-size: 35px; font-weight: bold; cursor: pointer; }
@@ -69,71 +46,18 @@
 <body>
 
     <div class="timer-stage"><iframe src="https://board.multitimer.net/view/?q=6z0n8w08m0"></iframe></div>
-    
     <div class="counter-grid">
-        <div class="counter-item mirror-box" style="border-top: 3px solid var(--light-purple);">
-            <i class="fa-solid fa-wand-magic-sparkles box-logo" style="color:var(--light-purple);"></i>
-            <div><p class="mirror-label" style="color:var(--light-purple);">✨ Tales Detected</p><div id="totalViewsCounter" class="mirror-stat" style="font-size: 2.5rem;">0</div></div>
-            <div class="mirror-row">
-                <div><p class="mirror-label">👥 Online</p><div id="visitorCounter" class="mirror-stat">0</div></div>
-                <div><p class="mirror-label" style="color:var(--plex-orange);">🎬 Plex</p><div id="plex-count-num" class="mirror-stat">0</div></div>
-            </div>
-        </div>
+        <div class="counter-item mirror-box" style="border-top: 3px solid var(--light-purple);"><i class="fa-solid fa-wand-magic-sparkles box-logo" style="color:var(--light-purple);"></i><div><p class="mirror-label" style="color:var(--light-purple);">✨ Tales Detected</p><div id="totalViewsCounter" class="mirror-stat" style="font-size: 2.5rem;">0</div></div><div class="mirror-row"><div><p class="mirror-label">👥 Online</p><div id="visitorCounter" class="mirror-stat">0</div></div><div><p class="mirror-label" style="color:var(--plex-orange);">🎬 Plex</p><div id="plex-count-num" class="mirror-stat">0</div></div></div></div>
+        <div class="counter-item mirror-box" style="border-top: 3px solid var(--meta-blue);"><i class="fa-brands fa-meta box-logo" style="color:var(--meta-blue); font-size: 18px;"></i><div style="display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 12px; width: 100%; align-items: center; padding: 0 0 0 28px;"><div style="text-align: left;"><p class="mirror-label" style="color:var(--ig-pink);"><i class="fa-brands fa-instagram"></i> IG Fol</p><div id="ig-fol-num" class="mirror-stat" style="font-size: 1.5rem;">0</div></div><div style="text-align: left;"><p class="mirror-label" style="color:#fff;"><i class="fa-brands fa-threads"></i> Threads</p><div id="threads-fol-num" class="mirror-stat" style="font-size: 1.5rem;">0</div></div><div style="text-align: left;"><p class="mirror-label" style="color:var(--fb-vivid);"><i class="fa-brands fa-facebook"></i> Page</p><div id="fb-page-num" class="mirror-stat" style="font-size: 1.5rem;">0</div></div><div style="text-align: left;"><p class="mirror-label" style="color:var(--fb-vivid);"><i class="fa-solid fa-user"></i> Profile</p><div id="fb-personal-num" class="mirror-stat" style="font-size: 1.5rem;">0</div></div></div></div>
+        <div class="counter-item mirror-box" id="twitch-box" onclick="openTwitch()" style="border-top: 3px solid var(--twitch-purple); cursor: pointer;"><i class="fa-brands fa-twitch box-logo" style="color:var(--twitch-purple);"></i><div><p class="mirror-label" style="color:var(--twitch-purple);">🟣 Followers</p><div id="twitch-fol-num" class="mirror-stat" style="font-size: 2.5rem;">---</div></div><div class="mirror-row"><div><p class="mirror-label">🎬 Viewers</p><div id="twitch-view-num" class="mirror-stat">0</div></div><div><p class="mirror-label">💬 Chatters</p><div id="twitch-chatter-num" class="mirror-stat">0</div></div></div></div>
+        <div class="counter-item" id="yt-box" style="border-top: 3px solid var(--yt-red);"><i class="fa-brands fa-youtube box-logo" style="color:var(--yt-red);"></i><iframe scrolling="no" src="https://livecounts.io/embed/youtube-live-subscriber-counter/UCMuv7PfbLVm8IZsd6Bgqqzg"></iframe></div>
+        
+        <div class="counter-item" id="tt-box" style="border-top: 3px solid var(--tt-cyan);"><i class="fa-brands fa-tiktok box-logo" style="color:var(--tt-cyan);"></i><iframe scrolling="no" src="https://livecounts.io/embed/tiktok-live-follower-counter/briandivacox"></iframe></div>
+        <div class="counter-item" id="x-box" style="border-top: 3px solid #ffffff;"><div class="box-logo"><svg viewBox="0 0 24 24" fill="white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.045 4.126H5.078z"/></svg></div><iframe scrolling="no" src="https://livecounts.io/embed/twitter-live-follower-counter/briandivacox"></iframe></div>
+        <div class="counter-item mirror-box" style="border-top: 3px solid var(--bsky-electric);"><div class="box-logo"><svg viewBox="0 0 566 500"><path fill="var(--bsky-electric)" d="M121.2 35.6C191.6 86.9 282.9 178.1 282.9 178.1S374.2 86.9 444.7 35.6C502.9-6.8 566 -20.3 566 49.3c0 19.3-11.2 121.1-17.8 144.6-21 75-52.2 89.8-118.4 104.8 134.5 25.3 152.9 70.6 152.9 101.7 0 71-65.4 63.3-119 31.9-74.5-43.8-139.8-138.8-179.9-195.1-40.1 56.3-105.4 151.3-179.9 195.1-53.6 31.5-119 39.1-119-31.9 0-31.1 18.4-76.4 152.9-101.7C46.2 283.7 15 268.9 0 193.9c-6.6-23.5-17.8-125.3-17.8-144.6 0-69.6 63.1-56.1 121.2-13.7z"/></svg></div><div id="bsky-num" class="main-number">---</div></div>
+        <div class="counter-item" id="court-box" onclick="openCourt()"><div class="court-wrapper"><iframe id="court-player" class="court-iframe" src="https://video.ibm.com/embed/23891775?showtitle=false&volume=0&autoplay=0"></iframe><div style="position: absolute; top: 10px; left: 15px; z-index: 60; text-shadow: 2px 2px 4px #000;"><h4 style="margin: 0; font-size: 14px; color: #fff;">Court Stream</h4></div><i class="fa-solid fa-expand" style="position: absolute; top: 12px; right: 15px; color: rgba(255,255,255,0.6); z-index: 60;"></i></div></div>
 
-        <div class="counter-item mirror-box" style="border-top: 3px solid var(--meta-blue);">
-            <i class="fa-brands fa-meta box-logo" style="color:var(--meta-blue); font-size: 18px;"></i>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 12px; width: 100%; align-items: center; padding: 0 0 0 28px;">
-                <div style="text-align: left;"><p class="mirror-label" style="color:var(--ig-pink);"><i class="fa-brands fa-instagram"></i> IG Fol</p><div id="ig-fol-num" class="mirror-stat" style="font-size: 1.5rem;">0</div></div>
-                <div style="text-align: left;"><p class="mirror-label" style="color:#fff;"><i class="fa-brands fa-threads"></i> Threads</p><div id="threads-fol-num" class="mirror-stat" style="font-size: 1.5rem;">0</div></div>
-                <div style="text-align: left;"><p class="mirror-label" style="color:var(--fb-vivid);"><i class="fa-brands fa-facebook"></i> Page</p><div id="fb-page-num" class="mirror-stat" style="font-size: 1.5rem;">0</div></div>
-                <div style="text-align: left;"><p class="mirror-label" style="color:var(--fb-vivid);"><i class="fa-solid fa-user"></i> Profile</p><div id="fb-personal-num" class="mirror-stat" style="font-size: 1.5rem;">0</div></div>
-            </div>
-        </div>
-
-        <div class="counter-item mirror-box" id="twitch-box" onclick="openTwitch()" style="border-top: 3px solid var(--twitch-purple); cursor: pointer;">
-            <i class="fa-brands fa-twitch box-logo" style="color:var(--twitch-purple);"></i>
-            <div><p class="mirror-label" style="color:var(--twitch-purple);">🟣 Followers</p><div id="twitch-fol-num" class="mirror-stat" style="font-size: 2.5rem;">---</div></div>
-            <div class="mirror-row">
-                <div><p class="mirror-label">🎬 Viewers</p><div id="twitch-view-num" class="mirror-stat">0</div></div>
-                <div><p class="mirror-label">💬 Chatters</p><div id="twitch-chatter-num" class="mirror-stat">0</div></div>
-            </div>
-        </div>
-
-        <div class="counter-item" id="yt-box" style="border-top: 3px solid var(--yt-red);">
-            <i class="fa-brands fa-youtube box-logo" style="color:var(--yt-red);"></i>
-            <iframe scrolling="no" src="https://livecounts.io/embed/youtube-live-subscriber-counter/UCMuv7PfbLVm8IZsd6Bgqqzg"></iframe>
-        </div>
-
-        <div class="counter-item" id="tt-box" style="border-top: 3px solid var(--tt-cyan);">
-            <i class="fa-brands fa-tiktok box-logo" style="color:var(--tt-cyan);"></i>
-            <iframe scrolling="no" src="https://livecounts.io/embed/tiktok-live-follower-counter/briandivacox"></iframe>
-        </div>
-
-        <div class="counter-item" id="x-box" style="border-top: 3px solid #ffffff;">
-            <div class="box-logo"><svg viewBox="0 0 24 24" fill="white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.045 4.126H5.078z"/></svg></div>
-            <iframe scrolling="no" src="https://livecounts.io/embed/twitter-live-follower-counter/briandivacox"></iframe>
-        </div>
-
-        <div class="counter-item mirror-box" style="border-top: 3px solid var(--bsky-electric);">
-            <div class="box-logo"><svg viewBox="0 0 566 500"><path fill="var(--bsky-electric)" d="M121.2 35.6C191.6 86.9 282.9 178.1 282.9 178.1S374.2 86.9 444.7 35.6C502.9-6.8 566 -20.3 566 49.3c0 19.3-11.2 121.1-17.8 144.6-21 75-52.2 89.8-118.4 104.8 134.5 25.3 152.9 70.6 152.9 101.7 0 71-65.4 63.3-119 31.9-74.5-43.8-139.8-138.8-179.9-195.1-40.1 56.3-105.4 151.3-179.9 195.1-53.6 31.5-119 39.1-119-31.9 0-31.1 18.4-76.4 152.9-101.7C46.2 283.7 15 268.9 0 193.9c-6.6-23.5-17.8-125.3-17.8-144.6 0-69.6 63.1-56.1 121.2-13.7z"/></svg></div>
-            <div id="bsky-num" class="main-number">---</div>
-        </div>
-
-        <div class="counter-item" id="court-box" onclick="openCourt()">
-            <div class="court-wrapper">
-                <iframe id="court-player" class="court-iframe" src="https://video.ibm.com/embed/23891775?showtitle=false&volume=0&autoplay=0"></iframe>
-                <div style="position: absolute; top: 10px; left: 15px; z-index: 60; text-shadow: 2px 2px 4px #000;">
-                    <h4 style="margin: 0; font-size: 14px; color: #fff;">Court Stream</h4>
-                </div>
-                <i class="fa-solid fa-expand" style="position: absolute; top: 12px; right: 15px; color: rgba(255,255,255,0.6); z-index: 60;"></i>
-            </div>
-        </div>
-
-        <div class="counter-item mirror-box" style="border-top: 3px solid var(--snap-yellow);">
-            <i class="fa-brands fa-snapchat box-logo" style="color:var(--snap-yellow);"></i>
-            <div id="snap-fol-num" class="main-number">0</div>
-        </div>
-
+        <div class="counter-item mirror-box" style="border-top: 3px solid var(--snap-yellow);"><i class="fa-brands fa-snapchat box-logo" style="color:var(--snap-yellow);"></i><div id="snap-fol-num" class="main-number">0</div></div>
         <div class="counter-item" style="border-top: 3px solid var(--cinema-green); padding-left: 0; grid-column: 4;">
             <i class="fa-solid fa-film box-logo" style="color: var(--cinema-green);"></i>
             <div class="cinema-info">
@@ -142,20 +66,11 @@
                     <div class="cinema-label" style="color: var(--plex-orange);">Up Next</div><div id="m-next" class="cinema-title">--</div><div id="m-time" style="font-size: 10px; color: var(--text-dim);">--</div>
                 </div>
             </div>
-            <div class="cinema-footer">
-                <div class="cinema-stats-line"><span>M: <span id="m-count">0</span></span><span>TV: <span id="tv-count">0</span></span><span style="color: var(--cinema-green);">S: <span id="sync-timer">LIVE</span></span></div>
-                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v9.6.8</span></div>
-            </div>
+            <div class="cinema-footer"><div class="cinema-stats-line"><span>M: <span id="m-count">0</span></span><span>TV: <span id="tv-count">0</span></span><span style="color: var(--cinema-green);">S: <span id="sync-timer">LIVE</span></span></div><div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v9.7.1</span></div></div>
         </div>
     </div>
 
-    <div id="courtModal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal" onclick="closeCourt()">&times;</span>
-            <h3 style="margin-top: 0; color: var(--plex-orange);">Live Court Feed</h3>
-            <iframe id="modal-player" width="100%" height="500" src="" frameborder="0" allowfullscreen></iframe>
-        </div>
-    </div>
+    <div id="courtModal" class="modal"><div class="modal-content"><span class="close-modal" onclick="closeCourt()">&times;</span><h3 style="margin-top: 0; color: var(--plex-orange);">Live Court Feed</h3><iframe id="modal-player" width="100%" height="500" src="" frameborder="0" allowfullscreen></iframe></div></div>
 
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
@@ -181,8 +96,21 @@
             document.getElementById('twitch-chatter-num').innerText = fNum(d.twitchChatters);
             document.getElementById('ig-fol-num').innerText = fNum(d.igFol || 0);
         });
+
+        // --- NEW STRING-TO-SECONDS ENGINE ---
+        function parseToSeconds(str) {
+            if (!str) return 0;
+            let total = 0;
+            const h = str.match(/(\d+)\s*(h|hr|hour)/i);
+            const m = str.match(/(\d+)\s*(m|min)/i);
+            const s = str.match(/(\d+)\s*(s|sec)/i);
+            if (h) total += parseInt(h[1]) * 3600;
+            if (m) total += parseInt(m[1]) * 60;
+            if (s) total += parseInt(s[1]);
+            return total;
+        }
         
-        let nowInt, nextInt, localNowSecs = 0;
+        let nowInt, nextInt, localNowSecs = 0, localNextSecs = 0;
         sDb.ref('theaterSync').on('value', (snapshot) => {
             const m = snapshot.val(); if (!m) return;
             const isIdle = !m.nowPlaying || m.nowPlaying.toLowerCase().includes("no movie playing");
@@ -192,53 +120,48 @@
             document.getElementById('m-open').innerText = m.daysOpen || "0";
             document.getElementById('tv-count').innerText = fNum(m.tvCount || m.showCount);
             
+            // --- NEXT SHOWING TICKER ---
             clearInterval(nextInt);
             const timeEl = document.getElementById('m-time');
             const nextTitleEl = document.getElementById('m-next');
-
-            // --- THE MASTER LIVE HEARTBEAT ENGINE ---
-            if (m.nextTimestamp && m.nextTimestamp > 0) {
+            
+            // Check if nextTime contains any numbers (indicating a duration)
+            if (m.nextTime && /\d/.test(m.nextTime) && !m.nextTime.includes(",")) {
                 nextTitleEl.innerText = m.nextTitle || "Upcoming";
-                const targetTs = m.nextTimestamp;
-                const now = new Date();
-                const isToday = new Date(targetTs).toDateString() === now.toDateString();
-
-                if (isToday && (targetTs - Date.now() > 0)) {
-                    const runTicker = () => {
-                        const diff = targetTs - Date.now();
-                        if (diff <= 0) { timeEl.innerText = "Show Starting..."; clearInterval(nextInt); return; }
-                        const s = Math.floor(diff / 1000), hh = Math.floor(s / 3600), mm = Math.floor((s % 3600) / 60), ss = s % 60;
-                        const pad = (n) => n < 10 ? "0" + n : n;
-                        timeEl.innerText = `In: ${pad(hh)}h ${pad(mm)}m ${pad(ss)}s`;
-                    };
-                    runTicker(); nextInt = setInterval(runTicker, 1000);
-                } else {
-                    timeEl.innerText = m.nextTime;
-                }
+                localNextSecs = parseToSeconds(m.nextTime);
+                const startNextTicker = () => {
+                    if (localNextSecs <= 0) { timeEl.innerText = "Show Starting..."; clearInterval(nextInt); return; }
+                    localNextSecs--;
+                    let hh = Math.floor(localNextSecs / 3600), mm = Math.floor((localNextSecs % 3600) / 60), ss = localNextSecs % 60;
+                    const f = (n) => n < 10 ? "0" + n : n;
+                    timeEl.innerText = `In: ${f(hh)}h ${f(mm)}m ${f(ss)}s`;
+                };
+                startNextTicker(); nextInt = setInterval(startNextTicker, 1000);
             } else {
                 nextTitleEl.innerText = m.nextTitle || "None";
                 timeEl.innerText = m.nextTime || "No Movie Scheduled";
             }
             
+            // --- NOW PLAYING TICKER ---
             clearInterval(nowInt);
             const nowEl = document.getElementById('m-left');
             if (isIdle || !m.timeLeft || m.timeLeft.includes("--")) { nowEl.innerText = "Cinema Idle"; } else {
-                let hM = m.timeLeft.match(/(\d+)\s*hour/i), mM = m.timeLeft.match(/(\d+)\s*min/i), sM = m.timeLeft.match(/(\d+)\s*sec/i);
-                localNowSecs = (parseInt(hM?hM[1]:0)*3600)+(parseInt(mM?mM[1]:0)*60)+parseInt(sM?sM[1]:0);
-                nowInt = setInterval(() => {
-                    if (localNowSecs <= 0) { clearInterval(nowInt); nowEl.innerText = "Cinema Idle"; return; }
+                localNowSecs = parseToSeconds(m.timeLeft);
+                const startNowTicker = () => {
+                    if (localNowSecs <= 0) { nowEl.innerText = "Cinema Idle"; clearInterval(nowInt); return; }
                     localNowSecs--;
-                    let hh = Math.floor(localNowSecs/3600), mm = Math.floor((localNowSecs%3600)/60), ss = localNowSecs%60;
-                    const pad = (n) => n < 10 ? "0" + n : n;
-                    nowEl.innerText = `Left: ${pad(hh)}h ${pad(mm)}m ${pad(ss)}s`;
-                }, 1000);
+                    let hh = Math.floor(localNowSecs / 3600), mm = Math.floor((localNowSecs % 3600) / 60), ss = localNowSecs % 60;
+                    const f = (n) => n < 10 ? "0" + n : n;
+                    nowEl.innerText = `Left: ${f(hh)}h ${f(mm)}m ${f(ss)}s`;
+                };
+                startNowTicker(); nowInt = setInterval(startNowTicker, 1000);
             }
         });
         
         function openCourt() { document.getElementById('modal-player').src = "https://video.ibm.com/embed/23891775?autoplay=1"; document.getElementById('courtModal').style.display = "block"; }
         function closeCourt() { document.getElementById('modal-player').src = ""; document.getElementById('courtModal').style.display = "none"; }
         function openTwitch() { window.open(`Live.html?host=${window.location.hostname}`, 'TwitchStudio', `width=1480,height=820`); }
-        async function getBsky() { try { const r = await fetch('https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=briandivacox.bsky.social'); const p = await r.json(); if (p.followersCount !== undefined) document.getElementById('bsky-num').innerText = fNum(p.followersCount); } catch (e) {} }
+        async function getBsky() { try { const r = await fetch('https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=briandivacox.bsky.social'); const p = await r.json(); if (p.followersCount !== undefined) document.getElementById('bsky-num').innerText = p.followersCount.toLocaleString(); } catch (e) {} }
         getBsky(); setInterval(getBsky, 300000);
     </script>
 </body>
