@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v9.5.7</title>
+    <title>Cloud Dashboard v9.5.8</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script data-cfasync="false" src="https://video.ibm.com/embed-api/v1/ustream-embedapi.min.js"></script>
     <style>
@@ -336,7 +336,7 @@
             </div>
             <div class="cinema-footer">
                 <div class="cinema-stats-line"><span>M: <span id="m-count">0</span></span><span>TV: <span id="tv-count">0</span></span><span style="color: var(--cinema-green);">S: <span id="sync-timer">LIVE</span></span></div>
-                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v9.5.7</span></div>
+                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v9.5.8</span></div>
             </div>
         </div>
     </div>
@@ -420,19 +420,21 @@
                 nextTitleEl.innerText = "None";
                 timeEl.innerText = "No Movie Scheduled";
             } else {
-                nextTitleEl.innerText = m.nextTitle || m.nextPlaying || "None";
+                let dateString = cleanNextTime.replace(/starting\s*:\s*/i, '').trim();
+                if (!dateString.includes("2026") && !dateString.includes("2027")) {
+                    dateString += ", 2026";
+                }
+                const targetTimestamp = Date.parse(dateString);
+                const isPastEvent = !isNaN(targetTimestamp) && (targetTimestamp - Date.now() <= 0);
                 
-                // STATE-DRIVEN CONDITIONER: If theater is currently idle, bypass the clock math entirely
-                if (isIdle) {
-                    timeEl.innerText = m.nextTime;
+                // AUTOCLEAR LOOP PROTOTYPE: If time math is in the past and theater is idle, clear the ghost fields
+                if (isPastEvent && isIdle) {
+                    nextTitleEl.innerText = "None";
+                    timeEl.innerText = "No Movie Scheduled";
                 } else {
-                    let dateString = cleanNextTime.replace(/starting\s*:\s*/i, '').trim();
-                    if (!dateString.includes("2026") && !dateString.includes("2027")) {
-                        dateString += ", 2026";
-                    }
-                    const targetTimestamp = Date.parse(dateString);
+                    nextTitleEl.innerText = m.nextTitle || m.nextPlaying || "None";
                     
-                    if (isNaN(targetTimestamp)) {
+                    if (isIdle || isNaN(targetTimestamp)) {
                         timeEl.innerText = m.nextTime;
                     } else {
                         const startCountdown = () => {
