@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v9.7.3</title>
+    <title>Cloud Dashboard v9.7.4</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script data-cfasync="false" src="https://video.ibm.com/embed-api/v1/ustream-embedapi.min.js"></script>
     <style>
@@ -66,7 +66,7 @@
                     <div class="cinema-label" style="color: var(--plex-orange);">Up Next</div><div id="m-next" class="cinema-title">--</div><div id="m-time" style="font-size: 10px; color: var(--text-dim);">--</div>
                 </div>
             </div>
-            <div class="cinema-footer"><div class="cinema-stats-line"><span>M: <span id="m-count">0</span></span><span>TV: <span id="tv-count">0</span></span><span style="color: var(--cinema-green);">S: <span id="sync-timer">LIVE</span></span></div><div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v9.7.3</span></div></div>
+            <div class="cinema-footer"><div class="cinema-stats-line"><span>M: <span id="m-count">0</span></span><span>TV: <span id="tv-count">0</span></span><span style="color: var(--cinema-green);">S: <span id="sync-timer">LIVE</span></span></div><div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v9.7.4</span></div></div>
         </div>
     </div>
 
@@ -97,7 +97,6 @@
             document.getElementById('ig-fol-num').innerText = fNum(d.igFol || 0);
         });
 
-        // String-to-Seconds Parser
         function parseToSeconds(str) {
             if (!str) return 0;
             let total = 0;
@@ -120,7 +119,6 @@
             document.getElementById('m-open').innerText = m.daysOpen || "0";
             document.getElementById('tv-count').innerText = fNum(m.tvCount || m.showCount);
             
-            // UP NEXT TICKER
             clearInterval(nextInt);
             const timeEl = document.getElementById('m-time');
             const nextTitleEl = document.getElementById('m-next');
@@ -141,7 +139,6 @@
                 timeEl.innerText = m.nextTime || "No Movie Scheduled";
             }
             
-            // NOW PLAYING TICKER
             clearInterval(nowInt);
             const nowEl = document.getElementById('m-left');
             if (isIdle || !m.timeLeft || m.timeLeft.includes("--")) { nowEl.innerText = "Cinema Idle"; } else {
