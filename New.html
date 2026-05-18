@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v9.6.0</title>
+    <title>Cloud Dashboard v9.6.2</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script data-cfasync="false" src="https://video.ibm.com/embed-api/v1/ustream-embedapi.min.js"></script>
     <style>
@@ -125,7 +125,7 @@
             </div>
             <div class="cinema-footer">
                 <div class="cinema-stats-line"><span>M: <span id="m-count">0</span></span><span>TV: <span id="tv-count">0</span></span><span style="color: var(--cinema-green);">S: <span id="sync-timer">LIVE</span></span></div>
-                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v9.6.0</span></div>
+                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v9.6.2</span></div>
             </div>
         </div>
     </div>
@@ -193,37 +193,36 @@
             const timeEl = document.getElementById('m-time');
             const nextTitleEl = document.getElementById('m-next');
             const cleanNextTime = m.nextTime ? m.nextTime.trim() : "";
-            const isNextEmpty = !cleanNextTime || cleanNextTime.toLowerCase().includes("none");
             
-            if (isNextEmpty) {
+            if (!cleanNextTime || cleanNextTime.toLowerCase().includes("none") || cleanNextTime === "") {
                 nextTitleEl.innerText = "None"; timeEl.innerText = "No Movie Scheduled";
             } else {
+                nextTitleEl.innerText = m.nextTitle || "Upcoming";
                 let dateString = cleanNextTime.replace(/starting\s*:\s*/i, '').trim();
                 if (!dateString.includes("2026") && !dateString.includes("2027")) dateString += ", 2026";
                 const targetTimestamp = Date.parse(dateString);
                 
                 if (isNaN(targetTimestamp)) {
-                    nextTitleEl.innerText = m.nextTitle || "None"; timeEl.innerText = m.nextTime;
+                    timeEl.innerText = m.nextTime;
                 } else {
-                    nextTitleEl.innerText = m.nextTitle || "None";
                     const targetDate = new Date(targetTimestamp);
-                    const today = new Date();
-                    
-                    // CHECK IF EVENT IS TODAY
-                    const isToday = targetDate.getDate() === today.getDate() && targetDate.getMonth() === today.getMonth() && targetDate.getFullYear() === today.getFullYear();
-                    
-                    if (isToday) {
+                    const now = new Date();
+                    const isToday = targetDate.getDate() === now.getDate() && targetDate.getMonth() === now.getMonth() && targetDate.getFullYear() === now.getFullYear();
+                    const distance = targetTimestamp - now.getTime();
+
+                    if (distance <= 0) {
+                        timeEl.innerText = "Show Started"; 
+                    } else if (isToday) {
                         const startCountdown = () => {
-                            const distance = targetTimestamp - Date.now();
-                            if (distance <= 0) { timeEl.innerText = "Show Starting..."; clearInterval(nextInt); return; }
-                            const totalSecs = Math.floor(distance / 1000);
+                            const d = targetTimestamp - Date.now();
+                            if (d <= 0) { timeEl.innerText = "Show Started"; clearInterval(nextInt); return; }
+                            const totalSecs = Math.floor(d / 1000);
                             const hh = Math.floor(totalSecs / 3600), mm = Math.floor((totalSecs % 3600) / 60), ss = totalSecs % 60;
                             timeEl.innerText = `In: ${hh}h ${mm}m ${ss}s`;
                         };
                         nextInt = setInterval(startCountdown, 1000);
                         startCountdown();
                     } else {
-                        // SHOW STATIC DATE IF NOT TODAY
                         timeEl.innerText = m.nextTime;
                     }
                 }
