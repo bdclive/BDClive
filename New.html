@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v9.8.2</title>
+    <title>Cloud Dashboard v9.8.3</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script data-cfasync="false" src="https://video.ibm.com/embed-api/v1/ustream-embedapi.min.js"></script>
     <style>
@@ -59,22 +59,26 @@
 
         <div class="counter-item mirror-box" style="border-top: 3px solid var(--meta-blue);">
             <i class="fa-brands fa-meta box-logo" style="color:var(--meta-blue); font-size: 18px;"></i>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 12px; width: 100%; align-items: center; padding: 0 0 0 28px;">
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px 6px; width: 100%; align-items: center; padding: 0 10px 0 15px; box-sizing: border-box;">
                 <div style="text-align: left;">
-                    <p class="mirror-label" style="color:var(--ig-vivid);"><i class="fa-brands fa-instagram"></i> IG Fol</p>
-                    <div id="ig-fol-num" class="mirror-stat" style="font-size: 1.5rem; line-height: 1;">0</div>
+                    <p class="mirror-label" style="color:var(--ig-vivid); white-space: nowrap;"><i class="fa-brands fa-instagram"></i> IG Fol</p>
+                    <div id="ig-fol-num" class="mirror-stat" style="font-size: 1.35rem; line-height: 1; margin-top: 3px;">0</div>
                 </div>
                 <div style="text-align: left;">
-                    <p class="mirror-label" style="color:#fff;"><i class="fa-brands fa-threads"></i> Threads</p>
-                    <div id="threads-fol-num" class="mirror-stat" style="font-size: 1.5rem; line-height: 1;">0</div>
+                    <p class="mirror-label" style="color:#fff; white-space: nowrap;"><i class="fa-brands fa-threads"></i> Threads</p>
+                    <div id="threads-fol-num" class="mirror-stat" style="font-size: 1.35rem; line-height: 1; margin-top: 3px;">0</div>
                 </div>
                 <div style="text-align: left;">
-                    <p class="mirror-label" style="color:var(--fb-vivid);"><i class="fa-brands fa-facebook"></i> Page</p>
-                    <div id="fb-page-num" class="mirror-stat" style="font-size: 1.5rem; line-height: 1;">0</div>
+                    <p class="mirror-label" style="color:#bc95ff; white-space: nowrap;"><i class="fa-solid fa-eye"></i> Views</p>
+                    <div id="threads-views-num" class="mirror-stat" style="font-size: 1.35rem; line-height: 1; margin-top: 3px;">0</div>
                 </div>
                 <div style="text-align: left;">
-                    <p class="mirror-label" style="color:var(--fb-vivid);"><i class="fa-solid fa-user"></i> Profile</p>
-                    <div id="fb-personal-num" class="mirror-stat" style="font-size: 1.5rem; line-height: 1;">0</div>
+                    <p class="mirror-label" style="color:var(--fb-vivid); white-space: nowrap;"><i class="fa-brands fa-facebook"></i> Page</p>
+                    <div id="fb-page-num" class="mirror-stat" style="font-size: 1.35rem; line-height: 1; margin-top: 3px;">0</div>
+                </div>
+                <div style="text-align: left; grid-column: span 2;">
+                    <p class="mirror-label" style="color:var(--fb-vivid); white-space: nowrap;"><i class="fa-solid fa-user"></i> Profile</p>
+                    <div id="fb-personal-num" class="mirror-stat" style="font-size: 1.35rem; line-height: 1; margin-top: 3px;">0</div>
                 </div>
             </div>
         </div>
@@ -134,7 +138,7 @@
             </div>
             <div class="cinema-footer">
                 <div class="cinema-stats-line"><span>M: <span id="m-count">0</span></span><span>TV: <span id="tv-count">0</span></span><span style="color: var(--cinema-green);">S: <span id="sync-timer">LIVE</span></span></div>
-                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v9.8.2</span></div>
+                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v9.8.3</span></div>
             </div>
         </div>
     </div>
@@ -157,6 +161,9 @@
         
         const fNum = (val) => { if (val === null || val === undefined || val === "---") return val || "0"; const num = parseFloat(val.toString().replace(/,/g, '').trim()); return isNaN(num) ? val : new Intl.NumberFormat('en-US').format(num); };
         
+        let lastPulseTime = 0;
+        let alertTimeout = null;
+
         vDb.ref("totalViewCount").on("value", s => document.getElementById("totalViewsCounter").innerText = fNum(s.val()));
         vDb.ref("visitorsConnected").on("value", s => document.getElementById("visitorCounter").innerText = fNum(s.numChildren()));
         
@@ -164,6 +171,7 @@
             const d = s.val(); if (!d) return;
             document.getElementById('plex-count-num').innerText = fNum(d.plexCount);
             document.getElementById('threads-fol-num').innerText = fNum(d.threadsFol);
+            document.getElementById('threads-views-num').innerText = fNum(d.threadsViews);
             document.getElementById('snap-fol-num').innerText = fNum(d.snapFol);
             document.getElementById('fb-page-num').innerText = fNum(d.fbPage);
             document.getElementById('fb-personal-num').innerText = fNum(d.fbPersonal);
