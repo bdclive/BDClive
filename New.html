@@ -1,257 +1,223 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v9.8.2</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <script data-cfasync="false" src="https://video.ibm.com/embed-api/v1/ustream-embedapi.min.js"></script>
-    <style>
-        :root {
-            --bg-color: #0d1117; --card-bg: #161b22; --border-color: #30363d;
-            --text-main: #ffffff; --text-dim: #8b949e;
-            --snap-yellow: #FFFC00; --bsky-electric: #00D2FF;
-            --light-purple: #bc95ff; --plex-orange: #e5a00d; --cinema-green: #238636;
-            --twitch-purple: #9146FF; --fb-vivid: #4d94ff;
-            --yt-red: #FF0000; --tt-cyan: #00f2ea; --ig-vivid: #ff5c8d; --meta-blue: #58a6ff;
+# ====================================================================
+# THREADS LAB BRIDGE - VERSION 1.16.0 (Live System Alert Build)
+# ====================================================================
+import requests
+import time
+import sys
+
+# --- CONFIGURATION ---
+PLEX_IP = "127.0.0.1"
+PLEX_PORT = "32400"
+PLEX_TOKEN = "h1t7VnuUdZLiyDjpGWsZ"
+
+TWITCH_CHANNEL = "briandivacox"
+TWITCH_TOKEN = "yyojykiccdtzwvfxzud5vy17sl6eor"
+TWITCH_CLIENT_ID = "gp762nuuoqcoxypju8c569th9wz7q5"
+TWITCH_BROADCASTER_ID = "170864"
+
+# --- FACEBOOK / INSTAGRAM ASSETS ---
+META_PAGE_ID = "55320913267"
+
+# Wrapped in triple quotes to protect long tokens from line-wrapping crashes
+META_TOKEN = """EAAOJz87tfbEBRhajcsKOScZAeOtWne37RkQuEIsPZA9jlmxoHhj7xBd7b6omUQqQ6EzEEBxoO02h0DB3dtvwfIVpVLJGMSA7yIRqy0lMqZBYxcjhbV5sFxahuUFzjAllb1TrMWZBtKI9FZCpz4DZBT8TUEa9eLEJnMrq3h6pCWxBdgdufkwodWtrsyspulySBQyp6mbBu1oWvkD3StGAd20FSN5CHlC3uzZAf5DYcuvo0BcDhBW2gZDZD""".strip()
+
+# --- DEDICATED THREADS ASSETS ---
+THREADS_APP_ID = "1006536711882922" 
+THREADS_USER_ID = "26231664763158295" 
+THREADS_TOKEN = "THAAg36cTPHF1BYlpQVW9iZAHBiOVota2c4VjBqTGpKZAi1JZAzlwdF95MnZA5YkFYekFCZAmg4V1JIUlFXcnl0TVVvQkk4cTVHeGlveXpGYlRxX09hYTdiUWpaZATNDLTBPZAVc5SDdIVElmU1dXelN2RFQ3bzUwSk5QRGNxYkd5YWdOdTFFWC1oVHdiV2dwaGtBYVUZD"
+
+FIREBASE_URL = "https://livecounters-8eaa8-default-rtdb.firebaseio.com/labData.json"
+
+# --- TIMERS ---
+FAST_INTERVAL = 2      
+META_INTERVAL = 300    
+RETRY_COOLDOWN = 30    
+
+session = requests.Session()
+
+def handle_api_status(response_or_exception):
+    if isinstance(response_or_exception, Exception):
+        return "OFFLINE"
+    res = response_or_exception
+    if res.status_code == 200: return "OK"
+    elif res.status_code == 401: return "EXPIRED"
+    elif res.status_code == 403: return "BLOCKED"
+    elif res.status_code == 429: return "RATE_LIMIT"
+    return f"ERR:{res.status_code}"
+
+def get_plex_sessions():
+    url = f"http://{PLEX_IP}:{PLEX_PORT}/status/sessions?X-Plex-Token={PLEX_TOKEN}"
+    try:
+        r = session.get(url, headers={'Accept': 'application/json'}, timeout=3)
+        return len(r.json().get('MediaContainer', {}).get('Metadata', [])) if r.status_code == 200 else 0
+    except: return 0
+
+def get_twitch_chatters():
+    token = TWITCH_TOKEN.replace("oauth:", "").strip()
+    url = f"https://api.twitch.tv/helix/chat/chatters?broadcaster_id={TWITCH_BROADCASTER_ID}&moderator_id={TWITCH_BROADCASTER_ID}"
+    headers = {'Authorization': f'Bearer {token}', 'Client-Id': TWITCH_CLIENT_ID}
+    try:
+        r = session.get(url, headers=headers, timeout=5)
+        if r.status_code == 200: 
+            return r.json().get('total', 0), "OK"
+        return 0, handle_api_status(r)
+    except Exception as e: 
+        return 0, handle_api_status(e)
+
+def get_twitch_viewers():
+    token = TWITCH_TOKEN.replace("oauth:", "").strip()
+    url = f"https://api.twitch.tv/helix/streams?user_login={TWITCH_CHANNEL}"
+    headers = {'Authorization': f'Bearer {token}', 'Client-Id': TWITCH_CLIENT_ID}
+    try:
+        r = session.get(url, headers=headers, timeout=5)
+        if r.status_code == 200:
+            stream_data = r.json().get('data', [])
+            return (stream_data[0].get('viewer_count', 0), "OK") if stream_data else (0, "LIVE_OFFLINE")
+        return 0, handle_api_status(r)
+    except Exception as e: 
+        return 0, handle_api_status(e)
+
+def get_facebook_page_insights():
+    url = f"https://graph.facebook.com/v25.0/{META_PAGE_ID}"
+    params = {"fields": "fan_count", "access_token": META_TOKEN}
+    try:
+        r = requests.get(url, params=params, timeout=5)
+        if r.status_code == 200:
+            return r.json().get('fan_count', 0), "OK"
+        print(f"\n[META FB INTERCEPT EXCEPTION]: Code {r.status_code} | Body: {r.text}")
+        return "0", handle_api_status(r)
+    except Exception as e: return "0", handle_api_status(e)
+
+def get_instagram_business_insights():
+    url = f"https://graph.facebook.com/v25.0/{META_PAGE_ID}"
+    params = {"fields": "instagram_business_account{followers_count}", "access_token": META_TOKEN}
+    try:
+        r = requests.get(url, params=params, timeout=5)
+        if r.status_code == 200:
+            res_json = r.json()
+            ig_node = res_json.get('instagram_business_account', {})
+            if ig_node:
+                return ig_node.get('followers_count', 0), "OK"
+        print(f"\n[META IG INTERCEPT EXCEPTION]: Code {r.status_code} | Body: {r.text}")
+        return "0", handle_api_status(r)
+    except Exception as e: return "0", handle_api_status(e)
+
+def get_threads_data():
+    followers, views, status_state = "0", "0", "FETCHING..."
+    fol_url = f"https://graph.threads.net/v1.0/{THREADS_USER_ID.strip()}/threads_insights"
+    views_url = f"https://graph.threads.net/v1.0/{THREADS_USER_ID.strip()}/threads_insights"
+    
+    fol_params = {"metric": "followers_count", "access_token": THREADS_TOKEN.strip()}
+    views_params = {"metric": "views", "access_token": THREADS_TOKEN.strip()}
+    try:
+        r_fol = requests.get(fol_url, params=fol_params, timeout=5)
+        status_state = handle_api_status(r_fol)
+        if r_fol.status_code == 200:
+            res_data = r_fol.json().get('data', [])
+            if res_data and 'total_value' in res_data[0]:
+                followers = str(res_data[0]['total_value'].get('value', 0))
+        
+        r_view = requests.get(views_url, params=views_params, timeout=5)
+        if r_view.status_code == 200:
+            res_data = r_view.json().get('data', [])
+            if res_data:
+                metric_entry = res_data[0]
+                raw_views = 0
+                if 'values' in metric_entry and metric_entry['values']:
+                    raw_views = sum(item.get('value', 0) for item in metric_entry['values'])
+                elif 'total_value' in metric_entry:
+                    raw_views = metric_entry['total_value'].get('value', 0)
+                
+                if raw_views >= 1000000: views = f"{raw_views / 1000000:.1f}m"
+                elif raw_views >= 1000: views = f"{raw_views / 1000:.1f}k"
+                else: views = str(raw_views)
+        return followers, views, status_state
+    except Exception as e:
+        return "0", "0", handle_api_status(e)
+
+def push_to_firebase(plex_count, chatters, viewers, fb_count, ig_count, threads_count, threads_views):
+    try:
+        payload = {
+            "plexCount": plex_count,
+            "twitchChatters": int(chatters),
+            "twitchViewers": int(viewers)
         }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: var(--text-main); display: flex; flex-direction: column; align-items: center; padding: 15px; margin: 0; min-height: 100vh; overflow-x: hidden; }
-        .timer-stage { width: 100%; max-width: 1400px; height: 195px; margin-bottom: 25px; border-radius: 12px; border: 1px solid var(--border-color); overflow: hidden; background: #000; position: relative; }
-        .timer-stage iframe { width: 100%; height: 350px; border: none; position: absolute; top: -92px; left: 0; border-radius: 12px; }
-        .counter-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; width: 100%; max-width: 1400px; }
-        .counter-item { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 10px; height: 150px; position: relative; display: flex; flex-direction: column; justify-content: center; padding-left: 25px; padding-bottom: 10px; overflow: hidden; transition: 0.3s; }
-        .box-logo { position: absolute; top: 12px; right: 15px; width: 22px; height: 22px; z-index: 40; display: flex; align-items: center; justify-content: center; pointer-events: none; }
-        .box-logo svg { width: 100%; height: 100%; }
-        .counter-item iframe:not(.court-iframe) { filter: invert(1) hue-rotate(180deg); border: 0; width: 450px; height: 220px; position: absolute; pointer-events: none; }
-        #x-box iframe, #yt-box iframe, #tt-box iframe { top: 15px; left: -85px; }
-        .main-number { font-size: 3.1rem; font-weight: 800; color: #ffffff; margin: 0; white-space: nowrap; letter-spacing: -2px; line-height: 1.1; }
-        .mirror-box { justify-content: space-evenly !important; padding-left: 0 !important; text-align: center; }
-        .mirror-row { display: flex; justify-content: space-around; width: 100%; margin-top: 5px; }
-        .mirror-label { font-size: 9px; color: var(--text-dim); text-transform: uppercase; font-weight: bold; margin: 0; }
-        .mirror-stat { font-size: 2rem; font-weight: 800; color: #ffffff; margin-bottom: 2px; }
-        .cinema-info { padding: 12px 20px 12px 15px; display: grid; grid-template-columns: 1.2fr 1fr; gap: 8px; height: 100%; text-align: left; }
-        .cinema-label { font-size: 9px; color: var(--cinema-green); text-transform: uppercase; font-weight: bold; }
-        .cinema-title { font-size: 13px; font-weight: bold; color: #ffffff; line-height: 1.2; margin-top: 2px; height: 32px; overflow: hidden; }
-        .cinema-footer { position: absolute; bottom: 0; left: 0; right: 0; background: #0d1117; padding: 6px 12px; border-top: 1px solid var(--border-color); display: flex; flex-direction: column; }
-        .cinema-stats-line { font-size: 10px; color: var(--plex-orange); display: flex; justify-content: space-between; font-weight: bold; }
-        #court-box { padding: 0 !important; border-top: 3px solid var(--plex-orange); background: #000; cursor: pointer; display: block; z-index: 1; }
-        .court-wrapper { width: 100%; height: 100%; overflow: hidden; position: relative; background: #000; z-index: 1; }
-        .court-iframe { width: 1200px; height: 675px; border: none; position: absolute; top: 0px; left: 0px; transform: scale(0.28); transform-origin: 0 0; pointer-events: none; z-index: 1; }
-        .modal { display: none; position: fixed; z-index: 9999999 !important; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); backdrop-filter: blur(5px); }
-        .modal-content { background-color: #161b22; margin: 5% auto; padding: 20px; border: 1px solid var(--plex-orange); width: 85%; max-width: 900px; border-radius: 12px; position: relative; }
-        .close-modal { position: absolute; top: 10px; right: 20px; color: var(--text-dim); font-size: 35px; font-weight: bold; cursor: pointer; }
-        .notification-dot { display: inline-block; width: 7px; height: 7px; background-color: #00FF66; border-radius: 50%; margin-left: 4px; vertical-align: middle; opacity: 0; transition: opacity 0.3s ease; }
-        .pulse-active { opacity: 1; animation: flashAnimation 1.2s infinite alternate; }
-        @keyframes flashAnimation { 0% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(0, 255, 102, 0.7); } 100% { transform: scale(1.2); box-shadow: 0 0 10px 4px rgba(0, 255, 102, 0); } }
-    </style>
-</head>
-<body>
-    <div class="timer-stage"><iframe src="https://board.multitimer.net/view/?q=6z0n8w08m0"></iframe></div>
-    <div class="counter-grid">
-        <div class="counter-item mirror-box" style="border-top: 3px solid var(--light-purple);">
-            <i class="fa-solid fa-wand-magic-sparkles box-logo" style="color:var(--light-purple);"></i>
-            <div><p class="mirror-label" style="color:var(--light-purple);">✨ Tales Detected</p><div id="totalViewsCounter" class="mirror-stat" style="font-size: 2.5rem;">0</div></div>
-            <div class="mirror-row">
-                <div><p class="mirror-label">👥 Online</p><div id="visitorCounter" class="mirror-stat">0</div></div>
-                <div><p class="mirror-label" style="color:var(--plex-orange);">🎬 Plex</p><div id="plex-count-num" class="mirror-stat">0</div></div>
-            </div>
-        </div>
-
-        <div class="counter-item mirror-box" style="border-top: 3px solid var(--meta-blue);">
-            <i class="fa-brands fa-meta box-logo" style="color:var(--meta-blue); font-size: 18px;"></i>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 12px; width: 100%; align-items: center; padding: 0 0 0 28px;">
-                <div style="text-align: left;">
-                    <p class="mirror-label" style="color:var(--ig-vivid);"><i class="fa-brands fa-instagram"></i> IG Fol</p>
-                    <div id="ig-fol-num" class="mirror-stat" style="font-size: 1.5rem; line-height: 1;">0</div>
-                </div>
-                <div style="text-align: left;">
-                    <p class="mirror-label" style="color:#fff;"><i class="fa-brands fa-threads"></i> Threads</p>
-                    <div id="threads-fol-num" class="mirror-stat" style="font-size: 1.5rem; line-height: 1;">0</div>
-                </div>
-                <div style="text-align: left;">
-                    <p class="mirror-label" style="color:var(--fb-vivid);"><i class="fa-brands fa-facebook"></i> Page</p>
-                    <div id="fb-page-num" class="mirror-stat" style="font-size: 1.5rem; line-height: 1;">0</div>
-                </div>
-                <div style="text-align: left;">
-                    <p class="mirror-label" style="color:var(--fb-vivid);"><i class="fa-solid fa-user"></i> Profile</p>
-                    <div id="fb-personal-num" class="mirror-stat" style="font-size: 1.5rem; line-height: 1;">0</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="counter-item mirror-box" id="twitch-box" onclick="openTwitch()" style="border-top: 3px solid var(--twitch-purple); cursor: pointer;">
-            <i class="fa-brands fa-twitch box-logo" style="color:var(--twitch-purple);"></i>
-            <div><p class="mirror-label" style="color:var(--twitch-purple);">🟣 Followers</p><div id="twitch-fol-num" class="mirror-stat" style="font-size: 2.5rem;">---</div></div>
-            <div class="mirror-row">
-                <div><p class="mirror-label">🎬 Viewers</p><div id="twitch-view-num" class="mirror-stat">0</div></div>
-                <div><p class="mirror-label">💬 Chatters<span id="chat-alert-dot" class="notification-dot"></span></p><div id="twitch-chatter-num" class="mirror-stat">0</div></div>
-            </div>
-            <i class="fa-solid fa-arrow-up-right-from-square" style="position: absolute; bottom: 12px; right: 15px; color: rgba(255,255,255,0.3); font-size: 11px;"></i>
-        </div>
-
-        <div class="counter-item" id="yt-box" style="border-top: 3px solid var(--yt-red);">
-            <i class="fa-brands fa-youtube box-logo" style="color:var(--yt-red);"></i>
-            <iframe scrolling="no" src="https://livecounts.io/embed/youtube-live-subscriber-counter/UCMuv7PfbLVm8IZsd6Bgqqzg"></iframe>
-        </div>
-
-        <div class="counter-item" id="tt-box" style="border-top: 3px solid var(--tt-cyan);">
-            <i class="fa-brands fa-tiktok box-logo" style="color:var(--tt-cyan);"></i>
-            <iframe scrolling="no" src="https://livecounts.io/embed/tiktok-live-follower-counter/briandivacox"></iframe>
-        </div>
-
-        <div class="counter-item" id="x-box" style="border-top: 3px solid #ffffff;">
-            <div class="box-logo"><svg viewBox="0 0 24 24" fill="white"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.045 4.126H5.078z"/></svg></div>
-            <iframe scrolling="no" src="https://livecounts.io/embed/twitter-live-follower-counter/briandivacox"></iframe>
-        </div>
-
-        <div class="counter-item mirror-box" style="border-top: 3px solid var(--bsky-electric);">
-            <div class="box-logo"><svg viewBox="0 0 566 500"><path fill="var(--bsky-electric)" d="M121.2 35.6C191.6 86.9 282.9 178.1 282.9 178.1S374.2 86.9 444.7 35.6C502.9-6.8 566 -20.3 566 49.3c0 19.3-11.2 121.1-17.8 144.6-21 75-52.2 89.8-118.4 104.8 134.5 25.3 152.9 70.6 152.9 101.7 0 71-65.4 63.3-119 31.9-74.5-43.8-139.8-138.8-179.9-195.1-40.1 56.3-105.4 151.3-179.9 195.1-53.6 31.5-119 39.1-119-31.9 0-31.1 18.4-76.4 152.9-101.7C46.2 283.7 15 268.9 0 193.9c-6.6-23.5-17.8-125.3-17.8-144.6 0-69.6 63.1-56.1 121.2-13.7z"/></svg></div>
-            <div id="bsky-num" class="main-number">---</div>
-        </div>
-
-        <div class="counter-item" id="court-box" onclick="openCourt()">
-            <div class="court-wrapper">
-                <iframe id="court-player" class="court-iframe" src="https://video.ibm.com/embed/23891775?showtitle=false&volume=0&autoplay=0"></iframe>
-                <div style="position: absolute; top: 10px; left: 15px; z-index: 60; text-shadow: 2px 2px 4px #000;">
-                    <h4 style="margin: 0; font-size: 14px; color: #fff;">Court Stream</h4>
-                </div>
-                <i class="fa-solid fa-expand" style="position: absolute; top: 12px; right: 15px; color: rgba(255,255,255,0.6); z-index: 60;"></i>
-            </div>
-        </div>
-
-        <div class="counter-item mirror-box" style="border-top: 3px solid var(--snap-yellow);">
-            <i class="fa-brands fa-snapchat box-logo" style="color:var(--snap-yellow);"></i>
-            <div id="snap-fol-num" class="main-number">0</div>
-        </div>
-
-        <div class="counter-item" style="border-top: 3px solid var(--cinema-green); padding-left: 0; grid-column: 4;">
-            <i class="fa-solid fa-film box-logo" style="color: var(--cinema-green);"></i>
-            <div class="cinema-info">
-                <div><div class="cinema-label">Now Playing</div><div id="m-now" class="cinema-title">Syncing...</div><div id="m-left" style="font-size: 10px; color: var(--text-dim); ">--</div></div>
-                <div style="border-left: 1px solid var(--border-color); padding-left: 10px;">
-                    <div class="cinema-label" style="color: var(--plex-orange);">Up Next</div><div id="m-next" class="cinema-title">--</div><div id="m-time" style="font-size: 10px; color: var(--text-dim);">--</div>
-                </div>
-            </div>
-            <div class="cinema-footer">
-                <div class="cinema-stats-line"><span>M: <span id="m-count">0</span></span><span>TV: <span id="tv-count">0</span></span><span style="color: var(--cinema-green);">S: <span id="sync-timer">LIVE</span></span></div>
-                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v9.8.2</span></div>
-            </div>
-        </div>
-    </div>
-
-    <div id="courtModal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal" onclick="closeCourt()">&times;</span>
-            <h3 style="margin-top: 0; color: var(--plex-orange);">Live Court Feed</h3>
-            <iframe id="modal-player" width="100%" height="500" src="" frameborder="0" allowfullscreen></iframe>
-        </div>
-    </div>
-
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-    <script>
-        const sConf = {apiKey: atob("QUl6YVN5QXZ4ZktnX3NwUE52RTJ3Y1QtdlRsOFlUUXU0TDN0Xzd3"), authDomain: "livecounters-8eaa8.firebaseapp.com", projectId: "livecounters-8eaa8", databaseURL: "https://livecounters-8eaa8-default-rtdb.firebaseio.com/", appId: "1:386919719539:web:c60c0d185c3d7e97ecc006" };
-        const vConf = {apiKey: "AIzaSyCokXnEtboNuUIASBMz2ZzS0GuchemoJYI", authDomain: "lbbb-webcounter.firebaseapp.com", projectId: "lbbb-webcounter", databaseURL: "https://lbbb-webcounter-default-rtdb.firebaseio.com/", appId: "1:217634980859:web:49ef2b0aa7fe7d0bb1415e" };
-        const sApp = firebase.initializeApp(sConf, "sApp"); const vApp = firebase.initializeApp(vConf, "vApp");
-        const sDb = sApp.database(); const vDb = vApp.database();
+        if "ERR" not in str(fb_count) and "FETCHING" not in str(fb_count): payload["fbPage"] = str(fb_count)
+        if "ERR" not in str(ig_count) and "FETCHING" not in str(ig_count): payload["igFol"] = str(ig_count)
+        if "ERR" not in str(threads_count) and "FETCHING" not in str(threads_count): payload["threadsFol"] = str(threads_count)
+        if "ERR" not in str(threads_views) and "FETCHING" not in str(threads_views): payload["threadsViews"] = str(threads_views)
         
-        const fNum = (val) => { if (val === null || val === undefined || val === "---") return val || "0"; const num = parseFloat(val.toString().replace(/,/g, '').trim()); return isNaN(num) ? val : new Intl.NumberFormat('en-US').format(num); };
-        
-        vDb.ref("totalViewCount").on("value", s => document.getElementById("totalViewsCounter").innerText = fNum(s.val()));
-        vDb.ref("visitorsConnected").on("value", s => document.getElementById("visitorCounter").innerText = fNum(s.numChildren()));
-        
-        sDb.ref('labData').on('value', (s) => {
-            const d = s.val(); if (!d) return;
-            document.getElementById('plex-count-num').innerText = fNum(d.plexCount);
-            document.getElementById('threads-fol-num').innerText = fNum(d.threadsFol);
-            document.getElementById('snap-fol-num').innerText = fNum(d.snapFol);
-            document.getElementById('fb-page-num').innerText = fNum(d.fbPage);
-            document.getElementById('fb-personal-num').innerText = fNum(d.fbPersonal);
-            document.getElementById('twitch-view-num').innerText = fNum(d.twitchViewers);
-            document.getElementById('twitch-chatter-num').innerText = fNum(d.twitchChatters);
-            document.getElementById('ig-fol-num').innerText = fNum(d.igFol);
-            if (d.lastChatActivity && d.lastChatActivity > lastPulseTime) {
-                if (lastPulseTime !== 0) {
-                    const dot = document.getElementById('chat-alert-dot');
-                    dot.classList.add('pulse-active');
-                    clearTimeout(alertTimeout);
-                    alertTimeout = setTimeout(() => { dot.classList.remove('pulse-active'); }, 8000);
-                }
-                lastPulseTime = d.lastChatActivity;
-            }
-        });
+        session.patch(FIREBASE_URL, json=payload, timeout=3)
+        return True
+    except: return False
 
-        function parseToSeconds(str) {
-            if (!str || str.toLowerCase().includes("scheduled") || str.includes(",")) return 0;
-            let total = 0;
-            const h = str.match(/(\d+)\s*(h|hr|hour)/i);
-            const m = str.match(/(\d+)\s*(m|min)/i);
-            const s = str.match(/(\d+)\s*(s|sec)/i);
-            if (h) total += parseInt(h[1]) * 3600;
-            if (m) total += parseInt(m[1]) * 60;
-            if (s) total += parseInt(s[1]);
-            return total;
-        }
+# --- MAIN ENGINE LOOP ---
+print("--- Threads Lab Bridge v1.16.0 (Live System Alert Build) ---")
+print("Tracking Live: Plex | Twitch | FB Page | Instagram | Threads")
+
+cached_fb, cached_ig, fb_status, ig_status = "0", "0", "FETCHING...", "FETCHING..."
+cached_th_fol, cached_th_views, th_status = "0", "0", "FETCHING..."
+twitch_view_status, twitch_chat_status = "FETCHING...", "FETCHING..."
+
+last_meta_check = 0  
+last_failed_meta_check = 0
+
+try:
+    while True:
+        current_time = time.time()
+        p_count = get_plex_sessions()
         
-        let nowInt, nextInt, localNowSecs = 0, localNextSecs = 0;
-        sDb.ref('theaterSync').on('value', (snapshot) => {
-            const m = snapshot.val(); if (!m) return;
-            const isIdle = !m.nowPlaying || m.nowPlaying.toLowerCase().includes("no movie playing");
+        t_chatters, twitch_chat_status = get_twitch_chatters()
+        t_viewers, twitch_view_status = get_twitch_viewers()
+        
+        time_for_normal_check = (current_time - last_meta_check >= META_INTERVAL)
+        time_for_retry_check = (current_time - last_failed_meta_check >= RETRY_COOLDOWN)
+        has_errors = ("ERR" in [fb_status, ig_status, th_status]) or ("FETCHING" in [fb_status, ig_status])
+
+        meta_needed = time_for_normal_check or (has_errors and time_for_retry_check)
+
+        if meta_needed:
+            fb_val, fb_status = get_facebook_page_insights()
+            if fb_status == "OK": cached_fb = fb_val
+                
+            ig_val, ig_status = get_instagram_business_insights()
+            if ig_status == "OK": cached_ig = ig_val
+                
+            th_fol_res, th_view_res, th_status = get_threads_data()
+            if th_status == "OK":
+                cached_th_fol, cached_th_views = th_fol_res, th_view_res
             
-            document.getElementById('m-now').innerText = isIdle ? "No Movie Playing" : m.nowPlaying;
-            document.getElementById('m-count').innerText = fNum(m.moviesCount || m.movieCount);
-            document.getElementById('m-open').innerText = m.daysOpen || "0";
-            document.getElementById('tv-count').innerText = fNum(m.tvCount || m.showCount);
-            
-            clearInterval(nextInt);
-            const timeEl = document.getElementById('m-time');
-            const nextTitleEl = document.getElementById('m-next');
-            
-            localNextSecs = parseToSeconds(m.nextTime);
-            if (localNextSecs > 0) {
-                nextTitleEl.innerText = m.nextTitle || "Upcoming";
-                const runNextTicker = () => {
-                    if (localNextSecs <= 0) { timeEl.innerText = "Show Starting..."; clearInterval(nextInt); return; }
-                    localNextSecs--;
-                    let hh = Math.floor(localNextSecs / 3600), mm = Math.floor((localNextSecs % 3600) / 60), ss = localNextSecs % 60;
-                    const f = (n) => n < 10 ? "0" + n : n;
-                    timeEl.innerText = `In: ${f(hh)}h ${f(mm)}m ${f(ss)}s`;
-                };
-                runNextTicker(); nextInt = setInterval(runNextTicker, 1000);
-            } else {
-                nextTitleEl.innerText = m.nextTitle || "None";
-                timeEl.innerText = m.nextTime || "No Movie Scheduled";
-            }
-            
-            clearInterval(nowInt);
-            const nowEl = document.getElementById('m-left');
-            if (isIdle || !m.timeLeft || m.timeLeft.includes("--")) { 
-                nowEl.innerText = "Cinema Idle"; 
-            } else {
-                localNowSecs = parseToSeconds(m.timeLeft);
-                if (localNowSecs > 0) {
-                    const runNowTicker = () => {
-                        if (localNowSecs <= 0) { nowEl.innerText = "Cinema Idle"; clearInterval(nowInt); return; }
-                        localNowSecs--;
-                        let hh = Math.floor(localNowSecs / 3600), mm = Math.floor((localNowSecs % 3600) / 60), ss = localNowSecs % 60;
-                        const f = (n) => n < 10 ? "0" + n : n;
-                        nowEl.innerText = `Left: ${f(hh)}h ${f(mm)}m ${f(ss)}s`;
-                    };
-                    runNowTicker(); nowInt = setInterval(runNowTicker, 1000);
-                } else {
-                    nowEl.innerText = m.timeLeft;
-                }
-            }
-        });
+            if fb_status == "OK" and ig_status == "OK" and th_status == "OK":
+                last_meta_check = current_time
+            else:
+                last_failed_meta_check = current_time
         
-        const twitchLabApi = 'https://script.google.com/macros/s/AKfycby0ndGELJv0Q6yAR8PKMsvo3u-hZ2qAL80sVahxyeyrLy_qDXhkcYZkKBoq6HhdrhyO/exec';
-        async function syncTwitchFollowers() { try { const res = await fetch(twitchLabApi + '?t=' + Date.now()); const data = await res.json(); if (data.twitch) document.getElementById('twitch-fol-num').innerText = fNum(data.twitch.followers); } catch (e) {} }
-        setInterval(syncTwitchFollowers, 60000); syncTwitchFollowers();
-        function openCourt() { document.getElementById('modal-player').src = "https://video.ibm.com/embed/23891775?autoplay=1"; document.getElementById('courtModal').style.display = "block"; }
-        function closeCourt() { document.getElementById('modal-player').src = ""; document.getElementById('courtModal').style.display = "none"; }
-        function openTwitch() { window.open(`Live.html?host=${window.location.hostname}`, 'TwitchStudio', `width=1480,height=820`); }
-        async function getBsky() { try { const r = await fetch('https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=briandivacox.bsky.social'); const p = await r.json(); if (p.followersCount !== undefined) document.getElementById('bsky-num').innerText = fNum(p.followersCount); } catch (e) {} }
-        getBsky(); setInterval(getBsky, 300000);
-    </script>
-</body>
-</html>
+        # System Health Validation Array
+        success = push_to_firebase(p_count, t_chatters, t_viewers, cached_fb, cached_ig, cached_th_fol, cached_th_views)
+        
+        # UPGRADE: Check if ANY platform tracking module dropped offline or hit an explicit error state
+        active_errors = []
+        if fb_status != "OK" and fb_status != "FETCHING...": active_errors.append(f"FB:{fb_status}")
+        if ig_status != "OK" and ig_status != "FETCHING...": active_errors.append(f"IG:{ig_status}")
+        if th_status != "OK" and th_status != "FETCHING...": active_errors.append(f"Threads:{th_status}")
+        if twitch_chat_status != "OK" and twitch_chat_status != "FETCHING...": active_errors.append(f"TwitchChat:{twitch_chat_status}")
+        if twitch_view_status != "OK" and twitch_view_status != "FETCHING..." and twitch_view_status != "LIVE_OFFLINE": active_errors.append(f"TwitchView:{twitch_view_status}")
+        
+        if not success:
+            global_status = "RETRYING_DB"
+        elif active_errors:
+            # Force the display array flag into high-alert state if sub-systems fail
+            global_status = f"ALERT ({', '.join(active_errors)})"
+        else:
+            global_status = "OK"
+        
+        fb_display = cached_fb if fb_status == "OK" else fb_status
+        ig_display = cached_ig if ig_status == "OK" else ig_status
+        th_display = f"{cached_th_fol}/{cached_th_views}" if th_status == "OK" else th_status
+        
+        sys.stdout.write(f"\r[STATUS: {global_status}] Plex: {p_count} | Twitch: {t_viewers} ({twitch_view_status})/{t_chatters} ({twitch_chat_status}) | FB: {fb_display} | IG: {ig_display} | Threads: {th_display}      ")
+        sys.stdout.flush()
+        time.sleep(FAST_INTERVAL)
+except Exception as e:
+    print(f"\n[CRITICAL RUNTIME ERROR]: {e}")
+    input("\nPress ENTER to close window...")
