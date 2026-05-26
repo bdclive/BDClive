@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v9.8.4</title>
+    <title>Cloud Dashboard v9.8.5</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script data-cfasync="false" src="https://video.ibm.com/embed-api/v1/ustream-embedapi.min.js"></script>
     <style>
@@ -128,7 +128,7 @@
             <div id="snap-fol-num" class="main-number">0</div>
         </div>
 
-        <div class="counter-item" style="border-top: 3px solid var(--cinema-green); padding-left: 0; grid-column: 4;">
+        <div class="counter-item" id="cinema-box" onclick="openTheater()" style="border-top: 3px solid var(--cinema-green); padding-left: 0; grid-column: 4; cursor: pointer;">
             <i class="fa-solid fa-film box-logo" style="color: var(--cinema-green);"></i>
             <div class="cinema-info">
                 <div><div class="cinema-label">Now Playing</div><div id="m-now" class="cinema-title">Syncing...</div><div id="m-left" style="font-size: 10px; color: var(--text-dim); ">--</div></div>
@@ -138,7 +138,7 @@
             </div>
             <div class="cinema-footer">
                 <div class="cinema-stats-line"><span>M: <span id="m-count">0</span></span><span>TV: <span id="tv-count">0</span></span><span style="color: var(--cinema-green);">S: <span id="sync-timer">LIVE</span></span></div>
-                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v9.8.4</span></div>
+                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v9.8.5</span></div>
             </div>
         </div>
     </div>
@@ -151,6 +151,14 @@
         </div>
     </div>
 
+    <div id="theaterModal" class="modal">
+        <div class="modal-content" style="border-color: var(--cinema-green); max-width: 1200px; width: 90%;">
+            <span class="close-modal" onclick="closeTheater()">&times;</span>
+            <h3 style="margin-top: 0; color: var(--cinema-green);">Brian's Theater Schedule Reference</h3>
+            <iframe id="theater-player" width="100%" height="650" src="" frameborder="0" allowfullscreen></iframe>
+        </div>
+    </div>
+
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
     <script>
@@ -159,11 +167,10 @@
         const sApp = firebase.initializeApp(sConf, "sApp"); const vApp = firebase.initializeApp(vConf, "vApp");
         const sDb = sApp.database(); const vDb = vApp.database();
         
-        // UPGRADED: Added a verification step to preserve letter suffixes like "k" and "m"
         const fNum = (val) => { 
             if (val === null || val === undefined || val === "---") return val || "0"; 
             const strVal = val.toString().trim();
-            if (/[a-zA-Z]$/.test(strVal)) return strVal; // If it ends with a letter milestone, protect it
+            if (/[a-zA-Z]$/.test(strVal)) return strVal; 
             const num = parseFloat(strVal.replace(/,/g, '')); 
             return isNaN(num) ? val : new Intl.NumberFormat('en-US').format(num); 
         };
@@ -264,6 +271,17 @@
         setInterval(syncTwitchFollowers, 60000); syncTwitchFollowers();
         function openCourt() { document.getElementById('modal-player').src = "https://video.ibm.com/embed/23891775?autoplay=1"; document.getElementById('courtModal').style.display = "block"; }
         function closeCourt() { document.getElementById('modal-player').src = ""; document.getElementById('courtModal').style.display = "none"; }
+        
+        // UPGRADED: Core Event Launchers Configured for the Google Sheet Iframe Window
+        function openTheater() { 
+            document.getElementById('theater-player').src = "https://docs.google.com/spreadsheets/d/1NEMy5X5leBqlVs9nxNwY2ynusLgyjmymekFk4avzUv0/edit?gid=428404608&rm=minimal"; 
+            document.getElementById('theaterModal').style.display = "block"; 
+        }
+        function closeTheater() { 
+            document.getElementById('theater-player').src = ""; 
+            document.getElementById('theaterModal').style.display = "none"; 
+        }
+
         function openTwitch() { window.open(`Live.html?host=${window.location.hostname}`, 'TwitchStudio', `width=1480,height=820`); }
         async function getBsky() { try { const r = await fetch('https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=briandivacox.bsky.social'); const p = await r.json(); if (p.followersCount !== undefined) document.getElementById('bsky-num').innerText = fNum(p.followersCount); } catch (e) {} }
         getBsky(); setInterval(getBsky, 300000);
