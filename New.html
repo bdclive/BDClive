@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v9.9.1</title>
+    <title>Cloud Dashboard v9.9.5</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script data-cfasync="false" src="https://video.ibm.com/embed-api/v1/ustream-embedapi.min.js"></script>
     <style>
@@ -14,7 +14,7 @@
             --light-purple: #bc95ff; --plex-orange: #e5a00d; --cinema-green: #238636;
             --twitch-purple: #9146FF; --fb-vivid: #4d94ff;
             --yt-red: #FF0000; --tt-cyan: #00f2ea; --ig-vivid: #ff5c8d; --meta-blue: #58a6ff;
-            --tasks-blue: #4285F4;
+            --tasks-blue: #4285F4; --tasks-green: #0F9D58; --tasks-yellow: #F4B400;
         }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: var(--text-main); display: flex; flex-direction: column; align-items: center; padding: 15px; margin: 0; min-height: 100vh; overflow-x: hidden; }
         .timer-stage { width: 100%; max-width: 1400px; height: 195px; margin-bottom: 25px; border-radius: 12px; border: 1px solid var(--border-color); overflow: hidden; background: #000; position: relative; }
@@ -129,13 +129,23 @@
             <div id="snap-fol-num" class="main-number">0</div>
         </div>
 
-        <div class="counter-item mirror-box" id="tasks-box" onclick="openTasks()" style="border-top: 3px solid var(--tasks-blue); cursor: pointer;">
+        <div class="counter-item mirror-box" id="tasks-box" onclick="openTasks()" style="border-top: 3px solid var(--tasks-blue); cursor: pointer; padding-left: 0;">
             <i class="fa-solid fa-list-check box-logo" style="color: var(--tasks-blue);"></i>
-            <div>
-                <p class="mirror-label" style="color: var(--tasks-blue);">📋 Active Tasks</p>
-                <div id="tasks-count-num" class="main-number">0</div>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; width: 100%; align-items: center; padding: 0 15px; box-sizing: border-box;">
+                <div style="text-align: center;">
+                    <p class="mirror-label" style="color: var(--tasks-blue); font-size: 8px;">📋 Primary</p>
+                    <div id="task-list-1" class="mirror-stat" style="font-size: 1.8rem; margin-top: 3px;">0</div>
+                </div>
+                <div style="text-align: center; border-left: 1px solid var(--border-color); border-right: 1px solid var(--border-color);">
+                    <p class="mirror-label" style="color: var(--tasks-green); font-size: 8px;">💼 Work</p>
+                    <div id="task-list-2" class="mirror-stat" style="font-size: 1.8rem; margin-top: 3px;">0</div>
+                </div>
+                <div style="text-align: center;">
+                    <p class="mirror-label" style="color: var(--tasks-yellow); font-size: 8px;">🚀 Projects</p>
+                    <div id="task-list-3" class="mirror-stat" style="font-size: 1.8rem; margin-top: 3px;">0</div>
+                </div>
             </div>
-            <i class="fa-solid fa-arrow-up-right-from-square" style="position: absolute; bottom: 12px; right: 15px; color: rgba(255,255,255,0.3); font-size: 11px;"></i>
+            <i class="fa-solid fa-arrow-up-right-from-square" style="position: absolute; bottom: 8px; right: 15px; color: rgba(255,255,255,0.2); font-size: 10px;"></i>
         </div>
 
         <div class="counter-item" style="opacity: 0; pointer-events: none;"></div>
@@ -150,7 +160,7 @@
             </div>
             <div class="cinema-footer">
                 <div class="cinema-stats-line"><span>M: <span id="m-count">0</span></span><span>TV: <span id="tv-count">0</span></span><span style="color: var(--cinema-green);">S: <span id="sync-timer">LIVE</span></span></div>
-                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v9.9.1</span></div>
+                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v9.9.5</span></div>
             </div>
         </div>
     </div>
@@ -261,8 +271,11 @@
             document.getElementById('m-open').innerText = m.daysOpen || "0";
             document.getElementById('tv-count').innerText = fNum(m.tvCount || m.showCount);
             
-            if(m.tasksCount !== undefined) {
-                document.getElementById('tasks-count-num').innerText = fNum(m.tasksCount);
+            // --- NEW: PARSE NESTED MULTI-TASK LISTENERS ---
+            if (m.tasks) {
+                document.getElementById('task-list-1').innerText = fNum(m.tasks.MyTasks_count);
+                document.getElementById('task-list-2').innerText = fNum(m.tasks.Work_count);
+                document.getElementById('task-list-3').innerText = fNum(m.tasks.PersonalProject_count);
             }
             
             clearInterval(nextInt);
