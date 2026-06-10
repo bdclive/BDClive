@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v9.8.6</title>
+    <title>Cloud Dashboard v9.9.0</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script data-cfasync="false" src="https://video.ibm.com/embed-api/v1/ustream-embedapi.min.js"></script>
     <style>
@@ -14,6 +14,7 @@
             --light-purple: #bc95ff; --plex-orange: #e5a00d; --cinema-green: #238636;
             --twitch-purple: #9146FF; --fb-vivid: #4d94ff;
             --yt-red: #FF0000; --tt-cyan: #00f2ea; --ig-vivid: #ff5c8d; --meta-blue: #58a6ff;
+            --tasks-blue: #4285F4;
         }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: var(--text-main); display: flex; flex-direction: column; align-items: center; padding: 15px; margin: 0; min-height: 100vh; overflow-x: hidden; }
         .timer-stage { width: 100%; max-width: 1400px; height: 195px; margin-bottom: 25px; border-radius: 12px; border: 1px solid var(--border-color); overflow: hidden; background: #000; position: relative; }
@@ -128,6 +129,17 @@
             <div id="snap-fol-num" class="main-number">0</div>
         </div>
 
+        <div class="counter-item mirror-box" id="tasks-box" onclick="openTasks()" style="border-top: 3px solid var(--tasks-blue); cursor: pointer;">
+            <i class="fa-solid fa-list-check box-logo" style="color: var(--tasks-blue);"></i>
+            <div>
+                <p class="mirror-label" style="color: var(--tasks-blue);">📋 Active Tasks</p>
+                <div id="tasks-count-num" class="main-number">0</div>
+            </div>
+            <i class="fa-solid fa-arrow-up-right-from-square" style="position: absolute; bottom: 12px; right: 15px; color: rgba(255,255,255,0.3); font-size: 11px;"></i>
+        </div>
+
+        <div class="counter-item" style="opacity: 0; pointer-events: none;"></div>
+
         <div class="counter-item" id="cinema-box" onclick="openTheater()" style="border-top: 3px solid var(--cinema-green); padding-left: 0; grid-column: 4; cursor: pointer;">
             <i class="fa-solid fa-film box-logo" style="color: var(--cinema-green);"></i>
             <div class="cinema-info">
@@ -138,7 +150,7 @@
             </div>
             <div class="cinema-footer">
                 <div class="cinema-stats-line"><span>M: <span id="m-count">0</span></span><span>TV: <span id="tv-count">0</span></span><span style="color: var(--cinema-green);">S: <span id="sync-timer">LIVE</span></span></div>
-                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v9.8.6</span></div>
+                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v9.9.0</span></div>
             </div>
         </div>
     </div>
@@ -159,6 +171,14 @@
         </div>
     </div>
 
+    <div id="tasksModal" class="modal">
+        <div class="modal-content" style="border-color: var(--tasks-blue); max-width: 500px; width: 95%;">
+            <span class="close-modal" onclick="closeTasks()">&times;</span>
+            <h3 style="margin-top: 0; color: var(--tasks-blue);"><i class="fa-solid fa-list-check"></i> Google Tasks Workspace</h3>
+            <iframe id="tasks-frame" width="100%" height="600" src="" frameborder="0" style="border-radius: 8px; background: #fff;"></iframe>
+        </div>
+    </div>
+
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
     <script>
@@ -175,8 +195,7 @@
             return isNaN(num) ? val : new Intl.NumberFormat('en-US').format(num); 
         };
         
-        let lastPulseTime = 0;
-        let alertTimeout = null;
+        let lastPulseTime = 0; let alertTimeout = null;
 
         vDb.ref("totalViewCount").on("value", s => document.getElementById("totalViewsCounter").innerText = fNum(s.val()));
         vDb.ref("visitorsConnected").on("value", s => document.getElementById("visitorCounter").innerText = fNum(s.numChildren()));
@@ -203,7 +222,6 @@
             }
         });
 
-        // Smart String to Total Seconds Parser (Now detects days format explicitly)
         function parseToSeconds(str) {
             if (!str || str.toLowerCase().includes("scheduled")) return 0;
             let total = 0;
@@ -219,24 +237,17 @@
             return total;
         }
 
-        // Helper to format ticking display and cleanly drop units at zero
         function formatTickerText(prefix, totalSecs) {
             let days = Math.floor(totalSecs / 86400);
             let hours = Math.floor((totalSecs % 86400) / 3600);
             let mins = Math.floor((totalSecs % 3600) / 60);
             let secs = totalSecs % 60;
-
             let output = prefix;
             
-            if (days > 0) {
-                output += `${days}day ${hours}hr ${mins}m ${secs}sec`;
-            } else if (hours > 0) {
-                output += `${hours}hr ${mins}m ${secs}sec`;
-            } else if (mins > 0) {
-                output += `${mins}m ${secs}sec`;
-            } else {
-                output += `${secs}sec`;
-            }
+            if (days > 0) output += `${days}day ${hours}hr ${mins}m ${secs}sec`;
+            else if (hours > 0) output += `${hours}hr ${mins}m ${secs}sec`;
+            else if (mins > 0) output += `${mins}m ${secs}sec`;
+            else output += `${secs}sec`;
             return output;
         }
         
@@ -250,15 +261,16 @@
             document.getElementById('m-open').innerText = m.daysOpen || "0";
             document.getElementById('tv-count').innerText = fNum(m.tvCount || m.showCount);
             
-            // --- UP NEXT TICKER ENGINE ---
+            // Map data securely to our new Tasks inner field container
+            if(m.tasksCount !== undefined) {
+                document.getElementById('tasks-count-num').innerText = fNum(m.tasksCount);
+            }
+            
             clearInterval(nextInt);
             const timeEl = document.getElementById('m-time');
             const nextTitleEl = document.getElementById('m-next');
             
             localNextSecs = parseToSeconds(m.nextTime);
-            
-            // Trigger ticker loop ONLY if it matches duration format (e.g. contains 'day', 'h', 'm', or 's')
-            // Otherwise, if it has a comma or no structural timeline markers, it safely renders the raw text date.
             const isDurationString = /(d|day|h|hr|m|min|s|sec)/i.test(m.nextTime) && !m.nextTime.includes(",");
             
             if (localNextSecs > 0 && isDurationString) {
@@ -274,7 +286,6 @@
                 timeEl.innerText = m.nextTime || "No Movie Scheduled";
             }
             
-            // --- NOW PLAYING TICKER ENGINE ---
             clearInterval(nowInt);
             const nowEl = document.getElementById('m-left');
             if (isIdle || !m.timeLeft || m.timeLeft.includes("--")) { 
@@ -288,29 +299,31 @@
                         nowEl.innerText = formatTickerText("Left: ", localNowSecs);
                     };
                     runNowTicker(); nowInt = setInterval(runNowTicker, 1000);
-                } else {
-                    nowEl.innerText = m.timeLeft;
-                }
+                } else { nowEl.innerText = m.timeLeft; }
             }
         });
         
         const twitchLabApi = 'https://script.google.com/macros/s/AKfycby0ndGELJv0Q6yAR8PKMsvo3u-hZ2qAL80sVahxyeyrLy_qDXhkcYZkKBoq6HhdrhyO/exec';
         async function syncTwitchFollowers() { try { const res = await fetch(twitchLabApi + '?t=' + Date.now()); const data = await res.json(); if (data.twitch) document.getElementById('twitch-fol-num').innerText = fNum(data.twitch.followers); } catch (e) {} }
         setInterval(syncTwitchFollowers, 60000); syncTwitchFollowers();
+        
         function openCourt() { document.getElementById('modal-player').src = "https://video.ibm.com/embed/23891775?autoplay=1"; document.getElementById('courtModal').style.display = "block"; }
         function closeCourt() { document.getElementById('modal-player').src = ""; document.getElementById('courtModal').style.display = "none"; }
-        
-        function openTheater() { 
-            document.getElementById('theater-player').src = "https://docs.google.com/spreadsheets/d/1NEMy5X5leBqlVs9nxNwY2ynusLgyjmymekFk4avzUv0/edit?gid=428404608&rm=minimal"; 
-            document.getElementById('theaterModal').style.display = "block"; 
-        }
-        function closeTheater() { 
-            document.getElementById('theater-player').src = ""; 
-            document.getElementById('theaterModal').style.display = "none"; 
-        }
+        function openTheater() { document.getElementById('theater-player').src = "https://docs.google.com/spreadsheets/d/1NEMy5X5leBqlVs9nxNwY2ynusLgyjmymekFk4avzUv0/edit?gid=428404608&rm=minimal"; document.getElementById('theaterModal').style.display = "block"; }
+        function closeTheater() { document.getElementById('theater-player').src = ""; document.getElementById('theaterModal').style.none; document.getElementById('theaterModal').style.display = "none"; }
         function openTwitch() { window.open(`Live.html?host=${window.location.hostname}`, 'TwitchStudio', `width=1480,height=820`); }
         async function getBsky() { try { const r = await fetch('https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=briandivacox.bsky.social'); const p = await r.json(); if (p.followersCount !== undefined) document.getElementById('bsky-num').innerText = fNum(p.followersCount); } catch (e) {} }
         getBsky(); setInterval(getBsky, 300000);
+
+        // --- NEW: TASKS MODAL INTERACTIVE CONTROLLERS ---
+        function openTasks() {
+            document.getElementById('tasks-frame').src = "https://tasks.google.com/embed/?origin=https://mail.google.com&amp;app=M&amp;fullscreen=true";
+            document.getElementById('tasksModal').style.display = "block";
+        }
+        function closeTasks() {
+            document.getElementById('tasks-frame').src = "";
+            document.getElementById('tasksModal').style.display = "none";
+        }
     </script>
 </body>
 </html>
