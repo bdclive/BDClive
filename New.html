@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v9.9.5</title>
+    <title>Cloud Dashboard v9.9.8</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <script data-cfasync="false" src="https://video.ibm.com/embed-api/v1/ustream-embedapi.min.js"></script>
     <style>
@@ -14,7 +14,7 @@
             --light-purple: #bc95ff; --plex-orange: #e5a00d; --cinema-green: #238636;
             --twitch-purple: #9146FF; --fb-vivid: #4d94ff;
             --yt-red: #FF0000; --tt-cyan: #00f2ea; --ig-vivid: #ff5c8d; --meta-blue: #58a6ff;
-            --tasks-blue: #4285F4; --tasks-green: #0F9D58; --tasks-yellow: #F4B400;
+            --tasks-blue: #4285F4;
         }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: var(--text-main); display: flex; flex-direction: column; align-items: center; padding: 15px; margin: 0; min-height: 100vh; overflow-x: hidden; }
         .timer-stage { width: 100%; max-width: 1400px; height: 195px; margin-bottom: 25px; border-radius: 12px; border: 1px solid var(--border-color); overflow: hidden; background: #000; position: relative; }
@@ -49,6 +49,7 @@
 <body>
     <div class="timer-stage"><iframe src="https://board.multitimer.net/view/?q=6z0n8w08m0"></iframe></div>
     <div class="counter-grid">
+        <!-- ROW 1 -->
         <div class="counter-item mirror-box" style="border-top: 3px solid var(--light-purple);">
             <i class="fa-solid fa-wand-magic-sparkles box-logo" style="color:var(--light-purple);"></i>
             <div><p class="mirror-label" style="color:var(--light-purple);">✨ Tales Detected</p><div id="totalViewsCounter" class="mirror-stat" style="font-size: 2.5rem;">0</div></div>
@@ -99,6 +100,7 @@
             <iframe scrolling="no" src="https://livecounts.io/embed/youtube-live-subscriber-counter/UCMuv7PfbLVm8IZsd6Bgqqzg"></iframe>
         </div>
 
+        <!-- ROW 2 -->
         <div class="counter-item" id="tt-box" style="border-top: 3px solid var(--tt-cyan);">
             <i class="fa-brands fa-tiktok box-logo" style="color:var(--tt-cyan);"></i>
             <iframe scrolling="no" src="https://livecounts.io/embed/tiktok-live-follower-counter/briandivacox"></iframe>
@@ -124,31 +126,43 @@
             </div>
         </div>
 
+        <!-- ROW 3 -->
         <div class="counter-item mirror-box" style="border-top: 3px solid var(--snap-yellow);">
             <i class="fa-brands fa-snapchat box-logo" style="color:var(--snap-yellow);"></i>
             <div id="snap-fol-num" class="main-number">0</div>
         </div>
 
-        <div class="counter-item mirror-box" id="tasks-box" onclick="openTasks()" style="border-top: 3px solid var(--tasks-blue); cursor: pointer; padding-left: 0;">
+        <!-- THE CUSTOM 6-WAY TASKS MATRIC CARD (Configured for direct layout space) -->
+        <div class="counter-item mirror-box" id="tasks-box" onclick="openTasks()" style="border-top: 3px solid var(--tasks-blue); cursor: pointer; padding: 0 10px; grid-column: span 2;">
             <i class="fa-solid fa-list-check box-logo" style="color: var(--tasks-blue);"></i>
-            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; width: 100%; align-items: center; padding: 0 15px; box-sizing: border-box;">
+            <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; width: 100%; align-items: center; box-sizing: border-box; padding-top: 15px;">
                 <div style="text-align: center;">
-                    <p class="mirror-label" style="color: var(--tasks-blue); font-size: 8px;">📋 Primary</p>
-                    <div id="task-list-1" class="mirror-stat" style="font-size: 1.8rem; margin-top: 3px;">0</div>
+                    <p class="mirror-label" style="color: var(--tasks-blue); font-size: 7.5px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">Task</p>
+                    <div id="task-t1" class="mirror-stat" style="font-size: 1.4rem; margin-top: 1px;">0</div>
                 </div>
-                <div style="text-align: center; border-left: 1px solid var(--border-color); border-right: 1px solid var(--border-color);">
-                    <p class="mirror-label" style="color: var(--tasks-green); font-size: 8px;">💼 Work</p>
-                    <div id="task-list-2" class="mirror-stat" style="font-size: 1.8rem; margin-top: 3px;">0</div>
+                <div style="text-align: center; border-left: 1px solid var(--border-color);">
+                    <p class="mirror-label" style="color: var(--cinema-green); font-size: 7.5px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">Theater</p>
+                    <div id="task-t2" class="mirror-stat" style="font-size: 1.4rem; margin-top: 1px;">0</div>
                 </div>
-                <div style="text-align: center;">
-                    <p class="mirror-label" style="color: var(--tasks-yellow); font-size: 8px;">🚀 Projects</p>
-                    <div id="task-list-3" class="mirror-stat" style="font-size: 1.8rem; margin-top: 3px;">0</div>
+                <div style="text-align: center; border-left: 1px solid var(--border-color);">
+                    <p class="mirror-label" style="color: var(--light-purple); font-size: 7.5px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">BDCF</p>
+                    <div id="task-t3" class="mirror-stat" style="font-size: 1.4rem; margin-top: 1px;">0</div>
+                </div>
+                <div style="text-align: center; border-left: 1px solid var(--border-color);">
+                    <p class="mirror-label" style="color: var(--ig-vivid); font-size: 7.5px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">DivaCox</p>
+                    <div id="task-t4" class="mirror-stat" style="font-size: 1.4rem; margin-top: 1px;">0</div>
+                </div>
+                <div style="text-align: center; border-left: 1px solid var(--border-color);">
+                    <p class="mirror-label" style="color: var(--plex-orange); font-size: 7.5px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">WOS</p>
+                    <div id="task-t5" class="mirror-stat" style="font-size: 1.4rem; margin-top: 1px;">0</div>
+                </div>
+                <div style="text-align: center; border-left: 1px solid var(--border-color);">
+                    <p class="mirror-label" style="color: #fff; font-size: 7.5px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">🎤 Mic</p>
+                    <div id="task-t6" class="mirror-stat" style="font-size: 1.4rem; margin-top: 1px;">0</div>
                 </div>
             </div>
             <i class="fa-solid fa-arrow-up-right-from-square" style="position: absolute; bottom: 8px; right: 15px; color: rgba(255,255,255,0.2); font-size: 10px;"></i>
         </div>
-
-        <div class="counter-item" style="opacity: 0; pointer-events: none;"></div>
 
         <div class="counter-item" id="cinema-box" onclick="openTheater()" style="border-top: 3px solid var(--cinema-green); padding-left: 0; grid-column: 4; cursor: pointer;">
             <i class="fa-solid fa-film box-logo" style="color: var(--cinema-green);"></i>
@@ -160,11 +174,12 @@
             </div>
             <div class="cinema-footer">
                 <div class="cinema-stats-line"><span>M: <span id="m-count">0</span></span><span>TV: <span id="tv-count">0</span></span><span style="color: var(--cinema-green);">S: <span id="sync-timer">LIVE</span></span></div>
-                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v9.9.5</span></div>
+                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v9.9.8</span></div>
             </div>
         </div>
     </div>
 
+    <!-- MODAL CONTAINERS -->
     <div id="courtModal" class="modal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeCourt()">&times;</span>
@@ -232,6 +247,17 @@
             }
         });
 
+        // Listen explicitly to the new separate /tasks directory node
+        sDb.ref('tasks').on('value', (s) => {
+            const t = s.val(); if (!t) return;
+            document.getElementById('task-t1').innerText = fNum(t.Task_count);
+            document.getElementById('task-t2').innerText = fNum(t.BrianTheater_count);
+            document.getElementById('task-t3').innerText = fNum(t.TheBDCFCrew_count);
+            document.getElementById('task-t4').innerText = fNum(t.BrianDivaCox_count);
+            document.getElementById('task-t5').innerText = fNum(t.WOS_count);
+            document.getElementById('task-t6').innerText = fNum(t.Mic_count);
+        });
+
         function parseToSeconds(str) {
             if (!str || str.toLowerCase().includes("scheduled")) return 0;
             let total = 0;
@@ -270,13 +296,6 @@
             document.getElementById('m-count').innerText = fNum(m.moviesCount || m.movieCount);
             document.getElementById('m-open').innerText = m.daysOpen || "0";
             document.getElementById('tv-count').innerText = fNum(m.tvCount || m.showCount);
-            
-            // --- NEW: PARSE NESTED MULTI-TASK LISTENERS ---
-            if (m.tasks) {
-                document.getElementById('task-list-1').innerText = fNum(m.tasks.MyTasks_count);
-                document.getElementById('task-list-2').innerText = fNum(m.tasks.Work_count);
-                document.getElementById('task-list-3').innerText = fNum(m.tasks.PersonalProject_count);
-            }
             
             clearInterval(nextInt);
             const timeEl = document.getElementById('m-time');
