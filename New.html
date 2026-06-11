@@ -52,7 +52,6 @@
 <body>
     <div class="timer-stage"><iframe src="https://board.multitimer.net/view/?q=6z0n8w08m0"></iframe></div>
     <div class="counter-grid">
-        <!-- ROW 1 -->
         <div class="counter-item mirror-box" style="border-top: 3px solid var(--light-purple);">
             <i class="fa-solid fa-wand-magic-sparkles box-logo" style="color:var(--light-purple);"></i>
             <div><p class="mirror-label" style="color:var(--light-purple);">✨ Tales Detected</p><div id="totalViewsCounter" class="mirror-stat" style="font-size: 2.5rem;">0</div></div>
@@ -103,7 +102,6 @@
             <iframe scrolling="no" src="https://livecounts.io/embed/youtube-live-subscriber-counter/UCMuv7PfbLVm8IZsd6Bgqqzg"></iframe>
         </div>
 
-        <!-- ROW 2 -->
         <div class="counter-item" id="tt-box" style="border-top: 3px solid var(--tt-cyan);">
             <i class="fa-brands fa-tiktok box-logo" style="color:var(--tt-cyan);"></i>
             <iframe scrolling="no" src="https://livecounts.io/embed/tiktok-live-follower-counter/briandivacox"></iframe>
@@ -129,13 +127,11 @@
             </div>
         </div>
 
-        <!-- ROW 3 -->
         <div class="counter-item mirror-box" style="border-top: 3px solid var(--snap-yellow);">
             <i class="fa-brands fa-snapchat box-logo" style="color:var(--snap-yellow);"></i>
             <div id="snap-fol-num" class="main-number">0</div>
         </div>
 
-        <!-- TASK PANEL MATRIX -->
         <div class="counter-item mirror-box" id="tasks-box" style="border-top: 3px solid var(--tasks-blue); padding: 5px 12px; grid-column: span 2; height: 150px;">
             <i class="fa-solid fa-list-check box-logo" style="color: var(--tasks-blue);"></i>
             <div style="display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); gap: 6px 12px; width: 100%; height: 100%; align-items: center; box-sizing: border-box; padding-top: 5px;">
@@ -170,14 +166,6 @@
                     <p class="mirror-label" style="color: var(--plex-orange); font-size: 7.5px; white-space: nowrap;">❄️ WOS</p>
                     <div id="task-k7" class="mirror-stat" style="font-size: 1.15rem; font-weight:700; line-height:1.1;">0</div>
                 </div>
-                <div class="task-click-node" onclick="openSpecificTaskList('movie_list')">
-                    <p class="mirror-label" style="color: #ff5c5c; font-size: 7.5px; white-space: nowrap;">🎞️ Movie List</p>
-                    <div id="task-k8" class="mirror-stat" style="font-size: 1.15rem; font-weight:700; line-height:1.1;">0</div>
-                </div>
-                <div class="task-click-node" onclick="openSpecificTaskList('movie_reviews_')">
-                    <p class="mirror-label" style="color: #bc95ff; font-size: 7.5px; white-space: nowrap;">✍️ Reviews</p>
-                    <div id="task-k9" class="mirror-stat" style="font-size: 1.15rem; font-weight:700; line-height:1.1;">0</div>
-                </div>
             </div>
             <i class="fa-solid fa-arrow-up-right-from-square" style="position: absolute; bottom: 8px; right: 15px; color: rgba(255,255,255,0.2); font-size: 10px;"></i>
         </div>
@@ -197,10 +185,9 @@
         </div>
     </div>
 
-    <!-- MODAL LAYOUT CHANNELS -->
     <div id="courtModal" class="modal">
         <div class="modal-content">
-            <span class="close-modal" onclick="closeCourt()">&times;</span>
+            <span class="close-modal" onclick="closeCourt()">×</span>
             <h3 style="margin-top: 0; color: var(--plex-orange);">Live Court Feed</h3>
             <iframe id="modal-player" width="100%" height="500" src="" frameborder="0" allowfullscreen></iframe>
         </div>
@@ -208,7 +195,7 @@
 
     <div id="theaterModal" class="modal">
         <div class="modal-content" style="border-color: var(--cinema-green); max-width: 1200px; width: 90%;">
-            <span class="close-modal" onclick="closeTheater()">&times;</span>
+            <span class="close-modal" onclick="closeTheater()">×</span>
             <h3 style="margin-top: 0; color: var(--cinema-green);">Brian's Theater Schedule Reference</h3>
             <iframe id="theater-player" width="100%" height="650" src="" frameborder="0" allowfullscreen></iframe>
         </div>
@@ -269,26 +256,20 @@
             document.getElementById('task-k5').innerText = fNum(t.My_Tasks_count);
             document.getElementById('task-k6').innerText = fNum(t.The_BDCF_Crew_count);
             document.getElementById('task-k7').innerText = fNum(t.WOS_count);
-            document.getElementById('task-k8').innerText = fNum(t.movie_list_count);
-            document.getElementById('task-k9').innerText = fNum(t.movie_reviews__count);
         });
 
-        // 🚀 NEW INTERFACE ACTION HOOK: Direct redirection routing targeting web standard window hooks
         function openSpecificTaskList(listKey) {
             let targetListId = "";
             if (currentTasksDatabaseSnapshot && currentTasksDatabaseSnapshot[listKey + "_id"]) {
                 targetListId = currentTasksDatabaseSnapshot[listKey + "_id"];
             }
             
-            // Build the standard standalone canvas path configuration format requested
             let destinationUrl = "https://tasks.google.com/tasks/";
             
-            // Append the target reference list tracking identity token parameter dynamically if synced
             if (targetListId) {
                 destinationUrl += `?listid=${encodeURIComponent(targetListId)}`;
             }
             
-            // Initialize standalone sandbox window layout safely on top layer
             window.open(destinationUrl, 'GoogleTasksWorkspace', 'width=720,height=800,resizable=yes,scrollbars=yes');
         }
 
