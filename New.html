@@ -277,7 +277,7 @@
         }
 
         function parseToSeconds(str) {
-            if (!str || str.toLowerCase().includes("scheduled")) return 0;
+            if (!str || str.toLowerCase().includes("scheduled") || str.toLowerCase().includes("no movie")) return 0;
             let total = 0;
             const dMatch = str.match(/(\d+)\s*(d|day|days)/i);
             const hMatch = str.match(/(\d+)\s*(h|hr|hour|hours)/i);
@@ -288,6 +288,10 @@
             if (hMatch) total += parseInt(hMatch[1]) * 3600;
             if (mMatch) total += parseInt(mMatch[1]) * 60;
             if (sMatch) total += parseInt(sMatch[1]);
+            
+            if (!dMatch && !hMatch && !mMatch && !sMatch && /^\d+$/.test(str.trim())) {
+                total = parseInt(str.trim()) * 60;
+            }
             return total;
         }
 
@@ -305,10 +309,10 @@
             return output;
         }
         
-        let nowInt, nextInt, localNowSecs = 0, localNextSecs = 0;
+        let nowInt, nextInt;
         sDb.ref('theaterSync').on('value', (snapshot) => {
             const m = snapshot.val(); if (!m) return;
-            const isIdle = !m.nowPlaying || m.nowPlaying.toLowerCase().includes("no movie playing");
+            const isIdle = !m.nowPlaying || m.nowPlaying.toLowerCase().includes("no movie playing") || m.nowPlaying.toLowerCase() === "offline";
             
             document.getElementById('m-now').innerText = isIdle ? "No Movie Playing" : m.nowPlaying;
             document.getElementById('m-count').innerText = fNum(m.moviesCount || m.movieCount);
@@ -319,28 +323,49 @@
             const timeEl = document.getElementById('m-time');
             const nextTitleEl = document.getElementById('m-next');
             
-            localNextSecs = parseToSeconds(m.nextTime);
-            const isDurationString = /(d|day|h|hr|m|min|s|sec)/i.test(m.nextTime) && !m.nextTime.includes(",");
-            
-            if (localNextSecs > 0 && isDurationString) {
+            let targetNextMs = m.nextStartMs || 0;
+            if (targetNextMs > Date.now()) {
                 nextTitleEl.innerText = m.nextTitle || "Upcoming";
                 const runNextTicker = () => {
-                    if (localNextSecs <= 0) { timeEl.innerText = "Show Starting..."; clearInterval(nextInt); return; }
-                    localNextSecs--;
-                    timeEl.innerText = formatTickerText("In: ", localNextSecs);
+                    const diffMs = targetNextMs - Date.now();
+                    if (diffMs <= 0) { timeEl.innerText = "Show Starting..."; clearInterval(nextInt); return; }
+                    const totalSecs = Math.floor(diffMs / 1000);
+                    timeEl.innerText = formatTickerText("In: ", totalSecs);
                 };
                 runNextTicker(); nextInt = setInterval(runNextTicker, 1000);
             } else {
-                nextTitleEl.innerText = m.nextTitle || "None";
-                timeEl.innerText = m.nextTime || "No Movie Scheduled";
+                let localNextSecs = parseToSeconds(m.nextTime);
+                const isDurationString = /(d|day|h|hr|m|min|s|sec)/i.test(m.nextTime) && !m.nextTime.includes(",");
+                
+                if (localNextSecs > 0 && isDurationString) {
+                    nextTitleEl.innerText = m.nextTitle || "Upcoming";
+                    const runNextTicker = () => {
+                        if (localNextSecs <= 0) { timeEl.innerText = "Show Starting..."; clearInterval(nextInt); return; }
+                        localNextSecs--;
+                        timeEl.innerText = formatTickerText("In: ", localNextSecs);
+                    };
+                    runNextTicker(); nextInt = setInterval(runNextTicker, 1000);
+                } else {
+                    nextTitleEl.innerText = m.nextTitle || "None";
+                    timeEl.innerText = m.nextTime || "No Movie Scheduled";
+                }
             }
             
             clearInterval(nowInt);
             const nowEl = document.getElementById('m-left');
-            if (isIdle || !m.timeLeft || m.timeLeft.includes("--")) { 
+            let targetEndMs = m.endMs || 0;
+            if (isIdle || (!targetEndMs && (!m.timeLeft || m.timeLeft.includes("--")))) { 
                 nowEl.innerText = "Cinema Idle"; 
+            } else if (targetEndMs > Date.now()) {
+                const runNowTicker = () => {
+                    const diffMs = targetEndMs - Date.now();
+                    if (diffMs <= 0) { nowEl.innerText = "Cinema Idle"; clearInterval(nowInt); return; }
+                    const totalSecs = Math.floor(diffMs / 1000);
+                    nowEl.innerText = formatTickerText("Left: ", totalSecs);
+                };
+                runNowTicker(); nowInt = setInterval(runNowTicker, 1000);
             } else {
-                localNowSecs = parseToSeconds(m.timeLeft);
+                let localNowSecs = parseToSeconds(m.timeLeft);
                 if (localNowSecs > 0) {
                     const runNowTicker = () => {
                         if (localNowSecs <= 0) { nowEl.innerText = "Cinema Idle"; clearInterval(nowInt); return; }
