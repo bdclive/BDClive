@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v10.2.16</title>
+    <title>Cloud Dashboard v10.2.17</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Outfit:wght@600;800&display=swap" rel="stylesheet">
@@ -230,6 +230,28 @@
             </div>
         </div>
 
+        <!-- GITHUB STATUS BOX (Row 3, Col 1) -->
+        <div class="counter-item" id="github-box" onclick="openGithubModal()" style="border-top: 3px solid #a371f7; padding: 10px 12px 6px 12px; grid-area: 3 / 1; height: 150px; cursor: pointer; display: flex; flex-direction: column; justify-content: space-between; position: relative;">
+            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <i class="fa-brands fa-github" style="color: #a371f7; font-size: 14px;"></i>
+                    <span style="font-size: 11px; font-weight: 800; color: #ffffff; letter-spacing: 0.5px; text-transform: uppercase;">GitHub Pipeline</span>
+                    <span style="font-size: 8.5px; background: rgba(35, 134, 54, 0.2); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.4); padding: 1px 4px; border-radius: 4px; font-weight: 800;">● LIVE</span>
+                </div>
+                <span id="gh-total-badge" style="font-size: 9px; color: var(--text-dim); background: rgba(255,255,255,0.06); padding: 1px 6px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.08);">Syncing...</span>
+            </div>
+
+            <!-- Auto-rotating / Scrollable Ticker Feed -->
+            <div id="gh-ticker-feed" style="display: flex; flex-direction: column; gap: 4px; overflow: hidden; height: 86px; margin: 4px 0;">
+                <div style="font-size: 10px; color: var(--text-dim); text-align: center; padding-top: 25px;">Loading repositories...</div>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 9px; color: var(--text-dim); border-top: 1px solid rgba(255,255,255,0.06); padding-top: 3px;">
+                <span>Active: <span id="gh-active-count" style="color: #3fb950; font-weight: 700;">0</span></span>
+                <span style="color: #a371f7; display: flex; align-items: center; gap: 4px;">Command Center <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 8.5px;"></i></span>
+            </div>
+        </div>
+
         <!-- TASKS BOX WIDGET -->
         <div class="counter-item mirror-box" id="tasks-box" style="border-top: 3px solid var(--tasks-blue); padding: 10px 12px 5px 12px; grid-area: 3 / 2 / 4 / 4; height: 150px;">
             <i class="fa-solid fa-list-check box-logo" style="color: var(--tasks-blue);"></i>
@@ -283,7 +305,7 @@
             </div>
             <div class="cinema-footer">
                 <div class="cinema-stats-line"><span>M: <span id="m-count">0</span></span><span>TV: <span id="tv-count">0</span></span><span style="color: var(--cinema-green);">S: <span id="sync-timer">LIVE</span></span></div>
-                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v10.2.16</span></div>
+                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v10.2.17</span></div>
             </div>
         </div>
     </div>
@@ -301,6 +323,27 @@
             <span class="close-modal" onclick="closeTheater()">×</span>
             <h3 style="margin-top: 0; color: var(--cinema-green);">Brian's Theater Schedule Reference</h3>
             <iframe id="theater-player" width="100%" height="650" src="" frameborder="0" allowfullscreen></iframe>
+        </div>
+    </div>
+
+    <div id="githubModal" class="modal">
+        <div class="modal-content" style="border-color: #a371f7; max-width: 800px; width: 90%; background: #0d1117; max-height: 85vh; display: flex; flex-direction: column;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #30363d; padding-bottom: 12px; margin-bottom: 15px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <i class="fa-brands fa-github" style="font-size: 22px; color: #a371f7;"></i>
+                    <h3 style="margin: 0; color: #ffffff; font-size: 16px;">GitHub Projects Command Center</h3>
+                </div>
+                <span class="close-modal" onclick="closeGithubModal()" style="font-size: 24px; cursor: pointer; color: #8b949e;">&times;</span>
+            </div>
+            <div style="display: flex; gap: 10px; margin-bottom: 12px;">
+                <input type="text" id="gh-search-input" onkeyup="filterGithubModal()" placeholder="Search repositories or commits..." style="flex: 1; background: #161b22; border: 1px solid #30363d; color: #fff; padding: 8px 12px; border-radius: 6px; font-size: 12px; outline: none;">
+                <button onclick="fetchGithubRepositories(true)" style="background: #238636; color: #fff; border: 1px solid rgba(255,255,255,0.1); padding: 8px 14px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 5px;">
+                    <i class="fa-solid fa-rotate"></i> Refresh
+                </button>
+            </div>
+            <div id="gh-modal-list" style="overflow-y: auto; display: flex; flex-direction: column; gap: 8px; flex: 1; padding-right: 5px; max-height: 55vh;">
+                <!-- Repo items rendered dynamically -->
+            </div>
         </div>
     </div>
 
@@ -619,6 +662,210 @@
         }
         setInterval(renderTheaterHeartbeat, 1000);
         renderTheaterHeartbeat();
+
+        // ================= GITHUB STATUS MONITOR =================
+        const GITHUB_ACCOUNTS = ['BrianDivaCox']; // Add any extra user or org handles here!
+        let allGithubRepos = [];
+        let ghTickerIndex = 0;
+        let ghTickerInterval = null;
+
+        function timeAgo(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diffSec = Math.floor((now - date) / 1000);
+            if (diffSec < 60) return "Just now";
+            const diffMin = Math.floor(diffSec / 60);
+            if (diffMin < 60) return `${diffMin}m ago`;
+            const diffHour = Math.floor(diffMin / 60);
+            if (diffHour < 24) return `${diffHour}h ago`;
+            const diffDays = Math.floor(diffHour / 24);
+            if (diffDays === 1) return "Yesterday";
+            if (diffDays < 30) return `${diffDays}d ago`;
+            const diffMonths = Math.floor(diffDays / 30);
+            return `${diffMonths}mo ago`;
+        }
+
+        async function fetchGithubRepositories(showToast = false) {
+            try {
+                const badge = document.getElementById('gh-total-badge');
+                if (badge && showToast) badge.innerText = "Refreshing...";
+                
+                let fetched = [];
+                for (const account of GITHUB_ACCOUNTS) {
+                    try {
+                        const res = await fetch(`https://api.github.com/users/${account}/repos?sort=pushed&per_page=30&t=${Date.now()}`);
+                        if (res.ok) {
+                            const list = await res.json();
+                            if (Array.isArray(list)) {
+                                fetched = fetched.concat(list.map(r => ({
+                                    name: r.name,
+                                    owner: account,
+                                    fullName: r.full_name,
+                                    htmlUrl: r.html_url,
+                                    pushedAt: r.pushed_at,
+                                    defaultBranch: r.default_branch || 'main',
+                                    description: r.description || 'No description',
+                                    stars: r.stargazers_count || 0,
+                                    forks: r.forks_count || 0,
+                                    latestCommit: null
+                                })));
+                            }
+                        }
+                    } catch (err) {
+                        console.warn(`GitHub fetch error for ${account}:`, err);
+                    }
+                }
+
+                // Sort by pushed_at descending (most recent first)
+                fetched.sort((a, b) => new Date(b.pushedAt) - new Date(a.pushedAt));
+                allGithubRepos = fetched;
+
+                // Fetch latest commit message for top 6 most recent repos asynchronously
+                const topRepos = allGithubRepos.slice(0, 6);
+                await Promise.allSettled(topRepos.map(async (repo) => {
+                    try {
+                        const cr = await fetch(`https://api.github.com/repos/${repo.owner}/${repo.name}/commits?per_page=1`);
+                        if (cr.ok) {
+                            const cData = await cr.json();
+                            if (Array.isArray(cData) && cData.length > 0) {
+                                repo.latestCommit = cData[0].commit.message.split('\n')[0];
+                            }
+                        }
+                    } catch (e) {}
+                }));
+
+                updateGithubDashboardUI();
+                const ghModal = document.getElementById('githubModal');
+                if (ghModal && ghModal.style.display === 'block') {
+                    renderGithubModalList(allGithubRepos);
+                }
+            } catch (globalErr) {
+                console.error("GitHub Status Monitor Error:", globalErr);
+            }
+        }
+
+        function updateGithubDashboardUI() {
+            const badge = document.getElementById('gh-total-badge');
+            const activeCountEl = document.getElementById('gh-active-count');
+            if (badge) badge.innerText = `${allGithubRepos.length} Repos`;
+
+            // Calculate active repos in last 24 hours
+            const now = new Date();
+            const activeRepos = allGithubRepos.filter(r => (now - new Date(r.pushedAt)) < 86400000);
+            if (activeCountEl) activeCountEl.innerText = activeRepos.length;
+
+            renderGithubTicker();
+            if (!ghTickerInterval && allGithubRepos.length > 2) {
+                ghTickerInterval = setInterval(() => {
+                    ghTickerIndex = (ghTickerIndex + 2) % Math.max(1, allGithubRepos.length - 1);
+                    renderGithubTicker();
+                }, 5000);
+            }
+        }
+
+        function renderGithubTicker() {
+            const feedEl = document.getElementById('gh-ticker-feed');
+            if (!feedEl) return;
+            if (!allGithubRepos.length) {
+                feedEl.innerHTML = '<div style="font-size: 10px; color: var(--text-dim); text-align: center; padding-top: 25px;">No repositories found</div>';
+                return;
+            }
+
+            // Show 2 items per view with smooth presentation
+            const items = [
+                allGithubRepos[ghTickerIndex % allGithubRepos.length],
+                allGithubRepos[(ghTickerIndex + 1) % allGithubRepos.length]
+            ].filter(Boolean);
+
+            feedEl.innerHTML = items.map(repo => {
+                const now = new Date();
+                const diffMs = now - new Date(repo.pushedAt);
+                const isRecent = diffMs < 86400000; // < 24h
+                const isWeek = diffMs < 604800000; // < 7d
+                const dotColor = isRecent ? '#3fb950' : (isWeek ? '#d29922' : '#8b949e');
+                const relTime = timeAgo(repo.pushedAt);
+                const commitMsg = repo.latestCommit || repo.description || 'No commit message';
+
+                return `
+                <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 6px; padding: 4px 8px; display: flex; flex-direction: column; gap: 2px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div style="display: flex; align-items: center; gap: 5px; overflow: hidden;">
+                            <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: ${dotColor}; box-shadow: 0 0 5px ${dotColor};"></span>
+                            <span style="font-size: 10px; font-weight: 700; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 95px;">${repo.name}</span>
+                            <span style="font-size: 8px; color: #a371f7; background: rgba(163, 113, 247, 0.15); padding: 0 3px; border-radius: 3px;">⑂ ${repo.defaultBranch}</span>
+                        </div>
+                        <span style="font-size: 8.5px; color: var(--text-dim); white-space: nowrap;">${relTime}</span>
+                    </div>
+                    <div style="font-size: 8.5px; color: #8b949e; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                        ${commitMsg}
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function openGithubModal() {
+            document.getElementById('githubModal').style.display = 'block';
+            renderGithubModalList(allGithubRepos);
+        }
+
+        function closeGithubModal() {
+            document.getElementById('githubModal').style.display = 'none';
+        }
+
+        function filterGithubModal() {
+            const query = (document.getElementById('gh-search-input').value || '').toLowerCase();
+            const filtered = allGithubRepos.filter(r => 
+                r.name.toLowerCase().includes(query) || 
+                (r.latestCommit && r.latestCommit.toLowerCase().includes(query)) ||
+                (r.description && r.description.toLowerCase().includes(query))
+            );
+            renderGithubModalList(filtered);
+        }
+
+        function renderGithubModalList(repos) {
+            const container = document.getElementById('gh-modal-list');
+            if (!container) return;
+            if (!repos.length) {
+                container.innerHTML = '<div style="text-align: center; color: #8b949e; padding: 40px;">No repositories matching your search.</div>';
+                return;
+            }
+
+            const now = new Date();
+            container.innerHTML = repos.map(repo => {
+                const diffMs = now - new Date(repo.pushedAt);
+                const isRecent = diffMs < 86400000;
+                const isWeek = diffMs < 604800000;
+                const statusBadge = isRecent 
+                    ? '<span style="background: rgba(35, 134, 54, 0.2); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.4); padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 700;">● Live / Pushed Today</span>'
+                    : (isWeek 
+                        ? '<span style="background: rgba(187, 128, 9, 0.2); color: #d29922; border: 1px solid rgba(210, 153, 34, 0.4); padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 700;">● Active This Week</span>'
+                        : '<span style="background: rgba(110, 118, 129, 0.1); color: #8b949e; border: 1px solid rgba(110, 118, 129, 0.2); padding: 2px 6px; border-radius: 4px; font-size: 9px;">● Idle</span>');
+
+                return `
+                <div style="background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; transition: background 0.2s;" onmouseover="this.style.background='#1f242c'" onmouseout="this.style.background='#161b22'">
+                    <div style="display: flex; flex-direction: column; gap: 4px; max-width: 75%;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="font-size: 13px; font-weight: 700; color: #58a6ff;">${repo.name}</span>
+                            <span style="font-size: 9.5px; background: rgba(110, 118, 129, 0.2); color: #8b949e; padding: 1px 5px; border-radius: 4px;">⑂ ${repo.defaultBranch}</span>
+                            ${statusBadge}
+                        </div>
+                        <div style="font-size: 11px; color: #c9d1d9;">
+                            ${repo.latestCommit ? `<i class="fa-solid fa-code-commit" style="color: #8b949e; margin-right: 4px;"></i> ${repo.latestCommit}` : repo.description}
+                        </div>
+                        <div style="font-size: 9.5px; color: #8b949e;">
+                            Pushed ${timeAgo(repo.pushedAt)} (${new Date(repo.pushedAt).toLocaleString()})
+                        </div>
+                    </div>
+                    <a href="${repo.htmlUrl}" target="_blank" style="background: #21262d; border: 1px solid #30363d; color: #58a6ff; text-decoration: none; padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: 600; display: flex; align-items: center; gap: 5px; white-space: nowrap;">
+                        Open <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 9px;"></i>
+                    </a>
+                </div>`;
+            }).join('');
+        }
+
+        // Initialize GitHub Status Monitor
+        fetchGithubRepositories();
+        setInterval(() => fetchGithubRepositories(false), 180000);
         
         const twitchLabApi = 'https://script.google.com/macros/s/AKfycby0ndGELJv0Q6yAR8PKMsvo3u-hZ2qAL80sVahxyeyrLy_qDXhkcYZkKBoq6HhdrhyO/exec';
         async function syncTwitchFollowers() { try { const res = await fetch(twitchLabApi + '?t=' + Date.now()); const data = await res.json(); if (data.twitch) document.getElementById('twitch-fol-num').innerText = fNum(data.twitch.followers); } catch (e) {} }
