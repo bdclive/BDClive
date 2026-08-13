@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v10.2.22</title>
+    <title>Cloud Dashboard v10.2.23</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Outfit:wght@600;800&display=swap" rel="stylesheet">
@@ -305,7 +305,7 @@
             </div>
             <div class="cinema-footer">
                 <div class="cinema-stats-line"><span>M: <span id="m-count">0</span></span><span>TV: <span id="tv-count">0</span></span><span style="color: var(--cinema-green);">S: <span id="sync-timer">LIVE</span></span></div>
-                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v10.2.22</span></div>
+                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v10.2.23</span></div>
             </div>
         </div>
     </div>
@@ -743,19 +743,22 @@
             return null;
         }
 
-        async function fetchGithubRepositories(showToast = false) {
+        async function fetchGithubRepositories(isManual = false) {
+            if (isFetchingGh) return;
+            if (!isManual && (Date.now() - lastGhFetchTime < GH_COOLDOWN_MS)) return;
+            
+            isFetchingGh = true;
+            lastGhFetchTime = Date.now();
+
             try {
-                const badge = document.getElementById('gh-total-badge');
-                if (badge && showToast) badge.innerText = "Refreshing...";
-                
                 let fetched = [];
                 for (const account of GITHUB_ACCOUNTS) {
                     try {
-                        const res = await fetch(`https://api.github.com/users/${account}/repos?sort=pushed&per_page=30&t=${Date.now()}`);
+                        const res = await fetch(`https://api.github.com/users/${account}/repos?sort=pushed&per_page=15`);
                         if (res.ok) {
-                            const list = await res.json();
-                            if (Array.isArray(list)) {
-                                fetched = fetched.concat(list.map(r => ({
+                            const data = await res.json();
+                            if (Array.isArray(data)) {
+                                fetched.push(...data.map(r => ({
                                     name: r.name,
                                     owner: account,
                                     fullName: r.full_name,
@@ -782,8 +785,8 @@
                 fetched.sort((a, b) => new Date(b.pushedAt) - new Date(a.pushedAt));
                 allGithubRepos = fetched;
 
-                // Fetch latest commit & action status for top 10 repos asynchronously
-                const topRepos = allGithubRepos.slice(0, 10);
+                // Fetch latest commit & action status for top 4 repos (optimizes API budget)
+                const topRepos = allGithubRepos.slice(0, 4);
                 await Promise.allSettled(topRepos.map(async (repo) => {
                     try {
                         const [cRes, aRes] = await Promise.allSettled([
@@ -826,6 +829,8 @@
                 }
             } catch (globalErr) {
                 console.error("GitHub Status Monitor Error:", globalErr);
+            } finally {
+                isFetchingGh = false;
             }
         }
 
@@ -1057,9 +1062,20 @@
             }).join('');
         }
 
-        // Initialize GitHub Status Monitor
+        // Initialize GitHub Status Monitor with 2m background sync & instant tab-focus auto-sync
         fetchGithubRepositories();
-        setInterval(() => fetchGithubRepositories(false), 180000);
+        setInterval(() => fetchGithubRepositories(false), 120000);
+        
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible' && Date.now() - lastGhFetchTime > GH_COOLDOWN_MS) {
+                fetchGithubRepositories(false);
+            }
+        });
+        window.addEventListener('focus', () => {
+            if (Date.now() - lastGhFetchTime > GH_COOLDOWN_MS) {
+                fetchGithubRepositories(false);
+            }
+        });
         
         const twitchLabApi = 'https://script.google.com/macros/s/AKfycby0ndGELJv0Q6yAR8PKMsvo3u-hZ2qAL80sVahxyeyrLy_qDXhkcYZkKBoq6HhdrhyO/exec';
         async function syncTwitchFollowers() { try { const res = await fetch(twitchLabApi + '?t=' + Date.now()); const data = await res.json(); if (data.twitch) document.getElementById('twitch-fol-num').innerText = fNum(data.twitch.followers); } catch (e) {} }
