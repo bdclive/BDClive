@@ -1,7 +1,7 @@
 # Changelog
 
-## v10.2.21 (2026-08-13)
-- **Active Work Only Filter for GitHub Pipeline:** Filtered the main dashboard GitHub Status Box to strictly show active workloads (uploading, queued, failed, or pushed within the last 7 days). Old/idle repositories are automatically excluded from the main card. Added `Active Projects` vs `All Repositories` filter tabs in the Command Center modal.
+## v10.2.22 (2026-08-13)
+- **Strict 24-Hour Upload Filter:** Set GitHub Status Box filter strictly to projects uploaded/pushed within the last 24 hours or actively running workflows. Automatically excluded any repository untouched beyond 24 hours from the main dashboard card.
 
-## v10.2.20 (2026-08-13)
-- **Short Name Formatting for GitHub Pipeline:** Formatted repository display names to use clean, short identifiers (e.g., `wosbdc` and `DasherTracker`).
+## v10.2.21 (2026-08-13)
+- **Active Work Only Filter for GitHub Pipeline:** Filtered main dashboard to active workloads.

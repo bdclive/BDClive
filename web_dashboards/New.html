@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v10.2.21</title>
+    <title>Cloud Dashboard v10.2.22</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Outfit:wght@600;800&display=swap" rel="stylesheet">
@@ -247,7 +247,7 @@
             </div>
 
             <div style="display: flex; justify-content: space-between; align-items: center; font-size: 9px; color: var(--text-dim); border-top: 1px solid rgba(255,255,255,0.06); padding-top: 3px;">
-                <span>Active: <span id="gh-active-count" style="color: #3fb950; font-weight: 700;">0</span></span>
+                <span>Uploaded: <span id="gh-active-count" style="color: #3fb950; font-weight: 700;">0</span></span>
                 <span style="color: #a371f7; display: flex; align-items: center; gap: 4px;">Command Center <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 8.5px;"></i></span>
             </div>
         </div>
@@ -305,7 +305,7 @@
             </div>
             <div class="cinema-footer">
                 <div class="cinema-stats-line"><span>M: <span id="m-count">0</span></span><span>TV: <span id="tv-count">0</span></span><span style="color: var(--cinema-green);">S: <span id="sync-timer">LIVE</span></span></div>
-                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v10.2.21</span></div>
+                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v10.2.22</span></div>
             </div>
         </div>
     </div>
@@ -837,7 +837,7 @@
                 const actBadge = getActionBadge(repo);
                 if (actBadge && actBadge.priority <= 2) return true; // in_progress, queued, failed
                 const diffMs = now - new Date(repo.pushedAt);
-                return diffMs <= (7 * 86400000); // within 7 days
+                return diffMs <= (24 * 60 * 60 * 1000); // strictly pushed within last 24 hours (today)
             });
         }
 
@@ -847,7 +847,7 @@
             const beaconEl = document.getElementById('gh-beacon-status');
             const activeRepos = getActiveRepositories();
 
-            if (badge) badge.innerText = `${activeRepos.length} Active`;
+            if (badge) badge.innerText = `${activeRepos.length} Recent`;
             if (activeCountEl) activeCountEl.innerText = activeRepos.length;
 
             const modalActiveCnt = document.getElementById('gh-modal-active-cnt');
