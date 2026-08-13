@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v10.2.18</title>
+    <title>Cloud Dashboard v10.2.19</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Outfit:wght@600;800&display=swap" rel="stylesheet">
@@ -236,7 +236,7 @@
                 <div style="display: flex; align-items: center; gap: 6px;">
                     <i class="fa-brands fa-github" style="color: #a371f7; font-size: 14px;"></i>
                     <span style="font-size: 11px; font-weight: 800; color: #ffffff; letter-spacing: 0.5px; text-transform: uppercase;">GitHub Pipeline</span>
-                    <span style="font-size: 8.5px; background: rgba(35, 134, 54, 0.2); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.4); padding: 1px 4px; border-radius: 4px; font-weight: 800;">● LIVE</span>
+                    <span id="gh-beacon-status"><span style="font-size: 8.5px; background: rgba(35, 134, 54, 0.2); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.4); padding: 1px 4px; border-radius: 4px; font-weight: 800;">● LIVE</span></span>
                 </div>
                 <span id="gh-total-badge" style="font-size: 9px; color: var(--text-dim); background: rgba(255,255,255,0.06); padding: 1px 6px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.08);">Syncing...</span>
             </div>
@@ -305,7 +305,7 @@
             </div>
             <div class="cinema-footer">
                 <div class="cinema-stats-line"><span>M: <span id="m-count">0</span></span><span>TV: <span id="tv-count">0</span></span><span style="color: var(--cinema-green);">S: <span id="sync-timer">LIVE</span></span></div>
-                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v10.2.18</span></div>
+                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v10.2.19</span></div>
             </div>
         </div>
     </div>
@@ -663,13 +663,14 @@
         setInterval(renderTheaterHeartbeat, 1000);
         renderTheaterHeartbeat();
 
-        // ================= GITHUB STATUS MONITOR =================
+        // ================= GITHUB STATUS MONITOR & ACTIONS PIPELINE =================
         const GITHUB_ACCOUNTS = ['BrianDivaCox', 'wosbdc', 'DasherTracker']; // All user & org handles
         let allGithubRepos = [];
         let ghTickerIndex = 0;
         let ghTickerInterval = null;
 
         function timeAgo(dateString) {
+            if (!dateString) return "--";
             const date = new Date(dateString);
             const now = new Date();
             const diffSec = Math.floor((now - date) / 1000);
@@ -683,6 +684,61 @@
             if (diffDays < 30) return `${diffDays}d ago`;
             const diffMonths = Math.floor(diffDays / 30);
             return `${diffMonths}mo ago`;
+        }
+
+        function getActionBadge(repo) {
+            if (!repo || !repo.actionStatus) return null;
+            if (repo.actionStatus === 'in_progress') {
+                return {
+                    label: 'UPLOADING',
+                    icon: '<i class="fa-solid fa-spinner fa-spin" style="color: #58a6ff; font-size: 8px;"></i>',
+                    color: '#58a6ff',
+                    bg: 'rgba(56, 139, 253, 0.2)',
+                    border: 'rgba(56, 139, 253, 0.6)',
+                    priority: 1
+                };
+            }
+            if (repo.actionStatus === 'queued') {
+                return {
+                    label: 'QUEUED',
+                    icon: '<i class="fa-solid fa-hourglass-half" style="color: #d29922; font-size: 8px;"></i>',
+                    color: '#d29922',
+                    bg: 'rgba(187, 128, 9, 0.2)',
+                    border: 'rgba(210, 153, 34, 0.6)',
+                    priority: 2
+                };
+            }
+            if (repo.actionConclusion === 'failure' || repo.actionConclusion === 'timed_out' || repo.actionConclusion === 'action_required') {
+                return {
+                    label: 'FAILED',
+                    icon: '<i class="fa-solid fa-circle-xmark" style="color: #f85149; font-size: 8.5px;"></i>',
+                    color: '#f85149',
+                    bg: 'rgba(248, 81, 73, 0.25)',
+                    border: 'rgba(248, 81, 73, 0.7)',
+                    priority: 0 // Highest priority
+                };
+            }
+            if (repo.actionConclusion === 'cancelled') {
+                return {
+                    label: 'CANCELLED',
+                    icon: '<i class="fa-solid fa-ban" style="color: #8b949e; font-size: 8px;"></i>',
+                    color: '#8b949e',
+                    bg: 'rgba(110, 118, 129, 0.15)',
+                    border: 'rgba(110, 118, 129, 0.3)',
+                    priority: 5
+                };
+            }
+            if (repo.actionConclusion === 'success') {
+                return {
+                    label: 'LIVE',
+                    icon: '<i class="fa-solid fa-circle-check" style="color: #3fb950; font-size: 8.5px;"></i>',
+                    color: '#3fb950',
+                    bg: 'rgba(35, 134, 54, 0.18)',
+                    border: 'rgba(63, 185, 80, 0.4)',
+                    priority: 4
+                };
+            }
+            return null;
         }
 
         async function fetchGithubRepositories(showToast = false) {
@@ -707,7 +763,11 @@
                                     description: r.description || 'No description',
                                     stars: r.stargazers_count || 0,
                                     forks: r.forks_count || 0,
-                                    latestCommit: null
+                                    latestCommit: null,
+                                    actionStatus: null,
+                                    actionConclusion: null,
+                                    actionName: null,
+                                    actionUpdatedAt: null
                                 })));
                             }
                         }
@@ -716,23 +776,46 @@
                     }
                 }
 
-                // Sort by pushed_at descending (most recent first)
+                // Initial sort by pushed_at
                 fetched.sort((a, b) => new Date(b.pushedAt) - new Date(a.pushedAt));
                 allGithubRepos = fetched;
 
-                // Fetch latest commit message for top 6 most recent repos asynchronously
-                const topRepos = allGithubRepos.slice(0, 8);
+                // Fetch latest commit & action status for top 10 repos asynchronously
+                const topRepos = allGithubRepos.slice(0, 10);
                 await Promise.allSettled(topRepos.map(async (repo) => {
                     try {
-                        const cr = await fetch(`https://api.github.com/repos/${repo.owner}/${repo.name}/commits?per_page=1`);
-                        if (cr.ok) {
-                            const cData = await cr.json();
+                        const [cRes, aRes] = await Promise.allSettled([
+                            fetch(`https://api.github.com/repos/${repo.owner}/${repo.name}/commits?per_page=1`),
+                            fetch(`https://api.github.com/repos/${repo.owner}/${repo.name}/actions/runs?per_page=1`)
+                        ]);
+                        if (cRes.status === 'fulfilled' && cRes.value.ok) {
+                            const cData = await cRes.value.json();
                             if (Array.isArray(cData) && cData.length > 0) {
                                 repo.latestCommit = cData[0].commit.message.split('\n')[0];
                             }
                         }
+                        if (aRes.status === 'fulfilled' && aRes.value.ok) {
+                            const aData = await aRes.value.json();
+                            if (aData.workflow_runs && aData.workflow_runs.length > 0) {
+                                const run = aData.workflow_runs[0];
+                                repo.actionStatus = run.status;
+                                repo.actionConclusion = run.conclusion;
+                                repo.actionName = run.name;
+                                repo.actionUpdatedAt = run.updated_at;
+                            }
+                        }
                     } catch (e) {}
                 }));
+
+                // Smart priority sort: Failed (0) -> In Progress (1) -> Queued (2) -> Recency (pushed_at)
+                allGithubRepos.sort((a, b) => {
+                    const bA = getActionBadge(a);
+                    const bB = getActionBadge(b);
+                    const pA = bA ? bA.priority : 99;
+                    const pB = bB ? bB.priority : 99;
+                    if ((pA <= 2 || pB <= 2) && pA !== pB) return pA - pB;
+                    return new Date(b.pushedAt) - new Date(a.pushedAt);
+                });
 
                 updateGithubDashboardUI();
                 const ghModal = document.getElementById('githubModal');
@@ -747,7 +830,25 @@
         function updateGithubDashboardUI() {
             const badge = document.getElementById('gh-total-badge');
             const activeCountEl = document.getElementById('gh-active-count');
+            const beaconEl = document.getElementById('gh-beacon-status');
             if (badge) badge.innerText = `${allGithubRepos.length} Repos`;
+
+            // Check if any build is currently failed, uploading, or queued
+            const hasFailed = allGithubRepos.some(r => r.actionConclusion === 'failure' || r.actionConclusion === 'timed_out');
+            const hasUploading = allGithubRepos.some(r => r.actionStatus === 'in_progress');
+            const hasQueued = allGithubRepos.some(r => r.actionStatus === 'queued');
+
+            if (beaconEl) {
+                if (hasFailed) {
+                    beaconEl.innerHTML = '<span style="color: #f85149; background: rgba(248,81,73,0.25); border: 1px solid rgba(248,81,73,0.6); padding: 1px 5px; border-radius: 4px; font-weight: 800;">● BUILD FAILED</span>';
+                } else if (hasUploading) {
+                    beaconEl.innerHTML = '<span style="color: #58a6ff; background: rgba(56,139,253,0.2); border: 1px solid rgba(56,139,253,0.6); padding: 1px 5px; border-radius: 4px; font-weight: 800;"><i class="fa-solid fa-spinner fa-spin"></i> UPLOADING</span>';
+                } else if (hasQueued) {
+                    beaconEl.innerHTML = '<span style="color: #d29922; background: rgba(187,128,9,0.2); border: 1px solid rgba(210,153,34,0.6); padding: 1px 5px; border-radius: 4px; font-weight: 800;">⌛ QUEUED</span>';
+                } else {
+                    beaconEl.innerHTML = '<span style="color: #3fb950; background: rgba(35,134,54,0.2); border: 1px solid rgba(63,185,80,0.4); padding: 1px 4px; border-radius: 4px; font-weight: 800;">● LIVE</span>';
+                }
+            }
 
             // Calculate active repos in last 24 hours
             const now = new Date();
@@ -782,18 +883,29 @@
                 const diffMs = now - new Date(repo.pushedAt);
                 const isRecent = diffMs < 86400000; // < 24h
                 const isWeek = diffMs < 604800000; // < 7d
-                const dotColor = isRecent ? '#3fb950' : (isWeek ? '#d29922' : '#8b949e');
                 const relTime = timeAgo(repo.pushedAt);
                 const commitMsg = repo.latestCommit || repo.description || 'No commit message';
                 const displayName = repo.owner !== 'BrianDivaCox' ? `${repo.owner}/${repo.name}` : repo.name;
+                const actBadge = getActionBadge(repo);
+
+                const statusPill = actBadge 
+                    ? `<span style="font-size: 7.5px; background: ${actBadge.bg}; color: ${actBadge.color}; border: 1px solid ${actBadge.border}; padding: 0 4px; border-radius: 3px; font-weight: 800; display: inline-flex; align-items: center; gap: 3px;">${actBadge.icon} ${actBadge.label}</span>`
+                    : (isRecent 
+                        ? `<span style="font-size: 7.5px; background: rgba(35,134,54,0.18); color: #3fb950; border: 1px solid rgba(63,185,80,0.4); padding: 0 4px; border-radius: 3px; font-weight: 800;">● TODAY</span>`
+                        : (isWeek 
+                            ? `<span style="font-size: 7.5px; background: rgba(187,128,9,0.18); color: #d29922; border: 1px solid rgba(210,153,34,0.4); padding: 0 4px; border-radius: 3px; font-weight: 800;">● ACTIVE</span>` 
+                            : ''));
+
+                const dotColor = actBadge ? actBadge.color : (isRecent ? '#3fb950' : (isWeek ? '#d29922' : '#8b949e'));
 
                 return `
-                <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 6px; padding: 4px 8px; display: flex; flex-direction: column; gap: 2px;">
+                <div style="background: rgba(255,255,255,0.03); border: 1px solid ${actBadge && actBadge.priority <= 2 ? actBadge.border : 'rgba(255,255,255,0.06)'}; border-radius: 6px; padding: 4px 8px; display: flex; flex-direction: column; gap: 2px;">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <div style="display: flex; align-items: center; gap: 5px; overflow: hidden;">
+                        <div style="display: flex; align-items: center; gap: 4px; overflow: hidden;">
                             <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: ${dotColor}; box-shadow: 0 0 5px ${dotColor};"></span>
-                            <span style="font-size: 10px; font-weight: 700; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 105px;" title="${repo.fullName}">${displayName}</span>
-                            <span style="font-size: 8px; color: #a371f7; background: rgba(163, 113, 247, 0.15); padding: 0 3px; border-radius: 3px;">⑂ ${repo.defaultBranch}</span>
+                            <span style="font-size: 10px; font-weight: 700; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 90px;" title="${repo.fullName}">${displayName}</span>
+                            ${statusPill}
+                            <span style="font-size: 7.5px; color: #a371f7; background: rgba(163, 113, 247, 0.15); padding: 0 3px; border-radius: 3px;">⑂ ${repo.defaultBranch}</span>
                         </div>
                         <span style="font-size: 8.5px; color: var(--text-dim); white-space: nowrap;">${relTime}</span>
                     </div>
@@ -819,6 +931,8 @@
                 r.name.toLowerCase().includes(query) || 
                 r.owner.toLowerCase().includes(query) ||
                 (r.latestCommit && r.latestCommit.toLowerCase().includes(query)) ||
+                (r.actionStatus && r.actionStatus.toLowerCase().includes(query)) ||
+                (r.actionConclusion && r.actionConclusion.toLowerCase().includes(query)) ||
                 (r.description && r.description.toLowerCase().includes(query))
             );
             renderGithubModalList(filtered);
@@ -837,19 +951,23 @@
                 const diffMs = now - new Date(repo.pushedAt);
                 const isRecent = diffMs < 86400000;
                 const isWeek = diffMs < 604800000;
-                const statusBadge = isRecent 
-                    ? '<span style="background: rgba(35, 134, 54, 0.2); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.4); padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 700;">● Live / Pushed Today</span>'
-                    : (isWeek 
-                        ? '<span style="background: rgba(187, 128, 9, 0.2); color: #d29922; border: 1px solid rgba(210, 153, 34, 0.4); padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 700;">● Active This Week</span>'
-                        : '<span style="background: rgba(110, 118, 129, 0.1); color: #8b949e; border: 1px solid rgba(110, 118, 129, 0.2); padding: 2px 6px; border-radius: 4px; font-size: 9px;">● Idle</span>');
+                const actBadge = getActionBadge(repo);
+
+                const statusBadge = actBadge 
+                    ? `<span style="background: ${actBadge.bg}; color: ${actBadge.color}; border: 1px solid ${actBadge.border}; padding: 2px 7px; border-radius: 4px; font-size: 9px; font-weight: 800; display: inline-flex; align-items: center; gap: 4px;">${actBadge.icon} ${actBadge.label}</span>`
+                    : (isRecent 
+                        ? '<span style="background: rgba(35, 134, 54, 0.2); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.4); padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 700;">● Live / Pushed Today</span>'
+                        : (isWeek 
+                            ? '<span style="background: rgba(187, 128, 9, 0.2); color: #d29922; border: 1px solid rgba(210, 153, 34, 0.4); padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 700;">● Active This Week</span>'
+                            : '<span style="background: rgba(110, 118, 129, 0.1); color: #8b949e; border: 1px solid rgba(110, 118, 129, 0.2); padding: 2px 6px; border-radius: 4px; font-size: 9px;">● Idle</span>'));
                 
                 const ownerBadge = repo.owner !== 'BrianDivaCox' ? `<span style="font-size: 9px; background: rgba(163, 113, 247, 0.2); color: #a371f7; border: 1px solid rgba(163, 113, 247, 0.4); padding: 1px 5px; border-radius: 4px;">🏢 ${repo.owner}</span>` : '';
                 const displayName = repo.owner !== 'BrianDivaCox' ? `${repo.owner} / ${repo.name}` : repo.name;
 
                 return `
-                <div style="background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; transition: background 0.2s;" onmouseover="this.style.background='#1f242c'" onmouseout="this.style.background='#161b22'">
+                <div style="background: #161b22; border: 1px solid ${actBadge && actBadge.priority <= 2 ? actBadge.border : '#30363d'}; border-radius: 8px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; transition: background 0.2s;" onmouseover="this.style.background='#1f242c'" onmouseout="this.style.background='#161b22'">
                     <div style="display: flex; flex-direction: column; gap: 4px; max-width: 75%;">
-                        <div style="display: flex; align-items: center; gap: 8px;">
+                        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
                             <span style="font-size: 13px; font-weight: 700; color: #58a6ff;">${displayName}</span>
                             ${ownerBadge}
                             <span style="font-size: 9.5px; background: rgba(110, 118, 129, 0.2); color: #8b949e; padding: 1px 5px; border-radius: 4px;">⑂ ${repo.defaultBranch}</span>
@@ -858,8 +976,9 @@
                         <div style="font-size: 11px; color: #c9d1d9;">
                             ${repo.latestCommit ? `<i class="fa-solid fa-code-commit" style="color: #8b949e; margin-right: 4px;"></i> ${repo.latestCommit}` : repo.description}
                         </div>
-                        <div style="font-size: 9.5px; color: #8b949e;">
-                            Pushed ${timeAgo(repo.pushedAt)} (${new Date(repo.pushedAt).toLocaleString()})
+                        <div style="font-size: 9.5px; color: #8b949e; display: flex; align-items: center; gap: 10px;">
+                            <span>Pushed ${timeAgo(repo.pushedAt)} (${new Date(repo.pushedAt).toLocaleDateString()})</span>
+                            ${repo.actionName ? `<span style="color: #58a6ff;"><i class="fa-solid fa-bolt" style="font-size: 8px;"></i> ${repo.actionName}</span>` : ''}
                         </div>
                     </div>
                     <a href="${repo.htmlUrl}" target="_blank" style="background: #21262d; border: 1px solid #30363d; color: #58a6ff; text-decoration: none; padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: 600; display: flex; align-items: center; gap: 5px; white-space: nowrap;">
