@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v10.2.15</title>
+    <title>Cloud Dashboard v10.2.16</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Outfit:wght@600;800&display=swap" rel="stylesheet">
@@ -283,7 +283,7 @@
             </div>
             <div class="cinema-footer">
                 <div class="cinema-stats-line"><span>M: <span id="m-count">0</span></span><span>TV: <span id="tv-count">0</span></span><span style="color: var(--cinema-green);">S: <span id="sync-timer">LIVE</span></span></div>
-                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v10.2.15</span></div>
+                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v10.2.16</span></div>
             </div>
         </div>
     </div>
@@ -488,58 +488,34 @@
             return output;
         }
         
-        let nowInt, nextInt;
+        // Cinema Box State Machine
+        const THEATER_STATE = {
+            moviesCount: 0,
+            daysOpen: "0",
+            tvCount: 0,
+            nowPlaying: "No Movie Playing",
+            showEndTime: null,
+            nextTitle: "Masters of the Universe",
+            nextTime: null,
+            targetShowDate: null
+        };
+
         sDb.ref('theaterSync').on('value', (snapshot) => {
             const m = snapshot.val(); if (!m) return;
             
-            document.getElementById('m-count').innerText = fNum(m.moviesCount || m.movieCount);
-            document.getElementById('m-open').innerText = m.daysOpen || "0";
-            document.getElementById('tv-count').innerText = fNum(m.tvCount || m.showCount);
+            THEATER_STATE.moviesCount = m.moviesCount || m.movieCount || 0;
+            THEATER_STATE.daysOpen = m.daysOpen || "0";
+            THEATER_STATE.tvCount = m.tvCount || m.showCount || 0;
+            THEATER_STATE.nowPlaying = m.nowPlaying || "No Movie Playing";
+            THEATER_STATE.nextTitle = m.nextTitle || "Masters of the Universe";
+            THEATER_STATE.showEndTime = m.showEndTime || null;
+            THEATER_STATE.nextTime = m.nextTime || null;
 
-            if (nowInt) clearInterval(nowInt);
-            if (nextInt) clearInterval(nextInt);
+            document.getElementById('m-count').innerText = fNum(THEATER_STATE.moviesCount);
+            document.getElementById('m-open').innerText = THEATER_STATE.daysOpen;
+            document.getElementById('tv-count').innerText = fNum(THEATER_STATE.tvCount);
 
             const now = new Date();
-            const nowTitleEl = document.getElementById('m-now');
-            const nowTimeEl = document.getElementById('m-left');
-            const nextTitleEl = document.getElementById('m-next');
-            const nextTimeEl = document.getElementById('m-time');
-
-            const isIdle = !m.nowPlaying || m.nowPlaying.toLowerCase().includes("no movie playing");
-            nowTitleEl.innerText = isIdle ? "No Movie Playing" : m.nowPlaying;
-
-            if (!isIdle) {
-                const showEnd = (m.showEndTime && !isNaN(new Date(m.showEndTime).getTime())) 
-                    ? new Date(m.showEndTime) 
-                    : new Date(now.getFullYear(), now.getMonth(), now.getDate(), 20, 56, 0);
-                
-                const runNowTicker = () => {
-                    const currNow = new Date();
-                    const secsLeft = Math.floor((showEnd - currNow) / 1000);
-                    if (secsLeft <= 0) {
-                        nowTimeEl.innerText = "Cinema Idle";
-                        nowTitleEl.innerText = "No Movie Playing";
-                        clearInterval(nowInt);
-                        return;
-                    }
-                    let h = Math.floor(secsLeft / 3600);
-                    let mins = Math.floor((secsLeft % 3600) / 60);
-                    let s = secsLeft % 60;
-                    let text = "Left: ";
-                    if (h > 0) text += `${h}h ${mins}m ${s}s`;
-                    else if (mins > 0) text += `${mins}m ${s}s`;
-                    else text += `${s}s`;
-                    nowTimeEl.innerText = text;
-                };
-                runNowTicker();
-                nowInt = setInterval(runNowTicker, 1000);
-            } else {
-                nowTimeEl.innerText = "Cinema Idle";
-            }
-
-            nextTitleEl.innerText = m.nextTitle || "Masters of the Universe";
-            document.getElementById('m-today-label').style.display = "none";
-                
             let targetShow = null;
             if (m.nextTime && m.nextTime !== "TBD" && !m.nextTime.includes("None")) {
                 targetShow = new Date(m.nextTime);
@@ -560,47 +536,89 @@
                     targetShow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 19, 0, 0);
                 }
             }
-            
-            const runNextTicker = () => {
-                const currNow = new Date();
-                const secsLeft = Math.floor((targetShow - currNow) / 1000);
-                if (secsLeft <= 0) {
-                    nextTimeEl.innerText = "Show Starting...";
-                    clearInterval(nextInt);
-                    document.getElementById('m-today-label').style.display = "none";
-                    return;
-                }
-                
-                const isToday = (targetShow.toDateString() === currNow.toDateString());
-                if (secsLeft <= 86400 && isToday) {
-                    document.getElementById('m-today-label').style.display = "inline";
-                    let hours = Math.floor(secsLeft / 3600);
-                    let mins = Math.floor((secsLeft % 3600) / 60);
-                    let secs = secsLeft % 60;
-                    let output = "";
-                    if (hours > 0) output += `${hours}h ${mins}m ${secs}s`;
-                    else if (mins > 0) output += `${mins}m ${secs}s`;
-                    else output += `${secs}s`;
-                    nextTimeEl.innerText = output;
-                } else if (secsLeft <= 86400) {
-                    document.getElementById('m-today-label').style.display = "none";
-                    let hours = Math.floor(secsLeft / 3600);
-                    let mins = Math.floor((secsLeft % 3600) / 60);
-                    let secs = secsLeft % 60;
-                    let output = "";
-                    if (hours > 0) output += `${hours}h ${mins}m ${secs}s`;
-                    else if (mins > 0) output += `${mins}m ${secs}s`;
-                    else output += `${secs}s`;
-                    nextTimeEl.innerText = output;
-                } else {
-                    document.getElementById('m-today-label').style.display = "none";
-                    const calendarDays = Math.ceil(secsLeft / 86400);
-                    nextTimeEl.innerText = `In: ${calendarDays} Day${calendarDays !== 1 ? 's' : ''}`;
-                }
-            };
-            runNextTicker();
-            nextInt = setInterval(runNextTicker, 1000);
+            THEATER_STATE.targetShowDate = targetShow;
         });
+
+        function renderTheaterHeartbeat() {
+            const now = new Date();
+            const nowTitleEl = document.getElementById('m-now');
+            const nowTimeEl = document.getElementById('m-left');
+            const nextTitleEl = document.getElementById('m-next');
+            const nextTimeEl = document.getElementById('m-time');
+            const todayLabelEl = document.getElementById('m-today-label');
+            if (!nowTitleEl || !nowTimeEl || !nextTitleEl || !nextTimeEl) return;
+
+            // 1. Render Now Playing & Left Ticker
+            const isIdle = !THEATER_STATE.nowPlaying || THEATER_STATE.nowPlaying.toLowerCase().includes("no movie playing");
+            nowTitleEl.innerText = isIdle ? "No Movie Playing" : THEATER_STATE.nowPlaying;
+
+            if (!isIdle) {
+                const showEnd = (THEATER_STATE.showEndTime && !isNaN(new Date(THEATER_STATE.showEndTime).getTime())) 
+                    ? new Date(THEATER_STATE.showEndTime) 
+                    : new Date(now.getFullYear(), now.getMonth(), now.getDate(), 20, 56, 0);
+                
+                const secsLeft = Math.floor((showEnd - now) / 1000);
+                if (secsLeft <= 0) {
+                    nowTimeEl.innerText = "Cinema Idle";
+                    nowTitleEl.innerText = "No Movie Playing";
+                } else {
+                    let h = Math.floor(secsLeft / 3600);
+                    let mins = Math.floor((secsLeft % 3600) / 60);
+                    let s = secsLeft % 60;
+                    let text = "Left: ";
+                    if (h > 0) text += `${h}h ${mins}m ${s}s`;
+                    else if (mins > 0) text += `${mins}m ${s}s`;
+                    else text += `${s}s`;
+                    nowTimeEl.innerText = text;
+                }
+            } else {
+                nowTimeEl.innerText = "Cinema Idle";
+            }
+
+            // 2. Render Up Next & Countdown Ticker
+            nextTitleEl.innerText = THEATER_STATE.nextTitle;
+
+            const targetShow = THEATER_STATE.targetShowDate;
+            if (targetShow) {
+                const secsLeft = Math.floor((targetShow - now) / 1000);
+                if (secsLeft <= 0) {
+                    if (todayLabelEl) todayLabelEl.style.display = "none";
+                    nextTimeEl.innerText = "Show Starting...";
+                } else {
+                    const isToday = (targetShow.toDateString() === now.toDateString());
+                    if (secsLeft <= 86400 && isToday) {
+                        if (todayLabelEl) todayLabelEl.style.display = "inline";
+                        let hours = Math.floor(secsLeft / 3600);
+                        let mins = Math.floor((secsLeft % 3600) / 60);
+                        let secs = secsLeft % 60;
+                        let output = "";
+                        if (hours > 0) output += `${hours}h ${mins}m ${secs}s`;
+                        else if (mins > 0) output += `${mins}m ${secs}s`;
+                        else output += `${secs}s`;
+                        nextTimeEl.innerText = output;
+                    } else if (secsLeft <= 86400) {
+                        if (todayLabelEl) todayLabelEl.style.display = "none";
+                        let hours = Math.floor(secsLeft / 3600);
+                        let mins = Math.floor((secsLeft % 3600) / 60);
+                        let secs = secsLeft % 60;
+                        let output = "";
+                        if (hours > 0) output += `${hours}h ${mins}m ${secs}s`;
+                        else if (mins > 0) output += `${mins}m ${secs}s`;
+                        else output += `${secs}s`;
+                        nextTimeEl.innerText = output;
+                    } else {
+                        if (todayLabelEl) todayLabelEl.style.display = "none";
+                        const calendarDays = Math.ceil(secsLeft / 86400);
+                        nextTimeEl.innerText = `In: ${calendarDays} Day${calendarDays !== 1 ? 's' : ''}`;
+                    }
+                }
+            } else {
+                if (todayLabelEl) todayLabelEl.style.display = "none";
+                nextTimeEl.innerText = "--";
+            }
+        }
+        setInterval(renderTheaterHeartbeat, 1000);
+        renderTheaterHeartbeat();
         
         const twitchLabApi = 'https://script.google.com/macros/s/AKfycby0ndGELJv0Q6yAR8PKMsvo3u-hZ2qAL80sVahxyeyrLy_qDXhkcYZkKBoq6HhdrhyO/exec';
         async function syncTwitchFollowers() { try { const res = await fetch(twitchLabApi + '?t=' + Date.now()); const data = await res.json(); if (data.twitch) document.getElementById('twitch-fol-num').innerText = fNum(data.twitch.followers); } catch (e) {} }
