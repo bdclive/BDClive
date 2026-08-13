@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Twitch Lab v1.2.2</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        body { background: #0d1117; color: white; font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        .lab-card { background: #161b22; border: 1px solid #30363d; padding: 40px; border-radius: 20px; text-align: center; width: 420px; box-shadow: 0 10px 40px rgba(0,0,0,0.6); border-top: 4px solid #9146FF; position: relative; }
+        .twitch-icon { color: #9146FF; font-size: 40px; margin-bottom: 10px; }
+        .label { color: #8b949e; text-transform: uppercase; font-size: 11px; font-weight: bold; letter-spacing: 2px; }
+        .number { font-size: 3.5rem; font-weight: 800; margin: 2px 0; color: #ffffff; letter-spacing: -2px; }
+        
+        /* Dual Metric Data Row Styling */
+        .metric-split-row { display: flex; justify-content: space-between; gap: 15px; margin: 15px 0; }
+        .split-box { flex: 1; background: rgba(145, 70, 255, 0.05); padding: 12px; border-radius: 12px; border: 1px solid rgba(145, 70, 255, 0.15); text-align: center; }
+        .split-label { color: #bc95ff; font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; margin: 0 0 5px 0; }
+        .split-number { font-size: 1.8rem; font-weight: bold; color: #ffffff; font-family: monospace; display: block; margin-bottom: 5px; }
+
+        .status-pill { display: inline-block; padding: 3px 10px; border-radius: 8px; font-size: 9px; font-weight: bold; background: #30363d; color: #8b949e; text-transform: uppercase; }
+        .success { background: #238636; color: white; }
+        .error { background: #da3633; color: white; }
+        
+        .log-box { margin-top: 25px; padding: 12px; background: #000; border-radius: 8px; font-family: 'Consolas', monospace; font-size: 10px; text-align: left; border: 1px solid #30363d; height: 100px; overflow-y: auto; }
+        .log-entry { margin-bottom: 6px; border-bottom: 1px solid #1c2128; padding-bottom: 4px; }
+        .sync-timer-ui { position: absolute; top: 15px; right: 20px; font-size: 10px; color: #8b949e; font-weight: bold; }
+        .version-tag { font-size: 9px; color: #8b949e; margin-top: 15px; display: block; }
+        button { margin-top: 10px; background: #30363d; color: white; border: none; padding: 12px; border-radius: 10px; cursor: pointer; font-weight: bold; width: 100%; font-size: 14px; }
+        button:hover { background: #3d444d; }
+
+        /* Real-Time Flashing Notification Dot Styling */
+        .notification-dot {
+            display: inline-block;
+            width: 7px;
+            height: 7px;
+            background-color: #00FF66;
+            border-radius: 50%;
+            margin-left: 4px;
+            vertical-align: middle;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .pulse-active {
+            opacity: 1;
+            animation: flashAnimation 1.2s infinite alternate;
+        }
+        @keyframes flashAnimation {
+            0% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(0, 255, 102, 0.7); }
+            100% { transform: scale(1.2); box-shadow: 0 0 10px 4px rgba(0, 255, 102, 0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="lab-card">
+        <div class="sync-timer-ui">Next Sync: <span id="timer-val">60</span>s</div>
+        <i class="fa-brands fa-twitch twitch-icon"></i>
+        <div class="label">Twitch Followers</div>
+        <div id="follower-count" class="number">---</div>
+        
+        <div class="metric-split-row">
+            <div class="split-box">
+                <p class="split-label">🎬 Live Viewers</p>
+                <span id="twitch-viewer-num" class="split-number">---</span>
+                <span id="viewers-status" class="status-pill">READY</span>
+            </div>
+            <div class="split-box">
+                <p class="split-label">💬 Chatters<span id="chat-alert-dot" class="notification-dot"></span></p>
+                <span id="twitch-chatter-num" class="split-number">---</span>
+                <span id="chatters-status" class="status-pill">READY</span>
+            </div>
+        </div>
+
+        <div class="log-box" id="changelog">
+            <div class="log-entry" style="color: #bc95ff;"><b>[System]</b> Multi-Pipeline Interface v1.2.2 fully restored and running.</div>
+        </div>
+
+        <button onclick="syncLab()">FORCE MANUAL SYNC</button>
+        <span class="version-tag">Lab Interface: v1.2.2 | Script Engine: <span id="script-ver-ui">...</span></span>
+    </div>
+
+    <script>
+        const followerApi = 'https://script.google.com/macros/s/AKfycby0ndGELJv0Q6yAR8PKMsvo3u-hZ2qAL80sVahxyeyrLy_qDXhkcYZkKBoq6HhdrhyO/exec';
+        const firebaseApi = 'https://livecounters-8eaa8-default-rtdb.firebaseio.com/labData.json';
+        let timeLeft = 60;
+        let alertTimeout;
+        let lastPulseTime = 0;
+
+        async function syncLab() {
+            const countEl = document.getElementById('follower-count');
+            const viewerEl = document.getElementById('twitch-viewer-num');
+            const chatterEl = document.getElementById('twitch-chatter-num');
+            
+            const vStatusEl = document.getElementById('viewers-status');
+            const cStatusEl = document.getElementById('chatters-status');
+            const logEl = document.getElementById('changelog');
+            const verEl = document.getElementById('script-ver-ui');
+
+            try {
+                // Fetch Apps Script Follower Count
+                const followerResponse = await fetch(followerApi + '?t=' + Date.now(), { method: 'GET', redirect: 'follow' });
+                const followerData = await followerResponse.json();
+                
+                countEl.innerText = followerData.twitch.followers;
+                verEl.innerText = followerData.twitch.scriptVersion;
+
+                // Fetch Firebase Realtime Live Metrics
+                const firebaseResponse = await fetch(firebaseApi + '?t=' + Date.now());
+                const firebaseData = await firebaseResponse.json();
+
+                // Viewers Parsing
+                if (firebaseData.twitchViewers !== undefined && !isNaN(firebaseData.twitchViewers)) {
+                    viewerEl.innerText = firebaseData.twitchViewers;
+                    vStatusEl.innerText = "LIVE";
+                    vStatusEl.className = "status-pill success";
+                } else {
+                    viewerEl.innerText = "0";
+                    vStatusEl.innerText = "OFFLINE";
+                    vStatusEl.className = "status-pill";
+                }
+
+                // Chatters Parsing (Mapped directly to twitchChatters)
+                if (firebaseData.twitchChatters !== undefined && firebaseData.twitchChatters !== "AUTH_ERR") {
+                    chatterEl.innerText = firebaseData.twitchChatters;
+                    cStatusEl.innerText = "CONNECTED";
+                    cStatusEl.className = "status-pill success";
+                } else {
+                    chatterEl.innerText = "---";
+                    cStatusEl.innerText = firebaseData.twitchChatters === "AUTH_ERR" ? "AUTH FAIL" : "OFFLINE";
+                    cStatusEl.className = "status-pill error";
+                }
+
+                // Live Pulse Notification Light Tracker
+                if (firebaseData.lastChatActivity && firebaseData.lastChatActivity > lastPulseTime) {
+                    if (lastPulseTime !== 0) {
+                        const dot = document.getElementById('chat-alert-dot');
+                        dot.classList.add('pulse-active');
+                        
+                        clearTimeout(alertTimeout);
+                        alertTimeout = setTimeout(() => {
+                            dot.classList.remove('pulse-active');
+                        }, 8000);
+                    }
+                    lastPulseTime = firebaseData.lastChatActivity;
+                }
+
+                const entry = document.createElement('div');
+                entry.className = 'log-entry';
+                entry.innerHTML = `<span style="color:#8b949e">[Sync]</span> F: ${followerData.twitch.followers} | V: ${firebaseData.twitchViewers} | C: ${firebaseData.twitchChatters}`;
+                logEl.prepend(entry);
+                
+                timeLeft = 60; 
+
+            } catch (err) {
+                vStatusEl.innerText = "FAIL";
+                vStatusEl.className = "status-pill error";
+                cStatusEl.innerText = "FAIL";
+                cStatusEl.className = "status-pill error";
+            }
+        }
+
+        setInterval(() => {
+            timeLeft--;
+            document.getElementById('timer-val').innerText = timeLeft;
+            if (timeLeft <= 0) { syncLab(); }
+        }, 1000);
+
+        syncLab();
+    </script>
+</body>
+</html>

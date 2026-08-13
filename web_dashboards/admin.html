@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloud Admin v3.9.5</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background: #0d1117; color: white; display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; min-height: 100vh; }
+        .admin-card { background: #161b22; border: 1px solid #30363d; padding: 0; border-radius: 15px; width: 100%; max-width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); display: none; overflow: hidden; }
+        .card-content { padding: 20px; }
+        #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0d1117; display: flex; justify-content: center; align-items: center; z-index: 100; }
+        .login-box { background: #161b22; padding: 40px 30px; border-radius: 15px; border: 1px solid #30363d; width: 90%; max-width: 350px; text-align: center; }
+        input { width: 100%; padding: 12px; background: #000; border: 1px solid #444; color: #0f0; border-radius: 8px; box-sizing: border-box; font-size: 16px; font-family: monospace; margin-bottom: 15px; transition: border 0.3s; }
+        input:focus { border-color: #58a6ff; outline: none; color: #fff; }
+        #login-btn { width: 100%; padding: 15px; background: #58a6ff; color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 16px; }
+        .quick-links { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 20px; width: 100%; }
+        .link-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px 5px; border-radius: 8px; text-decoration: none; font-size: 9px; font-weight: bold; color: white; border: 1px solid rgba(255,255,255,0.1); transition: 0.2s; }
+        .link-btn i { font-size: 18px; margin-bottom: 5px; }
+        .row { margin-bottom: 12px; }
+        .label { font-size: 10px; text-transform: uppercase; color: #8b949e; letter-spacing: 1px; margin-bottom: 5px; display: block; }
+        #push-btn { width: 100%; padding: 15px; background: #238636; color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 16px; }
+        .section-title { border-bottom: 1px solid #333; padding-bottom: 5px; margin-bottom: 15px; color: #58a6ff; font-size: 14px; margin-top: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .card-footer { background: #0d1117; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #30363d; }
+        .version-badge { background: #30363d; color: #58a6ff; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; font-family: monospace; }
+    </style>
+</head>
+<body>
+
+    <div id="login-overlay">
+        <div class="login-box">
+            <h3 style="margin-top:0">Cloud Command Login</h3>
+            <p style="font-size: 12px; color: #8b949e; margin-bottom: 20px;">v3.9.5 Admin Access</p>
+            <input type="email" id="admin-email" placeholder="Email">
+            <input type="password" id="admin-pass" placeholder="Password">
+            <button id="login-btn" onclick="loginManual()">AUTHENTICATE</button>
+            <p id="login-err" style="color: #ff7b72; font-size: 11px; margin-top: 15px; display: none;"></p>
+        </div>
+    </div>
+
+    <h2 style="margin-bottom: 15px;">Cloud Command</h2>
+
+    <div class="admin-card" id="main-admin">
+        <div class="card-content">
+            <div class="section-title">
+                <span>Quick Launch Sources</span>
+                <span style="color:#238636; font-size: 10px; font-weight: bold;">Verified ✅</span>
+            </div>
+            <div class="quick-links">
+                <a href="https://www.threads.net/@briandivacox" target="_blank" class="link-btn" style="background: #000;"><i class="fa-brands fa-threads"></i>Threads</a>
+                <a href="https://www.snapchat.com/add/briandivacox" target="_blank" class="link-btn" style="background: #FFFC00; color: black;"><i class="fa-brands fa-snapchat"></i>Snap</a>
+                <a href="https://www.facebook.com/briandivacox" target="_blank" class="link-btn" style="background: #0866FF;"><i class="fa-brands fa-facebook"></i>FB</a>
+                <a href="https://bsky.app/profile/briandivacox.bsky.social" target="_blank" class="link-btn" style="background: #1185FE;"><i class="fa-solid fa-square-poll-vertical"></i>Bsky</a>
+            </div>
+
+            <div class="section-title">Update Numbers</div>
+            
+            <div class="row">
+                <span class="label">Plex Stream Count</span>
+                <input type="text" id="plex-count" onfocus="unformat(this)" onblur="formatCompact(this)">
+            </div>
+            <div class="row">
+                <span class="label">Threads Followers</span>
+                <input type="text" id="threads-fol" onfocus="unformat(this)" onblur="formatCompact(this)">
+            </div>
+            <div class="row">
+                <span class="label">Threads Views</span>
+                <input type="text" id="threads-views" onfocus="unformat(this)" onblur="formatCompact(this)">
+            </div>
+            <div class="row">
+                <span class="label">Snapchat</span>
+                <input type="text" id="snap-fol" onfocus="unformat(this)" onblur="formatCompact(this)">
+            </div>
+            <div class="row">
+                <span class="label">FB Page</span>
+                <input type="text" id="fb-page" onfocus="unformat(this)" onblur="formatCompact(this)">
+            </div>
+            <div class="row">
+                <span class="label">FB Personal</span>
+                <input type="text" id="fb-personal" onfocus="unformat(this)" onblur="formatCompact(this)">
+            </div>
+
+            <button id="push-btn" onclick="cloudPush()">PUSH TO CLOUD</button>
+        </div>
+        <div class="card-footer">
+            <span style="font-size: 10px; color: #8b949e;">Build: Compact UI v1</span>
+            <span class="version-badge">v3.9.5</span>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+
+    <script>
+        const _k = "QUl6YVN5QXZ4ZktnX3NwUE52RTJ3Y1QtdlRsOFlUUXU0TDN0Xzd3";
+        
+        firebase.initializeApp({
+            apiKey: atob(_k),
+            authDomain: "livecounters-8eaa8.firebaseapp.com",
+            projectId: "livecounters-8eaa8",
+            databaseURL: "https://livecounters-8eaa8-default-rtdb.firebaseio.com/",
+            appId: "1:386919719539:web:c60c0d185c3d7e97ecc006"
+        });
+
+        const database = firebase.database();
+        const auth = firebase.auth();
+
+        // 1. FORMATTING LOGIC
+        const formatter = new Intl.NumberFormat('en-US', {
+            notation: "compact",
+            compactDisplay: "short",
+            maximumFractionDigits: 1
+        });
+
+        function formatCompact(el) {
+            let val = el.value.replace(/[^0-9.]/g, '');
+            if (val === "") return;
+            el.dataset.raw = val; // Store actual number hidden
+            el.value = formatter.format(parseFloat(val));
+        }
+
+        function unformat(el) {
+            if (el.dataset.raw) {
+                el.value = el.dataset.raw; // Show actual number when clicking in
+            }
+        }
+
+        // 2. AUTHENTICATION
+        function loginManual() {
+            const email = document.getElementById('admin-email').value;
+            const pass = document.getElementById('admin-pass').value;
+            auth.signInWithEmailAndPassword(email, pass).catch(err => {
+                const errEl = document.getElementById('login-err');
+                errEl.innerText = "Error: " + err.message;
+                errEl.style.display = 'block';
+            });
+        }
+
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                document.getElementById('login-overlay').style.display = 'none';
+                document.getElementById('main-admin').style.display = 'block';
+            }
+        });
+
+        // 3. DATA LOADING
+        window.onload = function() {
+            const saved = localStorage.getItem('lastAdminPush');
+            if (saved) {
+                const d = JSON.parse(saved);
+                Object.keys(d).forEach(key => {
+                    const input = document.querySelector(`[id="${key.replace(/[A-Z]/g, m => "-" + m.toLowerCase())}"]`);
+                    if (input) {
+                        input.dataset.raw = d[key].toString().replace(/,/g, '');
+                        input.value = formatter.format(parseFloat(input.dataset.raw));
+                    }
+                });
+            }
+        };
+
+        // 4. CLOUD SYNC
+        function cloudPush() {
+            const btn = document.getElementById('push-btn');
+            btn.innerText = "SYNCING...";
+            btn.disabled = true;
+
+            const getValue = (id) => {
+                const el = document.getElementById(id);
+                return el.dataset.raw || el.value.replace(/[^0-9.]/g, '');
+            };
+
+            const data = {
+                plexCount: getValue('plex-count'),
+                threadsFol: getValue('threads-fol'),
+                threadsViews: getValue('threads-views'),
+                snapFol: getValue('snap-fol'),
+                fbPage: getValue('fb-page'),
+                fbPersonal: getValue('fb-personal'),
+                timestamp: Date.now()
+            };
+
+            database.ref('labData').set(data, (err) => {
+                btn.disabled = false;
+                btn.innerText = "PUSH TO CLOUD";
+                if (err) {
+                    alert("Sync Denied: " + err.message);
+                } else { 
+                    localStorage.setItem('lastAdminPush', JSON.stringify(data));
+                    alert("Cloud Sync Successful!"); 
+                }
+            });
+        }
+    </script>
+</body>
+</html>

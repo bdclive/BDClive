@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Court Stream v7.9.4</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        :root { --bg: #0d1117; --card: #161b22; --border: #30363d; --text: #ffffff; --orange: #ffb515; --live: #ff3333; }
+        body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; overflow: hidden; }
+        
+        .counter-item { 
+            background: var(--card); border: 2px solid var(--border); border-radius: 12px; 
+            width: 320px; height: 160px; position: relative; padding-left: 25px;
+            display: flex; flex-direction: column; justify-content: center; transition: all 0.5s ease;
+        }
+
+        .version-tag { position: absolute; top: 12px; right: 50px; font-size: 10px; font-weight: 900; color: var(--orange); background: rgba(0,0,0,0.5); padding: 2px 6px; border-radius: 4px; }
+        .box-logo { position: absolute; top: 12px; right: 15px; font-size: 22px; color: var(--orange); }
+        .dot { height: 12px; width: 12px; background: #484f58; border-radius: 50%; display: inline-block; transition: 0.3s; }
+        .dot.live { background: var(--live); box-shadow: 0 0 10px var(--live); animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0.3; } }
+        
+        /* The "Heartbeat" Monitor - Invisible but active */
+        #JudgePlayer { position: absolute; bottom: 0; right: 0; width: 1px; height: 1px; opacity: 0.01; border: none; }
+    </style>
+</head>
+<body>
+
+    <div class="counter-item" id="court-box">
+        <div class="version-tag">v7.9.4</div>
+        <i class="fa-solid fa-gavel box-logo"></i>
+        
+        <p style="font-size:11px; color:var(--orange); font-weight:bold; margin:0;">Judge David</p>
+        <h4 style="font-size:26px; margin:5px 0; letter-spacing: -1px;">Court Stream</h4>
+        
+        <div style="display:flex; align-items:center; gap:10px;">
+            <span id="court-dot" class="dot"></span>
+            <span id="court-text" style="font-size:14px; font-weight:bold; color:#8b949e;">OFF AIR</span>
+        </div>
+
+        <iframe id="JudgePlayer" src="https://video.ibm.com/embed/23891775?autoplay=true&volume=0&api=1&mute=1" allow="autoplay"></iframe>
+    </div>
+
+    <script>
+        const dot = document.getElementById('court-dot');
+        const txt = document.getElementById('court-text');
+        const box = document.getElementById('court-box');
+
+        function setStatus(isLive) {
+            if (isLive) {
+                dot.className = 'dot live';
+                txt.innerText = "LIVE NOW"; txt.style.color = "#ff3333";
+                box.style.borderColor = "#ff3333"; box.style.background = "#1a0505";
+            } else {
+                dot.className = 'dot';
+                txt.innerText = "OFF AIR"; txt.style.color = "#8b949e";
+                box.style.borderColor = "#30363d"; box.style.background = "#161b22";
+            }
+        }
+
+        // The "Secret Listener" - Catches messages directly from the IBM iframe
+        window.addEventListener('message', function(event) {
+            try {
+                // IBM sends data as a string that looks like JSON
+                const data = JSON.parse(event.data);
+                
+                // If the event is 'playing' or 'live', we know the stream is active
+                if (data.event === 'playing' || data.event === 'live' || (data.property === 'live' && data.value === true)) {
+                    setStatus(true);
+                }
+                
+                // If the event is 'offline', it's done
+                if (data.event === 'offline' || data.event === 'finished') {
+                    setStatus(false);
+                }
+            } catch (e) {
+                // Ignore non-JSON messages (like those font errors)
+            }
+        });
+    </script>
+</body>
+</html>
