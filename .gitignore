@@ -1,0 +1,9 @@
+*.zip
+*.log
+.env
+__pycache__/
+test_scripts/
+threads_bridge_gui_*.pyw
+threads_bridge_cli_*.py
+*.pyw
+discord_rsvp_ids.json
