@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v10.2.19</title>
+    <title>Cloud Dashboard v10.2.20</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Outfit:wght@600;800&display=swap" rel="stylesheet">
@@ -305,7 +305,7 @@
             </div>
             <div class="cinema-footer">
                 <div class="cinema-stats-line"><span>M: <span id="m-count">0</span></span><span>TV: <span id="tv-count">0</span></span><span style="color: var(--cinema-green);">S: <span id="sync-timer">LIVE</span></span></div>
-                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v10.2.19</span></div>
+                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v10.2.20</span></div>
             </div>
         </div>
     </div>
@@ -864,6 +864,20 @@
             }
         }
 
+        function getRepoShortName(repo) {
+            if (!repo || !repo.name) return "";
+            if (repo.name.toLowerCase() === 'wosbdc.github.io' || repo.owner.toLowerCase() === 'wosbdc') {
+                return 'wosbdc';
+            }
+            if (repo.name.toLowerCase() === 'dashertracker.github.io' || repo.owner.toLowerCase() === 'dashertracker') {
+                return 'DasherTracker';
+            }
+            if (repo.name.toLowerCase().endsWith('.github.io')) {
+                return repo.name.replace(/\.github\.io$/i, '');
+            }
+            return repo.name;
+        }
+
         function renderGithubTicker() {
             const feedEl = document.getElementById('gh-ticker-feed');
             if (!feedEl) return;
@@ -885,7 +899,7 @@
                 const isWeek = diffMs < 604800000; // < 7d
                 const relTime = timeAgo(repo.pushedAt);
                 const commitMsg = repo.latestCommit || repo.description || 'No commit message';
-                const displayName = repo.owner !== 'BrianDivaCox' ? `${repo.owner}/${repo.name}` : repo.name;
+                const shortName = getRepoShortName(repo);
                 const actBadge = getActionBadge(repo);
 
                 const statusPill = actBadge 
@@ -903,7 +917,7 @@
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <div style="display: flex; align-items: center; gap: 4px; overflow: hidden;">
                             <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: ${dotColor}; box-shadow: 0 0 5px ${dotColor};"></span>
-                            <span style="font-size: 10px; font-weight: 700; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 90px;" title="${repo.fullName}">${displayName}</span>
+                            <span style="font-size: 10px; font-weight: 700; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 95px;" title="${repo.fullName}">${shortName}</span>
                             ${statusPill}
                             <span style="font-size: 7.5px; color: #a371f7; background: rgba(163, 113, 247, 0.15); padding: 0 3px; border-radius: 3px;">⑂ ${repo.defaultBranch}</span>
                         </div>
@@ -930,6 +944,7 @@
             const filtered = allGithubRepos.filter(r => 
                 r.name.toLowerCase().includes(query) || 
                 r.owner.toLowerCase().includes(query) ||
+                getRepoShortName(r).toLowerCase().includes(query) ||
                 (r.latestCommit && r.latestCommit.toLowerCase().includes(query)) ||
                 (r.actionStatus && r.actionStatus.toLowerCase().includes(query)) ||
                 (r.actionConclusion && r.actionConclusion.toLowerCase().includes(query)) ||
@@ -952,6 +967,7 @@
                 const isRecent = diffMs < 86400000;
                 const isWeek = diffMs < 604800000;
                 const actBadge = getActionBadge(repo);
+                const shortName = getRepoShortName(repo);
 
                 const statusBadge = actBadge 
                     ? `<span style="background: ${actBadge.bg}; color: ${actBadge.color}; border: 1px solid ${actBadge.border}; padding: 2px 7px; border-radius: 4px; font-size: 9px; font-weight: 800; display: inline-flex; align-items: center; gap: 4px;">${actBadge.icon} ${actBadge.label}</span>`
@@ -962,13 +978,12 @@
                             : '<span style="background: rgba(110, 118, 129, 0.1); color: #8b949e; border: 1px solid rgba(110, 118, 129, 0.2); padding: 2px 6px; border-radius: 4px; font-size: 9px;">● Idle</span>'));
                 
                 const ownerBadge = repo.owner !== 'BrianDivaCox' ? `<span style="font-size: 9px; background: rgba(163, 113, 247, 0.2); color: #a371f7; border: 1px solid rgba(163, 113, 247, 0.4); padding: 1px 5px; border-radius: 4px;">🏢 ${repo.owner}</span>` : '';
-                const displayName = repo.owner !== 'BrianDivaCox' ? `${repo.owner} / ${repo.name}` : repo.name;
 
                 return `
                 <div style="background: #161b22; border: 1px solid ${actBadge && actBadge.priority <= 2 ? actBadge.border : '#30363d'}; border-radius: 8px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; transition: background 0.2s;" onmouseover="this.style.background='#1f242c'" onmouseout="this.style.background='#161b22'">
                     <div style="display: flex; flex-direction: column; gap: 4px; max-width: 75%;">
                         <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-                            <span style="font-size: 13px; font-weight: 700; color: #58a6ff;">${displayName}</span>
+                            <span style="font-size: 13px; font-weight: 700; color: #58a6ff;">${shortName}</span>
                             ${ownerBadge}
                             <span style="font-size: 9.5px; background: rgba(110, 118, 129, 0.2); color: #8b949e; padding: 1px 5px; border-radius: 4px;">⑂ ${repo.defaultBranch}</span>
                             ${statusBadge}
