@@ -1,5 +1,8 @@
 # Changelog
 
+## v10.2.52 (2026-08-14)
+- **GateKeeper Header Text Realignment**: Shifted the `GATEKEEPER` header label position to the right for balanced visual alignment across the top bar.
+
 ## v10.2.51 (2026-08-14)
 - **Calibrated Exact 30-Day Active Sync (2 Active / 23 Unsynced)**: Audited live Century Games verification tokens in the database, verifying only 2 accounts hold active 30-day tokens (`BrianDCox` & `thadwarf`), setting **`23 Unsynced`** (`25 Total − 2 Active Sync = 23`).
 
