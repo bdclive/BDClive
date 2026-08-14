@@ -1,5 +1,8 @@
 # Changelog
 
+## v10.2.48 (2026-08-14)
+- **Dynamic Unsynced Calculation Formula (Total − Active Sync)**: Configured the GateKeeper Unsynced metric to dynamically compute `Total Accounts (25) − Active Sync (4) = 21 Unsynced`, synced in real time across Firebase RTDB (`/labData/gatekeeperCounters.json`).
+
 ## v10.2.47 (2026-08-14)
 - **Combined Unclaimed Ratio Layout (16/25)**: Consolidated the Unclaimed Accounts and Total Members counters into a compact, space-saving **`16/25`** ratio hero stat (`#gk-unclaimed / #gk-total-members`), expanding layout breathing room for **🔑 EXP. TOKENS (0)** and **🔄 UNSYNCED (7)**.
 
