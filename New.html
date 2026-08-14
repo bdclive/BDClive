@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v10.2.27</title>
+    <title>Cloud Dashboard v10.2.28</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Outfit:wght@600;800&display=swap" rel="stylesheet">
@@ -240,8 +240,8 @@
                 <span id="gh-total-badge" style="font-size: 9px; color: var(--text-dim); background: rgba(255,255,255,0.06); padding: 1px 6px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.08);">Syncing...</span>
             </div>
 
-            <!-- Auto-rotating / Scrollable Ticker Feed -->
-            <div id="gh-ticker-feed" style="display: flex; flex-direction: column; gap: 4px; overflow: hidden; height: 86px; margin: 4px 0;">
+            <!-- Auto-rotating / Scrollable Ticker Feed (4 items visible) -->
+            <div id="gh-ticker-feed" style="display: flex; flex-direction: column; gap: 3px; overflow: hidden; height: 94px; margin: 2px 0;">
                 <div style="font-size: 10px; color: var(--text-dim); text-align: center; padding-top: 25px;">Loading repositories...</div>
             </div>
 
@@ -304,7 +304,7 @@
             </div>
             <div class="cinema-footer">
                 <div class="cinema-stats-line"><span>M: <span id="m-count">0</span></span><span>TV: <span id="tv-count">0</span></span><span style="color: var(--cinema-green);">S: <span id="sync-timer">LIVE</span></span></div>
-                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v10.2.27</span></div>
+                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v10.2.28</span></div>
             </div>
         </div>
     </div>
@@ -876,7 +876,7 @@
             }
         }
 
-        const CURRENT_APP_VERSION = 'v10.2.27';
+        const CURRENT_APP_VERSION = 'v10.2.28';
         let isDeployingLive = false;
         let pendingRemoteVersion = null;
 
@@ -1000,16 +1000,16 @@
 
             renderGithubTicker();
             if (ghTickerInterval) clearInterval(ghTickerInterval);
-            if (activeRepos.length > 2) {
+            if (activeRepos.length > 4) {
                 ghTickerInterval = setInterval(() => {
                     const currentActive = getActiveRepositories();
-                    if (currentActive.length > 2) {
-                        ghTickerIndex = (ghTickerIndex + 2) % currentActive.length;
+                    if (currentActive.length > 4) {
+                        ghTickerIndex = (ghTickerIndex + 4) % currentActive.length;
                     } else {
                         ghTickerIndex = 0;
                     }
                     renderGithubTicker();
-                }, 5000);
+                }, 6000);
             }
         }
 
@@ -1046,15 +1046,16 @@
                 return;
             }
 
-            // Show active items only
+            // Display up to 4 items on screen
             let items = [];
-            if (activeRepos.length <= 2) {
-                items = activeRepos;
+            if (activeRepos.length <= 4) {
+                items = activeRepos.slice(0, 4);
             } else {
-                items = [
-                    activeRepos[ghTickerIndex % activeRepos.length],
-                    activeRepos[(ghTickerIndex + 1) % activeRepos.length]
-                ].filter(Boolean);
+                items = [];
+                for (let i = 0; i < 4; i++) {
+                    const idx = (ghTickerIndex + i) % activeRepos.length;
+                    items.push(activeRepos[idx]);
+                }
             }
 
             feedEl.innerHTML = items.map(repo => {
@@ -1068,27 +1069,27 @@
                 const actBadge = getActionBadge(repo);
 
                 const statusPill = actBadge 
-                    ? `<span style="font-size: 7.5px; background: ${actBadge.bg}; color: ${actBadge.color}; border: 1px solid ${actBadge.border}; padding: 0 4px; border-radius: 3px; font-weight: 800; display: inline-flex; align-items: center; gap: 3px;">${actBadge.icon} ${actBadge.label}</span>`
+                    ? `<span style="font-size: 7px; background: ${actBadge.bg}; color: ${actBadge.color}; border: 1px solid ${actBadge.border}; padding: 0 3px; border-radius: 3px; font-weight: 800; display: inline-flex; align-items: center; gap: 2px;">${actBadge.icon} ${actBadge.label}</span>`
                     : (isRecent 
-                        ? `<span style="font-size: 7.5px; background: rgba(35,134,54,0.18); color: #3fb950; border: 1px solid rgba(63,185,80,0.4); padding: 0 4px; border-radius: 3px; font-weight: 800;">● TODAY</span>`
+                        ? `<span style="font-size: 7px; background: rgba(35,134,54,0.18); color: #3fb950; border: 1px solid rgba(63,185,80,0.4); padding: 0 3px; border-radius: 3px; font-weight: 800;">● TODAY</span>`
                         : (isWeek 
-                            ? `<span style="font-size: 7.5px; background: rgba(187,128,9,0.18); color: #d29922; border: 1px solid rgba(210,153,34,0.4); padding: 0 4px; border-radius: 3px; font-weight: 800;">● ACTIVE</span>` 
+                            ? `<span style="font-size: 7px; background: rgba(187,128,9,0.18); color: #d29922; border: 1px solid rgba(210,153,34,0.4); padding: 0 3px; border-radius: 3px; font-weight: 800;">● ACTIVE</span>` 
                             : ''));
 
                 const dotColor = actBadge ? actBadge.color : (isRecent ? '#3fb950' : (isWeek ? '#d29922' : '#8b949e'));
 
                 return `
-                <div style="background: rgba(255,255,255,0.03); border: 1px solid ${actBadge && actBadge.priority <= 2 ? actBadge.border : 'rgba(255,255,255,0.06)'}; border-radius: 6px; padding: 4px 8px; display: flex; flex-direction: column; gap: 2px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="background: rgba(255,255,255,0.03); border: 1px solid ${actBadge && actBadge.priority <= 2 ? actBadge.border : 'rgba(255,255,255,0.06)'}; border-radius: 5px; padding: 2px 6px; display: flex; flex-direction: column; gap: 1px; min-height: 19px; box-sizing: border-box;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; line-height: 1.1;">
                         <div style="display: flex; align-items: center; gap: 4px; overflow: hidden;">
-                            <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: ${dotColor}; box-shadow: 0 0 5px ${dotColor};"></span>
-                            <span style="font-size: 10px; font-weight: 700; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 95px;" title="${repo.fullName}">${shortName}</span>
+                            <span style="display: inline-block; width: 5px; height: 5px; border-radius: 50%; background: ${dotColor}; box-shadow: 0 0 4px ${dotColor}; flex-shrink: 0;"></span>
+                            <span style="font-size: 9.5px; font-weight: 700; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 90px;" title="${repo.fullName}">${shortName}</span>
                             ${statusPill}
-                            <span style="font-size: 7.5px; color: #a371f7; background: rgba(163, 113, 247, 0.15); padding: 0 3px; border-radius: 3px;">⑂ ${repo.defaultBranch}</span>
+                            <span style="font-size: 7px; color: #a371f7; background: rgba(163, 113, 247, 0.15); padding: 0 3px; border-radius: 3px;">⑂ ${repo.defaultBranch}</span>
                         </div>
-                        <span style="font-size: 8.5px; color: var(--text-dim); white-space: nowrap;">${relTime}</span>
+                        <span style="font-size: 8px; color: var(--text-dim); white-space: nowrap;">${relTime}</span>
                     </div>
-                    <div style="font-size: 8.5px; color: #8b949e; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                    <div style="font-size: 8px; color: #8b949e; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.1;">
                         ${commitMsg}
                     </div>
                 </div>`;
