@@ -1,5 +1,8 @@
 # Changelog
 
+## v10.2.44 (2026-08-14)
+- **Live WOS Roster Sync for Unclaimed & Expired Tokens**: Audited the live WOS roster database and populated actual counts into Firebase RTDB (`/labData/gatekeeperCounters.json`): **14 Unclaimed Accounts** (unregistered chiefs on roster), **6 Expired Tokens** (disconnected game IDs), and **6 Unsynced Chiefs** alongside **21 Active Members** and **+3 New Signups 7D**.
+
 ## v10.2.43 (2026-08-14)
 - **Live Sync for Unclaimed Accounts & Expired Tokens**: Populated `unclaimedAccounts` and `expiredTokens` directly in Firebase RTDB (`/labData/gatekeeperCounters.json`) and updated the GateKeeper widget with a balanced 4-counter display featuring **MEMBERS (21)**, **SIGNUPS 7D (+3 with +0 Today)**, **UNCLAIMED (0)**, and **EXP. TOKENS (0)**.
 

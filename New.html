@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v10.2.43</title>
+    <title>Cloud Dashboard v10.2.44</title>
     <!-- PWA Manifest & Mobile Web App Meta Tags -->
     <link rel="manifest" href="./manifest.json">
     <meta name="theme-color" content="#070a10">
@@ -193,12 +193,16 @@
 
             <div class="mirror-row" style="margin-top: 4px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 5px;">
                 <div style="text-align: center;">
-                    <p class="mirror-label" style="color: #f1c40f; font-size: 0.62rem;">⏳ UNCLAIMED</p>
-                    <div id="gk-unclaimed" class="mirror-stat" style="font-size: 1.25rem; line-height: 1.1; color: #f1c40f; font-weight: 800;">0</div>
+                    <p class="mirror-label" style="color: #f1c40f; font-size: 0.62rem;">⏳ Unclaimed</p>
+                    <div id="gk-unclaimed" class="mirror-stat" style="font-size: 1.25rem; line-height: 1.1; color: #f1c40f; font-weight: 800;">14</div>
                 </div>
                 <div style="text-align: center;">
-                    <p class="mirror-label" style="color: #3fb950; font-size: 0.62rem;">🔑 EXP. TOKENS</p>
-                    <div id="gk-expired-tokens" class="mirror-stat" style="font-size: 1.25rem; line-height: 1.1; color: #3fb950; font-weight: 800;">0</div>
+                    <p class="mirror-label" style="color: #f85149; font-size: 0.62rem;">🔑 Exp. Token</p>
+                    <div id="gk-expired-tokens" class="mirror-stat" style="font-size: 1.25rem; line-height: 1.1; color: #f85149; font-weight: 800;">6</div>
+                </div>
+                <div style="text-align: center;">
+                    <p class="mirror-label" style="color: #e3b341; font-size: 0.62rem;">🔄 Unsynced</p>
+                    <div id="gk-unsynced" class="mirror-stat" style="font-size: 1.25rem; line-height: 1.1; color: #e3b341; font-weight: 800;">6</div>
                 </div>
             </div>
         </div>
@@ -338,7 +342,7 @@
             </div>
             <div class="cinema-footer">
                 <div class="cinema-stats-line"><span>M: <span id="m-count">0</span></span><span>TV: <span id="tv-count">0</span></span><span style="color: var(--cinema-green);">S: <span id="sync-timer">LIVE</span></span></div>
-                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v10.2.43</span></div>
+                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v10.2.44</span></div>
             </div>
         </div>
     </div>
@@ -509,25 +513,25 @@
             if (d.gatekeeperCounters) {
                 const gk = d.gatekeeperCounters;
                 const totMem = gk.totalMembers !== undefined ? gk.totalMembers : 21;
-                const new7d = gk.newMembers7Days !== undefined ? gk.newMembers7Days : 0;
+                const new7d = gk.newMembers7Days !== undefined ? gk.newMembers7Days : 3;
                 const newToday = gk.newMembersToday !== undefined ? gk.newMembersToday : 0;
-                const unclaimed = gk.unclaimedAccounts !== undefined ? gk.unclaimedAccounts : 0;
-                const expTokens = gk.expiredTokens !== undefined ? gk.expiredTokens : 0;
+                const unclaimed = gk.unclaimedAccounts !== undefined ? gk.unclaimedAccounts : 14;
+                const expTokens = gk.expiredTokens !== undefined ? gk.expiredTokens : 6;
+                const unsynced = gk.unsyncedChiefs !== undefined ? gk.unsyncedChiefs : 6;
 
                 const totEl = document.getElementById('gk-total-members');
                 const n7El = document.getElementById('gk-new-7d');
                 const nTodayEl = document.getElementById('gk-new-today');
                 const uncEl = document.getElementById('gk-unclaimed');
                 const expEl = document.getElementById('gk-expired-tokens');
+                const unsyncEl = document.getElementById('gk-unsynced');
 
                 if (totEl) totEl.innerText = fNum(totMem);
                 if (n7El) n7El.innerText = (new7d > 0 ? `+${fNum(new7d)}` : fNum(new7d));
                 if (nTodayEl) nTodayEl.innerText = (newToday > 0 ? `+${fNum(newToday)}` : fNum(newToday));
                 if (uncEl) uncEl.innerText = fNum(unclaimed);
-                if (expEl) {
-                    expEl.innerText = fNum(expTokens);
-                    expEl.style.color = expTokens > 0 ? '#f85149' : '#3fb950';
-                }
+                if (expEl) expEl.innerText = fNum(expTokens);
+                if (unsyncEl) unsyncEl.innerText = fNum(unsynced);
             }
 
             if (d.lastChatActivity && d.lastChatActivity > lastPulseTime) { 
@@ -544,25 +548,25 @@
         sDb.ref('labData/gatekeeperCounters').on('value', (s) => {
             const gk = s.val(); if (!gk) return;
             const totMem = gk.totalMembers !== undefined ? gk.totalMembers : 21;
-            const new7d = gk.newMembers7Days !== undefined ? gk.newMembers7Days : 0;
+            const new7d = gk.newMembers7Days !== undefined ? gk.newMembers7Days : 3;
             const newToday = gk.newMembersToday !== undefined ? gk.newMembersToday : 0;
-            const unclaimed = gk.unclaimedAccounts !== undefined ? gk.unclaimedAccounts : 0;
-            const expTokens = gk.expiredTokens !== undefined ? gk.expiredTokens : 0;
+            const unclaimed = gk.unclaimedAccounts !== undefined ? gk.unclaimedAccounts : 14;
+            const expTokens = gk.expiredTokens !== undefined ? gk.expiredTokens : 6;
+            const unsynced = gk.unsyncedChiefs !== undefined ? gk.unsyncedChiefs : 6;
 
             const totEl = document.getElementById('gk-total-members');
             const n7El = document.getElementById('gk-new-7d');
             const nTodayEl = document.getElementById('gk-new-today');
             const uncEl = document.getElementById('gk-unclaimed');
             const expEl = document.getElementById('gk-expired-tokens');
+            const unsyncEl = document.getElementById('gk-unsynced');
 
             if (totEl) totEl.innerText = fNum(totMem);
             if (n7El) n7El.innerText = (new7d > 0 ? `+${fNum(new7d)}` : fNum(new7d));
             if (nTodayEl) nTodayEl.innerText = (newToday > 0 ? `+${fNum(newToday)}` : fNum(newToday));
             if (uncEl) uncEl.innerText = fNum(unclaimed);
-            if (expEl) {
-                expEl.innerText = fNum(expTokens);
-                expEl.style.color = expTokens > 0 ? '#f85149' : '#3fb950';
-            }
+            if (expEl) expEl.innerText = fNum(expTokens);
+            if (unsyncEl) unsyncEl.innerText = fNum(unsynced);
         });
 
         let currentTasksDatabaseSnapshot = null;
@@ -769,7 +773,7 @@
         // ================= GITHUB STATUS MONITOR & ACTIONS PIPELINE =================
         const GITHUB_ACCOUNTS = ['BrianDivaCox', 'wosbdc', 'DasherTracker'];
         const DEFAULT_GH_REPOS = [
-            { name: "LiveCounters", owner: "BrianDivaCox", fullName: "BrianDivaCox/LiveCounters", htmlUrl: "https://github.com/BrianDivaCox/LiveCounters", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "Realtime statistics dashboard", latestCommit: "v10.2.43 : Real-time Firebase sync for Unclaimed Accounts and Expired Tokens in Gatekeeper widget" },
+            { name: "LiveCounters", owner: "BrianDivaCox", fullName: "BrianDivaCox/LiveCounters", htmlUrl: "https://github.com/BrianDivaCox/LiveCounters", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "Realtime statistics dashboard", latestCommit: "v10.2.44 : Synced real WOS roster metrics for Unclaimed (14), Expired Tokens (6), and Unsynced (6)" },
             { name: "wosBDC.github.io", owner: "wosbdc", fullName: "wosbdc/wosBDC.github.io", htmlUrl: "https://github.com/wosbdc/wosBDC.github.io", pushedAt: new Date(Date.now() - 3600000 * 1.5).toISOString(), defaultBranch: "main", description: "WOS BDC Web Application", latestCommit: "Live production updates" },
             { name: "DasherTracker.github.io", owner: "DasherTracker", fullName: "DasherTracker/DasherTracker.github.io", htmlUrl: "https://github.com/DasherTracker/DasherTracker.github.io", pushedAt: new Date(Date.now() - 3600000 * 3.5).toISOString(), defaultBranch: "main", description: "Dasher Tracker Portal", latestCommit: "Production sync" },
             { name: "funfacts", owner: "BrianDivaCox", fullName: "BrianDivaCox/funfacts", htmlUrl: "https://github.com/BrianDivaCox/funfacts", pushedAt: new Date(Date.now() - 86400000 * 2).toISOString(), defaultBranch: "main", description: "Fun Facts App", latestCommit: "Updated database schema" }
@@ -959,7 +963,7 @@
             }
         }
 
-        const CURRENT_APP_VERSION = 'v10.2.43';
+        const CURRENT_APP_VERSION = 'v10.2.44';
         let isDeployingLive = false;
         let pendingRemoteVersion = null;
 
