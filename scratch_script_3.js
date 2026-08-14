@@ -180,123 +180,715 @@
             return output;
         }
         
-        let nowInt, nextInt, localNowSecs = 0, localNextSecs = 0;
+        // Cinema Box State Machine
+        const THEATER_STATE = {
+            moviesCount: 0,
+            daysOpen: "0",
+            tvCount: 0,
+            nowPlaying: "No Movie Playing",
+            showEndTime: null,
+            nextTitle: "Masters of the Universe",
+            nextTime: null,
+            targetShowDate: null
+        };
+
         sDb.ref('theaterSync').on('value', (snapshot) => {
             const m = snapshot.val(); if (!m) return;
             
-            document.getElementById('m-count').innerText = fNum(m.moviesCount || m.movieCount);
-            document.getElementById('m-open').innerText = m.daysOpen || "0";
-            document.getElementById('tv-count').innerText = fNum(m.tvCount || m.showCount);
+            THEATER_STATE.moviesCount = m.moviesCount || m.movieCount || 0;
+            THEATER_STATE.daysOpen = m.daysOpen || "0";
+            THEATER_STATE.tvCount = m.tvCount || m.showCount || 0;
+            THEATER_STATE.nowPlaying = m.nowPlaying || "No Movie Playing";
+            THEATER_STATE.nextTitle = m.nextTitle || "Masters of the Universe";
+            THEATER_STATE.showEndTime = m.showEndTime || null;
+            THEATER_STATE.nextTime = m.nextTime || null;
+
+            document.getElementById('m-count').innerText = fNum(THEATER_STATE.moviesCount);
+            document.getElementById('m-open').innerText = THEATER_STATE.daysOpen;
+            document.getElementById('tv-count').innerText = fNum(THEATER_STATE.tvCount);
 
             const now = new Date();
-            const showStart = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 19, 0, 0);
-            const showEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 20, 56, 0);
+            let targetShow = null;
+            if (m.nextTime && m.nextTime !== "TBD" && !m.nextTime.includes("None")) {
+                targetShow = new Date(m.nextTime);
+                if (isNaN(targetShow.getTime())) {
+                    let relSecs = parseToSeconds(m.nextTime);
+                    if (relSecs > 0) {
+                        targetShow = new Date(now.getTime() + (relSecs * 1000));
+                    } else {
+                        let clean = m.nextTime.includes("202") ? m.nextTime : m.nextTime + ", 2026";
+                        targetShow = new Date(clean);
+                    }
+                }
+            }
+            
+            if (!targetShow || isNaN(targetShow.getTime())) {
+                targetShow = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 19, 0, 0);
+                if (now >= new Date(now.getFullYear(), now.getMonth(), now.getDate(), 20, 56, 0)) {
+                    targetShow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 19, 0, 0);
+                }
+            }
+            THEATER_STATE.targetShowDate = targetShow;
+        });
+
+        function renderTheaterHeartbeat() {
+            const now = new Date();
             const nowTitleEl = document.getElementById('m-now');
             const nowTimeEl = document.getElementById('m-left');
             const nextTitleEl = document.getElementById('m-next');
             const nextTimeEl = document.getElementById('m-time');
+            const todayLabelEl = document.getElementById('m-today-label');
+            if (!nowTitleEl || !nowTimeEl || !nextTitleEl || !nextTimeEl) return;
 
-            const isIdle = !m.nowPlaying || m.nowPlaying.toLowerCase().includes("no movie playing");
-            nowTitleEl.innerText = isIdle ? "No Movie Playing" : m.nowPlaying;
+            // 1. Render Now Playing & Left Ticker
+            const isIdle = !THEATER_STATE.nowPlaying || THEATER_STATE.nowPlaying.toLowerCase().includes("no movie playing");
+            nowTitleEl.innerText = isIdle ? "No Movie Playing" : THEATER_STATE.nowPlaying;
 
             if (!isIdle) {
-                const showEnd = (m.showEndTime && !isNaN(new Date(m.showEndTime).getTime())) 
-                    ? new Date(m.showEndTime) 
+                const showEnd = (THEATER_STATE.showEndTime && !isNaN(new Date(THEATER_STATE.showEndTime).getTime())) 
+                    ? new Date(THEATER_STATE.showEndTime) 
                     : new Date(now.getFullYear(), now.getMonth(), now.getDate(), 20, 56, 0);
                 
-                localNowSecs = Math.floor((showEnd - now) / 1000);
-                if (localNowSecs > 0) {
-                    const runNowTicker = () => {
-                        if (localNowSecs <= 0) {
-                            nowTimeEl.innerText = "Cinema Idle";
-                            nowTitleEl.innerText = "No Movie Playing";
-                            clearInterval(nowInt);
-                            return;
-                        }
-                        let h = Math.floor(localNowSecs / 3600);
-                        let mins = Math.floor((localNowSecs % 3600) / 60);
-                        let s = localNowSecs % 60;
-                        let text = "Left: ";
-                        if (h > 0) text += `${h}h ${mins}m ${s}s`;
-                        else if (mins > 0) text += `${mins}m ${s}s`;
-                        else text += `${s}s`;
-                        nowTimeEl.innerText = text;
-                        localNowSecs--;
-                    };
-                    runNowTicker();
-                    nowInt = setInterval(runNowTicker, 1000);
+                const secsLeft = Math.floor((showEnd - now) / 1000);
+                if (secsLeft <= 0) {
+                    nowTimeEl.innerText = "Cinema Idle";
+                    nowTitleEl.innerText = "No Movie Playing";
                 } else {
-                    nowTimeEl.innerText = "Streaming Live";
+                    let h = Math.floor(secsLeft / 3600);
+                    let mins = Math.floor((secsLeft % 3600) / 60);
+                    let s = secsLeft % 60;
+                    let text = "Left: ";
+                    if (h > 0) text += `${h}h ${mins}m ${s}s`;
+                    else if (mins > 0) text += `${mins}m ${s}s`;
+                    else text += `${s}s`;
+                    nowTimeEl.innerText = text;
                 }
             } else {
                 nowTimeEl.innerText = "Cinema Idle";
             }
 
-            nextTitleEl.innerText = m.nextTitle || "Masters of the Universe";
-            document.getElementById('m-today-label').style.display = "none";
+            // 2. Render Up Next & Countdown Ticker
+            nextTitleEl.innerText = THEATER_STATE.nextTitle;
+
+            const targetShow = THEATER_STATE.targetShowDate;
+            if (targetShow) {
+                const secsLeft = Math.floor((targetShow - now) / 1000);
+                if (secsLeft <= 0) {
+                    if (todayLabelEl) todayLabelEl.style.display = "none";
+                    nextTimeEl.innerText = "Show Starting...";
+                } else {
+                    const isToday = (targetShow.toDateString() === now.toDateString());
+                    if (secsLeft <= 86400 && isToday) {
+                        if (todayLabelEl) todayLabelEl.style.display = "inline";
+                        let hours = Math.floor(secsLeft / 3600);
+                        let mins = Math.floor((secsLeft % 3600) / 60);
+                        let secs = secsLeft % 60;
+                        let output = "";
+                        if (hours > 0) output += `${hours}h ${mins}m ${secs}s`;
+                        else if (mins > 0) output += `${mins}m ${secs}s`;
+                        else output += `${secs}s`;
+                        nextTimeEl.innerText = output;
+                    } else if (secsLeft <= 86400) {
+                        if (todayLabelEl) todayLabelEl.style.display = "none";
+                        let hours = Math.floor(secsLeft / 3600);
+                        let mins = Math.floor((secsLeft % 3600) / 60);
+                        let secs = secsLeft % 60;
+                        let output = "";
+                        if (hours > 0) output += `${hours}h ${mins}m ${secs}s`;
+                        else if (mins > 0) output += `${mins}m ${secs}s`;
+                        else output += `${secs}s`;
+                        nextTimeEl.innerText = output;
+                    } else {
+                        if (todayLabelEl) todayLabelEl.style.display = "none";
+                        const calendarDays = Math.ceil(secsLeft / 86400);
+                        nextTimeEl.innerText = `In: ${calendarDays} Day${calendarDays !== 1 ? 's' : ''}`;
+                    }
+                }
+            } else {
+                if (todayLabelEl) todayLabelEl.style.display = "none";
+                nextTimeEl.innerText = "--";
+            }
+        }
+        setInterval(renderTheaterHeartbeat, 1000);
+        renderTheaterHeartbeat();
+
+        // ================= GITHUB STATUS MONITOR & ACTIONS PIPELINE =================
+        const GITHUB_ACCOUNTS = ['BrianDivaCox', 'wosbdc', 'DasherTracker'];
+        const DEFAULT_GH_REPOS = [
+            { name: "LiveCounters", owner: "BrianDivaCox", fullName: "BrianDivaCox/LiveCounters", htmlUrl: "https://github.com/BrianDivaCox/LiveCounters", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "Realtime statistics dashboard", latestCommit: "v10.2.30 : Color-coded time ago age system and 5-hour cutoff" },
+            { name: "wosBDC.github.io", owner: "wosbdc", fullName: "wosbdc/wosBDC.github.io", htmlUrl: "https://github.com/wosbdc/wosBDC.github.io", pushedAt: new Date(Date.now() - 3600000 * 1.5).toISOString(), defaultBranch: "main", description: "WOS BDC Web Application", latestCommit: "Live production updates" },
+            { name: "DasherTracker.github.io", owner: "DasherTracker", fullName: "DasherTracker/DasherTracker.github.io", htmlUrl: "https://github.com/DasherTracker/DasherTracker.github.io", pushedAt: new Date(Date.now() - 3600000 * 3.5).toISOString(), defaultBranch: "main", description: "Dasher Tracker Portal", latestCommit: "Production sync" },
+            { name: "funfacts", owner: "BrianDivaCox", fullName: "BrianDivaCox/funfacts", htmlUrl: "https://github.com/BrianDivaCox/funfacts", pushedAt: new Date(Date.now() - 86400000 * 2).toISOString(), defaultBranch: "main", description: "Fun Facts App", latestCommit: "Updated database schema" }
+        ];
+
+        let allGithubRepos = [];
+        try {
+            const cached = JSON.parse(localStorage.getItem('gh_repos_cache') || 'null');
+            allGithubRepos = (Array.isArray(cached) && cached.length > 0) ? cached : DEFAULT_GH_REPOS;
+        } catch (e) {
+            allGithubRepos = DEFAULT_GH_REPOS;
+        }
+
+        let ghTickerIndex = 0;
+        let ghTickerInterval = null;
+        let lastGhFetchTime = 0;
+        let isFetchingGh = false;
+        const GH_COOLDOWN_MS = 20000;
+
+        function timeAgo(dateString) {
+            if (!dateString) return "--";
+            const date = new Date(dateString);
+            const now = new Date();
+            const diffSec = Math.floor((now - date) / 1000);
+            if (diffSec < 60) return "Just now";
+            const diffMin = Math.floor(diffSec / 60);
+            if (diffMin < 60) return `${diffMin}m ago`;
+            const diffHour = Math.floor(diffMin / 60);
+            if (diffHour < 24) return `${diffHour}h ago`;
+            const diffDays = Math.floor(diffHour / 24);
+            if (diffDays === 1) return "Yesterday";
+            if (diffDays < 30) return `${diffDays}d ago`;
+            const diffMonths = Math.floor(diffDays / 30);
+            return `${diffMonths}mo ago`;
+        }
+
+        function getActionBadge(repo) {
+            if (!repo || !repo.actionStatus) return null;
+            if (repo.actionStatus === 'in_progress') {
+                return {
+                    label: 'UPLOADING',
+                    icon: '<i class="fa-solid fa-spinner fa-spin" style="color: #58a6ff; font-size: 8px;"></i>',
+                    color: '#58a6ff',
+                    bg: 'rgba(56, 139, 253, 0.2)',
+                    border: 'rgba(56, 139, 253, 0.6)',
+                    priority: 1
+                };
+            }
+            if (repo.actionStatus === 'queued') {
+                return {
+                    label: 'QUEUED',
+                    icon: '<i class="fa-solid fa-hourglass-half" style="color: #d29922; font-size: 8px;"></i>',
+                    color: '#d29922',
+                    bg: 'rgba(187, 128, 9, 0.2)',
+                    border: 'rgba(210, 153, 34, 0.6)',
+                    priority: 2
+                };
+            }
+            if (repo.actionConclusion === 'failure' || repo.actionConclusion === 'timed_out' || repo.actionConclusion === 'action_required') {
+                return {
+                    label: 'FAILED',
+                    icon: '<i class="fa-solid fa-circle-xmark" style="color: #f85149; font-size: 8.5px;"></i>',
+                    color: '#f85149',
+                    bg: 'rgba(248, 81, 73, 0.25)',
+                    border: 'rgba(248, 81, 73, 0.7)',
+                    priority: 0 // Highest priority
+                };
+            }
+            if (repo.actionConclusion === 'cancelled') {
+                return {
+                    label: 'CANCELLED',
+                    icon: '<i class="fa-solid fa-ban" style="color: #8b949e; font-size: 8px;"></i>',
+                    color: '#8b949e',
+                    bg: 'rgba(110, 118, 129, 0.15)',
+                    border: 'rgba(110, 118, 129, 0.3)',
+                    priority: 5
+                };
+            }
+            if (repo.actionConclusion === 'success') {
+                return {
+                    label: 'LIVE',
+                    icon: '<i class="fa-solid fa-circle-check" style="color: #3fb950; font-size: 8.5px;"></i>',
+                    color: '#3fb950',
+                    bg: 'rgba(35, 134, 54, 0.18)',
+                    border: 'rgba(63, 185, 80, 0.4)',
+                    priority: 4
+                };
+            }
+            return null;
+        }
+
+        async function fetchGithubRepositories(isManual = false) {
+            if (isFetchingGh) return;
+            if (!isManual && (Date.now() - lastGhFetchTime < GH_COOLDOWN_MS)) return;
+            
+            isFetchingGh = true;
+            lastGhFetchTime = Date.now();
+
+            try {
+                let fetched = [];
+                for (const account of GITHUB_ACCOUNTS) {
+                    try {
+                        const res = await fetch(`https://api.github.com/users/${account}/repos?sort=pushed&per_page=15`);
+                        if (res.ok) {
+                            const data = await res.json();
+                            if (Array.isArray(data)) {
+                                fetched.push(...data.map(r => ({
+                                    name: r.name,
+                                    owner: account,
+                                    fullName: r.full_name,
+                                    htmlUrl: r.html_url,
+                                    pushedAt: r.pushed_at,
+                                    defaultBranch: r.default_branch || 'main',
+                                    description: r.description || 'No description',
+                                    stars: r.stargazers_count || 0,
+                                    forks: r.forks_count || 0,
+                                    latestCommit: null,
+                                    actionStatus: null,
+                                    actionConclusion: null,
+                                    actionName: null,
+                                    actionUpdatedAt: null
+                                })));
+                            }
+                        }
+                    } catch (err) {
+                        console.warn(`GitHub fetch error for ${account}:`, err);
+                    }
+                }
+
+                if (fetched.length > 0) {
+                    // Sort by pushed_at
+                    fetched.sort((a, b) => new Date(b.pushedAt) - new Date(a.pushedAt));
+                    allGithubRepos = fetched;
+
+                    // Fetch latest commit & action status for top 4 repos
+                    const topRepos = allGithubRepos.slice(0, 4);
+                    await Promise.allSettled(topRepos.map(async (repo) => {
+                        try {
+                            const [cRes, aRes] = await Promise.allSettled([
+                                fetch(`https://api.github.com/repos/${repo.owner}/${repo.name}/commits?per_page=1`),
+                                fetch(`https://api.github.com/repos/${repo.owner}/${repo.name}/actions/runs?per_page=1`)
+                            ]);
+                            if (cRes.status === 'fulfilled' && cRes.value.ok) {
+                                const cData = await cRes.value.json();
+                                if (Array.isArray(cData) && cData.length > 0) {
+                                    repo.latestCommit = cData[0].commit.message.split('\n')[0];
+                                }
+                            }
+                            if (aRes.status === 'fulfilled' && aRes.value.ok) {
+                                const aData = await aRes.value.json();
+                                if (aData.workflow_runs && aData.workflow_runs.length > 0) {
+                                    const run = aData.workflow_runs[0];
+                                    repo.actionStatus = run.status;
+                                    repo.actionConclusion = run.conclusion;
+                                    repo.actionName = run.name;
+                                    repo.actionUpdatedAt = run.updated_at;
+                                }
+                            }
+                        } catch (e) {}
+                    }));
+
+                    // Smart priority sort: Failed (0) -> In Progress (1) -> Queued (2) -> Recency (pushed_at)
+                    allGithubRepos.sort((a, b) => {
+                        const bA = getActionBadge(a);
+                        const bB = getActionBadge(b);
+                        const pA = bA ? bA.priority : 99;
+                        const pB = bB ? bB.priority : 99;
+                        if ((pA <= 2 || pB <= 2) && pA !== pB) return pA - pB;
+                        return new Date(b.pushedAt) - new Date(a.pushedAt);
+                    });
+
+                    try {
+                        localStorage.setItem('gh_repos_cache', JSON.stringify(allGithubRepos));
+                    } catch (e) {}
+                }
+
+                updateGithubDashboardUI();
+                checkAppUpdateAlert(allGithubRepos);
+                const ghModal = document.getElementById('githubModal');
+                if (ghModal && ghModal.style.display === 'block') {
+                    renderGithubModalList(allGithubRepos);
+                }
+            } catch (globalErr) {
+                console.error("GitHub Status Monitor Error:", globalErr);
+            } finally {
+                isFetchingGh = false;
+            }
+        }
+
+        const CURRENT_APP_VERSION = 'v10.2.30';
+        let isDeployingLive = false;
+        let pendingRemoteVersion = null;
+
+        function parseSemver(vStr) {
+            if (!vStr) return [0, 0, 0];
+            const clean = vStr.replace(/[^0-9.]/g, '');
+            const parts = clean.split('.').map(n => parseInt(n, 10) || 0);
+            while (parts.length < 3) parts.push(0);
+            return parts;
+        }
+
+        function isNewerVersion(remoteVer, currentVer) {
+            const [rMaj, rMin, rPat] = parseSemver(remoteVer);
+            const [cMaj, cMin, cPat] = parseSemver(currentVer);
+            if (rMaj !== cMaj) return rMaj > cMaj;
+            if (rMin !== cMin) return rMin > cMin;
+            return rPat > cPat;
+        }
+
+        function showUpdateAlert(title, desc, isBuilding = false) {
+            const banner = document.getElementById('updateAlertBanner');
+            const titleEl = document.getElementById('update-alert-title');
+            const descEl = document.getElementById('update-alert-desc');
+            const iconEl = document.getElementById('update-alert-icon');
+            if (!banner) return;
+
+            if (isBuilding) {
+                banner.style.borderColor = '#d29922';
+                if (iconEl) iconEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="color: #d29922;"></i>';
+                if (titleEl) { titleEl.innerText = title; titleEl.style.color = '#d29922'; }
+            } else {
+                banner.style.borderColor = '#3fb950';
+                if (iconEl) iconEl.innerHTML = '⚡';
+                if (titleEl) { titleEl.innerText = title; titleEl.style.color = '#3fb950'; }
+            }
+            if (descEl) descEl.innerText = desc;
+            banner.style.display = 'flex';
+        }
+
+        function dismissUpdateAlert() {
+            const banner = document.getElementById('updateAlertBanner');
+            if (banner) banner.style.display = 'none';
+            if (pendingRemoteVersion) {
+                sessionStorage.setItem('dismissed_version_' + pendingRemoteVersion, 'true');
+            }
+        }
+
+        async function checkDirectVersionUpdate() {
+            try {
+                const changelogUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+                    ? `CHANGELOG.md?t=${Date.now()}` 
+                    : `https://raw.githubusercontent.com/BrianDivaCox/LiveCounters/main/CHANGELOG.md?t=${Date.now()}`;
                 
-                let targetShow = null;
-                if (m.nextTime && m.nextTime !== "TBD" && !m.nextTime.includes("None")) {
-                    targetShow = new Date(m.nextTime);
-                    if (isNaN(targetShow.getTime())) {
-                        let relSecs = parseToSeconds(m.nextTime);
-                        if (relSecs > 0) {
-                            targetShow = new Date(now.getTime() + (relSecs * 1000));
-                        } else {
-                            let clean = m.nextTime.includes("202") ? m.nextTime : m.nextTime + ", 2026";
-                            targetShow = new Date(clean);
+                const res = await fetch(changelogUrl, { cache: 'no-cache' });
+                if (res.ok) {
+                    const text = await res.text();
+                    const match = text.match(/##\s*(v\d+\.\d+\.\d+)[^\n]*\n([^\n#]*)/i);
+                    if (match) {
+                        const remoteVer = match[1];
+                        const note = match[2] ? match[2].replace(/^-\s*\*\*/, '').replace(/\*\*:?/, ' -').trim() : 'New version available';
+                        if (isNewerVersion(remoteVer, CURRENT_APP_VERSION)) {
+                            pendingRemoteVersion = remoteVer;
+                            const isDismissed = sessionStorage.getItem('dismissed_version_' + remoteVer) === 'true';
+                            if (!isDismissed) {
+                                showUpdateAlert(`⚡ New Update Available (${remoteVer})`, note, false);
+                                return true;
+                            }
                         }
                     }
                 }
-                
-                if (!targetShow || isNaN(targetShow.getTime())) {
-                    targetShow = showStart;
-                    if (now >= showEnd) {
-                        targetShow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 19, 0, 0);
+            } catch (e) {
+                console.warn("Direct version check fallback error:", e);
+            }
+            return false;
+        }
+
+        async function checkAppUpdateAlert(repos) {
+            const hasNewDirect = await checkDirectVersionUpdate();
+            if (hasNewDirect) return;
+
+            const lcRepo = (repos || []).find(r => r.name === 'LiveCounters' || r.fullName === 'BrianDivaCox/LiveCounters');
+            if (!lcRepo) return;
+
+            if (lcRepo.actionStatus === 'in_progress' || lcRepo.actionStatus === 'queued') {
+                isDeployingLive = true;
+                showUpdateAlert('🚀 Deployment In Progress', 'Uploading and deploying new update...', true);
+                return;
+            }
+
+            if (isDeployingLive && lcRepo.actionConclusion === 'success') {
+                isDeployingLive = false;
+                showUpdateAlert('🟢 Update Deployed!', 'New update is live! Click reload to apply.', false);
+                return;
+            }
+
+            if (lcRepo.latestCommit) {
+                const versionMatch = lcRepo.latestCommit.match(/v\d+\.\d+\.\d+/i);
+                if (versionMatch) {
+                    const remoteVer = versionMatch[0];
+                    if (isNewerVersion(remoteVer, CURRENT_APP_VERSION)) {
+                        pendingRemoteVersion = remoteVer;
+                        const isDismissed = sessionStorage.getItem('dismissed_version_' + remoteVer) === 'true';
+                        if (!isDismissed) {
+                            showUpdateAlert(`⚡ Update Available (${remoteVer})`, lcRepo.latestCommit, false);
+                        }
+                    } else {
+                        const banner = document.getElementById('updateAlertBanner');
+                        if (banner && !isDeployingLive) banner.style.display = 'none';
                     }
                 }
-                
-                localNextSecs = Math.floor((targetShow - now) / 1000);
-                if (localNextSecs > 0) {
-                    const runNextTicker = () => {
-                        if (localNextSecs <= 0) {
-                            nextTimeEl.innerText = "Show Starting...";
-                            clearInterval(nextInt);
-                            document.getElementById('m-today-label').style.display = "none";
-                            return;
-                        }
-                        
-                        const isToday = (targetShow.toDateString() === now.toDateString());
-                        if (localNextSecs <= 86400 && isToday) {
-                            document.getElementById('m-today-label').style.display = "inline";
-                            let hours = Math.floor(localNextSecs / 3600);
-                            let mins = Math.floor((localNextSecs % 3600) / 60);
-                            let secs = localNextSecs % 60;
-                            let output = "";
-                            if (hours > 0) output += `${hours}h ${mins}m ${secs}s`;
-                            else if (mins > 0) output += `${mins}m ${secs}s`;
-                            else output += `${secs}s`;
-                            nextTimeEl.innerText = output;
-                        } else if (localNextSecs <= 86400) {
-                            document.getElementById('m-today-label').style.display = "none";
-                            let hours = Math.floor(localNextSecs / 3600);
-                            let mins = Math.floor((localNextSecs % 3600) / 60);
-                            let secs = localNextSecs % 60;
-                            let output = "";
-                            if (hours > 0) output += `${hours}h ${mins}m ${secs}s`;
-                            else if (mins > 0) output += `${mins}m ${secs}s`;
-                            else output += `${secs}s`;
-                            nextTimeEl.innerText = output;
-                        } else {
-                            document.getElementById('m-today-label').style.display = "none";
-                            const calendarDays = Math.ceil(localNextSecs / 86400);
-                            nextTimeEl.innerText = `In: ${calendarDays} Day${calendarDays !== 1 ? 's' : ''}`;
-                        }
-                        localNextSecs--;
-                    };
-                    runNextTicker();
-                    nextInt = setInterval(runNextTicker, 1000);
+            }
+        }
+
+        let ghModalTab = 'active'; // 'active' or 'all'
+
+        function getActiveRepositories() {
+            const now = new Date();
+            const MAX_AGE_MS = 5 * 60 * 60 * 1000; // strictly 5 hours cutoff
+            return allGithubRepos.filter(repo => {
+                const actBadge = getActionBadge(repo);
+                if (actBadge && actBadge.priority <= 2) return true; // in_progress, queued, failed
+                const diffMs = now - new Date(repo.pushedAt);
+                return diffMs <= MAX_AGE_MS; // strictly pushed within last 5 hours
+            });
+        }
+
+        function getTimeAgeTheme(diffMs) {
+            const ONE_HOUR = 3600000;
+            const THREE_HOURS = 3 * ONE_HOUR;
+            if (diffMs < ONE_HOUR) {
+                return {
+                    color: '#3fb950', // Green (<1hr)
+                    badgeBg: 'rgba(35, 134, 54, 0.18)',
+                    badgeBorder: 'rgba(63, 185, 80, 0.4)',
+                    label: '● <1H'
+                };
+            } else if (diffMs < THREE_HOURS) {
+                return {
+                    color: '#e3b341', // Yellow (1-3hr)
+                    badgeBg: 'rgba(227, 179, 65, 0.18)',
+                    badgeBorder: 'rgba(227, 179, 65, 0.4)',
+                    label: '● 1-3H'
+                };
+            } else {
+                return {
+                    color: '#f85149', // Red (4hr-5hr)
+                    badgeBg: 'rgba(248, 81, 73, 0.18)',
+                    badgeBorder: 'rgba(248, 81, 73, 0.4)',
+                    label: '● 4H+'
+                };
+            }
+        }
+
+        function updateGithubDashboardUI() {
+            const badge = document.getElementById('gh-total-badge');
+            const activeCountEl = document.getElementById('gh-active-count');
+            const activeRepos = getActiveRepositories();
+
+            const hasFailed = allGithubRepos.some(r => r.actionConclusion === 'failure' || r.actionConclusion === 'timed_out');
+            const hasUploading = allGithubRepos.some(r => r.actionStatus === 'in_progress');
+            const hasQueued = allGithubRepos.some(r => r.actionStatus === 'queued');
+
+            if (badge) {
+                if (hasFailed) {
+                    badge.innerHTML = '<span style="color: #f85149; font-weight: 800;">● BUILD FAILED</span>';
+                } else if (hasUploading) {
+                    badge.innerHTML = '<span style="color: #58a6ff; font-weight: 800;"><i class="fa-solid fa-spinner fa-spin"></i> UPLOADING</span>';
+                } else if (hasQueued) {
+                    badge.innerHTML = '<span style="color: #d29922; font-weight: 800;">⌛ QUEUED</span>';
+                } else {
+                    badge.innerText = `${activeRepos.length} Recent`;
                 }
+            }
+            if (activeCountEl) activeCountEl.innerText = activeRepos.length;
+
+            const modalActiveCnt = document.getElementById('gh-modal-active-cnt');
+            const modalAllCnt = document.getElementById('gh-modal-all-cnt');
+            if (modalActiveCnt) modalActiveCnt.innerText = activeRepos.length;
+            if (modalAllCnt) modalAllCnt.innerText = allGithubRepos.length;
+
+            renderGithubTicker();
+            if (ghTickerInterval) clearInterval(ghTickerInterval);
+            if (activeRepos.length > 4) {
+                ghTickerInterval = setInterval(() => {
+                    const currentActive = getActiveRepositories();
+                    if (currentActive.length > 4) {
+                        ghTickerIndex = (ghTickerIndex + 4) % currentActive.length;
+                    } else {
+                        ghTickerIndex = 0;
+                    }
+                    renderGithubTicker();
+                }, 6000);
+            }
+        }
+
+        function getRepoShortName(repo) {
+            if (!repo || !repo.name) return "";
+            if (repo.name.toLowerCase() === 'wosbdc.github.io' || repo.owner.toLowerCase() === 'wosbdc') {
+                return 'wosbdc';
+            }
+            if (repo.name.toLowerCase() === 'dashertracker.github.io' || repo.owner.toLowerCase() === 'dashertracker') {
+                return 'DasherTracker';
+            }
+            if (repo.name.toLowerCase().endsWith('.github.io')) {
+                return repo.name.replace(/\.github\.io$/i, '');
+            }
+            return repo.name;
+        }
+
+        function renderGithubTicker() {
+            const feedEl = document.getElementById('gh-ticker-feed');
+            if (!feedEl) return;
+            const activeRepos = getActiveRepositories();
+
+            if (!activeRepos.length) {
+                const latest = allGithubRepos.length ? allGithubRepos[0] : null;
+                if (latest) {
+                    feedEl.innerHTML = `
+                    <div style="background: rgba(255,255,255,0.02); border: 1px dashed rgba(255,255,255,0.1); border-radius: 6px; padding: 14px 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; height: 100%; box-sizing: border-box;">
+                        <span style="font-size: 10px; color: #3fb950; font-weight: 700;">● All Pipelines Up to Date</span>
+                        <span style="font-size: 8.5px; color: var(--text-dim);">Latest: ${getRepoShortName(latest)} (${timeAgo(latest.pushedAt)})</span>
+                    </div>`;
+                } else {
+                    feedEl.innerHTML = '<div style="font-size: 10px; color: var(--text-dim); text-align: center; padding-top: 25px;">No repositories found</div>';
+                }
+                return;
+            }
+
+            // Display up to 4 items on screen
+            let items = [];
+            if (activeRepos.length <= 4) {
+                items = activeRepos.slice(0, 4);
+            } else {
+                items = [];
+                for (let i = 0; i < 4; i++) {
+                    const idx = (ghTickerIndex + i) % activeRepos.length;
+                    items.push(activeRepos[idx]);
+                }
+            }
+
+            feedEl.innerHTML = items.map(repo => {
+                const now = new Date();
+                const diffMs = now - new Date(repo.pushedAt);
+                const timeTheme = getTimeAgeTheme(diffMs);
+                const relTime = timeAgo(repo.pushedAt);
+                const commitMsg = repo.latestCommit || repo.description || 'No commit message';
+                const shortName = getRepoShortName(repo);
+                const actBadge = getActionBadge(repo);
+
+                const statusPill = actBadge 
+                    ? `<span style="font-size: 7px; background: ${actBadge.bg}; color: ${actBadge.color}; border: 1px solid ${actBadge.border}; padding: 0 3px; border-radius: 3px; font-weight: 800; display: inline-flex; align-items: center; gap: 2px;">${actBadge.icon} ${actBadge.label}</span>`
+                    : `<span style="font-size: 7px; background: ${timeTheme.badgeBg}; color: ${timeTheme.color}; border: 1px solid ${timeTheme.badgeBorder}; padding: 0 3px; border-radius: 3px; font-weight: 800;">${timeTheme.label}</span>`;
+
+                const dotColor = actBadge ? actBadge.color : timeTheme.color;
+
+                return `
+                <div style="background: rgba(255,255,255,0.03); border: 1px solid ${actBadge && actBadge.priority <= 2 ? actBadge.border : 'rgba(255,255,255,0.06)'}; border-radius: 5px; padding: 2px 6px; display: flex; flex-direction: column; gap: 1px; min-height: 19px; box-sizing: border-box;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; line-height: 1.1;">
+                        <div style="display: flex; align-items: center; gap: 4px; overflow: hidden;">
+                            <span style="display: inline-block; width: 5px; height: 5px; border-radius: 50%; background: ${dotColor}; box-shadow: 0 0 4px ${dotColor}; flex-shrink: 0;"></span>
+                            <span style="font-size: 9.5px; font-weight: 700; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 90px;" title="${repo.fullName}">${shortName}</span>
+                            ${statusPill}
+                            <span style="font-size: 7px; color: #a371f7; background: rgba(163, 113, 247, 0.15); padding: 0 3px; border-radius: 3px;">⑂ ${repo.defaultBranch}</span>
+                        </div>
+                        <span style="font-size: 8px; color: ${timeTheme.color}; font-weight: 700; white-space: nowrap;">${relTime}</span>
+                    </div>
+                    <div style="font-size: 8px; color: #8b949e; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.1;">
+                        ${commitMsg}
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function openGithubModal() {
+            document.getElementById('githubModal').style.display = 'block';
+            filterGithubModal();
+        }
+
+        function closeGithubModal() {
+            document.getElementById('githubModal').style.display = 'none';
+        }
+
+        function switchGithubModalTab(tab) {
+            ghModalTab = tab;
+            const btnActive = document.getElementById('gh-tab-active');
+            const btnAll = document.getElementById('gh-tab-all');
+            if (tab === 'active') {
+                if (btnActive) { btnActive.style.background = '#a371f7'; btnActive.style.color = '#ffffff'; btnActive.style.border = 'none'; }
+                if (btnAll) { btnAll.style.background = '#21262d'; btnAll.style.color = '#8b949e'; btnAll.style.border = '1px solid #30363d'; }
+            } else {
+                if (btnAll) { btnAll.style.background = '#a371f7'; btnAll.style.color = '#ffffff'; btnAll.style.border = 'none'; }
+                if (btnActive) { btnActive.style.background = '#21262d'; btnActive.style.color = '#8b949e'; btnActive.style.border = '1px solid #30363d'; }
+            }
+            filterGithubModal();
+        }
+
+        function filterGithubModal() {
+            const query = (document.getElementById('gh-search-input').value || '').toLowerCase();
+            const sourceList = (ghModalTab === 'active') ? getActiveRepositories() : allGithubRepos;
+
+            const filtered = sourceList.filter(r => 
+                r.name.toLowerCase().includes(query) || 
+                r.owner.toLowerCase().includes(query) ||
+                getRepoShortName(r).toLowerCase().includes(query) ||
+                (r.latestCommit && r.latestCommit.toLowerCase().includes(query)) ||
+                (r.actionStatus && r.actionStatus.toLowerCase().includes(query)) ||
+                (r.actionConclusion && r.actionConclusion.toLowerCase().includes(query)) ||
+                (r.description && r.description.toLowerCase().includes(query))
+            );
+            renderGithubModalList(filtered);
+        }
+
+        function renderGithubModalList(repos) {
+            const container = document.getElementById('gh-modal-list');
+            if (!container) return;
+            if (!repos.length) {
+                container.innerHTML = '<div style="text-align: center; color: #8b949e; padding: 40px;">No repositories matching your criteria.</div>';
+                return;
+            }
+
+            const now = new Date();
+            container.innerHTML = repos.map(repo => {
+                const diffMs = now - new Date(repo.pushedAt);
+                const isRecent = diffMs < 86400000;
+                const isWeek = diffMs < 604800000;
+                const actBadge = getActionBadge(repo);
+                const shortName = getRepoShortName(repo);
+
+                const statusBadge = actBadge 
+                    ? `<span style="background: ${actBadge.bg}; color: ${actBadge.color}; border: 1px solid ${actBadge.border}; padding: 2px 7px; border-radius: 4px; font-size: 9px; font-weight: 800; display: inline-flex; align-items: center; gap: 4px;">${actBadge.icon} ${actBadge.label}</span>`
+                    : (isRecent 
+                        ? '<span style="background: rgba(35, 134, 54, 0.2); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.4); padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 700;">● Live / Pushed Today</span>'
+                        : (isWeek 
+                            ? '<span style="background: rgba(187, 128, 9, 0.2); color: #d29922; border: 1px solid rgba(210, 153, 34, 0.4); padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 700;">● Active This Week</span>'
+                            : '<span style="background: rgba(110, 118, 129, 0.1); color: #8b949e; border: 1px solid rgba(110, 118, 129, 0.2); padding: 2px 6px; border-radius: 4px; font-size: 9px;">● Idle</span>'));
+                
+                const ownerBadge = repo.owner !== 'BrianDivaCox' ? `<span style="font-size: 9px; background: rgba(163, 113, 247, 0.2); color: #a371f7; border: 1px solid rgba(163, 113, 247, 0.4); padding: 1px 5px; border-radius: 4px;">🏢 ${repo.owner}</span>` : '';
+
+                return `
+                <div style="background: #161b22; border: 1px solid ${actBadge && actBadge.priority <= 2 ? actBadge.border : '#30363d'}; border-radius: 8px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; transition: background 0.2s;" onmouseover="this.style.background='#1f242c'" onmouseout="this.style.background='#161b22'">
+                    <div style="display: flex; flex-direction: column; gap: 4px; max-width: 75%;">
+                        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                            <span style="font-size: 13px; font-weight: 700; color: #58a6ff;">${shortName}</span>
+                            ${ownerBadge}
+                            <span style="font-size: 9.5px; background: rgba(110, 118, 129, 0.2); color: #8b949e; padding: 1px 5px; border-radius: 4px;">⑂ ${repo.defaultBranch}</span>
+                            ${statusBadge}
+                        </div>
+                        <div style="font-size: 11px; color: #c9d1d9;">
+                            ${repo.latestCommit ? `<i class="fa-solid fa-code-commit" style="color: #8b949e; margin-right: 4px;"></i> ${repo.latestCommit}` : repo.description}
+                        </div>
+                        <div style="font-size: 9.5px; color: #8b949e; display: flex; align-items: center; gap: 10px;">
+                            <span>Pushed ${timeAgo(repo.pushedAt)} (${new Date(repo.pushedAt).toLocaleDateString()})</span>
+                            ${repo.actionName ? `<span style="color: #58a6ff;"><i class="fa-solid fa-bolt" style="font-size: 8px;"></i> ${repo.actionName}</span>` : ''}
+                        </div>
+                    </div>
+                    <a href="${repo.htmlUrl}" target="_blank" style="background: #21262d; border: 1px solid #30363d; color: #58a6ff; text-decoration: none; padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: 600; display: flex; align-items: center; gap: 5px; white-space: nowrap;">
+                        Open <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 9px;"></i>
+                    </a>
+                </div>`;
+            }).join('');
+        }
+
+        // Initialize GitHub Status Monitor with instant zero-delay cache render & 2m background sync
+        updateGithubDashboardUI();
+        checkAppUpdateAlert(allGithubRepos);
+        checkDirectVersionUpdate();
+        fetchGithubRepositories();
+        setInterval(() => fetchGithubRepositories(false), 120000);
+        setInterval(checkDirectVersionUpdate, 30000);
+        
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+                checkDirectVersionUpdate();
+                if (Date.now() - lastGhFetchTime > GH_COOLDOWN_MS) {
+                    fetchGithubRepositories(false);
+                }
+            }
+        });
+        window.addEventListener('focus', () => {
+            checkDirectVersionUpdate();
+            if (Date.now() - lastGhFetchTime > GH_COOLDOWN_MS) {
+                fetchGithubRepositories(false);
+            }
         });
         
         const twitchLabApi = 'https://script.google.com/macros/s/AKfycby0ndGELJv0Q6yAR8PKMsvo3u-hZ2qAL80sVahxyeyrLy_qDXhkcYZkKBoq6HhdrhyO/exec';
