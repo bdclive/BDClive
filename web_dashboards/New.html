@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v10.2.24</title>
+    <title>Cloud Dashboard v10.2.25</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Outfit:wght@600;800&display=swap" rel="stylesheet">
@@ -236,7 +236,6 @@
                 <div style="display: flex; align-items: center; gap: 6px;">
                     <i class="fa-brands fa-github" style="color: #a371f7; font-size: 14px;"></i>
                     <span style="font-size: 11px; font-weight: 800; color: #ffffff; letter-spacing: 0.5px; text-transform: uppercase;">GitHub Pipeline</span>
-                    <span id="gh-beacon-status"><span style="font-size: 8.5px; background: rgba(35, 134, 54, 0.2); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.4); padding: 1px 4px; border-radius: 4px; font-weight: 800;">● LIVE</span></span>
                 </div>
                 <span id="gh-total-badge" style="font-size: 9px; color: var(--text-dim); background: rgba(255,255,255,0.06); padding: 1px 6px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.08);">Syncing...</span>
             </div>
@@ -305,7 +304,7 @@
             </div>
             <div class="cinema-footer">
                 <div class="cinema-stats-line"><span>M: <span id="m-count">0</span></span><span>TV: <span id="tv-count">0</span></span><span style="color: var(--cinema-green);">S: <span id="sync-timer">LIVE</span></span></div>
-                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v10.2.24</span></div>
+                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v10.2.25</span></div>
             </div>
         </div>
     </div>
@@ -872,32 +871,29 @@
         function updateGithubDashboardUI() {
             const badge = document.getElementById('gh-total-badge');
             const activeCountEl = document.getElementById('gh-active-count');
-            const beaconEl = document.getElementById('gh-beacon-status');
             const activeRepos = getActiveRepositories();
 
-            if (badge) badge.innerText = `${activeRepos.length} Recent`;
+            const hasFailed = allGithubRepos.some(r => r.actionConclusion === 'failure' || r.actionConclusion === 'timed_out');
+            const hasUploading = allGithubRepos.some(r => r.actionStatus === 'in_progress');
+            const hasQueued = allGithubRepos.some(r => r.actionStatus === 'queued');
+
+            if (badge) {
+                if (hasFailed) {
+                    badge.innerHTML = '<span style="color: #f85149; font-weight: 800;">● BUILD FAILED</span>';
+                } else if (hasUploading) {
+                    badge.innerHTML = '<span style="color: #58a6ff; font-weight: 800;"><i class="fa-solid fa-spinner fa-spin"></i> UPLOADING</span>';
+                } else if (hasQueued) {
+                    badge.innerHTML = '<span style="color: #d29922; font-weight: 800;">⌛ QUEUED</span>';
+                } else {
+                    badge.innerText = `${activeRepos.length} Recent`;
+                }
+            }
             if (activeCountEl) activeCountEl.innerText = activeRepos.length;
 
             const modalActiveCnt = document.getElementById('gh-modal-active-cnt');
             const modalAllCnt = document.getElementById('gh-modal-all-cnt');
             if (modalActiveCnt) modalActiveCnt.innerText = activeRepos.length;
             if (modalAllCnt) modalAllCnt.innerText = allGithubRepos.length;
-
-            const hasFailed = allGithubRepos.some(r => r.actionConclusion === 'failure' || r.actionConclusion === 'timed_out');
-            const hasUploading = allGithubRepos.some(r => r.actionStatus === 'in_progress');
-            const hasQueued = allGithubRepos.some(r => r.actionStatus === 'queued');
-
-            if (beaconEl) {
-                if (hasFailed) {
-                    beaconEl.innerHTML = '<span style="color: #f85149; background: rgba(248,81,73,0.25); border: 1px solid rgba(248,81,73,0.6); padding: 1px 5px; border-radius: 4px; font-weight: 800;">● BUILD FAILED</span>';
-                } else if (hasUploading) {
-                    beaconEl.innerHTML = '<span style="color: #58a6ff; background: rgba(56,139,253,0.2); border: 1px solid rgba(56,139,253,0.6); padding: 1px 5px; border-radius: 4px; font-weight: 800;"><i class="fa-solid fa-spinner fa-spin"></i> UPLOADING</span>';
-                } else if (hasQueued) {
-                    beaconEl.innerHTML = '<span style="color: #d29922; background: rgba(187,128,9,0.2); border: 1px solid rgba(210,153,34,0.6); padding: 1px 5px; border-radius: 4px; font-weight: 800;">⌛ QUEUED</span>';
-                } else {
-                    beaconEl.innerHTML = '<span style="color: #3fb950; background: rgba(35,134,54,0.2); border: 1px solid rgba(63,185,80,0.4); padding: 1px 4px; border-radius: 4px; font-weight: 800;">● LIVE</span>';
-                }
-            }
 
             renderGithubTicker();
             if (ghTickerInterval) clearInterval(ghTickerInterval);
