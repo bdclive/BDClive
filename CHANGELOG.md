@@ -1,5 +1,8 @@
 # Changelog
 
+## v10.2.35 / Python Bridge v1.0.47 (2026-08-14)
+- **Real-Time WOS Alliance Roster Sync**: Replaced initial placeholder numbers with real-time Whiteout Survival (WOS) chief data (`chiefs.json`). Updated `GatekeeperCounterEngine` to parse actual chief rosters (**21 Total Alliance Members**, **+3 New Joins in Last 7 Days**, **+0 Today**). Synced live state to Firebase RTDB (`/labData/gatekeeperCounters.json`).
+
 ## v10.2.34 / Python Bridge v1.0.47 (2026-08-14)
 - **GUI Control Buttons Cleanup**: Updated GUI script to **v1.0.47** (`threads_bridge_gui_v1.0.47_(windows).pyw`). Removed the manual Gatekeeper control buttons (`actions_frame`) from the desktop GUI window per user request to keep the interface clean, compact, and automated.
 
