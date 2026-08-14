@@ -1,5 +1,8 @@
 # Changelog
 
+## v10.2.40 (2026-08-14)
+- **GateKeeper Live Freshness Age Indicator**: Removed the redundant static `100% LIVE` badge from the GateKeeper widget and replaced it with a dynamic, color-coded data freshness indicator (`#gk-sync-age`) that calculates the exact time since the last roster sync (`● 12m ago`, `● 2h ago`, etc.) to instantly verify how current the information is.
+
 ## v10.2.39 (2026-08-14)
 - **GateKeeper Health Grid & Standalone PWA Web App Support**: Upgraded Alliance GateKeeper widget with a 3-chip health grid (**Expired Tokens**, **Unsynced Chiefs**, **Unclaimed Accounts**, and **Roster Health Badge**). Added complete Progressive Web App (PWA) infrastructure with `manifest.json`, `sw.js` service worker, high-resolution SVG app icons (`icon-192.svg`, `icon-512.svg`), iOS mobile web app tags, and synced the root `index.html` for direct Web App access.
 
