@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v10.2.28</title>
+    <title>Cloud Dashboard v10.2.29</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Outfit:wght@600;800&display=swap" rel="stylesheet">
@@ -304,7 +304,7 @@
             </div>
             <div class="cinema-footer">
                 <div class="cinema-stats-line"><span>M: <span id="m-count">0</span></span><span>TV: <span id="tv-count">0</span></span><span style="color: var(--cinema-green);">S: <span id="sync-timer">LIVE</span></span></div>
-                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v10.2.28</span></div>
+                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v10.2.29</span></div>
             </div>
         </div>
     </div>
@@ -876,7 +876,7 @@
             }
         }
 
-        const CURRENT_APP_VERSION = 'v10.2.28';
+        const CURRENT_APP_VERSION = 'v10.2.29';
         let isDeployingLive = false;
         let pendingRemoteVersion = null;
 
@@ -924,8 +924,40 @@
             }
         }
 
-        function checkAppUpdateAlert(repos) {
-            const lcRepo = repos.find(r => r.name === 'LiveCounters' || r.fullName === 'BrianDivaCox/LiveCounters');
+        async function checkDirectVersionUpdate() {
+            try {
+                const changelogUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+                    ? `CHANGELOG.md?t=${Date.now()}` 
+                    : `https://raw.githubusercontent.com/BrianDivaCox/LiveCounters/main/CHANGELOG.md?t=${Date.now()}`;
+                
+                const res = await fetch(changelogUrl, { cache: 'no-cache' });
+                if (res.ok) {
+                    const text = await res.text();
+                    const match = text.match(/##\s*(v\d+\.\d+\.\d+)[^\n]*\n([^\n#]*)/i);
+                    if (match) {
+                        const remoteVer = match[1];
+                        const note = match[2] ? match[2].replace(/^-\s*\*\*/, '').replace(/\*\*:?/, ' -').trim() : 'New version available';
+                        if (isNewerVersion(remoteVer, CURRENT_APP_VERSION)) {
+                            pendingRemoteVersion = remoteVer;
+                            const isDismissed = sessionStorage.getItem('dismissed_version_' + remoteVer) === 'true';
+                            if (!isDismissed) {
+                                showUpdateAlert(`⚡ New Update Available (${remoteVer})`, note, false);
+                                return true;
+                            }
+                        }
+                    }
+                }
+            } catch (e) {
+                console.warn("Direct version check fallback error:", e);
+            }
+            return false;
+        }
+
+        async function checkAppUpdateAlert(repos) {
+            const hasNewDirect = await checkDirectVersionUpdate();
+            if (hasNewDirect) return;
+
+            const lcRepo = (repos || []).find(r => r.name === 'LiveCounters' || r.fullName === 'BrianDivaCox/LiveCounters');
             if (!lcRepo) return;
 
             if (lcRepo.actionStatus === 'in_progress' || lcRepo.actionStatus === 'queued') {
@@ -951,7 +983,6 @@
                             showUpdateAlert(`⚡ Update Available (${remoteVer})`, lcRepo.latestCommit, false);
                         }
                     } else {
-                        // Current version is up to date or newer -> ensure banner is hidden
                         const banner = document.getElementById('updateAlertBanner');
                         if (banner && !isDeployingLive) banner.style.display = 'none';
                     }
@@ -1188,15 +1219,21 @@
         // Initialize GitHub Status Monitor with instant zero-delay cache render & 2m background sync
         updateGithubDashboardUI();
         checkAppUpdateAlert(allGithubRepos);
+        checkDirectVersionUpdate();
         fetchGithubRepositories();
         setInterval(() => fetchGithubRepositories(false), 120000);
+        setInterval(checkDirectVersionUpdate, 30000);
         
         document.addEventListener('visibilitychange', () => {
-            if (document.visibilityState === 'visible' && Date.now() - lastGhFetchTime > GH_COOLDOWN_MS) {
-                fetchGithubRepositories(false);
+            if (document.visibilityState === 'visible') {
+                checkDirectVersionUpdate();
+                if (Date.now() - lastGhFetchTime > GH_COOLDOWN_MS) {
+                    fetchGithubRepositories(false);
+                }
             }
         });
         window.addEventListener('focus', () => {
+            checkDirectVersionUpdate();
             if (Date.now() - lastGhFetchTime > GH_COOLDOWN_MS) {
                 fetchGithubRepositories(false);
             }
