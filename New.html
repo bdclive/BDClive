@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v10.2.26</title>
+    <title>Cloud Dashboard v10.2.27</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Outfit:wght@600;800&display=swap" rel="stylesheet">
@@ -304,7 +304,7 @@
             </div>
             <div class="cinema-footer">
                 <div class="cinema-stats-line"><span>M: <span id="m-count">0</span></span><span>TV: <span id="tv-count">0</span></span><span style="color: var(--cinema-green);">S: <span id="sync-timer">LIVE</span></span></div>
-                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v10.2.26</span></div>
+                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v10.2.27</span></div>
             </div>
         </div>
     </div>
@@ -348,8 +348,8 @@
         </div>
     </div>
 
-    <!-- UPDATE ALERT BANNER (wosBDC Style) -->
-    <div id="updateAlertBanner" style="display: none; position: fixed; bottom: 24px; right: 24px; background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 12px 18px; color: #ffffff; z-index: 10000; box-shadow: 0 10px 30px rgba(0,0,0,0.7); font-size: 12px; align-items: center; gap: 14px; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
+    <!-- UPDATE ALERT BANNER (Centered) -->
+    <div id="updateAlertBanner" style="display: none; position: fixed; top: 24px; left: 50%; transform: translateX(-50%); background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 12px 20px; color: #ffffff; z-index: 10000; box-shadow: 0 12px 36px rgba(0,0,0,0.8), 0 0 15px rgba(35, 134, 54, 0.2); font-size: 12px; align-items: center; gap: 16px; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); min-width: 320px; max-width: 90vw;">
         <div style="display: flex; align-items: center; gap: 10px;">
             <span id="update-alert-icon" style="font-size: 20px;">⚡</span>
             <div style="display: flex; flex-direction: column; gap: 2px;">
@@ -358,10 +358,10 @@
             </div>
         </div>
         <div style="display: flex; align-items: center; gap: 8px;">
-            <button onclick="window.location.reload(true)" style="background: #238636; color: #ffffff; border: 1px solid rgba(255,255,255,0.2); padding: 6px 14px; border-radius: 6px; font-weight: 700; font-size: 11px; cursor: pointer; display: flex; align-items: center; gap: 5px; box-shadow: 0 2px 8px rgba(35, 134, 54, 0.4);">
+            <button onclick="window.location.reload(true)" style="background: #238636; color: #ffffff; border: 1px solid rgba(255,255,255,0.2); padding: 6px 14px; border-radius: 6px; font-weight: 700; font-size: 11px; cursor: pointer; display: flex; align-items: center; gap: 5px; box-shadow: 0 2px 8px rgba(35, 134, 54, 0.4); white-space: nowrap;">
                 <i class="fa-solid fa-rotate-right"></i> Reload Now
             </button>
-            <button onclick="document.getElementById('updateAlertBanner').style.display='none'" style="background: rgba(255,255,255,0.06); color: #8b949e; border: 1px solid rgba(255,255,255,0.1); padding: 6px 10px; border-radius: 6px; font-size: 11px; cursor: pointer;">
+            <button onclick="dismissUpdateAlert()" style="background: rgba(255,255,255,0.06); color: #8b949e; border: 1px solid rgba(255,255,255,0.1); padding: 6px 10px; border-radius: 6px; font-size: 11px; cursor: pointer;">
                 ✕
             </button>
         </div>
@@ -686,7 +686,7 @@
         // ================= GITHUB STATUS MONITOR & ACTIONS PIPELINE =================
         const GITHUB_ACCOUNTS = ['BrianDivaCox', 'wosbdc', 'DasherTracker'];
         const DEFAULT_GH_REPOS = [
-            { name: "LiveCounters", owner: "BrianDivaCox", fullName: "BrianDivaCox/LiveCounters", htmlUrl: "https://github.com/BrianDivaCox/LiveCounters", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "Realtime statistics dashboard", latestCommit: "v10.2.23 : Added rate-limit protected instant tab-focus synchronization" },
+            { name: "LiveCounters", owner: "BrianDivaCox", fullName: "BrianDivaCox/LiveCounters", htmlUrl: "https://github.com/BrianDivaCox/LiveCounters", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "Realtime statistics dashboard", latestCommit: "v10.2.27 : Fixed update alert semver comparison and session dismissal" },
             { name: "wosBDC.github.io", owner: "wosbdc", fullName: "wosbdc/wosBDC.github.io", htmlUrl: "https://github.com/wosbdc/wosBDC.github.io", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "WOS BDC Web Application", latestCommit: "Live production updates" },
             { name: "DasherTracker.github.io", owner: "DasherTracker", fullName: "DasherTracker/DasherTracker.github.io", htmlUrl: "https://github.com/DasherTracker/DasherTracker.github.io", pushedAt: new Date(Date.now() - 86400000 * 3).toISOString(), defaultBranch: "main", description: "Dasher Tracker Portal", latestCommit: "Production sync" },
             { name: "funfacts", owner: "BrianDivaCox", fullName: "BrianDivaCox/funfacts", htmlUrl: "https://github.com/BrianDivaCox/funfacts", pushedAt: new Date(Date.now() - 86400000 * 2).toISOString(), defaultBranch: "main", description: "Fun Facts App", latestCommit: "Updated database schema" }
@@ -876,8 +876,25 @@
             }
         }
 
-        const CURRENT_APP_VERSION = 'v10.2.26';
+        const CURRENT_APP_VERSION = 'v10.2.27';
         let isDeployingLive = false;
+        let pendingRemoteVersion = null;
+
+        function parseSemver(vStr) {
+            if (!vStr) return [0, 0, 0];
+            const clean = vStr.replace(/[^0-9.]/g, '');
+            const parts = clean.split('.').map(n => parseInt(n, 10) || 0);
+            while (parts.length < 3) parts.push(0);
+            return parts;
+        }
+
+        function isNewerVersion(remoteVer, currentVer) {
+            const [rMaj, rMin, rPat] = parseSemver(remoteVer);
+            const [cMaj, cMin, cPat] = parseSemver(currentVer);
+            if (rMaj !== cMaj) return rMaj > cMaj;
+            if (rMin !== cMin) return rMin > cMin;
+            return rPat > cPat;
+        }
 
         function showUpdateAlert(title, desc, isBuilding = false) {
             const banner = document.getElementById('updateAlertBanner');
@@ -899,6 +916,14 @@
             banner.style.display = 'flex';
         }
 
+        function dismissUpdateAlert() {
+            const banner = document.getElementById('updateAlertBanner');
+            if (banner) banner.style.display = 'none';
+            if (pendingRemoteVersion) {
+                sessionStorage.setItem('dismissed_version_' + pendingRemoteVersion, 'true');
+            }
+        }
+
         function checkAppUpdateAlert(repos) {
             const lcRepo = repos.find(r => r.name === 'LiveCounters' || r.fullName === 'BrianDivaCox/LiveCounters');
             if (!lcRepo) return;
@@ -917,8 +942,19 @@
 
             if (lcRepo.latestCommit) {
                 const versionMatch = lcRepo.latestCommit.match(/v\d+\.\d+\.\d+/i);
-                if (versionMatch && versionMatch[0] !== CURRENT_APP_VERSION) {
-                    showUpdateAlert(`⚡ Update Available (${versionMatch[0]})`, lcRepo.latestCommit, false);
+                if (versionMatch) {
+                    const remoteVer = versionMatch[0];
+                    if (isNewerVersion(remoteVer, CURRENT_APP_VERSION)) {
+                        pendingRemoteVersion = remoteVer;
+                        const isDismissed = sessionStorage.getItem('dismissed_version_' + remoteVer) === 'true';
+                        if (!isDismissed) {
+                            showUpdateAlert(`⚡ Update Available (${remoteVer})`, lcRepo.latestCommit, false);
+                        }
+                    } else {
+                        // Current version is up to date or newer -> ensure banner is hidden
+                        const banner = document.getElementById('updateAlertBanner');
+                        if (banner && !isDeployingLive) banner.style.display = 'none';
+                    }
                 }
             }
         }
