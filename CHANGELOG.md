@@ -1,5 +1,8 @@
 # Changelog
 
+## v10.2.37 (2026-08-14)
+- **Synchronized Frontend Versioning & Eliminated Update Alert Loop**: Synchronized dashboard version across `New.html` (title tag, Cinema Box footer badge, `CURRENT_APP_VERSION = 'v10.2.37'`, and `CHANGELOG.md`). Fixed the version mismatch where the dashboard was stuck showing `v10.2.30` and constantly triggering the update banner on reload.
+
 ## v10.2.36 / Python Bridge v1.0.48 (2026-08-14)
 - **Gatekeeper Card Formatting & 7-Day Join Display Fix**: Updated GUI and CLI bridge scripts to **v1.0.48** (`threads_bridge_gui_v1.0.48_(windows).pyw` and `threads_bridge_cli_v1.0.48_(terminal).py`). Fixed metric card formatting by removing `"Fol"` and displaying accurate WOS alliance data: **`21 Members / +3 (7D)`**.
 
