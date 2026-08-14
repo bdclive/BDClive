@@ -1,0 +1,16 @@
+{
+  "rules": {
+    "theaterSync": {
+      ".read": true,
+      ".write": true
+    },
+    "labData": {
+      ".read": true,
+      ".write": true
+    },
+    "tasks": {
+      ".read": true,
+      ".write": true
+    }
+  }
+}
