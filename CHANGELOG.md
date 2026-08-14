@@ -1,5 +1,8 @@
 # Changelog
 
+## v10.2.43 (2026-08-14)
+- **Live Sync for Unclaimed Accounts & Expired Tokens**: Populated `unclaimedAccounts` and `expiredTokens` directly in Firebase RTDB (`/labData/gatekeeperCounters.json`) and updated the GateKeeper widget with a balanced 4-counter display featuring **MEMBERS (21)**, **SIGNUPS 7D (+3 with +0 Today)**, **UNCLAIMED (0)**, and **EXP. TOKENS (0)**.
+
 ## v10.2.42 (2026-08-14)
 - **Cleaned GateKeeper Header & Restored High-Legibility Roster Layout**: Removed the shield icon and sync age indicator from the header for a clean title bar. Restored the high-legibility 3-metric layout featuring **TOTAL MEMBERS (21)**, **Signups 7D (+3)**, **Unclaimed Accounts (0)**, and **Today (+0)** directly backed by real-time Firebase RTDB sync.
 
