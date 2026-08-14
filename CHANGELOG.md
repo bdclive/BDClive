@@ -1,5 +1,8 @@
 # Changelog
 
+## v10.2.42 (2026-08-14)
+- **Cleaned GateKeeper Header & Restored High-Legibility Roster Layout**: Removed the shield icon and sync age indicator from the header for a clean title bar. Restored the high-legibility 3-metric layout featuring **TOTAL MEMBERS (21)**, **Signups 7D (+3)**, **Unclaimed Accounts (0)**, and **Today (+0)** directly backed by real-time Firebase RTDB sync.
+
 ## v10.2.41 (2026-08-14)
 - **Dedicated Cloud Data Dashboard Vector App Icon**: Replaced generic gaming/WOS icon graphics with an authentic, high-resolution **Cloud Data Dashboard** vector icon featuring glowing cyber pulse waves across a dark obsidian cloud silhouette.
 
