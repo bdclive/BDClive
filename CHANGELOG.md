@@ -1,5 +1,8 @@
 # Changelog
 
+## v10.2.34 / Python Bridge v1.0.47 (2026-08-14)
+- **GUI Control Buttons Cleanup**: Updated GUI script to **v1.0.47** (`threads_bridge_gui_v1.0.47_(windows).pyw`). Removed the manual Gatekeeper control buttons (`actions_frame`) from the desktop GUI window per user request to keep the interface clean, compact, and automated.
+
 ## v10.2.33 / Python Bridge v1.0.46 (2026-08-14)
 - **Alliance Gatekeeper New Member Counter & Extensible Counter Module**: Updated GUI and CLI bridge scripts to **v1.0.46** (`threads_bridge_gui_v1.0.46_(windows).pyw` and `threads_bridge_cli_v1.0.46_(terminal).py`). Built an extensible `GatekeeperCounterEngine` with local state persistence (`gatekeeper_counters.json`), daily automatic join reset, real-time Firebase RTDB sync (`/labData/gatekeeperCounters.json`), desktop GUI metric card with `➕ Add New Member (+1)` interactive controls, and automated rich Discord new member join embeds!
 
