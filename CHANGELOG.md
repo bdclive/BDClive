@@ -1,5 +1,8 @@
 # Changelog
 
+## v10.2.36 / Python Bridge v1.0.48 (2026-08-14)
+- **Gatekeeper Card Formatting & 7-Day Join Display Fix**: Updated GUI and CLI bridge scripts to **v1.0.48** (`threads_bridge_gui_v1.0.48_(windows).pyw` and `threads_bridge_cli_v1.0.48_(terminal).py`). Fixed metric card formatting by removing `"Fol"` and displaying accurate WOS alliance data: **`21 Members / +3 (7D)`**.
+
 ## v10.2.35 / Python Bridge v1.0.47 (2026-08-14)
 - **Real-Time WOS Alliance Roster Sync**: Replaced initial placeholder numbers with real-time Whiteout Survival (WOS) chief data (`chiefs.json`). Updated `GatekeeperCounterEngine` to parse actual chief rosters (**21 Total Alliance Members**, **+3 New Joins in Last 7 Days**, **+0 Today**). Synced live state to Firebase RTDB (`/labData/gatekeeperCounters.json`).
 
