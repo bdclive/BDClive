@@ -32,8 +32,8 @@ THREADS_TOKEN = "THAAg36cTPHF1BYmJxNmlDOEwyT09wVnVXSldOVU13b2dLX2Qwck9seVg1LXg3N
 
 DISCORD_BOT_TOKEN = "MTUzMzU3OTU1MjE4NDMzNjM4NA." + "GC3hup.WqnunYrhrCJ3Ksny33YODooyYrmGIbhEasfr10"
 DISCORD_GUILD_ID = "964526957721186354"
-DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1533569013706129538/dnx__aVXxU7rwxZGHw4zk5j-pLw5-gvoKpNOuJXJ4hOitt5qEfLjJm1MKHVC3i33lNuE"
-DISCORD_EVENT_WEBHOOK_URL = "https://discord.com/api/webhooks/1533689615439892491/UxGOzEEwFd9uCwNi482J09WZ-z2gG4yxpSaPrNcT7C56Vvd8yIIaeWaiZJo_JblmBt8i"
+DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1533569013706129538/REMOVED_EXPOSED_WEBHOOK"
+DISCORD_EVENT_WEBHOOK_URL = "https://discord.com/api/webhooks/1533689615439892491/REMOVED_EXPOSED_WEBHOOK"
 
 FIREBASE_URL = "https://brians-theater-default-rtdb.firebaseio.com/labData.json"
 
@@ -179,7 +179,7 @@ def purge_old_channel_messages(active_msg_id):
                 for m in msgs:
                     m_id = m.get('id')
                     if m_id and m_id != active_msg_id:
-                        del_url = f"https://discord.com/api/webhooks/1533689615439892491/UxGOzEEwFd9uCwNi482J09WZ-z2gG4yxpSaPrNcT7C56Vvd8yIIaeWaiZJo_JblmBt8i/messages/{m_id}"
+                        del_url = f"https://discord.com/api/webhooks/1533689615439892491/REMOVED_EXPOSED_WEBHOOK/messages/{m_id}"
                         session.delete(del_url, timeout=5)
     except: pass
 
