@@ -1,11 +1,8 @@
-# Implementation Task List: Alliance Gatekeeper New Member Counter
+# Implementation Task List: Remove Gatekeeper Control Buttons from Desktop GUI
 
-- [x] Create project backup archive (`LiveCounters_v10.2.33_backup.zip`)
-- [x] Design Extensible `CustomCountersEngine` for Python Bridge (`v1.0.46`)
-- [x] Implement **Alliance Gatekeeper New Member Counter** (tracking `totalMembers` & `newMembersToday`)
-- [x] Integrate Live Counter Card into Desktop GUI Control Panel (`threads_bridge_gui_v1.0.46`)
-- [x] Add Firebase RTDB `/labData/gatekeeperCounters.json` Sync Engine
-- [x] Add Discord Alert Dispatcher for New Member Joins
-- [x] Validate Python compilation and verify live counter engine
+- [x] Create project backup archive (`LiveCounters_v10.2.34_backup.zip`)
+- [x] Remove `Quick Control Panel Actions Frame` (`actions_frame`) buttons from `threads_bridge_gui`
+- [x] Bump Python Bridge version to `v1.0.47` and project version to `v10.2.34`
+- [x] Validate Python compilation
 - [x] Update `CHANGELOG.md`
 - [x] Commit & Push clean update to GitHub
