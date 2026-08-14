@@ -1,5 +1,8 @@
 # Changelog
 
+## v10.2.50 (2026-08-14)
+- **Restarted Background Bridge with 25 Total Members**: Terminated previous background bridge instance that had cached 21 members and restarted with calibrated `totalMembers: 25`, locking the live hero ratio to **`16/25`** across all connected clients.
+
 ## v10.2.49 (2026-08-14)
 - **Live Background Bridge Sync Calibration**: Upgraded `threads_bridge_gui_v1.0.48_(windows).pyw` and `gatekeeper_counters.json` to continuously broadcast live validated stats directly to Firebase RTDB (`totalMembers: 25`, `unclaimedAccounts: 16`, `unsyncedChiefs: 21`, `activeSync: 4`, `expiredTokens: 0`).
 
