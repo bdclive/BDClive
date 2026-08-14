@@ -1,6 +1,9 @@
 # Changelog
 
-## v10.2.30 (2026-08-13)
+## v10.2.31 / Python Bridge v1.0.45 (2026-08-14)
+- **Alliance Gatekeeper Integration & Private Webhook Storage**: Updated GUI and CLI bridge scripts to **v1.0.45** (`threads_bridge_gui_v1.0.45_(windows).pyw` and `threads_bridge_cli_v1.0.45_(terminal).py`). Integrated Alliance Gatekeeper module with 100% private local storage in `discord_config.json` (`GATEKEEPER_WEBHOOK_URL`). Verified live `200 OK` test alert posted cleanly!
+
+## v10.2.30 (2026-08-14)
 - **Time-Ago Color Hierarchy & 5-Hour Cutoff:** Implemented intuitive color-coded time tiers for the GitHub Status Box: Green for < 1hr (`● <1H`), Yellow/Amber for 1-3hrs (`● 1-3H`), and Red for 4-5hrs (`● 4H+`). Projects older than 5 hours automatically roll off into the archive to keep the active feed clean.
 
 ## v10.2.29 (2026-08-13)
