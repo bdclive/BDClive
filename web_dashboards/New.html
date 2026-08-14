@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v10.2.25</title>
+    <title>Cloud Dashboard v10.2.26</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Outfit:wght@600;800&display=swap" rel="stylesheet">
@@ -304,7 +304,7 @@
             </div>
             <div class="cinema-footer">
                 <div class="cinema-stats-line"><span>M: <span id="m-count">0</span></span><span>TV: <span id="tv-count">0</span></span><span style="color: var(--cinema-green);">S: <span id="sync-timer">LIVE</span></span></div>
-                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v10.2.25</span></div>
+                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v10.2.26</span></div>
             </div>
         </div>
     </div>
@@ -345,6 +345,25 @@
             <div id="gh-modal-list" style="overflow-y: auto; display: flex; flex-direction: column; gap: 8px; flex: 1; padding-right: 5px; max-height: 55vh;">
                 <!-- Repo items rendered dynamically -->
             </div>
+        </div>
+    </div>
+
+    <!-- UPDATE ALERT BANNER (wosBDC Style) -->
+    <div id="updateAlertBanner" style="display: none; position: fixed; bottom: 24px; right: 24px; background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 12px 18px; color: #ffffff; z-index: 10000; box-shadow: 0 10px 30px rgba(0,0,0,0.7); font-size: 12px; align-items: center; gap: 14px; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <span id="update-alert-icon" style="font-size: 20px;">⚡</span>
+            <div style="display: flex; flex-direction: column; gap: 2px;">
+                <span id="update-alert-title" style="font-weight: 700; color: #58a6ff; font-size: 13px;">New Update Available</span>
+                <span id="update-alert-desc" style="color: #8b949e; font-size: 11px;">A new version has been deployed.</span>
+            </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <button onclick="window.location.reload(true)" style="background: #238636; color: #ffffff; border: 1px solid rgba(255,255,255,0.2); padding: 6px 14px; border-radius: 6px; font-weight: 700; font-size: 11px; cursor: pointer; display: flex; align-items: center; gap: 5px; box-shadow: 0 2px 8px rgba(35, 134, 54, 0.4);">
+                <i class="fa-solid fa-rotate-right"></i> Reload Now
+            </button>
+            <button onclick="document.getElementById('updateAlertBanner').style.display='none'" style="background: rgba(255,255,255,0.06); color: #8b949e; border: 1px solid rgba(255,255,255,0.1); padding: 6px 10px; border-radius: 6px; font-size: 11px; cursor: pointer;">
+                ✕
+            </button>
         </div>
     </div>
 
@@ -845,6 +864,7 @@
                 }
 
                 updateGithubDashboardUI();
+                checkAppUpdateAlert(allGithubRepos);
                 const ghModal = document.getElementById('githubModal');
                 if (ghModal && ghModal.style.display === 'block') {
                     renderGithubModalList(allGithubRepos);
@@ -853,6 +873,53 @@
                 console.error("GitHub Status Monitor Error:", globalErr);
             } finally {
                 isFetchingGh = false;
+            }
+        }
+
+        const CURRENT_APP_VERSION = 'v10.2.26';
+        let isDeployingLive = false;
+
+        function showUpdateAlert(title, desc, isBuilding = false) {
+            const banner = document.getElementById('updateAlertBanner');
+            const titleEl = document.getElementById('update-alert-title');
+            const descEl = document.getElementById('update-alert-desc');
+            const iconEl = document.getElementById('update-alert-icon');
+            if (!banner) return;
+
+            if (isBuilding) {
+                banner.style.borderColor = '#d29922';
+                if (iconEl) iconEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="color: #d29922;"></i>';
+                if (titleEl) { titleEl.innerText = title; titleEl.style.color = '#d29922'; }
+            } else {
+                banner.style.borderColor = '#3fb950';
+                if (iconEl) iconEl.innerHTML = '⚡';
+                if (titleEl) { titleEl.innerText = title; titleEl.style.color = '#3fb950'; }
+            }
+            if (descEl) descEl.innerText = desc;
+            banner.style.display = 'flex';
+        }
+
+        function checkAppUpdateAlert(repos) {
+            const lcRepo = repos.find(r => r.name === 'LiveCounters' || r.fullName === 'BrianDivaCox/LiveCounters');
+            if (!lcRepo) return;
+
+            if (lcRepo.actionStatus === 'in_progress' || lcRepo.actionStatus === 'queued') {
+                isDeployingLive = true;
+                showUpdateAlert('🚀 Deployment In Progress', 'Uploading and deploying new update...', true);
+                return;
+            }
+
+            if (isDeployingLive && lcRepo.actionConclusion === 'success') {
+                isDeployingLive = false;
+                showUpdateAlert('🟢 Update Deployed!', 'New update is live! Click reload to apply.', false);
+                return;
+            }
+
+            if (lcRepo.latestCommit) {
+                const versionMatch = lcRepo.latestCommit.match(/v\d+\.\d+\.\d+/i);
+                if (versionMatch && versionMatch[0] !== CURRENT_APP_VERSION) {
+                    showUpdateAlert(`⚡ Update Available (${versionMatch[0]})`, lcRepo.latestCommit, false);
+                }
             }
         }
 
@@ -1083,6 +1150,7 @@
 
         // Initialize GitHub Status Monitor with instant zero-delay cache render & 2m background sync
         updateGithubDashboardUI();
+        checkAppUpdateAlert(allGithubRepos);
         fetchGithubRepositories();
         setInterval(() => fetchGithubRepositories(false), 120000);
         
