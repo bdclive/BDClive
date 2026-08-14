@@ -5,10 +5,12 @@ discord_config.json
 __pycache__/
 test_scripts/
 archive_backups/
+backups/
 legacy_updates/
 scratch_script_*.js
 threads_bridge_*
 *.py
 *.pyw
 discord_rsvp_ids.json
+
 
