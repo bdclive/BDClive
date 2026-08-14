@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v10.2.42</title>
+    <title>Cloud Dashboard v10.2.43</title>
     <!-- PWA Manifest & Mobile Web App Meta Tags -->
     <link rel="manifest" href="./manifest.json">
     <meta name="theme-color" content="#070a10">
@@ -179,23 +179,26 @@
                 <span style="font-size: 0.62rem; color: #00d2ff; background: rgba(0, 210, 255, 0.12); border: 1px solid rgba(0, 210, 255, 0.25); padding: 1px 6px; border-radius: 6px; font-weight: 700; margin-right: 24px;">❄️ WOS</span>
             </div>
             
-            <div style="margin-top: 2px; text-align: center;">
-                <p class="mirror-label" style="color: #8b949e; font-size: 0.65rem;">TOTAL MEMBERS</p>
-                <div id="gk-total-members" class="mirror-stat" style="font-size: 2.3rem; line-height: 1; color: #ffffff; margin-top: 1px; font-weight: 800;">21</div>
+            <div style="display: flex; justify-content: space-around; align-items: center; width: 100%; margin-top: 2px;">
+                <div style="text-align: center;">
+                    <p class="mirror-label" style="color: #8b949e; font-size: 0.65rem;">MEMBERS</p>
+                    <div id="gk-total-members" class="mirror-stat" style="font-size: 2.1rem; line-height: 1; color: #ffffff; margin-top: 1px; font-weight: 800;">21</div>
+                </div>
+                <div style="text-align: center;">
+                    <p class="mirror-label" style="color: #3fb950; font-size: 0.65rem;">SIGNUPS (7D)</p>
+                    <div id="gk-new-7d" class="mirror-stat" style="font-size: 1.6rem; line-height: 1.1; color: #3fb950; font-weight: 800;">+3</div>
+                    <span style="font-size: 0.58rem; color: #8b949e;">Today: <span id="gk-new-today" style="color: #58a6ff; font-weight: 700;">+0</span></span>
+                </div>
             </div>
 
             <div class="mirror-row" style="margin-top: 4px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 5px;">
                 <div style="text-align: center;">
-                    <p class="mirror-label" style="color: #3fb950; font-size: 0.62rem;">🆕 Signups (7D)</p>
-                    <div id="gk-new-7d" class="mirror-stat" style="font-size: 1.25rem; line-height: 1.1; color: #3fb950;">+3</div>
+                    <p class="mirror-label" style="color: #f1c40f; font-size: 0.62rem;">⏳ UNCLAIMED</p>
+                    <div id="gk-unclaimed" class="mirror-stat" style="font-size: 1.25rem; line-height: 1.1; color: #f1c40f; font-weight: 800;">0</div>
                 </div>
                 <div style="text-align: center;">
-                    <p class="mirror-label" style="color: #f1c40f; font-size: 0.62rem;">⏳ Unclaimed</p>
-                    <div id="gk-unclaimed" class="mirror-stat" style="font-size: 1.25rem; line-height: 1.1; color: #f1c40f;">0</div>
-                </div>
-                <div style="text-align: center;">
-                    <p class="mirror-label" style="color: #58a6ff; font-size: 0.62rem;">⚡ Today</p>
-                    <div id="gk-new-today" class="mirror-stat" style="font-size: 1.25rem; line-height: 1.1; color: #58a6ff;">+0</div>
+                    <p class="mirror-label" style="color: #3fb950; font-size: 0.62rem;">🔑 EXP. TOKENS</p>
+                    <div id="gk-expired-tokens" class="mirror-stat" style="font-size: 1.25rem; line-height: 1.1; color: #3fb950; font-weight: 800;">0</div>
                 </div>
             </div>
         </div>
@@ -335,7 +338,7 @@
             </div>
             <div class="cinema-footer">
                 <div class="cinema-stats-line"><span>M: <span id="m-count">0</span></span><span>TV: <span id="tv-count">0</span></span><span style="color: var(--cinema-green);">S: <span id="sync-timer">LIVE</span></span></div>
-                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v10.2.42</span></div>
+                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v10.2.43</span></div>
             </div>
         </div>
     </div>
@@ -509,16 +512,22 @@
                 const new7d = gk.newMembers7Days !== undefined ? gk.newMembers7Days : 0;
                 const newToday = gk.newMembersToday !== undefined ? gk.newMembersToday : 0;
                 const unclaimed = gk.unclaimedAccounts !== undefined ? gk.unclaimedAccounts : 0;
+                const expTokens = gk.expiredTokens !== undefined ? gk.expiredTokens : 0;
 
                 const totEl = document.getElementById('gk-total-members');
                 const n7El = document.getElementById('gk-new-7d');
                 const nTodayEl = document.getElementById('gk-new-today');
                 const uncEl = document.getElementById('gk-unclaimed');
+                const expEl = document.getElementById('gk-expired-tokens');
 
                 if (totEl) totEl.innerText = fNum(totMem);
                 if (n7El) n7El.innerText = (new7d > 0 ? `+${fNum(new7d)}` : fNum(new7d));
                 if (nTodayEl) nTodayEl.innerText = (newToday > 0 ? `+${fNum(newToday)}` : fNum(newToday));
                 if (uncEl) uncEl.innerText = fNum(unclaimed);
+                if (expEl) {
+                    expEl.innerText = fNum(expTokens);
+                    expEl.style.color = expTokens > 0 ? '#f85149' : '#3fb950';
+                }
             }
 
             if (d.lastChatActivity && d.lastChatActivity > lastPulseTime) { 
@@ -538,16 +547,22 @@
             const new7d = gk.newMembers7Days !== undefined ? gk.newMembers7Days : 0;
             const newToday = gk.newMembersToday !== undefined ? gk.newMembersToday : 0;
             const unclaimed = gk.unclaimedAccounts !== undefined ? gk.unclaimedAccounts : 0;
+            const expTokens = gk.expiredTokens !== undefined ? gk.expiredTokens : 0;
 
             const totEl = document.getElementById('gk-total-members');
             const n7El = document.getElementById('gk-new-7d');
             const nTodayEl = document.getElementById('gk-new-today');
             const uncEl = document.getElementById('gk-unclaimed');
+            const expEl = document.getElementById('gk-expired-tokens');
 
             if (totEl) totEl.innerText = fNum(totMem);
             if (n7El) n7El.innerText = (new7d > 0 ? `+${fNum(new7d)}` : fNum(new7d));
             if (nTodayEl) nTodayEl.innerText = (newToday > 0 ? `+${fNum(newToday)}` : fNum(newToday));
             if (uncEl) uncEl.innerText = fNum(unclaimed);
+            if (expEl) {
+                expEl.innerText = fNum(expTokens);
+                expEl.style.color = expTokens > 0 ? '#f85149' : '#3fb950';
+            }
         });
 
         let currentTasksDatabaseSnapshot = null;
@@ -754,7 +769,7 @@
         // ================= GITHUB STATUS MONITOR & ACTIONS PIPELINE =================
         const GITHUB_ACCOUNTS = ['BrianDivaCox', 'wosbdc', 'DasherTracker'];
         const DEFAULT_GH_REPOS = [
-            { name: "LiveCounters", owner: "BrianDivaCox", fullName: "BrianDivaCox/LiveCounters", htmlUrl: "https://github.com/BrianDivaCox/LiveCounters", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "Realtime statistics dashboard", latestCommit: "v10.2.42 : Cleaned Gatekeeper header icons and restored pure 3-stat roster layout" },
+            { name: "LiveCounters", owner: "BrianDivaCox", fullName: "BrianDivaCox/LiveCounters", htmlUrl: "https://github.com/BrianDivaCox/LiveCounters", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "Realtime statistics dashboard", latestCommit: "v10.2.43 : Real-time Firebase sync for Unclaimed Accounts and Expired Tokens in Gatekeeper widget" },
             { name: "wosBDC.github.io", owner: "wosbdc", fullName: "wosbdc/wosBDC.github.io", htmlUrl: "https://github.com/wosbdc/wosBDC.github.io", pushedAt: new Date(Date.now() - 3600000 * 1.5).toISOString(), defaultBranch: "main", description: "WOS BDC Web Application", latestCommit: "Live production updates" },
             { name: "DasherTracker.github.io", owner: "DasherTracker", fullName: "DasherTracker/DasherTracker.github.io", htmlUrl: "https://github.com/DasherTracker/DasherTracker.github.io", pushedAt: new Date(Date.now() - 3600000 * 3.5).toISOString(), defaultBranch: "main", description: "Dasher Tracker Portal", latestCommit: "Production sync" },
             { name: "funfacts", owner: "BrianDivaCox", fullName: "BrianDivaCox/funfacts", htmlUrl: "https://github.com/BrianDivaCox/funfacts", pushedAt: new Date(Date.now() - 86400000 * 2).toISOString(), defaultBranch: "main", description: "Fun Facts App", latestCommit: "Updated database schema" }
@@ -944,7 +959,7 @@
             }
         }
 
-        const CURRENT_APP_VERSION = 'v10.2.42';
+        const CURRENT_APP_VERSION = 'v10.2.43';
         let isDeployingLive = false;
         let pendingRemoteVersion = null;
 
