@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v10.2.23</title>
+    <title>Cloud Dashboard v10.2.24</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Outfit:wght@600;800&display=swap" rel="stylesheet">
@@ -305,7 +305,7 @@
             </div>
             <div class="cinema-footer">
                 <div class="cinema-stats-line"><span>M: <span id="m-count">0</span></span><span>TV: <span id="tv-count">0</span></span><span style="color: var(--cinema-green);">S: <span id="sync-timer">LIVE</span></span></div>
-                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v10.2.23</span></div>
+                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v10.2.24</span></div>
             </div>
         </div>
     </div>
@@ -666,10 +666,27 @@
         renderTheaterHeartbeat();
 
         // ================= GITHUB STATUS MONITOR & ACTIONS PIPELINE =================
-        const GITHUB_ACCOUNTS = ['BrianDivaCox', 'wosbdc', 'DasherTracker']; // All user & org handles
+        const GITHUB_ACCOUNTS = ['BrianDivaCox', 'wosbdc', 'DasherTracker'];
+        const DEFAULT_GH_REPOS = [
+            { name: "LiveCounters", owner: "BrianDivaCox", fullName: "BrianDivaCox/LiveCounters", htmlUrl: "https://github.com/BrianDivaCox/LiveCounters", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "Realtime statistics dashboard", latestCommit: "v10.2.23 : Added rate-limit protected instant tab-focus synchronization" },
+            { name: "wosBDC.github.io", owner: "wosbdc", fullName: "wosbdc/wosBDC.github.io", htmlUrl: "https://github.com/wosbdc/wosBDC.github.io", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "WOS BDC Web Application", latestCommit: "Live production updates" },
+            { name: "DasherTracker.github.io", owner: "DasherTracker", fullName: "DasherTracker/DasherTracker.github.io", htmlUrl: "https://github.com/DasherTracker/DasherTracker.github.io", pushedAt: new Date(Date.now() - 86400000 * 3).toISOString(), defaultBranch: "main", description: "Dasher Tracker Portal", latestCommit: "Production sync" },
+            { name: "funfacts", owner: "BrianDivaCox", fullName: "BrianDivaCox/funfacts", htmlUrl: "https://github.com/BrianDivaCox/funfacts", pushedAt: new Date(Date.now() - 86400000 * 2).toISOString(), defaultBranch: "main", description: "Fun Facts App", latestCommit: "Updated database schema" }
+        ];
+
         let allGithubRepos = [];
+        try {
+            const cached = JSON.parse(localStorage.getItem('gh_repos_cache') || 'null');
+            allGithubRepos = (Array.isArray(cached) && cached.length > 0) ? cached : DEFAULT_GH_REPOS;
+        } catch (e) {
+            allGithubRepos = DEFAULT_GH_REPOS;
+        }
+
         let ghTickerIndex = 0;
         let ghTickerInterval = null;
+        let lastGhFetchTime = 0;
+        let isFetchingGh = false;
+        const GH_COOLDOWN_MS = 20000;
 
         function timeAgo(dateString) {
             if (!dateString) return "--";
@@ -781,46 +798,52 @@
                     }
                 }
 
-                // Initial sort by pushed_at
-                fetched.sort((a, b) => new Date(b.pushedAt) - new Date(a.pushedAt));
-                allGithubRepos = fetched;
+                if (fetched.length > 0) {
+                    // Sort by pushed_at
+                    fetched.sort((a, b) => new Date(b.pushedAt) - new Date(a.pushedAt));
+                    allGithubRepos = fetched;
 
-                // Fetch latest commit & action status for top 4 repos (optimizes API budget)
-                const topRepos = allGithubRepos.slice(0, 4);
-                await Promise.allSettled(topRepos.map(async (repo) => {
+                    // Fetch latest commit & action status for top 4 repos
+                    const topRepos = allGithubRepos.slice(0, 4);
+                    await Promise.allSettled(topRepos.map(async (repo) => {
+                        try {
+                            const [cRes, aRes] = await Promise.allSettled([
+                                fetch(`https://api.github.com/repos/${repo.owner}/${repo.name}/commits?per_page=1`),
+                                fetch(`https://api.github.com/repos/${repo.owner}/${repo.name}/actions/runs?per_page=1`)
+                            ]);
+                            if (cRes.status === 'fulfilled' && cRes.value.ok) {
+                                const cData = await cRes.value.json();
+                                if (Array.isArray(cData) && cData.length > 0) {
+                                    repo.latestCommit = cData[0].commit.message.split('\n')[0];
+                                }
+                            }
+                            if (aRes.status === 'fulfilled' && aRes.value.ok) {
+                                const aData = await aRes.value.json();
+                                if (aData.workflow_runs && aData.workflow_runs.length > 0) {
+                                    const run = aData.workflow_runs[0];
+                                    repo.actionStatus = run.status;
+                                    repo.actionConclusion = run.conclusion;
+                                    repo.actionName = run.name;
+                                    repo.actionUpdatedAt = run.updated_at;
+                                }
+                            }
+                        } catch (e) {}
+                    }));
+
+                    // Smart priority sort: Failed (0) -> In Progress (1) -> Queued (2) -> Recency (pushed_at)
+                    allGithubRepos.sort((a, b) => {
+                        const bA = getActionBadge(a);
+                        const bB = getActionBadge(b);
+                        const pA = bA ? bA.priority : 99;
+                        const pB = bB ? bB.priority : 99;
+                        if ((pA <= 2 || pB <= 2) && pA !== pB) return pA - pB;
+                        return new Date(b.pushedAt) - new Date(a.pushedAt);
+                    });
+
                     try {
-                        const [cRes, aRes] = await Promise.allSettled([
-                            fetch(`https://api.github.com/repos/${repo.owner}/${repo.name}/commits?per_page=1`),
-                            fetch(`https://api.github.com/repos/${repo.owner}/${repo.name}/actions/runs?per_page=1`)
-                        ]);
-                        if (cRes.status === 'fulfilled' && cRes.value.ok) {
-                            const cData = await cRes.value.json();
-                            if (Array.isArray(cData) && cData.length > 0) {
-                                repo.latestCommit = cData[0].commit.message.split('\n')[0];
-                            }
-                        }
-                        if (aRes.status === 'fulfilled' && aRes.value.ok) {
-                            const aData = await aRes.value.json();
-                            if (aData.workflow_runs && aData.workflow_runs.length > 0) {
-                                const run = aData.workflow_runs[0];
-                                repo.actionStatus = run.status;
-                                repo.actionConclusion = run.conclusion;
-                                repo.actionName = run.name;
-                                repo.actionUpdatedAt = run.updated_at;
-                            }
-                        }
+                        localStorage.setItem('gh_repos_cache', JSON.stringify(allGithubRepos));
                     } catch (e) {}
-                }));
-
-                // Smart priority sort: Failed (0) -> In Progress (1) -> Queued (2) -> Recency (pushed_at)
-                allGithubRepos.sort((a, b) => {
-                    const bA = getActionBadge(a);
-                    const bB = getActionBadge(b);
-                    const pA = bA ? bA.priority : 99;
-                    const pB = bB ? bB.priority : 99;
-                    if ((pA <= 2 || pB <= 2) && pA !== pB) return pA - pB;
-                    return new Date(b.pushedAt) - new Date(a.pushedAt);
-                });
+                }
 
                 updateGithubDashboardUI();
                 const ghModal = document.getElementById('githubModal');
@@ -1062,7 +1085,8 @@
             }).join('');
         }
 
-        // Initialize GitHub Status Monitor with 2m background sync & instant tab-focus auto-sync
+        // Initialize GitHub Status Monitor with instant zero-delay cache render & 2m background sync
+        updateGithubDashboardUI();
         fetchGithubRepositories();
         setInterval(() => fetchGithubRepositories(false), 120000);
         

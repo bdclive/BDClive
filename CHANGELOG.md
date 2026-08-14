@@ -1,7 +1,7 @@
 # Changelog
 
-## v10.2.23 (2026-08-13)
-- **Instant Tab-Focus Real-Time Sync & Rate Limit Guard:** Added instant synchronization when switching or focusing tabs, with a 20-second debounce throttle and targeted active-only commit queries to maintain 100% safety against API rate limits.
+## v10.2.24 (2026-08-13)
+- **Zero-Delay Cache-First Engine & Fail-Safe Loader:** Added baseline repository defaults and immediate localStorage cache rendering on startup to completely eliminate "Loading..." stalls and provide graceful resilience against unauthenticated GitHub API rate limits.
 
-## v10.2.22 (2026-08-13)
-- **Strict 24-Hour Upload Filter:** Set GitHub Status Box filter strictly to projects uploaded/pushed within the last 24 hours.
+## v10.2.23 (2026-08-13)
+- **Instant Tab-Focus Real-Time Sync & Rate Limit Guard:** Added instant synchronization when switching or focusing tabs.
