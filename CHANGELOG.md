@@ -1,5 +1,8 @@
 # Changelog
 
+## v10.2.49 (2026-08-14)
+- **Live Background Bridge Sync Calibration**: Upgraded `threads_bridge_gui_v1.0.48_(windows).pyw` and `gatekeeper_counters.json` to continuously broadcast live validated stats directly to Firebase RTDB (`totalMembers: 25`, `unclaimedAccounts: 16`, `unsyncedChiefs: 21`, `activeSync: 4`, `expiredTokens: 0`).
+
 ## v10.2.48 (2026-08-14)
 - **Dynamic Unsynced Calculation Formula (Total − Active Sync)**: Configured the GateKeeper Unsynced metric to dynamically compute `Total Accounts (25) − Active Sync (4) = 21 Unsynced`, synced in real time across Firebase RTDB (`/labData/gatekeeperCounters.json`).
 
