@@ -1,5 +1,8 @@
 # Changelog
 
+## v10.2.39 (2026-08-14)
+- **GateKeeper Health Grid & Standalone PWA Web App Support**: Upgraded Alliance GateKeeper widget with a 3-chip health grid (**Expired Tokens**, **Unsynced Chiefs**, **Unclaimed Accounts**, and **Roster Health Badge**). Added complete Progressive Web App (PWA) infrastructure with `manifest.json`, `sw.js` service worker, high-resolution SVG app icons (`icon-192.svg`, `icon-512.svg`), iOS mobile web app tags, and synced the root `index.html` for direct Web App access.
+
 ## v10.2.38 (2026-08-14)
 - **Alliance GateKeeper Live Widget**: Created the Alliance GateKeeper counter card in Row 2, Box 2 (`#gatekeeper-box`). Added live metrics for **Total Members (21)**, **New Signups 7-Day (+3)**, **Unclaimed Accounts (0)**, and **Today's New Joins (+0)** with real-time Firebase RTDB sync (`/labData/gatekeeperCounters.json`).
 
