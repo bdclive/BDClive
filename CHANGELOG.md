@@ -1,5 +1,8 @@
 # Changelog
 
+## v10.2.41 (2026-08-14)
+- **Dedicated Cloud Data Dashboard Vector App Icon**: Replaced generic gaming/WOS icon graphics with an authentic, high-resolution **Cloud Data Dashboard** vector icon featuring glowing cyber pulse waves across a dark obsidian cloud silhouette.
+
 ## v10.2.40 (2026-08-14)
 - **GateKeeper Live Freshness Age Indicator**: Removed the redundant static `100% LIVE` badge from the GateKeeper widget and replaced it with a dynamic, color-coded data freshness indicator (`#gk-sync-age`) that calculates the exact time since the last roster sync (`● 12m ago`, `● 2h ago`, etc.) to instantly verify how current the information is.
 
