@@ -1,5 +1,8 @@
 # Changelog
 
+## v10.2.47 (2026-08-14)
+- **Combined Unclaimed Ratio Layout (16/25)**: Consolidated the Unclaimed Accounts and Total Members counters into a compact, space-saving **`16/25`** ratio hero stat (`#gk-unclaimed / #gk-total-members`), expanding layout breathing room for **🔑 EXP. TOKENS (0)** and **🔄 UNSYNCED (7)**.
+
 ## v10.2.46 (2026-08-14)
 - **Live Unverified / Unsynced Count Sync (7 Unsynced)**: Cross-referenced the `👥 Registered Users Database` in Firebase (`wos-dashboard-38d4c`) where 2 members have active Century Games verification (`BrianDCox` & `Thadwarf`) and **7 members are Unverified / Unsynced** (`sigmashu`, `aku tasya`, `Miaow Queen`, `Guardian`, `tyeesylvester18`, `wosrewards`, `test3`), syncing **7 Unsynced** to the GateKeeper box.
 
