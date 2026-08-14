@@ -1,6 +1,7 @@
 *.zip
 *.log
 .env
+discord_config.json
 __pycache__/
 test_scripts/
 threads_bridge_gui_*.pyw
