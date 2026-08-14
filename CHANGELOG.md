@@ -1,5 +1,8 @@
 # Changelog
 
+## v10.2.38 (2026-08-14)
+- **Alliance GateKeeper Live Widget**: Created the Alliance GateKeeper counter card in Row 2, Box 2 (`#gatekeeper-box`). Added live metrics for **Total Members (21)**, **New Signups 7-Day (+3)**, **Unclaimed Accounts (0)**, and **Today's New Joins (+0)** with real-time Firebase RTDB sync (`/labData/gatekeeperCounters.json`).
+
 ## v10.2.37 (2026-08-14)
 - **Synchronized Frontend Versioning & Eliminated Update Alert Loop**: Synchronized dashboard version across `New.html` (title tag, Cinema Box footer badge, `CURRENT_APP_VERSION = 'v10.2.37'`, and `CHANGELOG.md`). Fixed the version mismatch where the dashboard was stuck showing `v10.2.30` and constantly triggering the update banner on reload.
 
