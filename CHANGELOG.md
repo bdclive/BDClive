@@ -1,5 +1,8 @@
 # Changelog
 
+## v10.2.46 (2026-08-14)
+- **Live Unverified / Unsynced Count Sync (7 Unsynced)**: Cross-referenced the `👥 Registered Users Database` in Firebase (`wos-dashboard-38d4c`) where 2 members have active Century Games verification (`BrianDCox` & `Thadwarf`) and **7 members are Unverified / Unsynced** (`sigmashu`, `aku tasya`, `Miaow Queen`, `Guardian`, `tyeesylvester18`, `wosrewards`, `test3`), syncing **7 Unsynced** to the GateKeeper box.
+
 ## v10.2.45 (2026-08-14)
 - **Accurate WOS Roster Sync (25 Accounts, 16 Unclaimed, 16 Unsynced)**: Calibrated the exact roster count to 25 total accounts, syncing **16 Unclaimed Accounts** and **16 Unsynced Chiefs** with 0 expired tokens directly from Firebase RTDB (`/labData/gatekeeperCounters.json`).
 
