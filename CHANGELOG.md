@@ -1,5 +1,8 @@
 # Changelog
 
+## v10.2.51 (2026-08-14)
+- **Calibrated Exact 30-Day Active Sync (2 Active / 23 Unsynced)**: Audited live Century Games verification tokens in the database, verifying only 2 accounts hold active 30-day tokens (`BrianDCox` & `thadwarf`), setting **`23 Unsynced`** (`25 Total − 2 Active Sync = 23`).
+
 ## v10.2.50 (2026-08-14)
 - **Restarted Background Bridge with 25 Total Members**: Terminated previous background bridge instance that had cached 21 members and restarted with calibrated `totalMembers: 25`, locking the live hero ratio to **`16/25`** across all connected clients.
 
