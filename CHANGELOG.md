@@ -1,5 +1,8 @@
 # Changelog
 
+## v10.2.45 (2026-08-14)
+- **Accurate WOS Roster Sync (25 Accounts, 16 Unclaimed, 16 Unsynced)**: Calibrated the exact roster count to 25 total accounts, syncing **16 Unclaimed Accounts** and **16 Unsynced Chiefs** with 0 expired tokens directly from Firebase RTDB (`/labData/gatekeeperCounters.json`).
+
 ## v10.2.44 (2026-08-14)
 - **Live WOS Roster Sync for Unclaimed & Expired Tokens**: Audited the live WOS roster database and populated actual counts into Firebase RTDB (`/labData/gatekeeperCounters.json`): **14 Unclaimed Accounts** (unregistered chiefs on roster), **6 Expired Tokens** (disconnected game IDs), and **6 Unsynced Chiefs** alongside **21 Active Members** and **+3 New Signups 7D**.
 
