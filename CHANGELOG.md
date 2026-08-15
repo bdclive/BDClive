@@ -1,5 +1,8 @@
 # Changelog
 
+## v10.2.56 / v1.0.51 (2026-08-15)
+- 🛡️ **Cleaned Alliance Gatekeeper Discord Embed**: Streamlined gift code announcement embeds directly under the Alliance Gatekeeper webhook banner, stripping out all lab bridge signatures and web source tags.
+
 ## v10.2.55 / v1.0.50 (2026-08-15)
 - 📢 **Alliance Discord Gift Code Alerts**: Built automatic Discord webhook announcement broadcasting to the alliance channel whenever a new code is discovered and mass-redeemed for alliance members.
 - ⚡ **Real-Time Delivery Summary**: Displays code name, total successful claims, and alliance targets directly in Discord.
