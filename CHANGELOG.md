@@ -1,5 +1,8 @@
 # Changelog
 
+## v10.2.53 (2026-08-14)
+- **Hardened GateKeeper Telemetry Stream (16/25 & 23 Unsynced)**: Removed legacy `chiefs.json` parser that was feeding outdated 21 member counts into the bridge engine, and hardened frontend listener bounds to prevent any momentary display flashes.
+
 ## v10.2.52 (2026-08-14)
 - **GateKeeper Header Text Realignment**: Shifted the `GATEKEEPER` header label position to the right for balanced visual alignment across the top bar.
 
