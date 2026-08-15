@@ -1,5 +1,8 @@
 # Changelog
 
+## v10.2.57 / v1.0.51 (2026-08-15)
+- 🏰 **Unified Alliance Gatekeeper Report (#alerts)**: Built dynamic single-post Discord dashboard engine that auto-updates `#alerts` with live roster verification, new member signups, active gift codes, and auto-bot telemetry without clogging the channel.
+
 ## v10.2.56 / v1.0.51 (2026-08-15)
 - 🛡️ **Cleaned Alliance Gatekeeper Discord Embed**: Streamlined gift code announcement embeds directly under the Alliance Gatekeeper webhook banner, stripping out all lab bridge signatures and web source tags.
 
