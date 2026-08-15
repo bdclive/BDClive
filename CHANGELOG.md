@@ -1,5 +1,10 @@
 # Changelog
 
+## v10.2.54 / v1.0.49 (2026-08-15)
+- 🎁 **Integrated Alliance Auto Gift Code Bot Daemon**: Built autonomous Whiteout Survival gift code scraper (DotGG, ProGameGuides, PocketGamer) and Century Games validator engine directly into the Bridge GUI loop.
+- ⚡ **Auto-Discovery & Mass Redemption**: Automatically tests newly published promo codes against Century Games servers, registers verified active codes into Firebase `gift_codes_history`, and executes redemption across all enrolled alliance members & alts.
+- 📊 **Dedicated GUI Metric Card & Telemetry Stream**: Added **`🎁 GIFT CODE BOT`** live counter card to the desktop control panel and broadcasts heartbeat metrics to Firebase `system/giftcode_bot_status`.
+
 ## v10.2.53 (2026-08-14)
 - **Hardened GateKeeper Telemetry Stream (16/25 & 23 Unsynced)**: Removed legacy `chiefs.json` parser that was feeding outdated 21 member counts into the bridge engine, and hardened frontend listener bounds to prevent any momentary display flashes.
 
