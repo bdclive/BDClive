@@ -1,5 +1,9 @@
 # Changelog
 
+## v10.2.55 / v1.0.50 (2026-08-15)
+- 📢 **Alliance Discord Gift Code Alerts**: Built automatic Discord webhook announcement broadcasting to the alliance channel whenever a new code is discovered and mass-redeemed for alliance members.
+- ⚡ **Real-Time Delivery Summary**: Displays code name, total successful claims, and alliance targets directly in Discord.
+
 ## v10.2.54 / v1.0.49 (2026-08-15)
 - 🎁 **Integrated Alliance Auto Gift Code Bot Daemon**: Built autonomous Whiteout Survival gift code scraper (DotGG, ProGameGuides, PocketGamer) and Century Games validator engine directly into the Bridge GUI loop.
 - ⚡ **Auto-Discovery & Mass Redemption**: Automatically tests newly published promo codes against Century Games servers, registers verified active codes into Firebase `gift_codes_history`, and executes redemption across all enrolled alliance members & alts.
