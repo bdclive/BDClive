@@ -1,8 +1,7 @@
 # Changelog
 
-## v10.2.67 / v1.0.52 (2026-08-17)
-- 🏰 **Dynamic Alliance Gatekeeper Discord Sync**: Upgraded `send_or_update_gatekeeper_report()` in BDC Central Command to actively read and respect customized section texts, toggles, directives, and embed colors saved from the Web App Editor (`config/gatekeeperReportSettings`), preventing hardcoded overrides.
-- ⚡ **Zero-Quota Google Sheets Auto-Sync Webhook**: Wired incoming Apps Script webhook triggers directly into the Multi-Maintenance engine to update furnace levels in `Chief's List` with 0 outgoing quota.
+## v10.2.67 (2026-08-17)
+- ⏱️ **Calibrated GitHub Pipeline Active Window to 1 Hour Max**: Trimmed active pipeline visibility from 24h/5h down to strictly 1 hour max with high-contrast time tiers (`● <15M` in Electric Green, `● <30M` in Neon Cyan, `● <1H` in Warm Gold), cleanly collapsing older idle repositories into a minimal "● All Pipelines Up to Date" summary card and reserving red strictly for build failures.
 
 ## v10.2.66 (2026-08-17)
 - 📈 **Completed Real-Time Views Delta Badge & Firebase Cloud Baseline Sync**: Fully wired the live Net Views growth badge (`#grand-views-delta`) alongside Follower tracking and connected daily 24h baseline synchronization to Firebase RTDB (`labData/gtBaselines/YYYY-MM-DD`) so all devices share the exact same starting baseline.
