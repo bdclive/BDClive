@@ -1,5 +1,8 @@
 # Changelog
 
+## v10.2.69 (2026-08-17)
+- 🪟 **Standardized Window Title to `BDC LIVE vXX.X.XX`**: Streamlined `<title>` and `manifest.json` app name to prevent duplicate title repetition across PWA window frames and browser tabs.
+
 ## v10.2.68 (2026-08-17)
 - 🎯 **Unified GitHub Pipeline to Official `BDClive` Repository**: Cleaned out duplicate `LiveCounters` feed tile and set `bdclive/BDClive` as the single authoritative upstream remote and pipeline monitor.
 

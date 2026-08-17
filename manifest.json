@@ -1,5 +1,5 @@
 {
-  "name": "BDC LIVE Central Command",
+  "name": "BDC LIVE",
   "short_name": "BDCLIVE",
   "description": "Real-time statistics, streaming telemetry, and command center dashboard",
   "start_url": "./index.html",
