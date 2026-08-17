@@ -1,5 +1,8 @@
 # Changelog
 
+## v10.2.61 (2026-08-17)
+- 🚀 **Fixed GitHub Actions Pages Deployment**: Removed duplicate `Index.html` tracking collision between uppercase/lowercase filenames on Ubuntu runners, restoring green automated deployments.
+
 ## v10.2.60 (2026-08-17)
 - 🌐 **Real-Time Grand Totals Gain/Loss Delta Engine**: Built automated real-time delta indicators (`▲ +X` in bright green on gain, `▼ -X` in vivid red on drop) and 24h daily net baseline tracking directly into the Grand Totals box across all 9 platforms with glowing visual pulse animations.
 
