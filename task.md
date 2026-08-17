@@ -1,12 +1,11 @@
-# Task List: GitHub Pipeline 1-Hour Window & Micro Time Scale Calibration
+# Task List: BDC Central Command v1.0.53 & Dynamic Gatekeeper Sync
 
-- [x] Create project backup archive (`backups/LiveCounters_v10.2.67_backup.zip`)
-- [x] Set active pipeline visibility window strictly to 1 hour max (`60 * 60 * 1000`)
-- [x] Configure 1-hour micro color scale:
-  - `< 15m`: `● <15M` in Electric Green (`#3fb950`)
-  - `15m - 30m`: `● <30M` in Neon Cyan (`#00d2ff`)
-  - `30m - 60m`: `● <1H` in Warm Gold (`#e3b341`)
-  - `> 1h`: Clean minimal "All Pipelines Up to Date" summary card
-- [x] Bump version to `v10.2.67` across `New.html`, `index.html`, `web_dashboards/New.html`, and `CHANGELOG.md`
-- [x] Verify JavaScript syntax with Node.js
-- [x] Push live updates to both `bdclive` and `origin` remotes
+- [x] Create project backup archive (`backups/backup_magical_pasteur_*.zip`)
+- [x] Upgrade `send_or_update_gatekeeper_report()` in BDC Central Command to dynamically fetch and apply `config/gatekeeperReportSettings.json` from Firebase
+- [x] Wire incoming Apps Script zero-quota webhook for Whiteout Survival furnace level auto-updates
+- [x] Release and package `v1.0.53` scripts in `C:\Users\Brian\Documents\antigravity\magical-pasteur` and `Downloads`:
+  - `bdc_central_command_gui_v1.0.53_(windows).pyw`
+  - `threads_bridge_gui_v1.0.53_(windows).pyw`
+  - `bdc_central_command_cli_v1.0.53_(terminal).py`
+  - `threads_bridge_cli_v1.0.53_(terminal).py`
+- [x] Update CHANGELOG.md and commit to git remotes (`origin`, `bdclive`)

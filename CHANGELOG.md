@@ -1,5 +1,10 @@
 # Changelog
 
+## v10.2.68 / v1.0.53 (2026-08-17)
+- 🏰 **Dynamic Alliance Gatekeeper Discord Sync**: Upgraded `send_or_update_gatekeeper_report()` in BDC Central Command to actively read and respect customized section texts, toggles, directives, and embed colors saved from the Web App Editor (`config/gatekeeperReportSettings`), preventing hardcoded overrides.
+- ⚡ **Zero-Quota Google Sheets Auto-Sync Webhook**: Wired incoming Apps Script webhook triggers directly into the Multi-Maintenance engine to update furnace levels in `Chief's List` with 0 outgoing quota.
+- 🚀 **Central Command v1.0.53 Release**: Packaged standalone GUI and CLI executable scripts with dynamic `#alerts` post synchronization into `C:\Users\Brian\Documents\antigravity\magical-pasteur` and `Downloads`.
+
 ## v10.2.67 (2026-08-17)
 - ⏱️ **Calibrated GitHub Pipeline Active Window to 1 Hour Max**: Trimmed active pipeline visibility from 24h/5h down to strictly 1 hour max with high-contrast time tiers (`● <15M` in Electric Green, `● <30M` in Neon Cyan, `● <1H` in Warm Gold), cleanly collapsing older idle repositories into a minimal "● All Pipelines Up to Date" summary card and reserving red strictly for build failures.
 
