@@ -1,5 +1,10 @@
 # Changelog
 
+## v10.2.58 / v1.0.52 (2026-08-17)
+- ⚡ **Rebranded to BDC Central Command**: Unified all background daemons into a master control panel with full multi-threading support.
+- 🔥 **Integrated WoS Multi-Maintenance Engine (4x Daily - 0 Google Quota)**: Built automated 6-hour background sweep daemon and manual trigger button to sync furnace levels, nicknames, and avatars across all 39 alliance members and alts directly with Century Games API and Firebase without exhausting Google Apps Script quotas.
+- 🪟 **Dedicated GUI Control Card & Triggers**: Added live `🔥 WoS Maintenance` card with audit counts, `🔥 WoS Maint` manual sweep button, and refreshed `🎁 Sweep Codes` and `🏰 #alerts Report` action buttons.
+
 ## v10.2.57 / v1.0.51 (2026-08-15)
 - 🏰 **Unified Alliance Gatekeeper Report (#alerts)**: Built dynamic single-post Discord dashboard engine that auto-updates `#alerts` with live roster verification, new member signups, active gift codes, and auto-bot telemetry without clogging the channel.
 
