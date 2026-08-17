@@ -1,0 +1,16 @@
+{
+  "scriptId": "1PhtDEegD3cmMoz4IbD6nt8vj45eAMGBMGEd-iIOcPnxl4fUd01q0BEKY",
+  "rootDir": "gas_tasks",
+  "scriptExtensions": [
+    ".js",
+    ".gs"
+  ],
+  "htmlExtensions": [
+    ".html"
+  ],
+  "jsonExtensions": [
+    ".json"
+  ],
+  "filePushOrder": [],
+  "skipSubdirectories": false
+}
