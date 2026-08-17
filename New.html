@@ -928,6 +928,11 @@
             document.getElementById('m-count').innerText = fNum(THEATER_STATE.moviesCount);
             document.getElementById('m-open').innerText = THEATER_STATE.daysOpen;
             document.getElementById('tv-count').innerText = fNum(THEATER_STATE.tvCount);
+            if (m.rsvpCount !== undefined) {
+                document.getElementById('m-rsvp').innerText = fNum(m.rsvpCount);
+            } else if (m.discordRsvp !== undefined) {
+                document.getElementById('m-rsvp').innerText = fNum(m.discordRsvp);
+            }
 
             const now = new Date();
             let targetShow = null;
