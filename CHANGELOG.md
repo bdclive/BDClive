@@ -1,5 +1,8 @@
 # Changelog
 
+## v10.2.73 (2026-08-17)
+- 🩺 **Built Platform Counter Health & Diagnostics Table Modal (`#counterAuditModal`)**: Added a sleek telemetry data table modal accessible directly from the Grand Totals card header, providing live connection audits, token expiry tracking, and 1-click health repairs across all 9 social platforms with background daemon support (`counter_checker_daemon.py`).
+
 ## v10.2.72 (2026-08-17)
 - 🎛️ **Added 1x Spotlight & 2x Dual Ticker Modes with Interactive Switcher**: Upgraded GitHub Pipeline box with an interactive `1x / 2x` view toggle in the header, offering an ultra-legible single spotlight card with pagination dots and a dual-card split view for high-traffic monitoring periods.
 
