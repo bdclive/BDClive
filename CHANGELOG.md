@@ -1,5 +1,8 @@
 # Changelog
 
+## v10.2.62 (2026-08-17)
+- ⚡ **Real-Time WebSocket GitHub Pipeline Stream via Firebase**: Integrated persistent WebSocket listener on `labData/githubPipeline` for instantaneous sub-second repository push and workflow status updates, completely eliminating GitHub API client-side rate limits.
+
 ## v10.2.61 (2026-08-17)
 - 🚀 **Fixed GitHub Actions Pages Deployment**: Removed duplicate `Index.html` tracking collision between uppercase/lowercase filenames on Ubuntu runners, restoring green automated deployments.
 
