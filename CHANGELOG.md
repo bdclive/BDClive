@@ -1,5 +1,8 @@
 # Changelog
 
+## v10.2.65 (2026-08-17)
+- 🎨 **Added Official BDC LIVE Branding & Social Preview Assets**: Generated and integrated high-resolution 1024x1024 metallic cyber emblem avatar (`bdclive_logo.jpg`) and widescreen 16:9 command center social preview banner (`bdclive_banner.jpg`) across `manifest.json` and OpenGraph/Twitter meta tags.
+
 ## v10.2.64 (2026-08-17)
 - 🚀 **Optimized Pages Workflow Concurrency**: Configured `cancel-in-progress: true` on GitHub Pages deployment pipeline, preventing concurrent runner lockups and duplicate `github-pages` artifact collisions.
 
