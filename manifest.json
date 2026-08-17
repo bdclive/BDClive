@@ -1,13 +1,13 @@
 {
-  "name": "LiveCounters Command Center",
-  "short_name": "LiveCounters",
-  "description": "Real-time statistics and streaming command center dashboard",
+  "name": "BDC LIVE Central Command",
+  "short_name": "BDCLIVE",
+  "description": "Real-time statistics, streaming telemetry, and command center dashboard",
   "start_url": "./index.html",
   "display": "standalone",
   "orientation": "any",
   "background_color": "#05070b",
   "theme_color": "#070a10",
-  "categories": ["utilities", "productivity"],
+  "categories": ["utilities", "productivity", "entertainment"],
   "icons": [
     {
       "src": "./icon-192.svg",
@@ -19,6 +19,12 @@
       "src": "./icon-512.svg",
       "sizes": "512x512",
       "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./bdclive_logo.jpg",
+      "sizes": "1024x1024",
+      "type": "image/jpeg",
       "purpose": "any maskable"
     }
   ]
