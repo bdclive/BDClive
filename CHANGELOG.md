@@ -1,5 +1,8 @@
 # Changelog
 
+## v10.2.75 (2026-08-17)
+- 📬 **Integrated Automated Email Alerts & Token Repair Guides (`v1.0.55`)**: Upgraded Central Command desktop GUI to `v1.0.55` with automated email dispatch to `ALERT_EMAIL` containing step-by-step developer portal instructions, direct links, and config variable targets whenever any platform token expires during nightly maintenance.
+
 ## v10.2.74 (2026-08-17)
 - 🌙 **Integrated Autonomous Night Counter Audit & Discord Alerting into Desktop GUI (`v1.0.54`)**: Built `PlatformCounterHealthEngine` into Central Command desktop GUI (`bdc_central_command_gui_v1.0.54_(windows).pyw`), executing automated sweeps every 6 hours / midnight maintenance, auto-healing Firebase `labData`, and sending rich Discord alert embeds to `#alerts` when platform tokens expire.
 
