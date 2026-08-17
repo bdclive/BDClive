@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cloud Dashboard v10.2.58</title>
+    <title>Cloud Dashboard v10.2.59</title>
     <!-- PWA Manifest & Mobile Web App Meta Tags -->
     <link rel="manifest" href="./manifest.json">
     <meta name="theme-color" content="#070a10">
@@ -42,9 +42,9 @@
         .mirror-row { display: flex; justify-content: space-around; width: 100%; margin-top: 5px; }
         .mirror-label { font-family: 'Inter', sans-serif; font-size: 9px; color: var(--text-dim); text-transform: uppercase; font-weight: 700; margin: 0; letter-spacing: 0.5px; }
         .mirror-stat { font-family: 'Outfit', sans-serif; font-size: 2rem; font-weight: 800; color: #ffffff; margin-bottom: 2px; }
-        .cinema-info { padding: 10px 15px 5px 15px; display: grid; grid-template-columns: 1.2fr 1fr; gap: 8px; height: calc(100% - 38px); box-sizing: border-box; text-align: left; }
+        .cinema-info { padding: 10px 12px 5px 12px; display: grid; grid-template-columns: 1fr 1.15fr; gap: 8px; height: calc(100% - 38px); box-sizing: border-box; text-align: left; }
         .cinema-label { font-family: 'Inter', sans-serif; font-size: 9px; color: var(--cinema-green); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
-        .cinema-title { font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 700; color: #ffffff; line-height: 1.2; margin-top: 2px; height: 32px; overflow: hidden; }
+        .cinema-title { font-family: 'Outfit', sans-serif; font-size: 12.5px; font-weight: 700; color: #ffffff; line-height: 1.2; margin-top: 2px; height: 32px; overflow: hidden; text-overflow: ellipsis; }
         .cinema-footer { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(13, 17, 23, 0.9); padding: 6px 12px; border-top: 1px solid var(--border-color); display: flex; flex-direction: column; }
         .cinema-stats-line { font-family: 'Inter', sans-serif; font-size: 10px; color: var(--plex-orange); display: flex; justify-content: space-between; font-weight: 700; }
         #court-box { padding: 0 !important; border-top: 3px solid var(--plex-orange); background: #000; cursor: pointer; display: block; z-index: 1; }
@@ -328,19 +328,26 @@
         <div class="counter-item" id="cinema-box" onclick="openTheater()" style="border-top: 3px solid var(--cinema-green); padding-left: 0; grid-area: 3 / 4; cursor: pointer;">
             <i class="fa-solid fa-film box-logo" style="color: var(--cinema-green);"></i>
             <div class="cinema-info">
-                <div><div class="cinema-label">Now Playing</div><div id="m-now" class="cinema-title">Syncing...</div><div id="m-left" style="font-size: 11.5px; color: #ffffff; font-weight: 700; letter-spacing: 0.5px; text-shadow: 0px 1px 2px rgba(0,0,0,0.8); margin-top: 2px;">--</div></div>
-                <div style="border-left: 1px solid var(--border-color); padding-left: 10px;">
+                <div>
+                    <div class="cinema-label">Now Playing</div>
+                    <div id="m-now" class="cinema-title">Syncing...</div>
+                    <div id="m-left" style="font-size: 11px; color: #ffffff; font-weight: 700; letter-spacing: 0.3px; text-shadow: 0px 1px 2px rgba(0,0,0,0.8); margin-top: 2px; white-space: nowrap;">--</div>
+                </div>
+                <div style="border-left: 1px solid var(--border-color); padding-left: 8px; min-width: 0;">
                     <div class="cinema-label" style="color: var(--plex-orange);">Up Next</div>
                     <div id="m-next" class="cinema-title">--</div>
-                    <div style="font-size: 11.5px; color: #ffffff; font-weight: 700; letter-spacing: 0.5px; text-shadow: 0px 1px 2px rgba(0,0,0,0.8); margin-top: 2px; display: flex; align-items: center; justify-content: space-between; padding-right: 20px;">
-                        <div><span id="m-today-label" style="color: var(--light-purple); font-weight: 900; display: none; margin-bottom: 2px; text-shadow: none;">TODAY </span><span id="m-time">--</span></div>
-                        <span style="background: rgba(241, 196, 15, 0.15); color: #f1c40f; border: 1px solid rgba(241, 196, 15, 0.35); padding: 1px 6px; border-radius: 8px; font-size: 9.5px; font-weight: 800;">👥 <span id="m-rsvp">0</span></span>
+                    <div style="font-size: 11px; color: #ffffff; font-weight: 700; margin-top: 2px; display: flex; align-items: center; justify-content: space-between; gap: 4px; white-space: nowrap;">
+                        <div style="display: flex; align-items: center; gap: 4px; overflow: hidden; min-width: 0;">
+                            <span id="m-today-label" style="background: rgba(188, 149, 255, 0.18); color: var(--light-purple); border: 1px solid rgba(188, 149, 255, 0.35); padding: 0px 4px; border-radius: 4px; font-size: 8.5px; font-weight: 800; letter-spacing: 0.5px; display: none; text-shadow: none; flex-shrink: 0;">TODAY</span>
+                            <span id="m-time" style="font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 11.5px; color: #ffffff; white-space: nowrap;">--</span>
+                        </div>
+                        <span style="background: rgba(241, 196, 15, 0.15); color: #f1c40f; border: 1px solid rgba(241, 196, 15, 0.35); padding: 1px 5px; border-radius: 6px; font-size: 9px; font-weight: 800; flex-shrink: 0;">👥 <span id="m-rsvp">0</span></span>
                     </div>
                 </div>
             </div>
             <div class="cinema-footer">
                 <div class="cinema-stats-line"><span>M: <span id="m-count">0</span></span><span>TV: <span id="tv-count">0</span></span><span style="color: var(--cinema-green);">S: <span id="sync-timer">LIVE</span></span></div>
-                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v10.2.58</span></div>
+                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v10.2.59</span></div>
             </div>
         </div>
     </div>
@@ -741,7 +748,7 @@
                 } else {
                     const isToday = (targetShow.toDateString() === now.toDateString());
                     if (secsLeft <= 86400 && isToday) {
-                        if (todayLabelEl) todayLabelEl.style.display = "inline";
+                        if (todayLabelEl) todayLabelEl.style.display = "inline-flex";
                         let hours = Math.floor(secsLeft / 3600);
                         let mins = Math.floor((secsLeft % 3600) / 60);
                         let secs = secsLeft % 60;
@@ -777,7 +784,7 @@
         // ================= GITHUB STATUS MONITOR & ACTIONS PIPELINE =================
         const GITHUB_ACCOUNTS = ['BrianDivaCox', 'wosbdc', 'DasherTracker'];
         const DEFAULT_GH_REPOS = [
-            { name: "LiveCounters", owner: "BrianDivaCox", fullName: "BrianDivaCox/LiveCounters", htmlUrl: "https://github.com/BrianDivaCox/LiveCounters", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "Realtime statistics dashboard", latestCommit: "v10.2.58 : Rebranded to BDC Central Command with multi-maintenance daemon" },
+            { name: "LiveCounters", owner: "BrianDivaCox", fullName: "BrianDivaCox/LiveCounters", htmlUrl: "https://github.com/BrianDivaCox/LiveCounters", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "Realtime statistics dashboard", latestCommit: "v10.2.59 : Fixed Up Next time cutoff and layout in Brian's Theater box" },
             { name: "wosBDC.github.io", owner: "wosbdc", fullName: "wosbdc/wosBDC.github.io", htmlUrl: "https://github.com/wosbdc/wosBDC.github.io", pushedAt: new Date(Date.now() - 3600000 * 1.5).toISOString(), defaultBranch: "main", description: "WOS BDC Web Application", latestCommit: "v1.24.47 : WOS Alliance web portal & database updates" },
             { name: "DasherTracker.github.io", owner: "DasherTracker", fullName: "DasherTracker/DasherTracker.github.io", htmlUrl: "https://github.com/DasherTracker/DasherTracker.github.io", pushedAt: new Date(Date.now() - 3600000 * 3.5).toISOString(), defaultBranch: "main", description: "Dasher Tracker Portal", latestCommit: "Production sync" },
             { name: "funfacts", owner: "BrianDivaCox", fullName: "BrianDivaCox/funfacts", htmlUrl: "https://github.com/BrianDivaCox/funfacts", pushedAt: new Date(Date.now() - 86400000 * 2).toISOString(), defaultBranch: "main", description: "Fun Facts App", latestCommit: "Updated database schema" }
@@ -967,7 +974,7 @@
             }
         }
 
-        const CURRENT_APP_VERSION = 'v10.2.58';
+        const CURRENT_APP_VERSION = 'v10.2.59';
         let isDeployingLive = false;
         let pendingRemoteVersion = null;
 
