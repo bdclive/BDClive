@@ -1,5 +1,8 @@
 # Changelog
 
+## v10.2.59 (2026-08-17)
+- 🎬 **Fixed Brian's Theater "Up Next" Countdown Cutoff**: Rebalanced column grid distribution (`1fr 1.15fr`), converted the `TODAY` indicator into a sleek inline badge, and enforced `white-space: nowrap` so the live countdown timer (`8h 36m 58s`) and RSVP badge fit cleanly on a single line without wrapping or clipping.
+
 ## v10.2.58 (Bridge v1.0.52 - 2026-08-17)
 - ⚡ **Rebranded to BDC Central Command**: Unified all background daemons into a master control panel with full multi-threading support.
 - 🔥 **Integrated WoS Multi-Maintenance Engine (4x Daily - 0 Google Quota)**: Built automated 6-hour background sweep daemon and manual trigger button to sync furnace levels, nicknames, and avatars across all 39 alliance members and alts directly with Century Games API and Firebase without exhausting Google Apps Script quotas.
