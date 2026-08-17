@@ -1,5 +1,8 @@
 # Changelog
 
+## v10.2.76 (2026-08-17)
+- 📧 **Streamlined Counter Audit Alerts to Direct Email (`v1.0.56`)**: Removed Discord webhook posting for platform counter token audits in favor of dedicated HTML email alerts with interactive developer portal repair guides sent directly to `ALERT_EMAIL`.
+
 ## v10.2.75 (2026-08-17)
 - 📬 **Integrated Automated Email Alerts & Token Repair Guides (`v1.0.55`)**: Upgraded Central Command desktop GUI to `v1.0.55` with automated email dispatch to `ALERT_EMAIL` containing step-by-step developer portal instructions, direct links, and config variable targets whenever any platform token expires during nightly maintenance.
 
