@@ -1,5 +1,9 @@
 # Changelog
 
+## v10.2.78 / v1.0.60 (2026-08-17)
+- 🔑 **Built Interactive API Token & Credential Manager (`TokenManagerDialog`)**: Added dedicated `[ 🔑 Edit Tokens ]` button in Central Command Desktop GUI top bar, providing an interactive dark-themed management window with password mask toggles (`👁️ Show/Hide`), direct 1-click developer portal links (Meta, Snapchat, Twitch, Google Cloud, Discord), and instant hot-reloading with persistence to `tokens_config.json`.
+- 🎟️ **Fixed Discord Scheduled Events & Live RSVP Tracker**: Added `?with_user_count=true` query parameter to Discord Scheduled Events endpoint and connected real-time `rsvpCount` synchronization to Brian's Theater Box.
+
 ## v10.2.77 / v1.0.59 (2026-08-17)
 - 🗂️ **Established Ecosystem Master Version Registry (`VERSION.json`)**: Created authoritative root version registry tracking Central Command (`v1.0.59`), BDClive Web (`v10.2.77`), wosBDC (`v2.9.10`), and Google Apps Script (`@196`).
 - 🎁 **Smart Gift Code Detection & Candidate Blacklist (`v1.0.59`)**: Upgraded `GiftCodeBotEngine` with 3-tier status classification (`active`, `expired`, `non_existent`), persistent keyword blacklist (`scraped_candidates_blacklist.json`), and authenticated Firebase REST writes.
