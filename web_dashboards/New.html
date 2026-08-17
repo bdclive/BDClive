@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BDC LIVE v10.2.71</title>
+    <title>BDC LIVE v10.2.72</title>
     <!-- Open Graph & Social Preview Meta Tags -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="BDC LIVE v10.2.71">
+    <meta property="og:title" content="BDC LIVE v10.2.72">
     <meta property="og:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="og:image" content="./bdclive_banner.jpg">
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="BDC LIVE v10.2.71">
+    <meta property="twitter:title" content="BDC LIVE v10.2.72">
     <meta property="twitter:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="twitter:image" content="./bdclive_banner.jpg">
     <!-- PWA Manifest & Mobile Web App Meta Tags -->
@@ -288,11 +288,17 @@
                     <i class="fa-brands fa-github" style="color: #a371f7; font-size: 14px;"></i>
                     <span style="font-size: 11px; font-weight: 800; color: #ffffff; letter-spacing: 0.5px; text-transform: uppercase;">GitHub Pipeline</span>
                 </div>
-                <span id="gh-total-badge" style="font-size: 9px; color: var(--text-dim); background: rgba(255,255,255,0.06); padding: 1px 6px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.08);">Syncing...</span>
+                <div style="display: flex; align-items: center; gap: 5px;">
+                    <div id="gh-mode-toggle" onclick="event.stopPropagation(); toggleGithubTickerMode();" style="display: flex; align-items: center; background: rgba(163, 113, 247, 0.12); border: 1px solid rgba(163, 113, 247, 0.3); border-radius: 6px; padding: 1px 2px; cursor: pointer; gap: 2px;" title="Toggle 1-Card Spotlight / 2-Card Dual View">
+                        <span id="gh-mode-single-btn" style="font-size: 7.5px; font-weight: 800; padding: 1px 4px; border-radius: 4px; background: #a371f7; color: #ffffff; transition: all 0.2s ease;">1x</span>
+                        <span id="gh-mode-dual-btn" style="font-size: 7.5px; font-weight: 700; padding: 1px 4px; border-radius: 4px; color: #8b949e; transition: all 0.2s ease;">2x</span>
+                    </div>
+                    <span id="gh-total-badge" style="font-size: 9px; color: var(--text-dim); background: rgba(255,255,255,0.06); padding: 1px 6px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.08);">Syncing...</span>
+                </div>
             </div>
 
-            <!-- Auto-rotating / Scrollable Ticker Feed (4 items visible) -->
-            <div id="gh-ticker-feed" style="display: flex; flex-direction: column; gap: 3px; overflow: hidden; height: 94px; margin: 2px 0;">
+            <!-- Auto-rotating Spotlight / Dual Ticker Feed -->
+            <div id="gh-ticker-feed" style="display: flex; flex-direction: column; gap: 4px; overflow: hidden; height: 94px; margin: 2px 0; justify-content: center;">
                 <div style="font-size: 10px; color: var(--text-dim); text-align: center; padding-top: 25px;">Loading repositories...</div>
             </div>
 
@@ -362,7 +368,7 @@
             </div>
             <div class="cinema-footer">
                 <div class="cinema-stats-line"><span>M: <span id="m-count">0</span></span><span>TV: <span id="tv-count">0</span></span><span style="color: var(--cinema-green);">S: <span id="sync-timer">LIVE</span></span></div>
-                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v10.2.71</span></div>
+                <div style="font-size: 9px; color: var(--text-dim); display: flex; justify-content: space-between;"><span>Open: <span id="m-open">0</span></span><span>v10.2.72</span></div>
             </div>
         </div>
     </div>
@@ -993,7 +999,7 @@
         });
 
         const DEFAULT_GH_REPOS = [
-            { name: "BDClive", owner: "bdclive", fullName: "bdclive/BDClive", htmlUrl: "https://github.com/bdclive/BDClive", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "BDC Live Central Command Dashboard", latestCommit: "v10.2.71 : Implemented 100% future-proof GitHub organization and repository auto-discovery engine" },
+            { name: "BDClive", owner: "bdclive", fullName: "bdclive/BDClive", htmlUrl: "https://github.com/bdclive/BDClive", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "BDC Live Central Command Dashboard", latestCommit: "v10.2.72 : Added dynamic 1x spotlight and 2x dual ticker modes with interactive switcher" },
             { name: "wosBDC.github.io", owner: "wosbdc", fullName: "wosbdc/wosBDC.github.io", htmlUrl: "https://github.com/wosbdc/wosBDC.github.io", pushedAt: new Date(Date.now() - 3600000 * 1.5).toISOString(), defaultBranch: "main", description: "WOS BDC Web Application", latestCommit: "v1.24.47 : WOS Alliance web portal & database updates" },
             { name: "DasherTracker.github.io", owner: "DasherTracker", fullName: "DasherTracker/DasherTracker.github.io", htmlUrl: "https://github.com/DasherTracker/DasherTracker.github.io", pushedAt: new Date(Date.now() - 3600000 * 3.5).toISOString(), defaultBranch: "main", description: "Dasher Tracker Portal", latestCommit: "Production sync" },
             { name: "theBDCFcrew.github.io", owner: "theBDCFcrew", fullName: "theBDCFcrew/theBDCFcrew.github.io", htmlUrl: "https://github.com/theBDCFcrew/theBDCFcrew.github.io", pushedAt: new Date(Date.now() - 86400000).toISOString(), defaultBranch: "main", description: "The BDCF Crew Portal", latestCommit: "Production sync" },
@@ -1184,7 +1190,7 @@
             }
         }
 
-        const CURRENT_APP_VERSION = 'v10.2.71';
+        const CURRENT_APP_VERSION = 'v10.2.72';
         let isDeployingLive = false;
         let pendingRemoteVersion = null;
 
@@ -1351,10 +1357,41 @@
             }
         }
 
+        let ghTickerMode = localStorage.getItem('gh_ticker_mode') || 'single'; // 'single' (Option A) or 'dual' (Option B)
+
+        function toggleGithubTickerMode(forcedMode) {
+            if (forcedMode) {
+                ghTickerMode = forcedMode;
+            } else {
+                ghTickerMode = (ghTickerMode === 'single') ? 'dual' : 'single';
+            }
+            try {
+                localStorage.setItem('gh_ticker_mode', ghTickerMode);
+            } catch (e) {}
+            ghTickerIndex = 0;
+            updateGithubDashboardUI();
+        }
+
         function updateGithubDashboardUI() {
             const badge = document.getElementById('gh-total-badge');
             const activeCountEl = document.getElementById('gh-active-count');
             const activeRepos = getActiveRepositories();
+
+            const btnSingle = document.getElementById('gh-mode-single-btn');
+            const btnDual = document.getElementById('gh-mode-dual-btn');
+            if (btnSingle && btnDual) {
+                if (ghTickerMode === 'single') {
+                    btnSingle.style.background = '#a371f7';
+                    btnSingle.style.color = '#ffffff';
+                    btnDual.style.background = 'transparent';
+                    btnDual.style.color = '#8b949e';
+                } else {
+                    btnDual.style.background = '#a371f7';
+                    btnDual.style.color = '#ffffff';
+                    btnSingle.style.background = 'transparent';
+                    btnSingle.style.color = '#8b949e';
+                }
+            }
 
             const hasFailed = allGithubRepos.some(r => r.actionConclusion === 'failure' || r.actionConclusion === 'timed_out');
             const hasUploading = allGithubRepos.some(r => r.actionStatus === 'in_progress');
@@ -1380,16 +1417,20 @@
 
             renderGithubTicker();
             if (ghTickerInterval) clearInterval(ghTickerInterval);
-            if (activeRepos.length > 4) {
+
+            const step = (ghTickerMode === 'single') ? 1 : 2;
+            const intervalTime = (ghTickerMode === 'single') ? 4000 : 5000;
+
+            if (activeRepos.length > step) {
                 ghTickerInterval = setInterval(() => {
                     const currentActive = getActiveRepositories();
-                    if (currentActive.length > 4) {
-                        ghTickerIndex = (ghTickerIndex + 4) % currentActive.length;
+                    if (currentActive.length > step) {
+                        ghTickerIndex = (ghTickerIndex + step) % currentActive.length;
                     } else {
                         ghTickerIndex = 0;
                     }
                     renderGithubTicker();
-                }, 6000);
+                }, intervalTime);
             }
         }
 
@@ -1426,13 +1467,60 @@
                 return;
             }
 
-            // Display up to 4 items on screen
+            // OPTION A: Spotlight Single Card (1x Mode)
+            if (ghTickerMode === 'single') {
+                const curIdx = ghTickerIndex % activeRepos.length;
+                const repo = activeRepos[curIdx];
+                const now = new Date();
+                const diffMs = now - new Date(repo.pushedAt);
+                const timeTheme = getTimeAgeTheme(diffMs);
+                const relTime = timeAgo(repo.pushedAt);
+                const commitMsg = repo.latestCommit || repo.description || 'No commit message';
+                const shortName = getRepoShortName(repo);
+                const actBadge = getActionBadge(repo);
+
+                const statusPill = actBadge 
+                    ? `<span style="font-size: 8px; background: ${actBadge.bg}; color: ${actBadge.color}; border: 1px solid ${actBadge.border}; padding: 1px 4px; border-radius: 4px; font-weight: 800; display: inline-flex; align-items: center; gap: 3px;">${actBadge.icon} ${actBadge.label}</span>`
+                    : `<span style="font-size: 8px; background: ${timeTheme.badgeBg}; color: ${timeTheme.color}; border: 1px solid ${timeTheme.badgeBorder}; padding: 1px 4px; border-radius: 4px; font-weight: 800;">${timeTheme.label}</span>`;
+
+                const dotColor = actBadge ? actBadge.color : timeTheme.color;
+
+                // Build pagination dots
+                let dotsHtml = '';
+                if (activeRepos.length > 1) {
+                    dotsHtml = `<div style="display: flex; align-items: center; justify-content: center; gap: 4px; margin-top: 2px;">` +
+                        activeRepos.map((r, i) => {
+                            const isCur = (i === curIdx);
+                            return `<span onclick="event.stopPropagation(); ghTickerIndex = ${i}; renderGithubTicker();" style="cursor: pointer; width: ${isCur ? '12px' : '5px'}; height: 5px; border-radius: 3px; background: ${isCur ? '#a371f7' : 'rgba(255,255,255,0.2)'}; box-shadow: ${isCur ? '0 0 6px #a371f7' : 'none'}; transition: all 0.3s ease;"></span>`;
+                        }).join('') +
+                    `</div>`;
+                }
+
+                feedEl.innerHTML = `
+                <div style="background: linear-gradient(135deg, rgba(163, 113, 247, 0.08) 0%, rgba(255,255,255,0.02) 100%); border: 1px solid ${actBadge && actBadge.priority <= 2 ? actBadge.border : 'rgba(163, 113, 247, 0.3)'}; border-radius: 8px; padding: 6px 9px; display: flex; flex-direction: column; justify-content: space-between; height: 90px; box-sizing: border-box; transition: all 0.3s ease;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; line-height: 1.1;">
+                        <div style="display: flex; align-items: center; gap: 5px; overflow: hidden;">
+                            <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: ${dotColor}; box-shadow: 0 0 6px ${dotColor}; flex-shrink: 0;"></span>
+                            <span style="font-size: 11.5px; font-weight: 800; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 105px;" title="${repo.fullName}">${shortName}</span>
+                            ${statusPill}
+                            <span style="font-size: 7.5px; color: #a371f7; background: rgba(163, 113, 247, 0.15); padding: 1px 4px; border-radius: 3px; font-weight: 700;">⑂ ${repo.defaultBranch}</span>
+                        </div>
+                        <span style="font-size: 8.5px; color: ${timeTheme.color}; font-weight: 700; white-space: nowrap;">${relTime}</span>
+                    </div>
+                    <div style="font-size: 9.5px; color: #c9d1d9; line-height: 1.25; margin: 2px 0; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;" title="${commitMsg}">
+                        <i class="fa-solid fa-code-commit" style="font-size: 8px; color: #a371f7; margin-right: 2px;"></i> ${commitMsg}
+                    </div>
+                    ${dotsHtml}
+                </div>`;
+                return;
+            }
+
+            // OPTION B: Dual-Card Ticker (2x Mode)
             let items = [];
-            if (activeRepos.length <= 4) {
-                items = activeRepos.slice(0, 4);
+            if (activeRepos.length <= 2) {
+                items = activeRepos.slice(0, 2);
             } else {
-                items = [];
-                for (let i = 0; i < 4; i++) {
+                for (let i = 0; i < 2; i++) {
                     const idx = (ghTickerIndex + i) % activeRepos.length;
                     items.push(activeRepos[idx]);
                 }
@@ -1454,17 +1542,17 @@
                 const dotColor = actBadge ? actBadge.color : timeTheme.color;
 
                 return `
-                <div style="background: rgba(255,255,255,0.03); border: 1px solid ${actBadge && actBadge.priority <= 2 ? actBadge.border : 'rgba(255,255,255,0.06)'}; border-radius: 5px; padding: 2px 6px; display: flex; flex-direction: column; gap: 1px; min-height: 19px; box-sizing: border-box;">
+                <div style="background: rgba(255,255,255,0.03); border: 1px solid ${actBadge && actBadge.priority <= 2 ? actBadge.border : 'rgba(255,255,255,0.06)'}; border-radius: 6px; padding: 4px 7px; display: flex; flex-direction: column; gap: 2px; min-height: 41px; box-sizing: border-box;">
                     <div style="display: flex; justify-content: space-between; align-items: center; line-height: 1.1;">
                         <div style="display: flex; align-items: center; gap: 4px; overflow: hidden;">
                             <span style="display: inline-block; width: 5px; height: 5px; border-radius: 50%; background: ${dotColor}; box-shadow: 0 0 4px ${dotColor}; flex-shrink: 0;"></span>
-                            <span style="font-size: 9.5px; font-weight: 700; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 90px;" title="${repo.fullName}">${shortName}</span>
+                            <span style="font-size: 10px; font-weight: 700; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 95px;" title="${repo.fullName}">${shortName}</span>
                             ${statusPill}
                             <span style="font-size: 7px; color: #a371f7; background: rgba(163, 113, 247, 0.15); padding: 0 3px; border-radius: 3px;">⑂ ${repo.defaultBranch}</span>
                         </div>
                         <span style="font-size: 8px; color: ${timeTheme.color}; font-weight: 700; white-space: nowrap;">${relTime}</span>
                     </div>
-                    <div style="font-size: 8px; color: #8b949e; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.1;">
+                    <div style="font-size: 8.5px; color: #8b949e; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.1;">
                         ${commitMsg}
                     </div>
                 </div>`;

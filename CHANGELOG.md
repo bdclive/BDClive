@@ -1,5 +1,8 @@
 # Changelog
 
+## v10.2.72 (2026-08-17)
+- 🎛️ **Added 1x Spotlight & 2x Dual Ticker Modes with Interactive Switcher**: Upgraded GitHub Pipeline box with an interactive `1x / 2x` view toggle in the header, offering an ultra-legible single spotlight card with pagination dots and a dual-card split view for high-traffic monitoring periods.
+
 ## v10.2.71 (2026-08-17)
 - 🤖 **Built 100% Future-Proof GitHub Organization Auto-Discovery Engine**: Created `github_auto_discovery_daemon.py` to continuously scan Brian's authenticated GitHub account for newly created organizations and repositories, auto-broadcasting real-time commit telemetry and deployment statuses to Central Command via Firebase (`labData/githubPipeline` & `labData/githubAccounts`).
 
