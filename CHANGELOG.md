@@ -1,5 +1,8 @@
 # Changelog
 
+## v10.2.74 (2026-08-17)
+- 🌙 **Integrated Autonomous Night Counter Audit & Discord Alerting into Desktop GUI (`v1.0.54`)**: Built `PlatformCounterHealthEngine` into Central Command desktop GUI (`bdc_central_command_gui_v1.0.54_(windows).pyw`), executing automated sweeps every 6 hours / midnight maintenance, auto-healing Firebase `labData`, and sending rich Discord alert embeds to `#alerts` when platform tokens expire.
+
 ## v10.2.73 (2026-08-17)
 - 🩺 **Built Platform Counter Health & Diagnostics Table Modal (`#counterAuditModal`)**: Added a sleek telemetry data table modal accessible directly from the Grand Totals card header, providing live connection audits, token expiry tracking, and 1-click health repairs across all 9 social platforms with background daemon support (`counter_checker_daemon.py`).
 
