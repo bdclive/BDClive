@@ -1,5 +1,8 @@
 # Changelog
 
+## v10.2.64 (2026-08-17)
+- 🚀 **Optimized Pages Workflow Concurrency**: Configured `cancel-in-progress: true` on GitHub Pages deployment pipeline, preventing concurrent runner lockups and duplicate `github-pages` artifact collisions.
+
 ## v10.2.63 (2026-08-17)
 - 🏢 **Linked Official `bdclive` Organization & Repository**: Connected the project to the dedicated `bdclive` organization (`https://github.com/bdclive/BDClive`), establishing dual remote synchronization and dynamic changelog/status tracking across both repositories.
 
