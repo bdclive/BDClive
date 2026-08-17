@@ -1,11 +1,11 @@
-# Task List: Central Command Desktop GUI v1.0.54 with Night Maintenance & Discord Alerts
+# Task List: Automated Email Alerts & Token Repair Guides (v1.0.55 / v10.2.75)
 
-- [x] Create project backup archive (`backups/LiveCounters_v10.2.74_backup.zip`)
-- [x] Upgrade Central Command desktop GUI to `v1.0.54` (`bdc_central_command_gui_v1.0.54_(windows).pyw`)
-- [x] Implement `PlatformCounterHealthEngine` with 6-hour night maintenance cadence
-- [x] Connect automated Discord webhook alerts for expired platform tokens
-- [x] Add `[🩺 Audit Counters]` quick action button and status card to Desktop GUI
-- [x] Update launcher `BDC_Central_Command_GUI_v1.0.0.pyw` to latest v1.0.54
-- [x] Bump web app version to `v10.2.74` across `New.html`, `index.html`, `web_dashboards/New.html`, and `CHANGELOG.md`
+- [x] Create project backup archive (`backups/LiveCounters_v10.2.75_backup.zip`)
+- [x] Add `ALERT_EMAIL` and `SEND_EMAIL_ON_TOKEN_EXPIRY` to `discord_config.json`
+- [x] Build `PLATFORM_REPAIR_GUIDES` dictionary with step-by-step instructions and portal links
+- [x] Integrate HTML email alert dispatcher and Discord embed formatter into `bdc_central_command_gui_v1.0.55_(windows).pyw`
+- [x] Upgrade CLI daemon to `bdc_central_command_cli_v1.0.55_(terminal).py`
+- [x] Update launcher `BDC_Central_Command_GUI_v1.0.0.pyw` to latest v1.0.55
+- [x] Bump version to `v10.2.75` across `New.html`, `index.html`, `web_dashboards/New.html`, and `CHANGELOG.md`
 - [x] Verify Python compilation and JavaScript syntax
 - [x] Push live updates to `origin` (`bdclive/BDClive`)
