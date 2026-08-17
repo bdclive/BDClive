@@ -1,5 +1,8 @@
 # Changelog
 
+## v10.2.66 (2026-08-17)
+- 📈 **Completed Real-Time Views Delta Badge & Firebase Cloud Baseline Sync**: Fully wired the live Net Views growth badge (`#grand-views-delta`) alongside Follower tracking and connected daily 24h baseline synchronization to Firebase RTDB (`labData/gtBaselines/YYYY-MM-DD`) so all devices share the exact same starting baseline.
+
 ## v10.2.65 (2026-08-17)
 - 🎨 **Added Official BDC LIVE Branding & Social Preview Assets**: Generated and integrated high-resolution 1024x1024 metallic cyber emblem avatar (`bdclive_logo.jpg`) and widescreen 16:9 command center social preview banner (`bdclive_banner.jpg`) across `manifest.json` and OpenGraph/Twitter meta tags.
 
