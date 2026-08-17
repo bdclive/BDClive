@@ -12,5 +12,7 @@ threads_bridge_*
 *.py
 *.pyw
 discord_rsvp_ids.json
+tokens_config.json
+*/tokens_config.json
 
 
