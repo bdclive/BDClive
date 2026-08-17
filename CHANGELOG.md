@@ -1,5 +1,10 @@
 # Changelog
 
+## v10.2.77 / v1.0.59 (2026-08-17)
+- 🗂️ **Established Ecosystem Master Version Registry (`VERSION.json`)**: Created authoritative root version registry tracking Central Command (`v1.0.59`), BDClive Web (`v10.2.77`), wosBDC (`v2.9.10`), and Google Apps Script (`@196`).
+- 🎁 **Smart Gift Code Detection & Candidate Blacklist (`v1.0.59`)**: Upgraded `GiftCodeBotEngine` with 3-tier status classification (`active`, `expired`, `non_existent`), persistent keyword blacklist (`scraped_candidates_blacklist.json`), and authenticated Firebase REST writes.
+- 📧 **Platform Token Repair Engine (`v1.0.57`-`v1.0.58`)**: Fixed `PLATFORM_REPAIR_GUIDES` and enabled direct HTML email dispatch for expired social platform tokens.
+
 ## v10.2.76 (2026-08-17)
 - 📧 **Streamlined Counter Audit Alerts to Direct Email (`v1.0.56`)**: Removed Discord webhook posting for platform counter token audits in favor of dedicated HTML email alerts with interactive developer portal repair guides sent directly to `ALERT_EMAIL`.
 
