@@ -1,5 +1,8 @@
 # Changelog
 
+## v10.2.60 (2026-08-17)
+- 🌐 **Real-Time Grand Totals Gain/Loss Delta Engine**: Built automated real-time delta indicators (`▲ +X` in bright green on gain, `▼ -X` in vivid red on drop) and 24h daily net baseline tracking directly into the Grand Totals box across all 9 platforms with glowing visual pulse animations.
+
 ## v10.2.59 (2026-08-17)
 - 🎬 **Fixed Brian's Theater "Up Next" Countdown Cutoff**: Rebalanced column grid distribution (`1fr 1.15fr`), converted the `TODAY` indicator into a sleek inline badge, and enforced `white-space: nowrap` so the live countdown timer (`8h 36m 58s`) and RSVP badge fit cleanly on a single line without wrapping or clipping.
 
