@@ -1,5 +1,8 @@
 # Changelog
 
+## v10.2.63 (2026-08-17)
+- 🏢 **Linked Official `bdclive` Organization & Repository**: Connected the project to the dedicated `bdclive` organization (`https://github.com/bdclive/BDClive`), establishing dual remote synchronization and dynamic changelog/status tracking across both repositories.
+
 ## v10.2.62 (2026-08-17)
 - ⚡ **Real-Time WebSocket GitHub Pipeline Stream via Firebase**: Integrated persistent WebSocket listener on `labData/githubPipeline` for instantaneous sub-second repository push and workflow status updates, completely eliminating GitHub API client-side rate limits.
 
