@@ -1,5 +1,8 @@
 # Changelog
 
+## v10.2.70 (2026-08-17)
+- 🔢 **Added `parseMetricNum` & Fixed Metric Shorthand Parsing**: Fixed root cause of phantom `-6,408` view drop by properly converting `"6.6k"` string counters into full `6,600` integer values across all 9 platforms.
+
 ## v10.2.69 (2026-08-17)
 - 🪟 **Standardized Window Title to `BDC LIVE vXX.X.XX`**: Streamlined `<title>` and `manifest.json` app name to prevent duplicate title repetition across PWA window frames and browser tabs.
 
