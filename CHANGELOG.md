@@ -1,5 +1,9 @@
 # Changelog
 
+## v10.2.79 / v1.0.61 (2026-08-18)
+- 🎁 **Upgraded GiftCode Scraping Feeds to 4 Verified Sources**: Removed broken/defunct 404 feeds (GamsGo, DotGG, ProGameGuides) and replaced them with verified high-speed sources (`Beebom`, `WosRewards`, `PocketGamer`, `GamingOnPhone`) for 100% clean, error-free automated gift code sweeps.
+- 🔌 **Added Silent Auto-Reconnect on Transient Socket Blips**: Gracefully handled `ConnectionResetError` (10054) and transient socket drops in the main engine loop to eliminate false error spam in the Central Command activity log.
+
 ## v10.2.78 / v1.0.60 (2026-08-17)
 - 🔑 **Built Interactive API Token & Credential Manager (`TokenManagerDialog`)**: Added dedicated `[ 🔑 Edit Tokens ]` button in Central Command Desktop GUI top bar, providing an interactive dark-themed management window with password mask toggles (`👁️ Show/Hide`), direct 1-click developer portal links (Meta, Snapchat, Twitch, Google Cloud, Discord), and instant hot-reloading with persistence to `tokens_config.json`.
 - 🎟️ **Fixed Discord Scheduled Events & Live RSVP Tracker**: Added `?with_user_count=true` query parameter to Discord Scheduled Events endpoint and connected real-time `rsvpCount` synchronization to Brian's Theater Box.
