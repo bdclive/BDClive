@@ -1,5 +1,9 @@
 # Changelog
 
+## v10.2.83 / v1.0.63 (2026-08-18)
+- 🎟️ **Fixed Discord Cloudflare WAF Bot Error (HTTP 40333)**: Replaced browser user-agent on all Discord bot and scheduled-events API endpoints with compliant `DiscordBot` header to eliminate 403 blocks.
+- 🏷️ **Prominent GUI Version Header & Remote Shortcuts**: Added `(v1.0.63)` directly to the GUI top header label and title bar, and deployed `BDC Central Command v1.0.63.lnk` directly to the server desktop.
+
 ## v10.2.82 (2026-08-18)
 - ⚡ **Live Auto-Update Test Verification**: Tested and validated autonomous background detection, 5-second countdown banner with glowing emerald status pill, and automated cache-busting hard reload.
 

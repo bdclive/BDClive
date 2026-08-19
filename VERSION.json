@@ -3,17 +3,17 @@
   "lastUpdated": "2026-08-17T15:48:00-07:00",
   "components": {
     "bdc_central_command_desktop": {
-      "version": "1.0.62",
+      "version": "1.0.63",
       "folder": "BDC_Central_Command/",
-      "guiFile": "BDC_Central_Command/bdc_central_command_gui_v1.0.62_(windows).pyw",
-      "cliFile": "BDC_Central_Command/bdc_central_command_cli_v1.0.62_(terminal).py",
+      "guiFile": "BDC_Central_Command/bdc_central_command_gui_v1.0.63_(windows).pyw",
+      "cliFile": "BDC_Central_Command/bdc_central_command_cli_v1.0.63_(terminal).py",
       "blacklistFile": "BDC_Central_Command/scraped_candidates_blacklist.json",
       "tokensConfigFile": "tokens_config.json",
       "latestChanges": [
+        "v1.0.63: Fixed Discord HTTP 403 by using compliant DiscordBot User-Agent for event & attendee fetching",
         "v1.0.62: Built Windows host PC uptime and app runtime tracker into desktop card and Firebase telemetry",
         "v1.0.61: Upgraded gift code scraper to 4 high-speed feeds and added silent socket reconnect",
-        "v1.0.60: Built interactive API Token & Credential Manager dialog with hot-reloading",
-        "v1.0.59: Smart 3-Tier Gift Code Detection with persistent candidate blacklist"
+        "v1.0.60: Built interactive API Token & Credential Manager dialog with hot-reloading"
       ]
     },
     "daemons": {
@@ -27,7 +27,7 @@
       "cliFile": "Threads_Bridge/threads_bridge_cli_v1.0.59_(terminal).py"
     },
     "bdclive_web_dashboard": {
-      "version": "10.2.82",
+      "version": "10.2.83",
       "repository": "https://github.com/bdclive/BDClive"
     },
     "wosbdc_alliance_dashboard": {
