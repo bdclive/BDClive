@@ -1,3 +1,7 @@
+## [10.2.98] - 2026-08-19
+- Synced client app version constant to eliminate update prompt.
+- Resolved recurring update notification banner on dashboard load.
+
 ## [10.2.97] - 2026-08-19
 - Shifted timer clocks up to eliminate top empty gap.
 - Trimmed timer box height to fit clocks snugly.
