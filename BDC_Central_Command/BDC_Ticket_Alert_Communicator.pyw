@@ -41,7 +41,8 @@ WOS_FIREBASE_SECRET = "n5fTnxcK5J5ddNsT77AhZIoQGTogW3ROpk4k03Sv"
 PUBLIC_WEBSITE_URL = "https://wosbdc.github.io/#feedback"
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-SEEN_FILE = os.path.join(BASE_DIR, "seen_ticket_ids.json")
+DATA_DIR = os.path.join(BASE_DIR, "data")
+SEEN_FILE = os.path.join(DATA_DIR, "seen_ticket_ids.json") if os.path.exists(os.path.join(DATA_DIR, "seen_ticket_ids.json")) else (os.path.join(BASE_DIR, "seen_ticket_ids.json") if os.path.exists(os.path.join(BASE_DIR, "seen_ticket_ids.json")) else os.path.join(DATA_DIR, "seen_ticket_ids.json"))
 CONFIG_FILE = os.path.join(BASE_DIR, "communicator_config.json")
 ICON_ICO = os.path.join(BASE_DIR, "central_command_icon.ico")
 ICON_PNG = os.path.join(BASE_DIR, "central_command_icon.png")

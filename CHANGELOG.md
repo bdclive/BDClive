@@ -1,4 +1,45 @@
+## [1.0.71] - 2026-08-19
+### Fixed & Enhanced
+- 🛡️ **Alliance Token Scanner Robustness & Pure Python Fallback Engine**:
+  - Enhanced `find_node_executable()` with absolute path resolution across all Windows Node.js installation directories.
+  - Implemented seamless pure Python JWT session validation fallback when Node.js is not present in PATH, completely eliminating `'node' is not recognized` errors.
+  - Added clean mapping for Century Games session responses (`未登录` -> `Session Expired (30-Day limit reached — re-sync required)`).
+- 📸 **In-Game OCR Roster Scanner Desktop Integration**:
+  - Fully bound `launch_ocr_scanner` inside `BDC_Central_Command_GUI_v1.0.71.pyw`.
+  - Added native `Start_Roster_Scanner.bat` 1-click launcher and verified all batch links.
+  - Completed comprehensive 35-point suite verification across all local and remote desktop directories.
+
+## [1.0.69] - 2026-08-19
+### Added
+- **Automated In-Game Roster Scanner & OCR Engine** (`BDC_Roster_OCR_Scanner.py`):
+  - Direct ADB integration with LDPlayer Android Emulator (`emulator-5574`).
+  - Automated screen navigation, scrolling, and Tesseract OCR parsing for live Chief names, Combat Power, and Ranks.
+  - Zero in-game mailbox codes needed: reads the live game screen directly.
+  - Automatic cloud synchronization of live roster stats to Firebase RTDB (`/users` & `/roster_live`) and Google Sheets.
+- **Central Command Desktop Integration (`v1.0.69`)**:
+  - Added `📸 In-Game OCR Scan` button in the Central Command header for instant 1-click roster scans.
+  - Added automated OCR roster scan option to the 4x daily Maintenance Engine.
+
 # Changelog
+
+## v1.0.68 (2026-08-19)
+- 👑 **BDC Chief Info & Furnace Manager Program (`BDC_Chief_Lookup_Tool.pyw`)**:
+  - **Instant Chief Lookup**: Lookup any chief by Player ID (`fid` / `gameId`, e.g. `697738681` Soulcrusher4217, `318843189` BrianDCox) or select directly from the 42-member alliance roster dropdown.
+  - **Live Profile & Verification Card**: Inspect Chief Username, Furnace Level (`FC 1` - `FC 8`, `Lv 1` - `Lv 30`), State/Kingdom (`2089`), Joined Date, Time Active, Account Email, and Century Games JWT token.
+  - **Live Century Games API Validation**: Integrated live handshake against Century Games' Gift Code server to verify account activity in Kingdom 2089.
+  - **Linked Alts Inspector**: Displays all linked alt accounts (e.g. Sugardaddy, Bisquick, Gingivitis, shrimpleprechaun, BDCFdaddy) with individual furnace levels and token status.
+  - **1-Click Furnace Upgrade & Cloud Sync**: Direct furnace level editor with instant synchronization to Firebase RTDB (`users` & `roster_live`) and Google Sheets via the Apps Script bridge (`updateChiefLevel`).
+- ⚡ **Central Command Desktop Suite v1.0.68 Integration**:
+  - Added dedicated **`👑 Chief Info`** quick action button in the Central Command header.
+  - Updated `Start_Central_Command.bat` and transfer package to `v1.0.68`.
+  - Executed Clean House protocol across all local and remote desktop directories.
+
+## v10.2.90 (2026-08-19)
+- Redesigned Gatekeeper widget with crystal-clear dual-card layout.
+- Added Alliance Chiefs card showing claimed and unclaimed counts.
+- Added Game Sync card displaying active and expired tokens.
+- Purged all legacy Century terminology across entire dashboard.
+- Added real-time alliance claimed percentage ratio footer.
 
 ## v10.2.89 (2026-08-19)
 - 🎛️ **Custom Ticket Alerts & Multi-Profile Audio Synthesizer Suite**:

@@ -2,22 +2,7 @@
   "name": "BDC Ecosystem Master Version Registry",
   "lastUpdated": "2026-08-17T15:48:00-07:00",
   "components": {
-    "bdc_central_command_desktop": {
-      "version": "1.0.67",
-      "folder": "BDC_Central_Command/",
-      "guiFile": "BDC_Central_Command/BDC_Central_Command_GUI_v1.0.67.pyw",
-      "cliFile": "BDC_Central_Command/bdc_central_command_cli_v1.0.67_(terminal).py",
-      "iconFile": "BDC_Central_Command/central_command_icon.ico",
-      "blacklistFile": "BDC_Central_Command/scraped_candidates_blacklist.json",
-      "tokensConfigFile": "tokens_config.json",
-      "latestChanges": [
-        "v1.0.67: Fixed Python 3.14/Tcl 9 font decimal and trace compatibility; full workspace clean house",
-        "v1.0.66: Integrated real-time dynamic Gatekeeper roster metrics engine (41 Chiefs, active 30-day tokens, claimed/unclaimed ratios) and normalized Firebase telemetry keys",
-        "v1.0.65: Designed custom high-definition brand icon (.ico / .png) and integrated into window title bar and desktop shortcuts; fixed Discord message editing in place",
-        "v1.0.64: Implemented 30s Discord event interval with 429 rate limit backoff and cached UI stability",
-        "v1.0.63: Fixed Discord HTTP 403 by using compliant DiscordBot User-Agent for event & attendee fetching"
-      ]
-    },
+    "bdc_central_command_desktop": "1.0.71",
     "daemons": {
       "folder": "Daemons/",
       "counterChecker": "Daemons/counter_checker_daemon.py",
@@ -29,11 +14,11 @@
       "cliFile": "Threads_Bridge/threads_bridge_cli_v1.0.59_(terminal).py"
     },
     "bdclive_web_dashboard": {
-      "version": "10.2.89",
+      "version": "10.2.90",
       "repository": "https://github.com/bdclive/BDClive",
       "latestChanges": [
-        "v10.2.89: Added custom sound profiles (5 synthesizers + custom audio URL), volume slider, desktop push notifications, and priority filters to ticket alerts",
-        "v10.2.88: Eliminated ticket sound chime loop with initial load guard & debounce, and fixed sticky update banner dismissal"
+        "v10.2.90: Redesigned Gatekeeper widget with Game Sync dual-card architecture and purged legacy terminology",
+        "v10.2.89: Added custom sound profiles (5 synthesizers + custom audio URL), volume slider, desktop push notifications, and priority filters to ticket alerts"
       ]
     },
     "wosbdc_alliance_dashboard": {
@@ -48,5 +33,6 @@
       "deploymentId": "AKfycbzXjvqOcr9w3CZuwNxDhesndWeSwFLDeo7RS_REykgenkqf73lq4FAfZ7bTitTmVEA",
       "versionNumber": "@196"
     }
-  }
+  },
+  "version": "1.0.71"
 }
