@@ -1,5 +1,9 @@
 # Changelog
 
+## v10.2.80 / v1.0.62 (2026-08-18)
+- 💻 **Built Windows Host PC & Central Command App Uptime Tracker**: Added native Windows `GetTickCount64` and application runtime telemetry to Central Command desktop GUI (16th card completing the 4x4 grid) and live Firebase RTDB sync.
+- 🎬 **Cinema Footer Telemetry Upgrade (`#host-uptime-badge`)**: Replaced redundant version badge in Brian's Theater Box bottom-right footer with an ultra-compact live host uptime chip (`💻 Host: 1d 9h 🟢`) with dynamic reboot health advisories (`Optimal <7d`, `Stable 7-14d`, `Reboot Rec >14d`, `Reboot Needed >30d`).
+
 ## v10.2.79 / v1.0.61 (2026-08-18)
 - 🎁 **Upgraded GiftCode Scraping Feeds to 4 Verified Sources**: Removed broken/defunct 404 feeds (GamsGo, DotGG, ProGameGuides) and replaced them with verified high-speed sources (`Beebom`, `WosRewards`, `PocketGamer`, `GamingOnPhone`) for 100% clean, error-free automated gift code sweeps.
 - 🔌 **Added Silent Auto-Reconnect on Transient Socket Blips**: Gracefully handled `ConnectionResetError` (10054) and transient socket drops in the main engine loop to eliminate false error spam in the Central Command activity log.
