@@ -1,3 +1,7 @@
+## [10.2.95] - 2026-08-19
+- Shaved timer stage box height for compact view.
+- Reduced top padding inside master cyber-glass frame.
+
 ## [10.2.94] - 2026-08-19
 - Removed gap between top border and page edge.
 - Centered command deck frame directly at page top.
