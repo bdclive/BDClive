@@ -14,11 +14,11 @@
       "cliFile": "Threads_Bridge/threads_bridge_cli_v1.0.59_(terminal).py"
     },
     "bdclive_web_dashboard": {
-      "version": "10.2.90",
+      "version": "10.2.91",
       "repository": "https://github.com/bdclive/BDClive",
       "latestChanges": [
-        "v10.2.90: Redesigned Gatekeeper widget with Game Sync dual-card architecture and purged legacy terminology",
-        "v10.2.89: Added custom sound profiles (5 synthesizers + custom audio URL), volume slider, desktop push notifications, and priority filters to ticket alerts"
+        "v10.2.91: Added real-time Central Command heartbeat and automatic offline watchdog",
+        "v10.2.90: Redesigned Gatekeeper widget with Game Sync dual-card architecture and purged legacy terminology"
       ]
     },
     "wosbdc_alliance_dashboard": {
