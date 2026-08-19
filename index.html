@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BDC LIVE v10.2.91</title>
+    <title>BDC LIVE v10.2.92</title>
     <!-- Open Graph & Social Preview Meta Tags -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="BDC LIVE v10.2.91">
+    <meta property="og:title" content="BDC LIVE v10.2.92">
     <meta property="og:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="og:image" content="./bdclive_banner.jpg">
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="BDC LIVE v10.2.91">
+    <meta property="twitter:title" content="BDC LIVE v10.2.92">
     <meta property="twitter:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="twitter:image" content="./bdclive_banner.jpg">
     <!-- PWA Manifest & Mobile Web App Meta Tags -->
@@ -185,13 +185,10 @@
         <div class="counter-item mirror-box" id="gatekeeper-box" onclick="openGatekeeperModal()" style="border-top: 3px solid #00d2ff; grid-area: 2 / 2; padding: 10px 12px 8px 12px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; background: linear-gradient(135deg, rgba(0, 210, 255, 0.08) 0%, rgba(13, 17, 23, 0.88) 100%); cursor: pointer; position: relative; transition: all 0.3s ease;">
             <!-- Header Bar -->
             <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-                <p class="mirror-label" style="color: #00d2ff; font-size: 0.75rem; letter-spacing: 0.8px; white-space: nowrap; display: flex; align-items: center; gap: 6px; font-weight: 800;">
+                <p class="mirror-label" style="color: #00d2ff; font-size: 0.75rem; letter-spacing: 0.8px; white-space: nowrap; display: flex; align-items: center; gap: 6px; font-weight: 800; margin: 0;">
                     <i class="fa-solid fa-shield-halved" style="color: #00d2ff;"></i> GATEKEEPER
                 </p>
-                <div style="display: flex; align-items: center; gap: 6px;">
-                    <span id="gk-sync-pulse" style="font-size: 8px; color: #3fb950; display: inline-flex; align-items: center; gap: 3px;" title="Real-Time WOS Cloud Sync Active"><i class="fa-solid fa-circle fa-beat" style="font-size: 6px; color: #3fb950; animation-duration: 2s;"></i> LIVE</span>
-                    <span style="font-size: 0.62rem; color: #00d2ff; background: rgba(0, 210, 255, 0.12); border: 1px solid rgba(0, 210, 255, 0.25); padding: 1px 6px; border-radius: 6px; font-weight: 700;">❄️ WOS</span>
-                </div>
+                <span style="font-size: 0.62rem; color: #8b949e; font-weight: 600; letter-spacing: 0.5px;">State 2089</span>
             </div>
             
             <!-- Dual-Card Core Grid -->
@@ -223,10 +220,11 @@
 
             <!-- Footer Strip -->
             <div class="mirror-row" style="margin-top: 2px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 4px; display: flex; justify-content: space-between; align-items: center;">
-                <span id="gk-footer-ratio" style="font-size: 0.60rem; color: #8b949e; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                    ❄️ State 2089 • <span id="gk-claim-pct" style="color: #00d2ff; font-weight: 700;">58.5%</span> Claimed
-                </span>
-                <span style="font-size: 0.58rem; color: #3fb950; font-weight: 700;"><span id="gk-new-7d">+0</span> (7d)</span>
+                <div style="display: flex; align-items: center; gap: 5px; overflow: hidden;">
+                    <span id="gk-sync-pulse" style="font-size: 8px; color: #3fb950; display: inline-flex; align-items: center; gap: 3px;" title="Real-Time Database Sync"><i class="fa-solid fa-circle fa-beat" style="font-size: 6px; color: #3fb950; animation-duration: 2s;"></i> LIVE</span>
+                    <span style="font-size: 0.60rem; color: #8b949e; white-space: nowrap;">• <span id="gk-claim-pct" style="color: #00d2ff; font-weight: 700;">58.5%</span> Claimed</span>
+                </div>
+                <span style="font-size: 0.58rem; color: #3fb950; font-weight: 700; white-space: nowrap;"><span id="gk-new-7d">+0</span> (7d)</span>
             </div>
             <i class="fa-solid fa-arrow-up-right-from-square" style="position: absolute; bottom: 6px; right: 8px; color: rgba(0, 210, 255, 0.35); font-size: 8px;"></i>
         </div>
@@ -1479,7 +1477,7 @@
         });
 
         const DEFAULT_GH_REPOS = [
-            { name: "BDClive", owner: "bdclive", fullName: "bdclive/BDClive", htmlUrl: "https://github.com/bdclive/BDClive", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "BDC Live Central Command Dashboard", latestCommit: "v10.2.91 : Added real-time Central Command heartbeat and offline watchdog" },
+            { name: "BDClive", owner: "bdclive", fullName: "bdclive/BDClive", htmlUrl: "https://github.com/bdclive/BDClive", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "BDC Live Central Command Dashboard", latestCommit: "v10.2.92 : Streamlined Gatekeeper header and moved live beacon to footer" },
             { name: "wosBDC.github.io", owner: "wosbdc", fullName: "wosbdc/wosBDC.github.io", htmlUrl: "https://github.com/wosbdc/wosBDC.github.io", pushedAt: new Date(Date.now() - 3600000 * 1.5).toISOString(), defaultBranch: "main", description: "WOS BDC Web Application", latestCommit: "v2.9.12 : WOS Alliance web portal & database updates" },
             { name: "DasherTracker.github.io", owner: "DasherTracker", fullName: "DasherTracker/DasherTracker.github.io", htmlUrl: "https://github.com/DasherTracker/DasherTracker.github.io", pushedAt: new Date(Date.now() - 3600000 * 3.5).toISOString(), defaultBranch: "main", description: "Dasher Tracker Portal", latestCommit: "Production sync" },
             { name: "theBDCFcrew.github.io", owner: "theBDCFcrew", fullName: "theBDCFcrew/theBDCFcrew.github.io", htmlUrl: "https://github.com/theBDCFcrew/theBDCFcrew.github.io", pushedAt: new Date(Date.now() - 86400000).toISOString(), defaultBranch: "main", description: "The BDCF Crew Portal", latestCommit: "Production sync" },
@@ -1670,7 +1668,7 @@
             }
         }
 
-        const CURRENT_APP_VERSION = 'v10.2.91';
+        const CURRENT_APP_VERSION = 'v10.2.92';
         let isDeployingLive = false;
         let pendingRemoteVersion = null;
         let autoRefreshTimer = null;

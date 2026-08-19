@@ -34,6 +34,10 @@
   - Updated `Start_Central_Command.bat` and transfer package to `v1.0.68`.
   - Executed Clean House protocol across all local and remote desktop directories.
 
+## v10.2.92 (2026-08-19)
+- Removed WOS badge to clean up Gatekeeper widget header.
+- Relocated real-time live heartbeat status beacon to widget footer.
+
 ## v10.2.91 (2026-08-19)
 - Added real-time Central Command heartbeat and offline watchdog.
 - Live beacons automatically switch between LIVE, STALE, and OFFLINE.
