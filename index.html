@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BDC LIVE v10.2.85</title>
+    <title>BDC LIVE v10.2.86</title>
     <!-- Open Graph & Social Preview Meta Tags -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="BDC LIVE v10.2.85">
+    <meta property="og:title" content="BDC LIVE v10.2.86">
     <meta property="og:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="og:image" content="./bdclive_banner.jpg">
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="BDC LIVE v10.2.85">
+    <meta property="twitter:title" content="BDC LIVE v10.2.86">
     <meta property="twitter:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="twitter:image" content="./bdclive_banner.jpg">
     <!-- PWA Manifest & Mobile Web App Meta Tags -->
@@ -1162,7 +1162,7 @@
         });
 
         const DEFAULT_GH_REPOS = [
-            { name: "BDClive", owner: "bdclive", fullName: "bdclive/BDClive", htmlUrl: "https://github.com/bdclive/BDClive", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "BDC Live Central Command Dashboard", latestCommit: "v10.2.85 : Integrated real-time WOS Gatekeeper roster engine and interactive modal audit" },
+            { name: "BDClive", owner: "bdclive", fullName: "bdclive/BDClive", htmlUrl: "https://github.com/bdclive/BDClive", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "BDC Live Central Command Dashboard", latestCommit: "v10.2.86 : Fixed update refresh loop with direct VERSION.json integration and loop guard" },
             { name: "wosBDC.github.io", owner: "wosbdc", fullName: "wosbdc/wosBDC.github.io", htmlUrl: "https://github.com/wosbdc/wosBDC.github.io", pushedAt: new Date(Date.now() - 3600000 * 1.5).toISOString(), defaultBranch: "main", description: "WOS BDC Web Application", latestCommit: "v2.9.12 : WOS Alliance web portal & database updates" },
             { name: "DasherTracker.github.io", owner: "DasherTracker", fullName: "DasherTracker/DasherTracker.github.io", htmlUrl: "https://github.com/DasherTracker/DasherTracker.github.io", pushedAt: new Date(Date.now() - 3600000 * 3.5).toISOString(), defaultBranch: "main", description: "Dasher Tracker Portal", latestCommit: "Production sync" },
             { name: "theBDCFcrew.github.io", owner: "theBDCFcrew", fullName: "theBDCFcrew/theBDCFcrew.github.io", htmlUrl: "https://github.com/theBDCFcrew/theBDCFcrew.github.io", pushedAt: new Date(Date.now() - 86400000).toISOString(), defaultBranch: "main", description: "The BDCF Crew Portal", latestCommit: "Production sync" },
@@ -1353,17 +1353,22 @@
             }
         }
 
-        const CURRENT_APP_VERSION = 'v10.2.85';
+        const CURRENT_APP_VERSION = 'v10.2.86';
         let isDeployingLive = false;
         let pendingRemoteVersion = null;
         let autoRefreshTimer = null;
         let autoRefreshCountdown = 5;
 
-        async function performHardRefreshAndPurgeCache() {
+        async function performHardRefreshAndPurgeCache(targetVer) {
             if (autoRefreshTimer) {
                 clearInterval(autoRefreshTimer);
                 autoRefreshTimer = null;
             }
+            const verToRecord = targetVer || pendingRemoteVersion || CURRENT_APP_VERSION;
+            try {
+                sessionStorage.setItem('last_auto_reload_for_' + verToRecord, String(Date.now()));
+            } catch(e) {}
+
             const titleEl = document.getElementById('update-alert-title');
             const descEl = document.getElementById('update-alert-desc');
             const badgeEl = document.getElementById('update-countdown-badge');
@@ -1394,12 +1399,30 @@
             window.location.href = url.toString();
         }
 
-        function startAutoRefreshCountdown() {
+        function startAutoRefreshCountdown(remoteVer) {
             if (autoRefreshTimer) clearInterval(autoRefreshTimer);
+            
+            // Loop Guard: If an auto-reload for this version was already attempted in the last 5 minutes, DO NOT loop!
+            const lastAttempt = sessionStorage.getItem('last_auto_reload_for_' + remoteVer);
+            if (lastAttempt && (Date.now() - parseInt(lastAttempt, 10)) < 300000) {
+                const badgeEl = document.getElementById('update-countdown-badge');
+                if (badgeEl) {
+                    badgeEl.style.display = 'inline-block';
+                    badgeEl.style.background = 'rgba(227, 179, 65, 0.15)';
+                    badgeEl.style.color = '#e3b341';
+                    badgeEl.style.borderColor = 'rgba(227, 179, 65, 0.35)';
+                    badgeEl.innerText = `Click Reload to apply`;
+                }
+                return;
+            }
+
             autoRefreshCountdown = 5;
             const badgeEl = document.getElementById('update-countdown-badge');
             if (badgeEl) {
                 badgeEl.style.display = 'inline-block';
+                badgeEl.style.background = 'rgba(63, 185, 80, 0.15)';
+                badgeEl.style.color = '#3fb950';
+                badgeEl.style.borderColor = 'rgba(63, 185, 80, 0.35)';
                 badgeEl.innerText = `Auto-refreshing in ${autoRefreshCountdown}s...`;
             }
 
@@ -1410,7 +1433,7 @@
                 } else {
                     clearInterval(autoRefreshTimer);
                     autoRefreshTimer = null;
-                    performHardRefreshAndPurgeCache();
+                    performHardRefreshAndPurgeCache(remoteVer);
                 }
             }, 1000);
         }
@@ -1431,7 +1454,7 @@
             return rPat > cPat;
         }
 
-        function showUpdateAlert(title, desc, isBuilding = false) {
+        function showUpdateAlert(title, desc, isBuilding = false, remoteVer = null) {
             const banner = document.getElementById('updateAlertBanner');
             const titleEl = document.getElementById('update-alert-title');
             const descEl = document.getElementById('update-alert-desc');
@@ -1451,7 +1474,7 @@
                 banner.style.boxShadow = '0 12px 36px rgba(0,0,0,0.8), 0 0 20px rgba(63, 185, 80, 0.35)';
                 if (iconEl) iconEl.innerHTML = '⚡';
                 if (titleEl) { titleEl.innerText = title; titleEl.style.color = '#3fb950'; }
-                startAutoRefreshCountdown();
+                startAutoRefreshCountdown(remoteVer || pendingRemoteVersion);
             }
             if (descEl) descEl.innerText = desc;
             banner.style.display = 'flex';
@@ -1472,22 +1495,22 @@
         async function checkDirectVersionUpdate() {
             try {
                 const repoPath = 'bdclive/BDClive';
-                const changelogUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-                    ? `CHANGELOG.md?t=${Date.now()}` 
-                    : `https://raw.githubusercontent.com/${repoPath}/main/CHANGELOG.md?t=${Date.now()}`;
+                const versionUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+                    ? `VERSION.json?t=${Date.now()}` 
+                    : `https://raw.githubusercontent.com/${repoPath}/main/VERSION.json?t=${Date.now()}`;
                 
-                const res = await fetch(changelogUrl, { cache: 'no-cache' });
+                const res = await fetch(versionUrl, { cache: 'no-cache' });
                 if (res.ok) {
-                    const text = await res.text();
-                    const match = text.match(/##\s*(v\d+\.\d+\.\d+)[^\n]*\n([^\n#]*)/i);
-                    if (match) {
-                        const remoteVer = match[1];
-                        const note = match[2] ? match[2].replace(/^-\s*\*\*/, '').replace(/\*\*:?/, ' -').trim() : 'New version available';
+                    const data = await res.json();
+                    const webComp = data?.components?.bdclive_web_dashboard;
+                    const remoteVer = webComp?.version;
+                    if (remoteVer) {
                         if (isNewerVersion(remoteVer, CURRENT_APP_VERSION)) {
-                            pendingRemoteVersion = remoteVer;
-                            const isDismissed = sessionStorage.getItem('dismissed_version_' + remoteVer) === 'true';
+                            pendingRemoteVersion = 'v' + remoteVer.replace(/^v/, '');
+                            const isDismissed = sessionStorage.getItem('dismissed_version_' + pendingRemoteVersion) === 'true';
                             if (!isDismissed) {
-                                showUpdateAlert(`⚡ New Update Available (${remoteVer})`, note, false);
+                                const note = (webComp.latestChanges && webComp.latestChanges[0]) ? webComp.latestChanges[0] : `New version ${pendingRemoteVersion} deployed`;
+                                showUpdateAlert(`⚡ New Update Available (${pendingRemoteVersion})`, note, false, pendingRemoteVersion);
                                 return true;
                             }
                         } else {
@@ -1497,7 +1520,7 @@
                     }
                 }
             } catch (e) {
-                console.warn("Direct version check fallback error:", e);
+                console.warn("Direct VERSION.json check error:", e);
             }
             return false;
         }
@@ -1517,7 +1540,7 @@
 
             if (isDeployingLive && lcRepo.actionConclusion === 'success') {
                 isDeployingLive = false;
-                showUpdateAlert('🟢 Update Deployed!', 'New update is live! Click reload to apply.', false);
+                showUpdateAlert('🟢 Update Deployed!', 'New update is live! Click reload to apply.', false, pendingRemoteVersion);
                 return;
             }
 
@@ -1529,7 +1552,7 @@
                         pendingRemoteVersion = remoteVer;
                         const isDismissed = sessionStorage.getItem('dismissed_version_' + remoteVer) === 'true';
                         if (!isDismissed) {
-                            showUpdateAlert(`⚡ Update Available (${remoteVer})`, lcRepo.latestCommit, false);
+                            showUpdateAlert(`⚡ Update Available (${remoteVer})`, lcRepo.latestCommit, false, remoteVer);
                         }
                     } else {
                         const banner = document.getElementById('updateAlertBanner');

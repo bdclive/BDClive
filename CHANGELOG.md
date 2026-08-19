@@ -1,6 +1,9 @@
 # Changelog
 
 ## v10.2.86 / v1.0.66 (2026-08-19)
+- 🛑 **Permanently Eliminated Update Refresh Loop & Direct VERSION.json Registry Binding**:
+  - Refactored `checkDirectVersionUpdate()` to query `VERSION.json` (`components.bdclive_web_dashboard.version`) directly instead of parsing raw markdown text from `CHANGELOG.md`. This prevents cross-component version conflicts where Central Command desktop updates triggered false web client update alerts.
+  - Built a 5-minute **Session Loop Protection Guard** into `startAutoRefreshCountdown()` and `performHardRefreshAndPurgeCache()` (`sessionStorage.getItem('last_auto_reload_for_' + remoteVer)`). If an auto-reload for a given version has already been executed, the dashboard immediately suppresses automatic refresh looping and displays a stable `Click Reload to apply` pill instead of violently looping.
 - 🛡️ **Integrated Real-Time Dynamic Gatekeeper Engine in BDC Central Command**:
   - Upgraded [`GatekeeperCounterEngine`](file:///C:/Users/Brian/Documents/antigravity/magical-pasteur/BDC_Central_Command/bdc_central_command_gui_v1.0.66_(windows).pyw) in Central Command to compute live metrics directly from `roster_live` and `users` on every cycle and maintenance sweep.
   - Replaced legacy static defaults with dynamic calculation of all 41 alliance chiefs, claimed vs unclaimed accounts, active 30-day Century Games JWT tokens, and join velocity.
