@@ -1,3 +1,7 @@
+## [10.2.97] - 2026-08-19
+- Shifted timer clocks up to eliminate top empty gap.
+- Trimmed timer box height to fit clocks snugly.
+
 ## [10.2.96] - 2026-08-19
 - Reverted timer stage container height to standard.
 - Restored master deck padding baseline.
