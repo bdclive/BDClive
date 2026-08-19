@@ -2197,13 +2197,17 @@
             if (!tokenStr || typeof tokenStr !== 'string' || !tokenStr.includes('.')) return true;
             try {
                 const parts = tokenStr.split('.');
-                if (parts.length < 2) return true;
-                const payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')));
-                if (!payload.exp) return true;
-                return (Date.now() / 1000) > payload.exp;
-            } catch (e) {
-                return true;
-            }
+                for (const p of parts) {
+                    if (!p) continue;
+                    try {
+                        const payload = JSON.parse(atob(p.replace(/-/g, '+').replace(/_/g, '/')));
+                        if (payload && payload.exp) {
+                            return (Date.now() / 1000) > payload.exp;
+                        }
+                    } catch (e) {}
+                }
+            } catch (e) {}
+            return true;
         }
 
         function computeAndRenderGatekeeper() {
@@ -2229,12 +2233,22 @@
                 const gId = String(u.gameId || '').trim();
                 if (gId) {
                     registeredGameIds.add(gId);
-                    gameIdToUser[gId] = { name: u.name || 'Anonymous Chief', email: u.email, isAlt: false, verified: !!u.centuryGamesVerified, token: u.wos_cg_token, joinedDate: u.joinedDate || u.dateStarted };
-                    if (u.centuryGamesVerified) verifiedGameIds.add(gId);
-                    if (u.wos_cg_token) {
-                        if (isJwtExpired(u.wos_cg_token)) expiredTokens++;
-                        else validTokens++;
+                    const isExp = Boolean(u.tokenExpired || (u.tokenStatus && u.tokenStatus.status === 'expired') || (u.wos_cg_token ? isJwtExpired(u.wos_cg_token) : true));
+                    if (!isExp && u.wos_cg_token) {
+                        validTokens++;
+                        verifiedGameIds.add(gId);
+                    } else if (u.wos_cg_token) {
+                        expiredTokens++;
                     }
+                    gameIdToUser[gId] = { 
+                        name: u.name || 'Anonymous Chief', 
+                        email: u.email, 
+                        isAlt: false, 
+                        verified: !isExp, 
+                        token: u.wos_cg_token, 
+                        tokenExpired: isExp,
+                        joinedDate: u.joinedDate || u.dateStarted 
+                    };
                 }
                 
                 // Linked Alts
@@ -2250,14 +2264,24 @@
                 if (u.altTokens && typeof u.altTokens === 'object') {
                     Object.entries(u.altTokens).forEach(([altId, aInfo]) => {
                         const sAlt = String(altId).trim();
-                        if (sAlt) {
+                        if (sAlt && aInfo) {
                             registeredGameIds.add(sAlt);
-                            if (aInfo.centuryGamesVerified) verifiedGameIds.add(sAlt);
-                            if (aInfo.token) {
-                                if (isJwtExpired(aInfo.token)) expiredTokens++;
-                                else validTokens++;
+                            const isAltExp = Boolean(aInfo.tokenExpired || (aInfo.tokenStatus && aInfo.tokenStatus.status === 'expired') || (aInfo.token ? isJwtExpired(aInfo.token) : true));
+                            if (!isAltExp && aInfo.token) {
+                                validTokens++;
+                                verifiedGameIds.add(sAlt);
+                            } else if (aInfo.token) {
+                                expiredTokens++;
                             }
-                            gameIdToUser[sAlt] = { name: aInfo.nickname || u.name, isAlt: true, parentChief: u.name, verified: !!aInfo.centuryGamesVerified, token: aInfo.token, joinedDate: aInfo.joinedDate || aInfo.dateStarted };
+                            gameIdToUser[sAlt] = { 
+                                name: aInfo.nickname || aInfo.name || u.name, 
+                                isAlt: true, 
+                                parentChief: u.name, 
+                                verified: !isAltExp, 
+                                token: aInfo.token, 
+                                tokenExpired: isAltExp,
+                                joinedDate: aInfo.joinedDate || aInfo.dateStarted 
+                            };
                         }
                     });
                 }
