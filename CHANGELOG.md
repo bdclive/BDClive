@@ -1,5 +1,18 @@
 # Changelog
 
+## v10.2.87 (2026-08-19)
+- 🎟️ **Integrated Ticket Alerts System Widget (Row 2, Box 3)**:
+  - Installed a dedicated **Ticket Alerts** widget in Row 2, Column 3 (`grid-area: 2 / 3`) with real-time dynamic listeners connected to `wosDb.ref('community_feedback')` and `sDb.ref('labData/ticketAlerts')`.
+  - Displays live counters for **Pending Tickets**, **Total Tickets**, **Urgent / Bug Alerts**, **Today's New Submissions**, and a dynamic scrolling preview ticker of the latest incoming ticket message.
+- 🔊 **HTML5 Web Audio API Sound Chime Engine (`playTicketAlertSound()`)**:
+  - Implemented an audio chime using the Web Audio API with zero external audio file dependencies (synthesizes a high-definition 2-tone melodic chime: D5 -> A5 -> D6).
+  - Built-in audio unlock gesture handler on first page interaction.
+  - Automatic sound alert triggers in real time whenever a new pending ticket or support request is submitted.
+  - Persistent sound toggle (**🔔 Sound ON / 🔕 Muted**) stored in `localStorage` with quick toggle buttons on both the main dashboard widget and the modal header.
+- 📋 **Interactive Ticket Alerts Inspection Modal (`openTicketAlertsModal()`)**:
+  - Full-screen cyber inspection modal featuring 5 summary metric badges, 4 status filter tabs (`All`, `Pending`, `In-Progress`, `Resolved`), instant search by chief name or message, and 1-click status actions (`✓ Resolve`, `⚡ Progress`, `✕ Delete`).
+  - Integrated **Post New Alert / Ticket** form for direct dispatch of announcements and support requests.
+
 ## v10.2.86 / v1.0.66 (2026-08-19)
 - 🛑 **Permanently Eliminated Update Refresh Loop & Direct VERSION.json Registry Binding**:
   - Refactored `checkDirectVersionUpdate()` to query `VERSION.json` (`components.bdclive_web_dashboard.version`) directly instead of parsing raw markdown text from `CHANGELOG.md`. This prevents cross-component version conflicts where Central Command desktop updates triggered false web client update alerts.
