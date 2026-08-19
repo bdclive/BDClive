@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BDC LIVE v10.2.87</title>
+    <title>BDC LIVE v10.2.88</title>
     <!-- Open Graph & Social Preview Meta Tags -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="BDC LIVE v10.2.87">
+    <meta property="og:title" content="BDC LIVE v10.2.88">
     <meta property="og:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="og:image" content="./bdclive_banner.jpg">
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="BDC LIVE v10.2.87">
+    <meta property="twitter:title" content="BDC LIVE v10.2.88">
     <meta property="twitter:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="twitter:image" content="./bdclive_banner.jpg">
     <!-- PWA Manifest & Mobile Web App Meta Tags -->
@@ -227,8 +227,8 @@
                     <i class="fa-solid fa-ticket" style="color: #ff7b00;"></i> TICKET ALERTS
                 </p>
                 <div style="display: flex; align-items: center; gap: 5px;">
-                    <button id="ticket-sound-toggle-btn" onclick="event.stopPropagation(); toggleTicketSound();" style="background: rgba(255, 94, 0, 0.15); color: #ff9f43; border: 1px solid rgba(255, 94, 0, 0.35); border-radius: 6px; padding: 2px 6px; font-size: 8px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 3px; transition: all 0.2s ease;" title="Toggle Audio Sound Alerts for Incoming Tickets">
-                        <i id="ticket-sound-icon" class="fa-solid fa-volume-high"></i> <span id="ticket-sound-text">SOUND ON</span>
+                    <button id="ticket-sound-toggle-btn" onclick="event.stopPropagation(); toggleTicketSound();" style="background: rgba(139, 148, 158, 0.12); color: #8b949e; border: 1px solid rgba(139, 148, 158, 0.25); border-radius: 6px; padding: 2px 6px; font-size: 8px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 3px; transition: all 0.2s ease;" title="Toggle Audio Sound Alerts for Incoming Tickets">
+                        <i id="ticket-sound-icon" class="fa-solid fa-volume-xmark"></i> <span id="ticket-sound-text">MUTED</span>
                     </button>
                     <span id="ticket-live-beacon" style="font-size: 8px; color: #3fb950; display: inline-flex; align-items: center; gap: 3px;" title="Real-Time Ticket Listener Active"><i class="fa-solid fa-circle fa-beat" style="font-size: 6px; color: #3fb950; animation-duration: 2s;"></i> LIVE</span>
                 </div>
@@ -797,12 +797,6 @@
             computeAndRenderTicketAlerts();
         });
 
-        sDb.ref('labData/ticketAlerts').on('value', s => {
-            if (typeof computeAndRenderTicketAlerts === 'function') {
-                computeAndRenderTicketAlerts(s.val() || {});
-            }
-        });
-
         sDb.ref('labData').on('value', (s) => {
             const d = s.val(); if (!d) return;
             document.getElementById('plex-count-num').innerText = fNum(d.plexCount);
@@ -1318,7 +1312,7 @@
         });
 
         const DEFAULT_GH_REPOS = [
-            { name: "BDClive", owner: "bdclive", fullName: "bdclive/BDClive", htmlUrl: "https://github.com/bdclive/BDClive", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "BDC Live Central Command Dashboard", latestCommit: "v10.2.86 : Fixed update refresh loop with direct VERSION.json integration and loop guard" },
+            { name: "BDClive", owner: "bdclive", fullName: "bdclive/BDClive", htmlUrl: "https://github.com/bdclive/BDClive", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "BDC Live Central Command Dashboard", latestCommit: "v10.2.88 : Eliminated sound loop and dismissed sticky update banner" },
             { name: "wosBDC.github.io", owner: "wosbdc", fullName: "wosbdc/wosBDC.github.io", htmlUrl: "https://github.com/wosbdc/wosBDC.github.io", pushedAt: new Date(Date.now() - 3600000 * 1.5).toISOString(), defaultBranch: "main", description: "WOS BDC Web Application", latestCommit: "v2.9.12 : WOS Alliance web portal & database updates" },
             { name: "DasherTracker.github.io", owner: "DasherTracker", fullName: "DasherTracker/DasherTracker.github.io", htmlUrl: "https://github.com/DasherTracker/DasherTracker.github.io", pushedAt: new Date(Date.now() - 3600000 * 3.5).toISOString(), defaultBranch: "main", description: "Dasher Tracker Portal", latestCommit: "Production sync" },
             { name: "theBDCFcrew.github.io", owner: "theBDCFcrew", fullName: "theBDCFcrew/theBDCFcrew.github.io", htmlUrl: "https://github.com/theBDCFcrew/theBDCFcrew.github.io", pushedAt: new Date(Date.now() - 86400000).toISOString(), defaultBranch: "main", description: "The BDCF Crew Portal", latestCommit: "Production sync" },
@@ -1509,18 +1503,43 @@
             }
         }
 
-        const CURRENT_APP_VERSION = 'v10.2.86';
+        const CURRENT_APP_VERSION = 'v10.2.88';
         let isDeployingLive = false;
         let pendingRemoteVersion = null;
         let autoRefreshTimer = null;
         let autoRefreshCountdown = 5;
+
+        function normalizeVer(v) {
+            if (!v) return '';
+            return 'v' + String(v).replace(/^v/i, '').trim();
+        }
+
+        function isVersionDismissed(ver) {
+            if (!ver) return false;
+            const norm = normalizeVer(ver);
+            try {
+                return sessionStorage.getItem('dismissed_version_' + norm) === 'true' || 
+                       localStorage.getItem('dismissed_version_' + norm) === 'true';
+            } catch(e) {
+                return false;
+            }
+        }
+
+        function markVersionDismissed(ver) {
+            if (!ver) return;
+            const norm = normalizeVer(ver);
+            try {
+                sessionStorage.setItem('dismissed_version_' + norm, 'true');
+                localStorage.setItem('dismissed_version_' + norm, 'true');
+            } catch(e) {}
+        }
 
         async function performHardRefreshAndPurgeCache(targetVer) {
             if (autoRefreshTimer) {
                 clearInterval(autoRefreshTimer);
                 autoRefreshTimer = null;
             }
-            const verToRecord = targetVer || pendingRemoteVersion || CURRENT_APP_VERSION;
+            const verToRecord = normalizeVer(targetVer || pendingRemoteVersion || CURRENT_APP_VERSION);
             try {
                 sessionStorage.setItem('last_auto_reload_for_' + verToRecord, String(Date.now()));
             } catch(e) {}
@@ -1557,9 +1576,10 @@
 
         function startAutoRefreshCountdown(remoteVer) {
             if (autoRefreshTimer) clearInterval(autoRefreshTimer);
+            const normVer = normalizeVer(remoteVer);
             
             // Loop Guard: If an auto-reload for this version was already attempted in the last 5 minutes, DO NOT loop!
-            const lastAttempt = sessionStorage.getItem('last_auto_reload_for_' + remoteVer);
+            const lastAttempt = sessionStorage.getItem('last_auto_reload_for_' + normVer);
             if (lastAttempt && (Date.now() - parseInt(lastAttempt, 10)) < 300000) {
                 const badgeEl = document.getElementById('update-countdown-badge');
                 if (badgeEl) {
@@ -1589,7 +1609,7 @@
                 } else {
                     clearInterval(autoRefreshTimer);
                     autoRefreshTimer = null;
-                    performHardRefreshAndPurgeCache(remoteVer);
+                    performHardRefreshAndPurgeCache(normVer);
                 }
             }, 1000);
         }
@@ -1618,6 +1638,12 @@
             const badgeEl = document.getElementById('update-countdown-badge');
             if (!banner) return;
 
+            const normVer = normalizeVer(remoteVer || pendingRemoteVersion);
+            if (isVersionDismissed(normVer)) {
+                banner.style.display = 'none';
+                return;
+            }
+
             if (isBuilding) {
                 if (autoRefreshTimer) { clearInterval(autoRefreshTimer); autoRefreshTimer = null; }
                 banner.style.borderColor = '#d29922';
@@ -1630,7 +1656,7 @@
                 banner.style.boxShadow = '0 12px 36px rgba(0,0,0,0.8), 0 0 20px rgba(63, 185, 80, 0.35)';
                 if (iconEl) iconEl.innerHTML = '⚡';
                 if (titleEl) { titleEl.innerText = title; titleEl.style.color = '#3fb950'; }
-                startAutoRefreshCountdown(remoteVer || pendingRemoteVersion);
+                startAutoRefreshCountdown(normVer);
             }
             if (descEl) descEl.innerText = desc;
             banner.style.display = 'flex';
@@ -1644,7 +1670,7 @@
             const banner = document.getElementById('updateAlertBanner');
             if (banner) banner.style.display = 'none';
             if (pendingRemoteVersion) {
-                sessionStorage.setItem('dismissed_version_' + pendingRemoteVersion, 'true');
+                markVersionDismissed(pendingRemoteVersion);
             }
         }
 
@@ -1662,9 +1688,8 @@
                     const remoteVer = webComp?.version;
                     if (remoteVer) {
                         if (isNewerVersion(remoteVer, CURRENT_APP_VERSION)) {
-                            pendingRemoteVersion = 'v' + remoteVer.replace(/^v/, '');
-                            const isDismissed = sessionStorage.getItem('dismissed_version_' + pendingRemoteVersion) === 'true';
-                            if (!isDismissed) {
+                            pendingRemoteVersion = normalizeVer(remoteVer);
+                            if (!isVersionDismissed(pendingRemoteVersion)) {
                                 const note = (webComp.latestChanges && webComp.latestChanges[0]) ? webComp.latestChanges[0] : `New version ${pendingRemoteVersion} deployed`;
                                 showUpdateAlert(`⚡ New Update Available (${pendingRemoteVersion})`, note, false, pendingRemoteVersion);
                                 return true;
@@ -1703,11 +1728,10 @@
             if (lcRepo.latestCommit) {
                 const versionMatch = lcRepo.latestCommit.match(/v\d+\.\d+\.\d+/i);
                 if (versionMatch) {
-                    const remoteVer = versionMatch[0];
+                    const remoteVer = normalizeVer(versionMatch[0]);
                     if (isNewerVersion(remoteVer, CURRENT_APP_VERSION)) {
                         pendingRemoteVersion = remoteVer;
-                        const isDismissed = sessionStorage.getItem('dismissed_version_' + remoteVer) === 'true';
-                        if (!isDismissed) {
+                        if (!isVersionDismissed(remoteVer)) {
                             showUpdateAlert(`⚡ Update Available (${remoteVer})`, lcRepo.latestCommit, false, remoteVer);
                         }
                     } else {
@@ -2301,7 +2325,9 @@
         let rawTicketAlerts = null;
         let currentTicketFilter = 'all';
         let previousPendingTicketCount = null;
-        let ticketSoundEnabled = localStorage.getItem('ticket_sound_enabled') !== 'false';
+        let isTicketInitialLoadComplete = false;
+        let lastTicketSoundPlayedTime = 0;
+        let ticketSoundEnabled = localStorage.getItem('ticket_sound_enabled') === 'true';
         let audioCtx = null;
 
         function getAudioContext() {
@@ -2406,6 +2432,7 @@
                 }
             }
         }
+        updateTicketSoundUI();
 
         function computeAndRenderTicketAlerts(customAlerts = {}) {
             const tickets = { ...(rawTicketAlerts || {}), ...customAlerts };
@@ -2437,16 +2464,21 @@
                 }
             });
             
-            // Sound trigger on new pending ticket arrival
-            if (previousPendingTicketCount !== null && pendingCount > previousPendingTicketCount) {
-                playTicketAlertSound('new_ticket');
-                const box = document.getElementById('ticket-alerts-box');
-                if (box) {
-                    box.style.boxShadow = '0 0 30px rgba(255, 94, 0, 0.6)';
-                    setTimeout(() => { box.style.boxShadow = 'none'; }, 3000);
+            // Sound trigger ONLY for new real-time tickets arriving after initial load
+            if (isTicketInitialLoadComplete && previousPendingTicketCount !== null && pendingCount > previousPendingTicketCount) {
+                const nowTime = Date.now();
+                if (nowTime - lastTicketSoundPlayedTime > 5000) {
+                    lastTicketSoundPlayedTime = nowTime;
+                    playTicketAlertSound('new_ticket');
+                    const box = document.getElementById('ticket-alerts-box');
+                    if (box) {
+                        box.style.boxShadow = '0 0 30px rgba(255, 94, 0, 0.6)';
+                        setTimeout(() => { box.style.boxShadow = 'none'; }, 3000);
+                    }
                 }
             }
             previousPendingTicketCount = pendingCount;
+            isTicketInitialLoadComplete = true;
             
             // Update Card DOM Elements
             const pEl = document.getElementById('ticket-pending-count');

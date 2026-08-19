@@ -1,5 +1,16 @@
 # Changelog
 
+## v10.2.88 (2026-08-19)
+- 🔇 **Eliminated Ticket Alerts Sound Chime Loop & Initial Load Silence**:
+  - Implemented `isTicketInitialLoadComplete` guard ensuring that existing pending tickets never trigger audio alerts when opening or refreshing the dashboard.
+  - Added a 5-second minimum cooldown debounce (`lastTicketSoundPlayedTime`) to prevent machine-gunning or repeating chime sounds.
+  - Removed conflicting redundant `sDb.ref('labData/ticketAlerts')` listener that was causing state thrashing and false ticket arrival triggers against `wosDb.ref('community_feedback')`.
+  - Set sound alerts to safe default (Muted) until explicitly activated by user.
+- 🛑 **Fixed Sticky Update Alert Banner & Permanent Dismissal**:
+  - Fully normalized semver version strings (`normalizeVer`) across `checkDirectVersionUpdate()`, `checkAppUpdateAlert()`, and `dismissUpdateAlert()`.
+  - Stored dismissed updates across both `sessionStorage` and `localStorage` so dismissed versions stay hidden and never re-emerge during background repository polling sweeps.
+  - Synchronized `CURRENT_APP_VERSION = 'v10.2.88'` across all dashboard files.
+
 ## v10.2.87 (2026-08-19)
 - 🎟️ **Integrated Ticket Alerts System Widget (Row 2, Box 3)**:
   - Installed a dedicated **Ticket Alerts** widget in Row 2, Column 3 (`grid-area: 2 / 3`) with real-time dynamic listeners connected to `wosDb.ref('community_feedback')` and `sDb.ref('labData/ticketAlerts')`.
