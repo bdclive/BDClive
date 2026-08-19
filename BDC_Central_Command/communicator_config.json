@@ -1,4 +1,6 @@
 {
   "sound_enabled": true,
-  "toast_enabled": true
+  "toast_enabled": true,
+  "geometry": "1200x780+404+258",
+  "sash_position": 546
 }

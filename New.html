@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BDC LIVE v10.2.88</title>
+    <title>BDC LIVE v10.2.89</title>
     <!-- Open Graph & Social Preview Meta Tags -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="BDC LIVE v10.2.88">
+    <meta property="og:title" content="BDC LIVE v10.2.89">
     <meta property="og:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="og:image" content="./bdclive_banner.jpg">
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="BDC LIVE v10.2.88">
+    <meta property="twitter:title" content="BDC LIVE v10.2.89">
     <meta property="twitter:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="twitter:image" content="./bdclive_banner.jpg">
     <!-- PWA Manifest & Mobile Web App Meta Tags -->
@@ -545,14 +545,74 @@
                         <span style="font-size: 10px; color: #8b949e;">Whiteout Survival & Central Command • Live Audio & Push Alerts</span>
                     </div>
                 </div>
-                <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                    <button id="modal-alert-settings-toggle-btn" onclick="toggleTicketAlertSettingsPanel()" style="background: rgba(255, 123, 0, 0.12); color: #ff9f43; border: 1px solid rgba(255, 123, 0, 0.35); padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; transition: all 0.2s ease;" title="Customize Sound Profile, Volume, Desktop Notifications & Priority Filters">
+                        <i class="fa-solid fa-sliders"></i> Alert Settings
+                    </button>
                     <button id="modal-test-sound-btn" onclick="playTicketAlertSound('test')" style="background: rgba(255, 94, 0, 0.12); color: #ff9f43; border: 1px solid rgba(255, 94, 0, 0.3); padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; transition: all 0.2s ease;">
-                        <i class="fa-solid fa-play"></i> 🔊 Test Sound Chime
+                        <i class="fa-solid fa-play"></i> 🔊 Test Alert
                     </button>
                     <button id="modal-ticket-sound-toggle-btn" onclick="toggleTicketSound()" style="background: rgba(63, 185, 80, 0.18); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.4); padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; transition: all 0.2s ease;">
                         <i class="fa-solid fa-volume-high"></i> Sound Enabled
                     </button>
                     <span class="close-modal" onclick="closeTicketAlertsModal()" style="font-size: 24px; cursor: pointer; color: #8b949e;">&times;</span>
+                </div>
+            </div>
+
+            <!-- Custom Alert & Sound Configuration Panel (Collapsible) -->
+            <div id="ticket-alert-settings-panel" style="display: none; background: rgba(255, 94, 0, 0.05); border: 1px solid rgba(255, 94, 0, 0.25); border-radius: 8px; padding: 12px 14px; margin-bottom: 12px; box-shadow: inset 0 0 15px rgba(255, 94, 0, 0.04);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 6px;">
+                    <h4 style="margin: 0; color: #ff9f43; font-size: 12px; font-weight: 800; display: flex; align-items: center; gap: 6px;">
+                        <i class="fa-solid fa-sliders"></i> Custom Ticket Alert & Audio Synthesizer Configuration
+                    </h4>
+                    <span style="font-size: 10px; color: #8b949e;">Preferences saved automatically in your browser</span>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; align-items: end;">
+                    <!-- Sound Profile -->
+                    <div>
+                        <label style="display: block; font-size: 10px; color: #8b949e; font-weight: 700; margin-bottom: 4px; text-transform: uppercase;">Sound Profile</label>
+                        <select id="ticket-sound-profile-select" onchange="changeTicketSoundProfile(this.value)" style="width: 100%; background: #161b22; border: 1px solid #30363d; color: #fff; padding: 6px 8px; border-radius: 6px; font-size: 11px; outline: none; cursor: pointer;">
+                            <option value="chime">🔔 Melodic Double Chime (D5-A5-D6)</option>
+                            <option value="radar">📡 Cyberpunk Radar Ping</option>
+                            <option value="soft">✨ Soft Ambient Bell</option>
+                            <option value="tactical">🚨 Tactical Pulse / Siren</option>
+                            <option value="arcade">🕹️ Retro Arcade Ding</option>
+                            <option value="custom">🎵 Custom Audio URL / MP3</option>
+                        </select>
+                    </div>
+                    <!-- Volume Slider -->
+                    <div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                            <label style="font-size: 10px; color: #8b949e; font-weight: 700; text-transform: uppercase;">Alert Volume</label>
+                            <span id="ticket-volume-val" style="font-size: 10px; color: #ff9f43; font-weight: 700;">50%</span>
+                        </div>
+                        <input type="range" id="ticket-volume-slider" min="0.05" max="1" step="0.05" value="0.5" oninput="changeTicketVolume(this.value)" style="width: 100%; accent-color: #ff5e00; cursor: pointer;">
+                    </div>
+                    <!-- Alert Priority Filter -->
+                    <div>
+                        <label style="display: block; font-size: 10px; color: #8b949e; font-weight: 700; margin-bottom: 4px; text-transform: uppercase;">Alert Trigger Condition</label>
+                        <select id="ticket-alert-priority-select" onchange="changeTicketAlertPriority(this.value)" style="width: 100%; background: #161b22; border: 1px solid #30363d; color: #fff; padding: 6px 8px; border-radius: 6px; font-size: 11px; outline: none; cursor: pointer;">
+                            <option value="all">🔔 Alert on All New Tickets</option>
+                            <option value="urgent_only">🚨 Alert ONLY on Urgent / Bugs</option>
+                        </select>
+                    </div>
+                    <!-- Desktop Notifications -->
+                    <div>
+                        <label style="display: block; font-size: 10px; color: #8b949e; font-weight: 700; margin-bottom: 4px; text-transform: uppercase;">Desktop Push Notifications</label>
+                        <button id="ticket-desktop-notif-btn" onclick="toggleTicketDesktopNotifications()" style="width: 100%; background: #21262d; color: #8b949e; border: 1px solid #30363d; padding: 6px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s ease;">
+                            <i class="fa-solid fa-bell"></i> <span id="ticket-desktop-notif-text">Enable Desktop Alerts</span>
+                        </button>
+                    </div>
+                </div>
+                <!-- Custom Audio URL Field (Hidden unless 'custom' is selected) -->
+                <div id="ticket-custom-audio-box" style="display: none; margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255, 94, 0, 0.15);">
+                    <label style="display: block; font-size: 10px; color: #8b949e; font-weight: 700; margin-bottom: 4px; text-transform: uppercase;">Custom Audio File URL (MP3 / WAV / OGG)</label>
+                    <div style="display: flex; gap: 8px;">
+                        <input type="url" id="ticket-custom-audio-url" placeholder="https://example.com/alert.mp3" style="flex: 1; background: #161b22; border: 1px solid #30363d; color: #fff; padding: 6px 10px; border-radius: 6px; font-size: 11px; outline: none;">
+                        <button onclick="saveAndTestCustomAudio()" style="background: #238636; color: #fff; border: none; padding: 6px 14px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
+                            <i class="fa-solid fa-floppy-disk"></i> Save & Test
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -1312,7 +1372,7 @@
         });
 
         const DEFAULT_GH_REPOS = [
-            { name: "BDClive", owner: "bdclive", fullName: "bdclive/BDClive", htmlUrl: "https://github.com/bdclive/BDClive", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "BDC Live Central Command Dashboard", latestCommit: "v10.2.88 : Eliminated sound loop and dismissed sticky update banner" },
+            { name: "BDClive", owner: "bdclive", fullName: "bdclive/BDClive", htmlUrl: "https://github.com/bdclive/BDClive", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "BDC Live Central Command Dashboard", latestCommit: "v10.2.89 : Added custom sound profiles, volume slider, desktop notifications, and priority filters to ticket alerts" },
             { name: "wosBDC.github.io", owner: "wosbdc", fullName: "wosbdc/wosBDC.github.io", htmlUrl: "https://github.com/wosbdc/wosBDC.github.io", pushedAt: new Date(Date.now() - 3600000 * 1.5).toISOString(), defaultBranch: "main", description: "WOS BDC Web Application", latestCommit: "v2.9.12 : WOS Alliance web portal & database updates" },
             { name: "DasherTracker.github.io", owner: "DasherTracker", fullName: "DasherTracker/DasherTracker.github.io", htmlUrl: "https://github.com/DasherTracker/DasherTracker.github.io", pushedAt: new Date(Date.now() - 3600000 * 3.5).toISOString(), defaultBranch: "main", description: "Dasher Tracker Portal", latestCommit: "Production sync" },
             { name: "theBDCFcrew.github.io", owner: "theBDCFcrew", fullName: "theBDCFcrew/theBDCFcrew.github.io", htmlUrl: "https://github.com/theBDCFcrew/theBDCFcrew.github.io", pushedAt: new Date(Date.now() - 86400000).toISOString(), defaultBranch: "main", description: "The BDCF Crew Portal", latestCommit: "Production sync" },
@@ -1503,7 +1563,7 @@
             }
         }
 
-        const CURRENT_APP_VERSION = 'v10.2.88';
+        const CURRENT_APP_VERSION = 'v10.2.89';
         let isDeployingLive = false;
         let pendingRemoteVersion = null;
         let autoRefreshTimer = null;
@@ -2328,6 +2388,11 @@
         let isTicketInitialLoadComplete = false;
         let lastTicketSoundPlayedTime = 0;
         let ticketSoundEnabled = localStorage.getItem('ticket_sound_enabled') === 'true';
+        let ticketSoundProfile = localStorage.getItem('ticket_sound_profile') || 'chime';
+        let ticketSoundVolume = parseFloat(localStorage.getItem('ticket_sound_volume') || '0.5');
+        let ticketCustomAudioUrl = localStorage.getItem('ticket_custom_audio_url') || '';
+        let ticketNotifyDesktop = localStorage.getItem('ticket_notify_desktop') === 'true';
+        let ticketAlertPriorityFilter = localStorage.getItem('ticket_alert_priority_filter') || 'all';
         let audioCtx = null;
 
         function getAudioContext() {
@@ -2346,44 +2411,131 @@
         document.addEventListener('click', () => { getAudioContext(); }, { once: true });
         document.addEventListener('keydown', () => { getAudioContext(); }, { once: true });
 
-        function playTicketAlertSound(mode = 'chime') {
+        function playTicketAlertSound(mode = 'alert') {
             if (!ticketSoundEnabled && mode !== 'test') return;
+            
+            const profile = ticketSoundProfile || 'chime';
+            const volume = typeof ticketSoundVolume === 'number' ? ticketSoundVolume : 0.5;
+
+            // Custom Audio File URL
+            if (profile === 'custom' && ticketCustomAudioUrl) {
+                try {
+                    const customAudio = new Audio(ticketCustomAudioUrl);
+                    customAudio.volume = Math.max(0.01, Math.min(1.0, volume));
+                    customAudio.play().catch(err => {
+                        console.warn("Custom audio playback failed, falling back to synthesizer:", err);
+                        synthesizeSound('chime', volume);
+                    });
+                    return;
+                } catch(e) {
+                    console.warn("Custom audio error:", e);
+                }
+            }
+
+            synthesizeSound(profile, volume);
+        }
+
+        function synthesizeSound(profile, volume = 0.5) {
             try {
                 const ctx = getAudioContext();
                 if (!ctx) return;
-
                 const now = ctx.currentTime;
-                
-                // Melodic Double Chime: D5 (587.33Hz) -> A5 (880Hz) -> D6 (1174.66Hz)
-                const osc1 = ctx.createOscillator();
-                const osc2 = ctx.createOscillator();
-                const gain = ctx.createGain();
+                const maxVol = Math.max(0.01, Math.min(1.0, volume)) * 0.4;
 
-                osc1.type = 'sine';
-                osc2.type = 'triangle';
-
-                osc1.frequency.setValueAtTime(587.33, now);
-                osc1.frequency.exponentialRampToValueAtTime(880.00, now + 0.12);
-                osc1.frequency.exponentialRampToValueAtTime(1174.66, now + 0.26);
-
-                osc2.frequency.setValueAtTime(293.66, now);
-                osc2.frequency.exponentialRampToValueAtTime(440.00, now + 0.12);
-                osc2.frequency.exponentialRampToValueAtTime(587.33, now + 0.26);
-
-                gain.gain.setValueAtTime(0.001, now);
-                gain.gain.linearRampToValueAtTime(0.4, now + 0.04);
-                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.68);
-
-                osc1.connect(gain);
-                osc2.connect(gain);
-                gain.connect(ctx.destination);
-
-                osc1.start(now);
-                osc2.start(now);
-                osc1.stop(now + 0.68);
-                osc2.stop(now + 0.68);
+                if (profile === 'radar') {
+                    // Cyberpunk Radar Ping (1760Hz sharp ping with fast exponential decay)
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(1760, now);
+                    osc.frequency.exponentialRampToValueAtTime(880, now + 0.35);
+                    gain.gain.setValueAtTime(0.001, now);
+                    gain.gain.linearRampToValueAtTime(maxVol, now + 0.02);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.45);
+                } else if (profile === 'soft') {
+                    // Soft Ambient Bell (F#5 739.99Hz -> C#6 1108.73Hz)
+                    const osc1 = ctx.createOscillator();
+                    const osc2 = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc1.type = 'sine';
+                    osc2.type = 'triangle';
+                    osc1.frequency.setValueAtTime(739.99, now);
+                    osc2.frequency.setValueAtTime(1108.73, now + 0.08);
+                    gain.gain.setValueAtTime(0.001, now);
+                    gain.gain.linearRampToValueAtTime(maxVol * 0.7, now + 0.06);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.85);
+                    osc1.connect(gain);
+                    osc2.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc1.start(now);
+                    osc2.start(now + 0.08);
+                    osc1.stop(now + 0.85);
+                    osc2.stop(now + 0.85);
+                } else if (profile === 'tactical') {
+                    // Tactical Pulse / Siren (Double chirp)
+                    [0, 0.16].forEach(offset => {
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        osc.type = 'sawtooth';
+                        osc.frequency.setValueAtTime(880, now + offset);
+                        osc.frequency.exponentialRampToValueAtTime(1480, now + offset + 0.12);
+                        gain.gain.setValueAtTime(0.001, now + offset);
+                        gain.gain.linearRampToValueAtTime(maxVol * 0.5, now + offset + 0.02);
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + offset + 0.14);
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        osc.start(now + offset);
+                        osc.stop(now + offset + 0.14);
+                    });
+                } else if (profile === 'arcade') {
+                    // Retro Arcade Ding (C7 2093Hz -> E7 2637Hz)
+                    const osc1 = ctx.createOscillator();
+                    const osc2 = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc1.type = 'square';
+                    osc2.type = 'square';
+                    osc1.frequency.setValueAtTime(2093, now);
+                    osc2.frequency.setValueAtTime(2637, now + 0.08);
+                    gain.gain.setValueAtTime(0.001, now);
+                    gain.gain.linearRampToValueAtTime(maxVol * 0.35, now + 0.02);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+                    osc1.connect(gain);
+                    osc2.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc1.start(now);
+                    osc2.start(now + 0.08);
+                    osc1.stop(now + 0.08);
+                    osc2.stop(now + 0.4);
+                } else {
+                    // Default Melodic Double Chime (D5 587.33Hz -> A5 880Hz -> D6 1174.66Hz)
+                    const osc1 = ctx.createOscillator();
+                    const osc2 = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc1.type = 'sine';
+                    osc2.type = 'triangle';
+                    osc1.frequency.setValueAtTime(587.33, now);
+                    osc1.frequency.exponentialRampToValueAtTime(880.00, now + 0.12);
+                    osc1.frequency.exponentialRampToValueAtTime(1174.66, now + 0.26);
+                    osc2.frequency.setValueAtTime(293.66, now);
+                    osc2.frequency.exponentialRampToValueAtTime(440.00, now + 0.12);
+                    osc2.frequency.exponentialRampToValueAtTime(587.33, now + 0.26);
+                    gain.gain.setValueAtTime(0.001, now);
+                    gain.gain.linearRampToValueAtTime(maxVol, now + 0.04);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.68);
+                    osc1.connect(gain);
+                    osc2.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc1.start(now);
+                    osc2.start(now);
+                    osc1.stop(now + 0.68);
+                    osc2.stop(now + 0.68);
+                }
             } catch(e) {
-                console.warn('Ticket alert sound error:', e);
+                console.warn('Synthesizer sound error:', e);
             }
         }
 
@@ -2392,6 +2544,95 @@
             localStorage.setItem('ticket_sound_enabled', String(ticketSoundEnabled));
             updateTicketSoundUI();
             if (ticketSoundEnabled) {
+                playTicketAlertSound('test');
+            }
+        }
+
+        function toggleTicketAlertSettingsPanel() {
+            const panel = document.getElementById('ticket-alert-settings-panel');
+            const btn = document.getElementById('modal-alert-settings-toggle-btn');
+            if (!panel) return;
+            const isHidden = panel.style.display === 'none' || !panel.style.display;
+            panel.style.display = isHidden ? 'block' : 'none';
+            if (btn) {
+                btn.style.background = isHidden ? 'rgba(255, 123, 0, 0.25)' : 'rgba(255, 123, 0, 0.12)';
+                btn.style.borderColor = isHidden ? '#ff9f43' : 'rgba(255, 123, 0, 0.35)';
+            }
+        }
+
+        function changeTicketSoundProfile(profile) {
+            ticketSoundProfile = profile;
+            localStorage.setItem('ticket_sound_profile', profile);
+            const customBox = document.getElementById('ticket-custom-audio-box');
+            if (customBox) {
+                customBox.style.display = profile === 'custom' ? 'block' : 'none';
+            }
+            playTicketAlertSound('test');
+        }
+
+        function changeTicketVolume(vol) {
+            ticketSoundVolume = parseFloat(vol);
+            localStorage.setItem('ticket_sound_volume', String(ticketSoundVolume));
+            const valEl = document.getElementById('ticket-volume-val');
+            if (valEl) valEl.innerText = `${Math.round(ticketSoundVolume * 100)}%`;
+        }
+
+        function changeTicketAlertPriority(prio) {
+            ticketAlertPriorityFilter = prio;
+            localStorage.setItem('ticket_alert_priority_filter', prio);
+        }
+
+        async function toggleTicketDesktopNotifications() {
+            if (!("Notification" in window)) {
+                alert("Desktop notifications are not supported in this browser.");
+                return;
+            }
+            if (Notification.permission === "granted") {
+                ticketNotifyDesktop = !ticketNotifyDesktop;
+                localStorage.setItem('ticket_notify_desktop', String(ticketNotifyDesktop));
+                if (ticketNotifyDesktop) {
+                    dispatchTicketDesktopNotification({ title: 'Desktop Alerts Active', description: 'You will receive desktop push notifications for new tickets!' });
+                }
+            } else if (Notification.permission !== "denied") {
+                const perm = await Notification.requestPermission();
+                if (perm === "granted") {
+                    ticketNotifyDesktop = true;
+                    localStorage.setItem('ticket_notify_desktop', 'true');
+                    dispatchTicketDesktopNotification({ title: 'Desktop Alerts Enabled', description: 'You will receive desktop push notifications for new tickets!' });
+                } else {
+                    ticketNotifyDesktop = false;
+                    localStorage.setItem('ticket_notify_desktop', 'false');
+                }
+            } else {
+                alert("Desktop notifications are blocked by your browser settings. Please enable notifications in your browser URL bar.");
+                ticketNotifyDesktop = false;
+                localStorage.setItem('ticket_notify_desktop', 'false');
+            }
+            updateTicketSoundUI();
+        }
+
+        function dispatchTicketDesktopNotification(ticket) {
+            if (!ticketNotifyDesktop) return;
+            if (!("Notification" in window) || Notification.permission !== "granted") return;
+            const sender = (ticket?.submittedBy?.name) || ticket?.author || 'Chief';
+            const title = ticket?.title || 'New Support Ticket';
+            const body = `${sender}: ${ticket?.description || ticket?.message || 'New alert received'}`;
+            try {
+                new Notification(`🚨 BDC Ticket Alert: ${title}`, {
+                    body: body.slice(0, 120),
+                    icon: './central_command_icon.png',
+                    tag: 'ticket-alert-' + (ticket?.id || Date.now())
+                });
+            } catch(e) {
+                console.warn("Desktop notification error:", e);
+            }
+        }
+
+        function saveAndTestCustomAudio() {
+            const urlInput = document.getElementById('ticket-custom-audio-url');
+            if (urlInput) {
+                ticketCustomAudioUrl = urlInput.value.trim();
+                localStorage.setItem('ticket_custom_audio_url', ticketCustomAudioUrl);
                 playTicketAlertSound('test');
             }
         }
@@ -2431,6 +2672,37 @@
                     modalBtn.style.borderColor = 'rgba(248, 81, 73, 0.4)';
                 }
             }
+
+            // Sync Settings Controls
+            const profSel = document.getElementById('ticket-sound-profile-select');
+            const volSlider = document.getElementById('ticket-volume-slider');
+            const volVal = document.getElementById('ticket-volume-val');
+            const prioSel = document.getElementById('ticket-alert-priority-select');
+            const notifBtn = document.getElementById('ticket-desktop-notif-btn');
+            const notifText = document.getElementById('ticket-desktop-notif-text');
+            const customBox = document.getElementById('ticket-custom-audio-box');
+            const customInput = document.getElementById('ticket-custom-audio-url');
+
+            if (profSel) profSel.value = ticketSoundProfile;
+            if (volSlider) volSlider.value = ticketSoundVolume;
+            if (volVal) volVal.innerText = `${Math.round(ticketSoundVolume * 100)}%`;
+            if (prioSel) prioSel.value = ticketAlertPriorityFilter;
+            if (customInput) customInput.value = ticketCustomAudioUrl;
+            if (customBox) customBox.style.display = ticketSoundProfile === 'custom' ? 'block' : 'none';
+
+            if (notifBtn && notifText) {
+                if (ticketNotifyDesktop && ("Notification" in window) && Notification.permission === "granted") {
+                    notifBtn.style.background = 'rgba(63, 185, 80, 0.18)';
+                    notifBtn.style.color = '#3fb950';
+                    notifBtn.style.borderColor = 'rgba(63, 185, 80, 0.4)';
+                    notifText.innerText = 'Desktop Alerts: ON';
+                } else {
+                    notifBtn.style.background = '#21262d';
+                    notifBtn.style.color = '#8b949e';
+                    notifBtn.style.borderColor = '#30363d';
+                    notifText.innerText = 'Enable Desktop Alerts';
+                }
+            }
         }
         updateTicketSoundUI();
 
@@ -2464,12 +2736,25 @@
                 }
             });
             
-            // Sound trigger ONLY for new real-time tickets arriving after initial load
+            // Sound & Notification trigger ONLY for new real-time tickets arriving after initial load
             if (isTicketInitialLoadComplete && previousPendingTicketCount !== null && pendingCount > previousPendingTicketCount) {
                 const nowTime = Date.now();
                 if (nowTime - lastTicketSoundPlayedTime > 5000) {
                     lastTicketSoundPlayedTime = nowTime;
-                    playTicketAlertSound('new_ticket');
+                    
+                    // Priority filter check
+                    const shouldAlert = (ticketAlertPriorityFilter !== 'urgent_only') || (urgentCount > 0);
+                    
+                    if (shouldAlert) {
+                        playTicketAlertSound('new_ticket');
+                        
+                        // Desktop push notification
+                        const sorted = [...ticketList].sort((a,b) => (b.createdAt || b.timestamp || 0) - (a.createdAt || a.timestamp || 0));
+                        if (sorted.length > 0) {
+                            dispatchTicketDesktopNotification(sorted[0]);
+                        }
+                    }
+                    
                     const box = document.getElementById('ticket-alerts-box');
                     if (box) {
                         box.style.boxShadow = '0 0 30px rgba(255, 94, 0, 0.6)';

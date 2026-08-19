@@ -1,5 +1,14 @@
 # Changelog
 
+## v10.2.89 (2026-08-19)
+- 🎛️ **Custom Ticket Alerts & Multi-Profile Audio Synthesizer Suite**:
+  - **5 Web Audio Synthesis Sound Profiles**: Added customizable audio synthesizer profiles including **Melodic Double Chime** *(D5-A5-D6)*, **Cyberpunk Radar Ping** *(1760Hz sharp sweep)*, **Soft Ambient Bell** *(F#5 gentle harmonic)*, **Tactical Pulse / Siren** *(Double chirp for urgent alerts)*, and **Retro Arcade Ding** *(C7-E7 coin ding)*.
+  - **Custom Audio URL / MP3 Support**: Users can enter custom MP3/WAV audio URLs with automatic fallback to Web Audio synthesis.
+  - **Dynamic Volume Slider**: Added interactive volume control (10% to 100%) persisted in `localStorage` with live `[ 🔊 Test Alert ]` preview.
+  - **Browser Desktop Push Notifications**: Integrated native Web `Notification` API allowing users to receive system desktop push notifications on new incoming tickets with chief name and message snippet even when the dashboard tab is backgrounded.
+  - **Alert Priority Trigger Threshold**: Added trigger condition filtering (`Alert on All Tickets` vs `Alert ONLY on Urgent / Bugs`).
+  - **Interactive Alert Settings Panel**: Integrated collapsible `[ ⚙️ Alert Settings ]` panel directly into the `#ticketAlertsModal` header.
+
 ## v1.0.67 (2026-08-19)
 - 🛡️ **BDC Ticket Alert Communicator Pro UI & Version Identifier Integration**:
   - **Prominent Version Number Display**: Embedded `v1.0.67` across window title (`BDC Live Alert Communicator v1.0.67 — Bug & Ticket Desk`), header bar badge pill, status bar footer, and Windows system tray tooltip/menu.

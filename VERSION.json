@@ -29,11 +29,11 @@
       "cliFile": "Threads_Bridge/threads_bridge_cli_v1.0.59_(terminal).py"
     },
     "bdclive_web_dashboard": {
-      "version": "10.2.88",
+      "version": "10.2.89",
       "repository": "https://github.com/bdclive/BDClive",
       "latestChanges": [
-        "v10.2.88: Eliminated ticket sound chime loop with initial load guard & debounce, and fixed sticky update banner dismissal",
-        "v10.2.87: Integrated Ticket Alerts System in Row 2 Box 3 with Web Audio melodic sound chime engine and interactive inspection modal"
+        "v10.2.89: Added custom sound profiles (5 synthesizers + custom audio URL), volume slider, desktop push notifications, and priority filters to ticket alerts",
+        "v10.2.88: Eliminated ticket sound chime loop with initial load guard & debounce, and fixed sticky update banner dismissal"
       ]
     },
     "wosbdc_alliance_dashboard": {
