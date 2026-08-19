@@ -14,11 +14,11 @@
       "cliFile": "Threads_Bridge/threads_bridge_cli_v1.0.59_(terminal).py"
     },
     "bdclive_web_dashboard": {
-      "version": "10.2.97",
+      "version": "10.2.98",
       "repository": "https://github.com/bdclive/BDClive",
       "latestChanges": [
-        "v10.2.97: Shifted timer clocks up to eliminate top empty gap",
-        "v10.2.96: Restored timer stage height to standard baseline"
+        "v10.2.98: Synced app version constant to eliminate stale update alert",
+        "v10.2.97: Shifted timer clocks up to eliminate top empty gap"
       ]
     },
     "wosbdc_alliance_dashboard": {
