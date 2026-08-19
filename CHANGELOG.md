@@ -1,5 +1,11 @@
 # Changelog
 
+## v10.2.85 / v1.0.65 (2026-08-19)
+- 🛠️ **Fixed Discord Message Editing & Eliminated Duplicate Posting (`send_or_update_gatekeeper_report` & `send_rsvp_card`)**:
+  - **Centralized Robust Path Resolution (`get_store_file_path`)**: Resolved all JSON store files (`discord_gatekeeper_report_id.json`, `discord_rsvp_ids.json`, `gatekeeper_counters.json`, `scraped_candidates_blacklist.json`, `tokens_config.json`, `discord_config.json`) dynamically across the script root, parent directory, and current working directory, preventing lost message ID references when launched from outside the folder.
+  - **Dual-Tier Message ID Persistence**: Implemented automatic Firebase RTDB cloud synchronization (`/system/gatekeeper_report_msg_id.json` and `/system/discord_rsvp_ids.json`) with local disk caching so stored message IDs survive directory relocations and restarts.
+  - **Bulletproof Edit-First Exception Handling**: Fixed fallback logic so transient rate limits (HTTP 429), server errors (5xx), and network blips preserve existing message IDs and never spawn duplicate messages. Only confirmed `404 Not Found` responses trigger new post creation.
+
 ## v10.2.84 / v1.0.64 (2026-08-18)
 - 🛡️ **Zero Rate Limit Discord Event Engine (Eliminated HTTP 429)**: Configured 30-second polling interval for Discord scheduled events with smart backoff and persistent in-memory UI caching so the Discord card never flickers or bounces.
 - ⚡ **Optimized Attendee Scraping**: Only queries the `/users` endpoint if event RSVP count is greater than 0, cutting API usage in half.
