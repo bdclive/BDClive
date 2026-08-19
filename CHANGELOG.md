@@ -1,5 +1,13 @@
 # Changelog
 
+## v10.2.86 / v1.0.66 (2026-08-19)
+- 🛡️ **Integrated Real-Time Dynamic Gatekeeper Engine in BDC Central Command**:
+  - Upgraded [`GatekeeperCounterEngine`](file:///C:/Users/Brian/Documents/antigravity/magical-pasteur/BDC_Central_Command/bdc_central_command_gui_v1.0.66_(windows).pyw) in Central Command to compute live metrics directly from `roster_live` and `users` on every cycle and maintenance sweep.
+  - Replaced legacy static defaults with dynamic calculation of all 41 alliance chiefs, claimed vs unclaimed accounts, active 30-day Century Games JWT tokens, and join velocity.
+  - Aligned Discord `#alerts` Gatekeeper Report Card with live roster stats (`41 Chiefs`, `24 Unclaimed`, `14 Active Tokens`).
+- ⚡ **Firebase Telemetry Normalization**:
+  - Normalized payload keys in [`push_to_firebase()`](file:///C:/Users/Brian/Documents/antigravity/magical-pasteur/BDC_Central_Command/bdc_central_command_gui_v1.0.66_(windows).pyw) to push both `fbPersonal` / `fbProfile` and `ytSub` / `ytSubs`, ensuring instant reactivity on the web dashboard.
+
 ## v10.2.85 / v1.0.65 (2026-08-19)
 - 🛡️ **Alliance Gatekeeper Real-Time Database Engine & Live Sync**:
   - Connected direct real-time listeners for `wosDb.ref('roster_live')` and `wosDb.ref('users')` (`wos-dashboard-38d4c`), replacing static/stale counts with live dynamic calculations across the 41-Chief Whiteout Survival alliance roster.
