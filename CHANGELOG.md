@@ -1,5 +1,8 @@
 # Changelog
 
+## v10.2.82 (2026-08-18)
+- ⚡ **Live Auto-Update Test Verification**: Tested and validated autonomous background detection, 5-second countdown banner with glowing emerald status pill, and automated cache-busting hard reload.
+
 ## v10.2.81 (2026-08-18)
 - ⚡ **Built "Set-and-Forget" Auto-Update & Hard Refresh Engine (`performHardRefreshAndPurgeCache`)**: The dashboard now automatically purges obsolete Service Worker caches, clears cache storages, and performs a cache-busted hard reload (`?t=timestamp`) after a 5-second countdown whenever a new version is deployed.
 - ⏱️ **Auto-Refresh Countdown Notification Pill**: Added live `Auto-refreshing in 5s...` visual badge to the update notification banner with manual instant reload override and cancel support.
