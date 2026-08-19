@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BDC LIVE v10.2.84</title>
+    <title>BDC LIVE v10.2.85</title>
     <!-- Open Graph & Social Preview Meta Tags -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="BDC LIVE v10.2.84">
+    <meta property="og:title" content="BDC LIVE v10.2.85">
     <meta property="og:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="og:image" content="./bdclive_banner.jpg">
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="BDC LIVE v10.2.84">
+    <meta property="twitter:title" content="BDC LIVE v10.2.85">
     <meta property="twitter:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="twitter:image" content="./bdclive_banner.jpg">
     <!-- PWA Manifest & Mobile Web App Meta Tags -->
@@ -182,22 +182,27 @@
         </div>
 
         <!-- ALLIANCE GATEKEEPER WIDGET (ROW 2, COL 2) -->
-        <div class="counter-item mirror-box" id="gatekeeper-box" style="border-top: 3px solid #00d2ff; grid-area: 2 / 2; padding: 10px 14px 8px 14px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; background: linear-gradient(135deg, rgba(0, 210, 255, 0.08) 0%, rgba(13, 17, 23, 0.85) 100%);">
+        <div class="counter-item mirror-box" id="gatekeeper-box" onclick="openGatekeeperModal()" style="border-top: 3px solid #00d2ff; grid-area: 2 / 2; padding: 10px 14px 8px 14px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; background: linear-gradient(135deg, rgba(0, 210, 255, 0.08) 0%, rgba(13, 17, 23, 0.85) 100%); cursor: pointer; position: relative; transition: all 0.3s ease;">
             <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-                <p class="mirror-label" style="color: #00d2ff; font-size: 0.75rem; letter-spacing: 0.8px; white-space: nowrap; margin-left: 45px;">GATEKEEPER</p>
-                <span style="font-size: 0.62rem; color: #00d2ff; background: rgba(0, 210, 255, 0.12); border: 1px solid rgba(0, 210, 255, 0.25); padding: 1px 6px; border-radius: 6px; font-weight: 700; margin-right: 24px;">❄️ WOS</span>
+                <p class="mirror-label" style="color: #00d2ff; font-size: 0.75rem; letter-spacing: 0.8px; white-space: nowrap; display: flex; align-items: center; gap: 6px;">
+                    <i class="fa-solid fa-shield-halved" style="color: #00d2ff;"></i> GATEKEEPER
+                </p>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <span id="gk-sync-pulse" style="font-size: 8px; color: #3fb950; display: inline-flex; align-items: center; gap: 3px;" title="Real-Time WOS Cloud Sync Active"><i class="fa-solid fa-circle fa-beat" style="font-size: 6px; color: #3fb950; animation-duration: 2s;"></i> LIVE</span>
+                    <span style="font-size: 0.62rem; color: #00d2ff; background: rgba(0, 210, 255, 0.12); border: 1px solid rgba(0, 210, 255, 0.25); padding: 1px 6px; border-radius: 6px; font-weight: 700;">❄️ WOS</span>
+                </div>
             </div>
             
             <div style="display: flex; justify-content: space-around; align-items: center; width: 100%; margin-top: 2px;">
                 <div style="text-align: center;">
                     <p class="mirror-label" style="color: #8b949e; font-size: 0.65rem;">MEMBERS (UNCLAIMED)</p>
                     <div class="mirror-stat" style="font-size: 1.95rem; line-height: 1; color: #ffffff; margin-top: 1px; font-weight: 800;">
-                        <span id="gk-unclaimed" style="color: #f1c40f;">16</span><span style="color: #8b949e; font-size: 1.25rem; font-weight: 600;">/</span><span id="gk-total-members" style="color: #ffffff;">25</span>
+                        <span id="gk-unclaimed" style="color: #f1c40f;">17</span><span style="color: #8b949e; font-size: 1.25rem; font-weight: 600;">/</span><span id="gk-total-members" style="color: #ffffff;">41</span>
                     </div>
                 </div>
                 <div style="text-align: center;">
                     <p class="mirror-label" style="color: #3fb950; font-size: 0.65rem;">SIGNUPS (7D)</p>
-                    <div id="gk-new-7d" class="mirror-stat" style="font-size: 1.6rem; line-height: 1.1; color: #3fb950; font-weight: 800;">+3</div>
+                    <div id="gk-new-7d" class="mirror-stat" style="font-size: 1.6rem; line-height: 1.1; color: #3fb950; font-weight: 800;">+0</div>
                     <span style="font-size: 0.58rem; color: #8b949e;">Today: <span id="gk-new-today" style="color: #58a6ff; font-weight: 700;">+0</span></span>
                 </div>
             </div>
@@ -209,9 +214,10 @@
                 </div>
                 <div style="text-align: center;">
                     <p class="mirror-label" style="color: #e3b341; font-size: 0.62rem;">🔄 UNSYNCED</p>
-                    <div id="gk-unsynced" class="mirror-stat" style="font-size: 1.25rem; line-height: 1.1; color: #e3b341; font-weight: 800;">23</div>
+                    <div id="gk-unsynced" class="mirror-stat" style="font-size: 1.25rem; line-height: 1.1; color: #e3b341; font-weight: 800;">27</div>
                 </div>
             </div>
+            <i class="fa-solid fa-arrow-up-right-from-square" style="position: absolute; bottom: 8px; right: 10px; color: rgba(0, 210, 255, 0.35); font-size: 9px;"></i>
         </div>
 
         <!-- GRAND TOTALS BOX (ROW 1, COL 4) -->
@@ -417,6 +423,81 @@
         </div>
     </div>
 
+    <!-- ALLIANCE GATEKEEPER ROSTER & TOKEN AUDIT MODAL -->
+    <div id="gatekeeperModal" class="modal">
+        <div class="modal-content" style="border-color: #00d2ff; max-width: 920px; width: 92%; background: #0d1117; max-height: 88vh; display: flex; flex-direction: column; box-shadow: 0 16px 48px rgba(0,0,0,0.8), 0 0 25px rgba(0, 210, 255, 0.2);">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #30363d; padding-bottom: 12px; margin-bottom: 12px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <i class="fa-solid fa-shield-halved" style="font-size: 22px; color: #00d2ff;"></i>
+                    <div>
+                        <h3 style="margin: 0; color: #ffffff; font-size: 16px; font-weight: 800; letter-spacing: 0.5px;">Alliance Gatekeeper — Roster & Token Health</h3>
+                        <span style="font-size: 10px; color: #8b949e;">Whiteout Survival State 2089 • Real-Time Database Sync</span>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <a href="https://wosbdc.github.io/" target="_blank" style="background: rgba(0, 210, 255, 0.12); color: #00d2ff; border: 1px solid rgba(0, 210, 255, 0.3); text-decoration: none; padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 5px; transition: all 0.2s ease;">
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i> Open WOS Portal
+                    </a>
+                    <span class="close-modal" onclick="closeGatekeeperModal()" style="font-size: 24px; cursor: pointer; color: #8b949e;">&times;</span>
+                </div>
+            </div>
+
+            <!-- Gatekeeper Summary Stats Bar -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin-bottom: 12px;">
+                <div style="background: rgba(0, 210, 255, 0.08); border: 1px solid rgba(0, 210, 255, 0.2); border-radius: 8px; padding: 8px; text-align: center;">
+                    <div style="font-size: 10px; color: #8b949e; font-weight: 700; text-transform: uppercase;">Total Roster</div>
+                    <div id="gk-modal-total-cnt" style="font-size: 18px; font-weight: 800; color: #00d2ff;">0</div>
+                </div>
+                <div style="background: rgba(63, 185, 80, 0.08); border: 1px solid rgba(63, 185, 80, 0.2); border-radius: 8px; padding: 8px; text-align: center;">
+                    <div style="font-size: 10px; color: #8b949e; font-weight: 700; text-transform: uppercase;">Claimed Chiefs</div>
+                    <div id="gk-modal-claimed-cnt" style="font-size: 18px; font-weight: 800; color: #3fb950;">0</div>
+                </div>
+                <div style="background: rgba(241, 196, 15, 0.08); border: 1px solid rgba(241, 196, 15, 0.2); border-radius: 8px; padding: 8px; text-align: center;">
+                    <div style="font-size: 10px; color: #8b949e; font-weight: 700; text-transform: uppercase;">Unclaimed</div>
+                    <div id="gk-modal-unclaimed-cnt" style="font-size: 18px; font-weight: 800; color: #f1c40f;">0</div>
+                </div>
+                <div style="background: rgba(163, 113, 247, 0.08); border: 1px solid rgba(163, 113, 247, 0.2); border-radius: 8px; padding: 8px; text-align: center;">
+                    <div style="font-size: 10px; color: #8b949e; font-weight: 700; text-transform: uppercase;">CG Verified</div>
+                    <div id="gk-modal-verified-cnt" style="font-size: 18px; font-weight: 800; color: #a371f7;">0</div>
+                </div>
+                <div style="background: rgba(248, 81, 73, 0.08); border: 1px solid rgba(248, 81, 73, 0.2); border-radius: 8px; padding: 8px; text-align: center;">
+                    <div style="font-size: 10px; color: #8b949e; font-weight: 700; text-transform: uppercase;">Exp. Tokens</div>
+                    <div id="gk-modal-expired-cnt" style="font-size: 18px; font-weight: 800; color: #f85149;">0</div>
+                </div>
+            </div>
+
+            <!-- Filter & Search Controls -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; gap: 10px; flex-wrap: wrap;">
+                <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                    <button id="gk-tab-all" onclick="filterGatekeeperRoster('all')" style="background: #00d2ff; color: #000; border: none; padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer;">All Chiefs (<span id="gk-tab-all-num">0</span>)</button>
+                    <button id="gk-tab-unclaimed" onclick="filterGatekeeperRoster('unclaimed')" style="background: #21262d; color: #f1c40f; border: 1px solid #30363d; padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer;">Unclaimed (<span id="gk-tab-unclaimed-num">0</span>)</button>
+                    <button id="gk-tab-claimed" onclick="filterGatekeeperRoster('claimed')" style="background: #21262d; color: #3fb950; border: 1px solid #30363d; padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer;">Claimed (<span id="gk-tab-claimed-num">0</span>)</button>
+                    <button id="gk-tab-tokens" onclick="filterGatekeeperRoster('tokens')" style="background: #21262d; color: #a371f7; border: 1px solid #30363d; padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer;">Century Games Tokens (<span id="gk-tab-tokens-num">0</span>)</button>
+                </div>
+                <input type="text" id="gk-search-input" oninput="renderGatekeeperRosterTable()" placeholder="🔍 Search chief name or Game ID..." style="background: #161b22; border: 1px solid #30363d; color: #fff; padding: 5px 10px; border-radius: 6px; font-size: 11px; outline: none; width: 230px;">
+            </div>
+
+            <!-- Roster Table Container -->
+            <div style="overflow-y: auto; flex: 1; border: 1px solid #30363d; border-radius: 8px; background: #161b22; max-height: 52vh;">
+                <table style="width: 100%; border-collapse: collapse; font-size: 11px; text-align: left;">
+                    <thead>
+                        <tr style="background: #21262d; border-bottom: 1px solid #30363d; color: #8b949e; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; position: sticky; top: 0; z-index: 2;">
+                            <th style="padding: 10px 12px;">Chief / Leader</th>
+                            <th style="padding: 10px 8px;">Game ID</th>
+                            <th style="padding: 10px 8px;">Furnace Level</th>
+                            <th style="padding: 10px 8px;">Portal Status</th>
+                            <th style="padding: 10px 8px;">Century Games Sync</th>
+                            <th style="padding: 10px 12px; text-align: right;">Joined / Active</th>
+                        </tr>
+                    </thead>
+                    <tbody id="gk-roster-table-body">
+                        <!-- Rendered dynamically -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
     <!-- PLATFORM COUNTER HEALTH & AUDIT MODAL -->
     <div id="counterAuditModal" class="modal">
         <div class="modal-content" style="border-color: #f1e05a; max-width: 840px; width: 92%; background: #0d1117; max-height: 88vh; display: flex; flex-direction: column; box-shadow: 0 16px 48px rgba(0,0,0,0.8), 0 0 25px rgba(241, 224, 90, 0.2);">
@@ -553,6 +634,17 @@
         wosDb.ref("presence").on("value", s => {
             const val = s.val();
             document.getElementById("wos-online-num").innerText = fNum(val !== null ? (typeof val === 'object' ? s.numChildren() : val) : 0);
+        });
+
+        // WOS Alliance Gatekeeper Live Database Listeners
+        wosDb.ref("roster_live").on("value", s => {
+            rawWosRoster = s.val();
+            computeAndRenderGatekeeper();
+        });
+
+        wosDb.ref("users").on("value", s => {
+            rawWosUsers = s.val();
+            computeAndRenderGatekeeper();
         });
 
         sDb.ref('labData').on('value', (s) => {
@@ -733,15 +825,15 @@
             
             if(d.discordRsvp !== undefined) document.getElementById('m-rsvp').innerText = fNum(d.discordRsvp);
             
-            // Alliance Gatekeeper Live Sync
-            if (d.gatekeeperCounters) {
+            // Alliance Gatekeeper Live Sync (Fallback / Secondary Sync)
+            if (d.gatekeeperCounters && !rawWosRoster) {
                 const gk = d.gatekeeperCounters;
-                const totMem = (gk.totalMembers && gk.totalMembers >= 25) ? gk.totalMembers : 25;
-                const new7d = gk.newMembers7Days !== undefined ? gk.newMembers7Days : 3;
+                const totMem = gk.totalMembers !== undefined ? gk.totalMembers : 41;
+                const new7d = gk.newMembers7Days !== undefined ? gk.newMembers7Days : 0;
                 const newToday = gk.newMembersToday !== undefined ? gk.newMembersToday : 0;
-                const unclaimed = gk.unclaimedAccounts !== undefined ? gk.unclaimedAccounts : 16;
+                const unclaimed = gk.unclaimedAccounts !== undefined ? gk.unclaimedAccounts : 17;
                 const expTokens = gk.expiredTokens !== undefined ? gk.expiredTokens : 0;
-                const unsynced = (gk.unsyncedChiefs && gk.unsyncedChiefs >= 23) ? gk.unsyncedChiefs : 23;
+                const unsynced = gk.unsyncedChiefs !== undefined ? gk.unsyncedChiefs : 27;
 
                 const totEl = document.getElementById('gk-total-members');
                 const n7El = document.getElementById('gk-new-7d');
@@ -751,8 +843,8 @@
                 const unsyncEl = document.getElementById('gk-unsynced');
 
                 if (totEl) totEl.innerText = fNum(totMem);
-                if (n7El) n7El.innerText = (new7d > 0 ? `+${fNum(new7d)}` : fNum(new7d));
-                if (nTodayEl) nTodayEl.innerText = (newToday > 0 ? `+${fNum(newToday)}` : fNum(newToday));
+                if (n7El) n7El.innerText = (new7d > 0 ? `+${fNum(new7d)}` : `+${new7d}`);
+                if (nTodayEl) nTodayEl.innerText = (newToday > 0 ? `+${fNum(newToday)}` : `+${newToday}`);
                 if (uncEl) uncEl.innerText = fNum(unclaimed);
                 if (expEl) {
                     expEl.innerText = fNum(expTokens);
@@ -786,13 +878,14 @@
         });
 
         sDb.ref('labData/gatekeeperCounters').on('value', (s) => {
+            if (rawWosRoster) return; // Prioritize real-time WOS Database
             const gk = s.val(); if (!gk) return;
-            const totMem = (gk.totalMembers && gk.totalMembers >= 25) ? gk.totalMembers : 25;
-            const new7d = gk.newMembers7Days !== undefined ? gk.newMembers7Days : 3;
+            const totMem = gk.totalMembers !== undefined ? gk.totalMembers : 41;
+            const new7d = gk.newMembers7Days !== undefined ? gk.newMembers7Days : 0;
             const newToday = gk.newMembersToday !== undefined ? gk.newMembersToday : 0;
-            const unclaimed = gk.unclaimedAccounts !== undefined ? gk.unclaimedAccounts : 16;
+            const unclaimed = gk.unclaimedAccounts !== undefined ? gk.unclaimedAccounts : 17;
             const expTokens = gk.expiredTokens !== undefined ? gk.expiredTokens : 0;
-            const unsynced = (gk.unsyncedChiefs && gk.unsyncedChiefs >= 23) ? gk.unsyncedChiefs : 23;
+            const unsynced = gk.unsyncedChiefs !== undefined ? gk.unsyncedChiefs : 27;
 
             const totEl = document.getElementById('gk-total-members');
             const n7El = document.getElementById('gk-new-7d');
@@ -802,8 +895,8 @@
             const unsyncEl = document.getElementById('gk-unsynced');
 
             if (totEl) totEl.innerText = fNum(totMem);
-            if (n7El) n7El.innerText = (new7d > 0 ? `+${fNum(new7d)}` : fNum(new7d));
-            if (nTodayEl) nTodayEl.innerText = (newToday > 0 ? `+${fNum(newToday)}` : fNum(newToday));
+            if (n7El) n7El.innerText = (new7d > 0 ? `+${fNum(new7d)}` : `+${new7d}`);
+            if (nTodayEl) nTodayEl.innerText = (newToday > 0 ? `+${fNum(newToday)}` : `+${newToday}`);
             if (uncEl) uncEl.innerText = fNum(unclaimed);
             if (expEl) {
                 expEl.innerText = fNum(expTokens);
@@ -1069,7 +1162,7 @@
         });
 
         const DEFAULT_GH_REPOS = [
-            { name: "BDClive", owner: "bdclive", fullName: "bdclive/BDClive", htmlUrl: "https://github.com/bdclive/BDClive", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "BDC Live Central Command Dashboard", latestCommit: "v10.2.84 : Added 30s Discord event interval with 429 rate limit backoff and cached stability in Central Command v1.0.64" },
+            { name: "BDClive", owner: "bdclive", fullName: "bdclive/BDClive", htmlUrl: "https://github.com/bdclive/BDClive", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "BDC Live Central Command Dashboard", latestCommit: "v10.2.85 : Integrated real-time WOS Gatekeeper roster engine and interactive modal audit" },
             { name: "wosBDC.github.io", owner: "wosbdc", fullName: "wosbdc/wosBDC.github.io", htmlUrl: "https://github.com/wosbdc/wosBDC.github.io", pushedAt: new Date(Date.now() - 3600000 * 1.5).toISOString(), defaultBranch: "main", description: "WOS BDC Web Application", latestCommit: "v2.9.12 : WOS Alliance web portal & database updates" },
             { name: "DasherTracker.github.io", owner: "DasherTracker", fullName: "DasherTracker/DasherTracker.github.io", htmlUrl: "https://github.com/DasherTracker/DasherTracker.github.io", pushedAt: new Date(Date.now() - 3600000 * 3.5).toISOString(), defaultBranch: "main", description: "Dasher Tracker Portal", latestCommit: "Production sync" },
             { name: "theBDCFcrew.github.io", owner: "theBDCFcrew", fullName: "theBDCFcrew/theBDCFcrew.github.io", htmlUrl: "https://github.com/theBDCFcrew/theBDCFcrew.github.io", pushedAt: new Date(Date.now() - 86400000).toISOString(), defaultBranch: "main", description: "The BDCF Crew Portal", latestCommit: "Production sync" },
@@ -1260,7 +1353,7 @@
             }
         }
 
-        const CURRENT_APP_VERSION = 'v10.2.84';
+        const CURRENT_APP_VERSION = 'v10.2.85';
         let isDeployingLive = false;
         let pendingRemoteVersion = null;
         let autoRefreshTimer = null;
@@ -1697,6 +1790,334 @@
             }).join('');
         }
 
+        // ================= ALLIANCE GATEKEEPER REAL-TIME ENGINE =================
+        let rawWosRoster = null;
+        let rawWosUsers = null;
+        let currentGkFilter = 'all';
+
+        function isJwtExpired(tokenStr) {
+            if (!tokenStr || typeof tokenStr !== 'string' || !tokenStr.includes('.')) return true;
+            try {
+                const parts = tokenStr.split('.');
+                if (parts.length < 2) return true;
+                const payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')));
+                if (!payload.exp) return true;
+                return (Date.now() / 1000) > payload.exp;
+            } catch (e) {
+                return true;
+            }
+        }
+
+        function computeAndRenderGatekeeper() {
+            if (!rawWosRoster) return;
+            
+            const rosterList = Object.values(rawWosRoster);
+            const usersMap = rawWosUsers || {};
+            const totalMembers = rosterList.length;
+            
+            const registeredGameIds = new Set();
+            const verifiedGameIds = new Set();
+            const gameIdToUser = {};
+            let expiredTokens = 0;
+            let validTokens = 0;
+            let newToday = 0;
+            let new7d = 0;
+            
+            const now = Date.now();
+            const todayStart = new Date().setHours(0, 0, 0, 0);
+            const sevenDaysAgo = now - (7 * 86400 * 1000);
+            
+            Object.entries(usersMap).forEach(([uid, u]) => {
+                const gId = String(u.gameId || '').trim();
+                if (gId) {
+                    registeredGameIds.add(gId);
+                    gameIdToUser[gId] = { name: u.name || 'Anonymous Chief', email: u.email, isAlt: false, verified: !!u.centuryGamesVerified, token: u.wos_cg_token, joinedDate: u.joinedDate || u.dateStarted };
+                    if (u.centuryGamesVerified) verifiedGameIds.add(gId);
+                    if (u.wos_cg_token) {
+                        if (isJwtExpired(u.wos_cg_token)) expiredTokens++;
+                        else validTokens++;
+                    }
+                }
+                
+                // Linked Alts
+                if (Array.isArray(u.linkedGameIds)) {
+                    u.linkedGameIds.forEach(altId => {
+                        const sAlt = String(altId).trim();
+                        if (sAlt) {
+                            registeredGameIds.add(sAlt);
+                            if (!gameIdToUser[sAlt]) gameIdToUser[sAlt] = { name: u.name || 'Anonymous Chief', email: u.email, isAlt: true, parentChief: u.name, joinedDate: u.joinedDate || u.dateStarted };
+                        }
+                    });
+                }
+                if (u.altTokens && typeof u.altTokens === 'object') {
+                    Object.entries(u.altTokens).forEach(([altId, aInfo]) => {
+                        const sAlt = String(altId).trim();
+                        if (sAlt) {
+                            registeredGameIds.add(sAlt);
+                            if (aInfo.centuryGamesVerified) verifiedGameIds.add(sAlt);
+                            if (aInfo.token) {
+                                if (isJwtExpired(aInfo.token)) expiredTokens++;
+                                else validTokens++;
+                            }
+                            gameIdToUser[sAlt] = { name: aInfo.nickname || u.name, isAlt: true, parentChief: u.name, verified: !!aInfo.centuryGamesVerified, token: aInfo.token, joinedDate: aInfo.joinedDate || aInfo.dateStarted };
+                        }
+                    });
+                }
+                
+                // Join / Signup timestamps
+                if (u.createdAt) {
+                    try {
+                        const t = new Date(u.createdAt).getTime();
+                        if (t >= todayStart) newToday++;
+                        if (t >= sevenDaysAgo) new7d++;
+                    } catch(e) {}
+                }
+            });
+            
+            let unclaimedAccounts = 0;
+            rosterList.forEach(r => {
+                const gId = String(r.gameId || '').trim();
+                if (!registeredGameIds.has(gId)) {
+                    unclaimedAccounts++;
+                }
+            });
+            
+            const unsyncedChiefs = totalMembers - verifiedGameIds.size;
+            
+            // Update Card DOM Elements
+            const totEl = document.getElementById('gk-total-members');
+            const uncEl = document.getElementById('gk-unclaimed');
+            const n7El = document.getElementById('gk-new-7d');
+            const nTodayEl = document.getElementById('gk-new-today');
+            const expEl = document.getElementById('gk-expired-tokens');
+            const unsyncEl = document.getElementById('gk-unsynced');
+            
+            if (totEl) totEl.innerText = fNum(totalMembers);
+            if (uncEl) uncEl.innerText = fNum(unclaimedAccounts);
+            if (n7El) n7El.innerText = (new7d > 0 ? `+${fNum(new7d)}` : `+0`);
+            if (nTodayEl) nTodayEl.innerText = (newToday > 0 ? `+${fNum(newToday)}` : `+0`);
+            if (expEl) {
+                expEl.innerText = fNum(expiredTokens);
+                expEl.style.color = expiredTokens > 0 ? '#f85149' : '#3fb950';
+            }
+            if (unsyncEl) unsyncEl.innerText = fNum(unsyncedChiefs > 0 ? unsyncedChiefs : 0);
+            
+            // Sync to labData/gatekeeperCounters on primary database for ecosystem health
+            try {
+                if (typeof sDb !== 'undefined' && sDb) {
+                    sDb.ref('labData/gatekeeperCounters').update({
+                        totalMembers,
+                        unclaimedAccounts,
+                        newMembers7Days: new7d,
+                        newMembersToday: newToday,
+                        expiredTokens,
+                        unsyncedChiefs: unsyncedChiefs > 0 ? unsyncedChiefs : 0,
+                        activeSync: validTokens,
+                        timestamp: Date.now()
+                    }).catch(() => {});
+                }
+            } catch(e) {}
+            
+            // If modal is open, refresh table
+            if (document.getElementById('gatekeeperModal') && document.getElementById('gatekeeperModal').style.display === 'block') {
+                renderGatekeeperRosterTable();
+            }
+        }
+
+        function filterGatekeeperRoster(tab) {
+            currentGkFilter = tab;
+            ['all', 'unclaimed', 'claimed', 'tokens'].forEach(t => {
+                const btn = document.getElementById('gk-tab-' + t);
+                if (btn) {
+                    if (t === tab) {
+                        btn.style.background = '#00d2ff';
+                        btn.style.color = '#000000';
+                        btn.style.fontWeight = '700';
+                    } else {
+                        btn.style.background = '#21262d';
+                        btn.style.color = t === 'unclaimed' ? '#f1c40f' : (t === 'claimed' ? '#3fb950' : (t === 'tokens' ? '#a371f7' : '#8b949e'));
+                        btn.style.fontWeight = '600';
+                    }
+                }
+            });
+            renderGatekeeperRosterTable();
+        }
+
+        function renderGatekeeperRosterTable() {
+            if (!rawWosRoster) return;
+            const rosterList = Object.values(rawWosRoster);
+            const usersMap = rawWosUsers || {};
+            
+            const registeredGameIds = new Set();
+            const verifiedGameIds = new Set();
+            const gameIdToUser = {};
+            let expiredTokens = 0;
+            let validTokens = 0;
+            
+            Object.entries(usersMap).forEach(([uid, u]) => {
+                const gId = String(u.gameId || '').trim();
+                if (gId) {
+                    registeredGameIds.add(gId);
+                    gameIdToUser[gId] = { name: u.name || 'Anonymous Chief', email: u.email, isAlt: false, verified: !!u.centuryGamesVerified, token: u.wos_cg_token, joinedDate: u.joinedDate || u.dateStarted };
+                    if (u.centuryGamesVerified) verifiedGameIds.add(gId);
+                    if (u.wos_cg_token) {
+                        if (isJwtExpired(u.wos_cg_token)) expiredTokens++;
+                        else validTokens++;
+                    }
+                }
+                if (Array.isArray(u.linkedGameIds)) {
+                    u.linkedGameIds.forEach(altId => {
+                        const sAlt = String(altId).trim();
+                        if (sAlt) {
+                            registeredGameIds.add(sAlt);
+                            if (!gameIdToUser[sAlt]) gameIdToUser[sAlt] = { name: u.name || 'Anonymous Chief', email: u.email, isAlt: true, parentChief: u.name, joinedDate: u.joinedDate || u.dateStarted };
+                        }
+                    });
+                }
+                if (u.altTokens && typeof u.altTokens === 'object') {
+                    Object.entries(u.altTokens).forEach(([altId, aInfo]) => {
+                        const sAlt = String(altId).trim();
+                        if (sAlt) {
+                            registeredGameIds.add(sAlt);
+                            if (aInfo.centuryGamesVerified) verifiedGameIds.add(sAlt);
+                            if (aInfo.token) {
+                                if (isJwtExpired(aInfo.token)) expiredTokens++;
+                                else validTokens++;
+                            }
+                            gameIdToUser[sAlt] = { name: aInfo.nickname || u.name, isAlt: true, parentChief: u.name, verified: !!aInfo.centuryGamesVerified, token: aInfo.token, joinedDate: aInfo.joinedDate || aInfo.dateStarted };
+                        }
+                    });
+                }
+            });
+            
+            let claimedCount = 0;
+            let unclaimedCount = 0;
+            let tokenLinkedCount = 0;
+            
+            rosterList.forEach(r => {
+                const gId = String(r.gameId || '').trim();
+                const isClaimed = registeredGameIds.has(gId);
+                const uInfo = gameIdToUser[gId];
+                if (isClaimed) claimedCount++;
+                else unclaimedCount++;
+                if (uInfo && (uInfo.token || uInfo.verified)) tokenLinkedCount++;
+            });
+            
+            // Update modal header counters
+            const mTot = document.getElementById('gk-modal-total-cnt');
+            const mCl = document.getElementById('gk-modal-claimed-cnt');
+            const mUn = document.getElementById('gk-modal-unclaimed-cnt');
+            const mVer = document.getElementById('gk-modal-verified-cnt');
+            const mExp = document.getElementById('gk-modal-expired-cnt');
+            const tAllNum = document.getElementById('gk-tab-all-num');
+            const tUnNum = document.getElementById('gk-tab-unclaimed-num');
+            const tClNum = document.getElementById('gk-tab-claimed-num');
+            const tTokNum = document.getElementById('gk-tab-tokens-num');
+            
+            if (mTot) mTot.innerText = fNum(rosterList.length);
+            if (mCl) mCl.innerText = fNum(claimedCount);
+            if (mUn) mUn.innerText = fNum(unclaimedCount);
+            if (mVer) mVer.innerText = fNum(verifiedGameIds.size);
+            if (mExp) mExp.innerText = fNum(expiredTokens);
+            if (tAllNum) tAllNum.innerText = rosterList.length;
+            if (tUnNum) tUnNum.innerText = unclaimedCount;
+            if (tClNum) tClNum.innerText = claimedCount;
+            if (tTokNum) tTokNum.innerText = tokenLinkedCount;
+            
+            // Search Query Filter
+            const searchVal = (document.getElementById('gk-search-input')?.value || '').toLowerCase().trim();
+            
+            const filteredRoster = rosterList.filter(r => {
+                const gId = String(r.gameId || '').trim();
+                const chiefName = (r.name || '').toLowerCase();
+                const fLevel = (r.furnaceLevel || r.stove_lv || '').toLowerCase();
+                const isClaimed = registeredGameIds.has(gId);
+                const uInfo = gameIdToUser[gId];
+                const hasToken = uInfo && (uInfo.token || uInfo.verified);
+                
+                // Tab filter
+                if (currentGkFilter === 'unclaimed' && isClaimed) return false;
+                if (currentGkFilter === 'claimed' && !isClaimed) return false;
+                if (currentGkFilter === 'tokens' && !hasToken) return false;
+                
+                // Search filter
+                if (searchVal) {
+                    const matchName = chiefName.includes(searchVal);
+                    const matchId = gId.includes(searchVal);
+                    const matchFurnace = fLevel.includes(searchVal);
+                    const matchUser = uInfo && (uInfo.name.toLowerCase().includes(searchVal) || (uInfo.parentChief && uInfo.parentChief.toLowerCase().includes(searchVal)));
+                    if (!matchName && !matchId && !matchFurnace && !matchUser) return false;
+                }
+                
+                return true;
+            });
+            
+            const tbody = document.getElementById('gk-roster-table-body');
+            if (!tbody) return;
+            
+            if (filteredRoster.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 24px; color: #8b949e; font-size: 12px;">No alliance chiefs match your filter/search criteria.</td></tr>`;
+                return;
+            }
+            
+            tbody.innerHTML = filteredRoster.map((r, idx) => {
+                const gId = String(r.gameId || '').trim();
+                const isClaimed = registeredGameIds.has(gId);
+                const uInfo = gameIdToUser[gId];
+                const isVerified = uInfo && uInfo.verified;
+                const hasToken = uInfo && uInfo.token;
+                const tokenExpired = hasToken ? isJwtExpired(uInfo.token) : false;
+                
+                // Formatting Furnace Level
+                let fLevelStr = r.furnaceLevel || r.stove_lv || '--';
+                if (!String(fLevelStr).startsWith('FC') && parseInt(fLevelStr, 10) > 30) {
+                    fLevelStr = `FC ${parseInt(fLevelStr, 10) - 30}`;
+                } else if (!String(fLevelStr).startsWith('FC') && fLevelStr !== '--') {
+                    fLevelStr = `Lv ${fLevelStr}`;
+                }
+                
+                // Portal status badge
+                let portalBadge = '';
+                if (isClaimed) {
+                    const altNote = uInfo?.isAlt ? ` <span style="color:#58a6ff; font-size:9px;">(Alt of ${uInfo.parentChief || 'Leader'})</span>` : '';
+                    portalBadge = `<span style="background: rgba(63, 185, 80, 0.12); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.3); padding: 2px 6px; border-radius: 4px; font-weight: 700; font-size: 10px; display: inline-flex; align-items: center; gap: 4px;">✓ Claimed${altNote}</span>`;
+                } else {
+                    portalBadge = `<span style="background: rgba(241, 196, 15, 0.12); color: #f1c40f; border: 1px solid rgba(241, 196, 15, 0.3); padding: 2px 6px; border-radius: 4px; font-weight: 700; font-size: 10px;">⚠ Unclaimed</span>`;
+                }
+                
+                // Century Games sync badge
+                let cgBadge = '';
+                if (hasToken) {
+                    if (tokenExpired) {
+                        cgBadge = `<span style="background: rgba(248, 81, 73, 0.12); color: #f85149; border: 1px solid rgba(248, 81, 73, 0.3); padding: 2px 6px; border-radius: 4px; font-weight: 700; font-size: 10px;" title="Token Expired: Requires Century Games Re-verification">● Token Expired</span>`;
+                    } else {
+                        cgBadge = `<span style="background: rgba(63, 185, 80, 0.12); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.3); padding: 2px 6px; border-radius: 4px; font-weight: 700; font-size: 10px;" title="Active Live Token Valid">● Active Token</span>`;
+                    }
+                } else if (isVerified) {
+                    cgBadge = `<span style="background: rgba(163, 113, 247, 0.12); color: #a371f7; border: 1px solid rgba(163, 113, 247, 0.3); padding: 2px 6px; border-radius: 4px; font-weight: 700; font-size: 10px;">Verified (Manual)</span>`;
+                } else {
+                    cgBadge = `<span style="color: #8b949e; font-size: 10px;">Unsynced</span>`;
+                }
+                
+                const joinDateStr = r.dateStarted || uInfo?.joinedDate || 'Active';
+                const bgRow = idx % 2 === 0 ? 'background: #0d1117;' : 'background: #161b22;';
+                
+                return `<tr style="${bgRow} border-bottom: 1px solid #21262d; transition: background 0.2s ease;">
+                    <td style="padding: 9px 12px; font-weight: 700; color: #ffffff;">
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <i class="fa-solid fa-user-shield" style="color: #00d2ff; font-size: 11px;"></i>
+                            <span>${r.name || 'Unknown Chief'}</span>
+                        </div>
+                    </td>
+                    <td style="padding: 9px 8px; font-family: monospace; color: #58a6ff; font-size: 10.5px;">${gId || '--'}</td>
+                    <td style="padding: 9px 8px; font-weight: 700; color: #e3b341;">${fLevelStr}</td>
+                    <td style="padding: 9px 8px;">${portalBadge}</td>
+                    <td style="padding: 9px 8px;">${cgBadge}</td>
+                    <td style="padding: 9px 12px; text-align: right; color: #8b949e; font-size: 10px;">${joinDateStr}</td>
+                </tr>`;
+            }).join('');
+        }
+
         // ================= PLATFORM COUNTER HEALTH & AUDIT ENGINE =================
         let latestAuditReport = null;
 
@@ -2080,6 +2501,13 @@
             document.getElementById('social-tab-box').style.borderTop = '3px solid ' + color;
         }
 
+        function openGatekeeperModal() {
+            document.getElementById('gatekeeperModal').style.display = "block";
+            renderGatekeeperRosterTable();
+        }
+        function closeGatekeeperModal() {
+            document.getElementById('gatekeeperModal').style.display = "none";
+        }
         function openCourt() { document.getElementById('modal-player').src = "https://video.ibm.com/embed/23891775?autoplay=1"; document.getElementById('courtModal').style.display = "block"; }
         function closeCourt() { document.getElementById('modal-player').src = ""; document.getElementById('courtModal').style.display = "none"; }
         function openTheater() { document.getElementById('theater-player').src = "https://docs.google.com/spreadsheets/d/1NEMy5X5leBqlVs9nxNwY2ynusLgyjmymekFk4avzUv0/edit?gid=428404608&rm=minimal"; document.getElementById('theaterModal').style.display = "block"; }
@@ -2087,6 +2515,20 @@
         function openTwitch() { window.open(`Live.html?host=${window.location.hostname}`, 'TwitchStudio', `width=1480,height=820`); }
         async function getBsky() { try { const r = await fetch('https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=briandivacox.bsky.social'); const p = await r.json(); if (p.followersCount !== undefined) document.getElementById('bsky-num').innerText = fNum(p.followersCount); } catch (e) {} }
         getBsky(); setInterval(getBsky, 300000);
+
+        // Global Window Click Handler for Modals
+        window.addEventListener('click', (e) => {
+            const gkM = document.getElementById('gatekeeperModal');
+            const caM = document.getElementById('counterAuditModal');
+            const ghM = document.getElementById('githubModal');
+            const ctM = document.getElementById('courtModal');
+            const thM = document.getElementById('theaterModal');
+            if (e.target === gkM) closeGatekeeperModal();
+            if (e.target === caM) closeCounterAuditModal();
+            if (e.target === ghM) closeGithubModal();
+            if (e.target === ctM) closeCourt();
+            if (e.target === thM) closeTheater();
+        });
 
         // PWA Service Worker Registration
         if ('serviceWorker' in navigator) {
