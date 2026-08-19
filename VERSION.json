@@ -7,10 +7,11 @@
       "folder": "BDC_Central_Command/",
       "guiFile": "BDC_Central_Command/bdc_central_command_gui_v1.0.65_(windows).pyw",
       "cliFile": "BDC_Central_Command/bdc_central_command_cli_v1.0.65_(terminal).py",
+      "iconFile": "BDC_Central_Command/central_command_icon.ico",
       "blacklistFile": "BDC_Central_Command/scraped_candidates_blacklist.json",
       "tokensConfigFile": "tokens_config.json",
       "latestChanges": [
-        "v1.0.65: Fixed Discord webhook message editing by adding centralized path resolution and dual-tier Firebase persistence to prevent duplicate posting",
+        "v1.0.65: Designed custom high-definition brand icon (.ico / .png) and integrated into window title bar and desktop shortcuts; fixed Discord message editing in place",
         "v1.0.64: Implemented 30s Discord event interval with 429 rate limit backoff and cached UI stability",
         "v1.0.63: Fixed Discord HTTP 403 by using compliant DiscordBot User-Agent for event & attendee fetching",
         "v1.0.62: Built Windows host PC uptime and app runtime tracker into desktop card and Firebase telemetry"

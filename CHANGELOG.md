@@ -1,6 +1,9 @@
 # Changelog
 
 ## v10.2.85 / v1.0.65 (2026-08-19)
+- 🎨 **High-Definition Custom Brand Icon Asset (`central_command_icon.ico` & `.png`)**:
+  - Designed multi-resolution (256x256 down to 16x16) cybernetic obsidian badge featuring glowing electric cyan & gold border, plasma lightning bolt, and bold `BDC CENTRAL COMMAND` insignia.
+  - Linked native Windows window icon into `BDCCentralCommandApp` (`root.iconbitmap`) and attached custom icon to remote Desktop shortcuts (`BDC Central Command v1.0.65.lnk`).
 - 🛠️ **Fixed Discord Message Editing & Eliminated Duplicate Posting (`send_or_update_gatekeeper_report` & `send_rsvp_card`)**:
   - **Centralized Robust Path Resolution (`get_store_file_path`)**: Resolved all JSON store files (`discord_gatekeeper_report_id.json`, `discord_rsvp_ids.json`, `gatekeeper_counters.json`, `scraped_candidates_blacklist.json`, `tokens_config.json`, `discord_config.json`) dynamically across the script root, parent directory, and current working directory, preventing lost message ID references when launched from outside the folder.
   - **Dual-Tier Message ID Persistence**: Implemented automatic Firebase RTDB cloud synchronization (`/system/gatekeeper_report_msg_id.json` and `/system/discord_rsvp_ids.json`) with local disk caching so stored message IDs survive directory relocations and restarts.
