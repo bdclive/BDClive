@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BDC LIVE v10.2.90</title>
+    <title>BDC LIVE v10.2.91</title>
     <!-- Open Graph & Social Preview Meta Tags -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="BDC LIVE v10.2.90">
+    <meta property="og:title" content="BDC LIVE v10.2.91">
     <meta property="og:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="og:image" content="./bdclive_banner.jpg">
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="BDC LIVE v10.2.90">
+    <meta property="twitter:title" content="BDC LIVE v10.2.91">
     <meta property="twitter:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="twitter:image" content="./bdclive_banner.jpg">
     <!-- PWA Manifest & Mobile Web App Meta Tags -->
@@ -868,8 +868,85 @@
             computeAndRenderTicketAlerts();
         });
 
+        // ================= CENTRAL COMMAND HEARTBEAT WATCHDOG =================
+        let lastCentralCommandHeartbeat = 0;
+        let isFirebaseConnected = true;
+
+        function recordCentralCommandHeartbeat(ts) {
+            const timeVal = typeof ts === 'number' && ts > 1000000000000 ? ts : Date.now();
+            if (timeVal > lastCentralCommandHeartbeat) {
+                lastCentralCommandHeartbeat = timeVal;
+            }
+            updateCentralCommandWatchdogUI();
+        }
+
+        sDb.ref('.info/connected').on('value', snap => {
+            isFirebaseConnected = snap.val() === true;
+            updateCentralCommandWatchdogUI();
+        });
+
+        window.addEventListener('online', () => { isFirebaseConnected = true; updateCentralCommandWatchdogUI(); });
+        window.addEventListener('offline', () => { isFirebaseConnected = false; updateCentralCommandWatchdogUI(); });
+
+        function updateCentralCommandWatchdogUI() {
+            const gkBeacon = document.getElementById('gk-sync-pulse');
+            const ticketBeacon = document.getElementById('ticket-live-beacon');
+            if (!gkBeacon && !ticketBeacon) return;
+
+            if (!navigator.onLine || !isFirebaseConnected) {
+                const offHtml = '<i class="fa-solid fa-triangle-exclamation" style="font-size: 6px; color: #f85149;"></i> OFFLINE';
+                const offTitle = 'No Internet Connection • Cloud database disconnected';
+                if (gkBeacon) { gkBeacon.style.color = '#f85149'; gkBeacon.innerHTML = offHtml; gkBeacon.title = offTitle; }
+                if (ticketBeacon) { ticketBeacon.style.color = '#f85149'; ticketBeacon.innerHTML = offHtml; ticketBeacon.title = offTitle; }
+                return;
+            }
+
+            if (!lastCentralCommandHeartbeat) {
+                const initHtml = '<i class="fa-solid fa-circle fa-beat" style="font-size: 6px; color: #3fb950; animation-duration: 2s;"></i> LIVE';
+                const initTitle = 'Cloud database connected • Waiting for Central Command telemetry';
+                if (gkBeacon) { gkBeacon.style.color = '#3fb950'; gkBeacon.innerHTML = initHtml; gkBeacon.title = initTitle; }
+                if (ticketBeacon) { ticketBeacon.style.color = '#3fb950'; ticketBeacon.innerHTML = initHtml; ticketBeacon.title = initTitle; }
+                return;
+            }
+
+            const now = Date.now();
+            const ageMs = Math.max(0, now - lastCentralCommandHeartbeat);
+            const ageMinutes = ageMs / 60000;
+            const ageSeconds = Math.floor(ageMs / 1000);
+
+            let timeAgoStr = `${ageSeconds}s ago`;
+            if (ageMinutes >= 1 && ageMinutes < 60) {
+                timeAgoStr = `${Math.floor(ageMinutes)}m ago`;
+            } else if (ageMinutes >= 60) {
+                timeAgoStr = `${Math.floor(ageMinutes / 60)}h ${Math.floor(ageMinutes % 60)}m ago`;
+            }
+
+            if (ageMinutes <= 3.5) {
+                // ONLINE / ACTIVE (< 3.5m)
+                const liveHtml = '<i class="fa-solid fa-circle fa-beat" style="font-size: 6px; color: #3fb950; animation-duration: 2s;"></i> LIVE';
+                const liveTitle = `Central Command Online & Syncing • Updated ${timeAgoStr}`;
+                if (gkBeacon) { gkBeacon.style.color = '#3fb950'; gkBeacon.innerHTML = liveHtml; gkBeacon.title = liveTitle; }
+                if (ticketBeacon) { ticketBeacon.style.color = '#3fb950'; ticketBeacon.innerHTML = liveHtml; ticketBeacon.title = liveTitle; }
+            } else if (ageMinutes <= 10) {
+                // IDLE / STALE (3.5 - 10m)
+                const staleHtml = '<i class="fa-solid fa-circle" style="font-size: 6px; color: #e3b341;"></i> STALE';
+                const staleTitle = `Central Command Idle / Delayed • Last synced ${timeAgoStr}`;
+                if (gkBeacon) { gkBeacon.style.color = '#e3b341'; gkBeacon.innerHTML = staleHtml; gkBeacon.title = staleTitle; }
+                if (ticketBeacon) { ticketBeacon.style.color = '#e3b341'; ticketBeacon.innerHTML = staleHtml; ticketBeacon.title = staleTitle; }
+            } else {
+                // OFFLINE (> 10m)
+                const offHtml = '<i class="fa-solid fa-circle" style="font-size: 6px; color: #f85149;"></i> OFFLINE';
+                const offTitle = `Central Command is Offline or Closed • Last synced ${timeAgoStr}`;
+                if (gkBeacon) { gkBeacon.style.color = '#f85149'; gkBeacon.innerHTML = offHtml; gkBeacon.title = offTitle; }
+                if (ticketBeacon) { ticketBeacon.style.color = '#f85149'; ticketBeacon.innerHTML = offHtml; ticketBeacon.title = offTitle; }
+            }
+        }
+
+        setInterval(updateCentralCommandWatchdogUI, 5000);
+
         sDb.ref('labData').on('value', (s) => {
             const d = s.val(); if (!d) return;
+            recordCentralCommandHeartbeat(d.timestamp || d.lastTelemetryTimestamp || (d.gatekeeperCounters && d.gatekeeperCounters.timestamp));
             document.getElementById('plex-count-num').innerText = fNum(d.plexCount);
             document.getElementById('threads-fol-num').innerText = fNum(d.threadsFol);
             document.getElementById('threads-views-num').innerText = fNum(d.threadsViews);
@@ -1108,8 +1185,9 @@
         });
 
         sDb.ref('labData/gatekeeperCounters').on('value', (s) => {
-            if (rawWosRoster) return; // Prioritize real-time WOS Database
             const gk = s.val(); if (!gk) return;
+            if (gk.timestamp) recordCentralCommandHeartbeat(gk.timestamp);
+            if (rawWosRoster) return; // Prioritize real-time WOS Database
             const totMem = gk.totalMembers !== undefined ? gk.totalMembers : 41;
             const new7d = gk.newMembers7Days !== undefined ? gk.newMembers7Days : 0;
             const newToday = gk.newMembersToday !== undefined ? gk.newMembersToday : 0;
@@ -1401,7 +1479,7 @@
         });
 
         const DEFAULT_GH_REPOS = [
-            { name: "BDClive", owner: "bdclive", fullName: "bdclive/BDClive", htmlUrl: "https://github.com/bdclive/BDClive", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "BDC Live Central Command Dashboard", latestCommit: "v10.2.90 : Redesigned Gatekeeper widget with Game Sync dual-card architecture" },
+            { name: "BDClive", owner: "bdclive", fullName: "bdclive/BDClive", htmlUrl: "https://github.com/bdclive/BDClive", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "BDC Live Central Command Dashboard", latestCommit: "v10.2.91 : Added real-time Central Command heartbeat and offline watchdog" },
             { name: "wosBDC.github.io", owner: "wosbdc", fullName: "wosbdc/wosBDC.github.io", htmlUrl: "https://github.com/wosbdc/wosBDC.github.io", pushedAt: new Date(Date.now() - 3600000 * 1.5).toISOString(), defaultBranch: "main", description: "WOS BDC Web Application", latestCommit: "v2.9.12 : WOS Alliance web portal & database updates" },
             { name: "DasherTracker.github.io", owner: "DasherTracker", fullName: "DasherTracker/DasherTracker.github.io", htmlUrl: "https://github.com/DasherTracker/DasherTracker.github.io", pushedAt: new Date(Date.now() - 3600000 * 3.5).toISOString(), defaultBranch: "main", description: "Dasher Tracker Portal", latestCommit: "Production sync" },
             { name: "theBDCFcrew.github.io", owner: "theBDCFcrew", fullName: "theBDCFcrew/theBDCFcrew.github.io", htmlUrl: "https://github.com/theBDCFcrew/theBDCFcrew.github.io", pushedAt: new Date(Date.now() - 86400000).toISOString(), defaultBranch: "main", description: "The BDCF Crew Portal", latestCommit: "Production sync" },
@@ -1592,7 +1670,7 @@
             }
         }
 
-        const CURRENT_APP_VERSION = 'v10.2.90';
+        const CURRENT_APP_VERSION = 'v10.2.91';
         let isDeployingLive = false;
         let pendingRemoteVersion = null;
         let autoRefreshTimer = null;

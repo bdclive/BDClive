@@ -34,6 +34,11 @@
   - Updated `Start_Central_Command.bat` and transfer package to `v1.0.68`.
   - Executed Clean House protocol across all local and remote desktop directories.
 
+## v10.2.91 (2026-08-19)
+- Added real-time Central Command heartbeat and offline watchdog.
+- Live beacons automatically switch between LIVE, STALE, and OFFLINE.
+- Added live sync age tooltips and internet disconnect detection.
+
 ## v10.2.90 (2026-08-19)
 - Redesigned Gatekeeper widget with crystal-clear dual-card layout.
 - Added Alliance Chiefs card showing claimed and unclaimed counts.
