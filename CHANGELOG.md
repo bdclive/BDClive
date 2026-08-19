@@ -1,3 +1,7 @@
+## [10.2.96] - 2026-08-19
+- Reverted timer stage container height to standard.
+- Restored master deck padding baseline.
+
 ## [10.2.95] - 2026-08-19
 - Shaved timer stage box height for compact view.
 - Reduced top padding inside master cyber-glass frame.
