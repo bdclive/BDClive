@@ -1,13 +1,11 @@
-# Task List: Windows Host & Central Command Uptime Tracker (v1.0.62 / v10.2.80)
+# Task List: Set-and-Forget Auto-Update & Cache-Purge Engine (v10.2.81)
 
-- [x] Create project backup archive (`backups/LiveCounters_v10.2.80_backup.zip`)
-- [x] Add native Windows `GetTickCount64` and Central Command application runtime engine
-- [x] Integrate 16th card in Central Command Desktop GUI completing the 4x4 card grid
-- [x] Replace redundant version text in Cinema Box footer with `#host-uptime-badge` (`💻 Host: 1d 9h 🟢`)
-- [x] Connect real-time `hostUptime`, `hostBootTime`, `appRuntime`, and `uptimeStatus` to Firebase `labData`
-- [x] Upgrade Central Command to `v1.0.62` (`BDC_Central_Command/bdc_central_command_gui_v1.0.62_(windows).pyw`)
-- [x] Update `BDC_Central_Command_Transfer_Package.zip`
-- [x] Update `VERSION.json` and `CHANGELOG.md` to `v10.2.80` / Central Command `v1.0.62`
-- [x] Synchronize `New.html`, `index.html`, and `web_dashboards/New.html` to `v10.2.80`
-- [x] Verify JavaScript syntax and Python compilation
+- [x] Create project backup archive (`backups/LiveCounters_v10.2.81_backup.zip`)
+- [x] Build `performHardRefreshAndPurgeCache()` with Service Worker unregister and CacheStorage purge
+- [x] Integrate 5-second auto-update countdown timer with live badge
+- [x] Add cache-busting timestamp reload query param (`?t=${Date.now()}`)
+- [x] Update `sw.js` to `CACHE_NAME = 'livecounters-cache-v10.2.81'`
+- [x] Update `VERSION.json` and `CHANGELOG.md` to `v10.2.81`
+- [x] Synchronize `New.html`, `index.html`, and `web_dashboards/New.html` to `v10.2.81`
+- [x] Verify JavaScript syntax with Node.js
 - [x] Push live release to `origin` (`bdclive/BDClive`)
