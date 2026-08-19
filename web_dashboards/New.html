@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BDC LIVE v10.2.80</title>
+    <title>BDC LIVE v10.2.81</title>
     <!-- Open Graph & Social Preview Meta Tags -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="BDC LIVE v10.2.80">
+    <meta property="og:title" content="BDC LIVE v10.2.81">
     <meta property="og:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="og:image" content="./bdclive_banner.jpg">
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="BDC LIVE v10.2.80">
+    <meta property="twitter:title" content="BDC LIVE v10.2.81">
     <meta property="twitter:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="twitter:image" content="./bdclive_banner.jpg">
     <!-- PWA Manifest & Mobile Web App Meta Tags -->
@@ -462,19 +462,22 @@
     </div>
 
     <!-- UPDATE ALERT BANNER (Centered) -->
-    <div id="updateAlertBanner" style="display: none; position: fixed; top: 24px; left: 50%; transform: translateX(-50%); background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 12px 20px; color: #ffffff; z-index: 10000; box-shadow: 0 12px 36px rgba(0,0,0,0.8), 0 0 15px rgba(35, 134, 54, 0.2); font-size: 12px; align-items: center; gap: 16px; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); min-width: 320px; max-width: 90vw;">
+    <div id="updateAlertBanner" style="display: none; position: fixed; top: 24px; left: 50%; transform: translateX(-50%); background: #161b22; border: 1px solid #3fb950; border-radius: 12px; padding: 12px 20px; color: #ffffff; z-index: 10000; box-shadow: 0 12px 36px rgba(0,0,0,0.8), 0 0 20px rgba(63, 185, 80, 0.35); font-size: 12px; align-items: center; gap: 16px; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); min-width: 340px; max-width: 90vw;">
         <div style="display: flex; align-items: center; gap: 10px;">
             <span id="update-alert-icon" style="font-size: 20px;">⚡</span>
             <div style="display: flex; flex-direction: column; gap: 2px;">
-                <span id="update-alert-title" style="font-weight: 700; color: #58a6ff; font-size: 13px;">New Update Available</span>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span id="update-alert-title" style="font-weight: 700; color: #3fb950; font-size: 13px;">New Update Available</span>
+                    <span id="update-countdown-badge" style="background: rgba(63, 185, 80, 0.15); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.35); padding: 1px 6px; border-radius: 6px; font-size: 9.5px; font-weight: 700;">Auto-refreshing in 5s...</span>
+                </div>
                 <span id="update-alert-desc" style="color: #8b949e; font-size: 11px;">A new version has been deployed.</span>
             </div>
         </div>
         <div style="display: flex; align-items: center; gap: 8px;">
-            <button onclick="window.location.reload(true)" style="background: #238636; color: #ffffff; border: 1px solid rgba(255,255,255,0.2); padding: 6px 14px; border-radius: 6px; font-weight: 700; font-size: 11px; cursor: pointer; display: flex; align-items: center; gap: 5px; box-shadow: 0 2px 8px rgba(35, 134, 54, 0.4); white-space: nowrap;">
+            <button onclick="performHardRefreshAndPurgeCache()" style="background: #238636; color: #ffffff; border: 1px solid rgba(255,255,255,0.2); padding: 6px 14px; border-radius: 6px; font-weight: 700; font-size: 11px; cursor: pointer; display: flex; align-items: center; gap: 5px; box-shadow: 0 2px 8px rgba(35, 134, 54, 0.4); white-space: nowrap;">
                 <i class="fa-solid fa-rotate-right"></i> Reload Now
             </button>
-            <button onclick="dismissUpdateAlert()" style="background: rgba(255,255,255,0.06); color: #8b949e; border: 1px solid rgba(255,255,255,0.1); padding: 6px 10px; border-radius: 6px; font-size: 11px; cursor: pointer;">
+            <button onclick="dismissUpdateAlert()" style="background: rgba(255,255,255,0.06); color: #8b949e; border: 1px solid rgba(255,255,255,0.1); padding: 6px 10px; border-radius: 6px; font-size: 11px; cursor: pointer;" title="Dismiss & Stay on current version">
                 ✕
             </button>
         </div>
@@ -1066,7 +1069,7 @@
         });
 
         const DEFAULT_GH_REPOS = [
-            { name: "BDClive", owner: "bdclive", fullName: "bdclive/BDClive", htmlUrl: "https://github.com/bdclive/BDClive", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "BDC Live Central Command Dashboard", latestCommit: "v10.2.80 : Built Windows host PC uptime and app runtime tracker into Central Command v1.0.62 and Cinema telemetry footer" },
+            { name: "BDClive", owner: "bdclive", fullName: "bdclive/BDClive", htmlUrl: "https://github.com/bdclive/BDClive", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "BDC Live Central Command Dashboard", latestCommit: "v10.2.81 : Implemented Set-and-Forget auto-update engine with automated cache purge and 5-second hard refresh" },
             { name: "wosBDC.github.io", owner: "wosbdc", fullName: "wosbdc/wosBDC.github.io", htmlUrl: "https://github.com/wosbdc/wosBDC.github.io", pushedAt: new Date(Date.now() - 3600000 * 1.5).toISOString(), defaultBranch: "main", description: "WOS BDC Web Application", latestCommit: "v2.9.12 : WOS Alliance web portal & database updates" },
             { name: "DasherTracker.github.io", owner: "DasherTracker", fullName: "DasherTracker/DasherTracker.github.io", htmlUrl: "https://github.com/DasherTracker/DasherTracker.github.io", pushedAt: new Date(Date.now() - 3600000 * 3.5).toISOString(), defaultBranch: "main", description: "Dasher Tracker Portal", latestCommit: "Production sync" },
             { name: "theBDCFcrew.github.io", owner: "theBDCFcrew", fullName: "theBDCFcrew/theBDCFcrew.github.io", htmlUrl: "https://github.com/theBDCFcrew/theBDCFcrew.github.io", pushedAt: new Date(Date.now() - 86400000).toISOString(), defaultBranch: "main", description: "The BDCF Crew Portal", latestCommit: "Production sync" },
@@ -1257,9 +1260,67 @@
             }
         }
 
-        const CURRENT_APP_VERSION = 'v10.2.80';
+        const CURRENT_APP_VERSION = 'v10.2.81';
         let isDeployingLive = false;
         let pendingRemoteVersion = null;
+        let autoRefreshTimer = null;
+        let autoRefreshCountdown = 5;
+
+        async function performHardRefreshAndPurgeCache() {
+            if (autoRefreshTimer) {
+                clearInterval(autoRefreshTimer);
+                autoRefreshTimer = null;
+            }
+            const titleEl = document.getElementById('update-alert-title');
+            const descEl = document.getElementById('update-alert-desc');
+            const badgeEl = document.getElementById('update-countdown-badge');
+            const iconEl = document.getElementById('update-alert-icon');
+            if (iconEl) iconEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="color: #3fb950;"></i>';
+            if (titleEl) { titleEl.innerText = "⚡ Purging Caches & Reloading..."; titleEl.style.color = '#3fb950'; }
+            if (descEl) descEl.innerText = "Applying latest version...";
+            if (badgeEl) badgeEl.innerText = "Reloading...";
+
+            try {
+                if ('serviceWorker' in navigator) {
+                    const regs = await navigator.serviceWorker.getRegistrations();
+                    for (let r of regs) {
+                        await r.unregister();
+                    }
+                }
+                if ('caches' in window) {
+                    const keys = await caches.keys();
+                    await Promise.all(keys.map(k => caches.delete(k)));
+                }
+            } catch (e) {
+                console.warn("Cache purge error:", e);
+            }
+
+            // Cache-busting hard reload with timestamp query param
+            const url = new URL(window.location.href);
+            url.searchParams.set('t', Date.now());
+            window.location.href = url.toString();
+        }
+
+        function startAutoRefreshCountdown() {
+            if (autoRefreshTimer) clearInterval(autoRefreshTimer);
+            autoRefreshCountdown = 5;
+            const badgeEl = document.getElementById('update-countdown-badge');
+            if (badgeEl) {
+                badgeEl.style.display = 'inline-block';
+                badgeEl.innerText = `Auto-refreshing in ${autoRefreshCountdown}s...`;
+            }
+
+            autoRefreshTimer = setInterval(() => {
+                autoRefreshCountdown--;
+                if (autoRefreshCountdown > 0) {
+                    if (badgeEl) badgeEl.innerText = `Auto-refreshing in ${autoRefreshCountdown}s...`;
+                } else {
+                    clearInterval(autoRefreshTimer);
+                    autoRefreshTimer = null;
+                    performHardRefreshAndPurgeCache();
+                }
+            }, 1000);
+        }
 
         function parseSemver(vStr) {
             if (!vStr) return [0, 0, 0];
@@ -1282,22 +1343,32 @@
             const titleEl = document.getElementById('update-alert-title');
             const descEl = document.getElementById('update-alert-desc');
             const iconEl = document.getElementById('update-alert-icon');
+            const badgeEl = document.getElementById('update-countdown-badge');
             if (!banner) return;
 
             if (isBuilding) {
+                if (autoRefreshTimer) { clearInterval(autoRefreshTimer); autoRefreshTimer = null; }
                 banner.style.borderColor = '#d29922';
+                banner.style.boxShadow = '0 12px 36px rgba(0,0,0,0.8), 0 0 20px rgba(210, 153, 34, 0.35)';
                 if (iconEl) iconEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="color: #d29922;"></i>';
                 if (titleEl) { titleEl.innerText = title; titleEl.style.color = '#d29922'; }
+                if (badgeEl) badgeEl.style.display = 'none';
             } else {
                 banner.style.borderColor = '#3fb950';
+                banner.style.boxShadow = '0 12px 36px rgba(0,0,0,0.8), 0 0 20px rgba(63, 185, 80, 0.35)';
                 if (iconEl) iconEl.innerHTML = '⚡';
                 if (titleEl) { titleEl.innerText = title; titleEl.style.color = '#3fb950'; }
+                startAutoRefreshCountdown();
             }
             if (descEl) descEl.innerText = desc;
             banner.style.display = 'flex';
         }
 
         function dismissUpdateAlert() {
+            if (autoRefreshTimer) {
+                clearInterval(autoRefreshTimer);
+                autoRefreshTimer = null;
+            }
             const banner = document.getElementById('updateAlertBanner');
             if (banner) banner.style.display = 'none';
             if (pendingRemoteVersion) {

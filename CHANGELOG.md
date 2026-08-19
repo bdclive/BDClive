@@ -1,5 +1,9 @@
 # Changelog
 
+## v10.2.81 (2026-08-18)
+- ⚡ **Built "Set-and-Forget" Auto-Update & Hard Refresh Engine (`performHardRefreshAndPurgeCache`)**: The dashboard now automatically purges obsolete Service Worker caches, clears cache storages, and performs a cache-busted hard reload (`?t=timestamp`) after a 5-second countdown whenever a new version is deployed.
+- ⏱️ **Auto-Refresh Countdown Notification Pill**: Added live `Auto-refreshing in 5s...` visual badge to the update notification banner with manual instant reload override and cancel support.
+
 ## v10.2.80 / v1.0.62 (2026-08-18)
 - 💻 **Built Windows Host PC & Central Command App Uptime Tracker**: Added native Windows `GetTickCount64` and application runtime telemetry to Central Command desktop GUI (16th card completing the 4x4 grid) and live Firebase RTDB sync.
 - 🎬 **Cinema Footer Telemetry Upgrade (`#host-uptime-badge`)**: Replaced redundant version badge in Brian's Theater Box bottom-right footer with an ultra-compact live host uptime chip (`💻 Host: 1d 9h 🟢`) with dynamic reboot health advisories (`Optimal <7d`, `Stable 7-14d`, `Reboot Rec >14d`, `Reboot Needed >30d`).
