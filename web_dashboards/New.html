@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BDC LIVE v10.2.89</title>
+    <title>BDC LIVE v10.2.90</title>
     <!-- Open Graph & Social Preview Meta Tags -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="BDC LIVE v10.2.89">
+    <meta property="og:title" content="BDC LIVE v10.2.90">
     <meta property="og:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="og:image" content="./bdclive_banner.jpg">
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="BDC LIVE v10.2.89">
+    <meta property="twitter:title" content="BDC LIVE v10.2.90">
     <meta property="twitter:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="twitter:image" content="./bdclive_banner.jpg">
     <!-- PWA Manifest & Mobile Web App Meta Tags -->
@@ -182,9 +182,10 @@
         </div>
 
         <!-- ALLIANCE GATEKEEPER WIDGET (ROW 2, COL 2) -->
-        <div class="counter-item mirror-box" id="gatekeeper-box" onclick="openGatekeeperModal()" style="border-top: 3px solid #00d2ff; grid-area: 2 / 2; padding: 10px 14px 8px 14px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; background: linear-gradient(135deg, rgba(0, 210, 255, 0.08) 0%, rgba(13, 17, 23, 0.85) 100%); cursor: pointer; position: relative; transition: all 0.3s ease;">
+        <div class="counter-item mirror-box" id="gatekeeper-box" onclick="openGatekeeperModal()" style="border-top: 3px solid #00d2ff; grid-area: 2 / 2; padding: 10px 12px 8px 12px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; background: linear-gradient(135deg, rgba(0, 210, 255, 0.08) 0%, rgba(13, 17, 23, 0.88) 100%); cursor: pointer; position: relative; transition: all 0.3s ease;">
+            <!-- Header Bar -->
             <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-                <p class="mirror-label" style="color: #00d2ff; font-size: 0.75rem; letter-spacing: 0.8px; white-space: nowrap; display: flex; align-items: center; gap: 6px;">
+                <p class="mirror-label" style="color: #00d2ff; font-size: 0.75rem; letter-spacing: 0.8px; white-space: nowrap; display: flex; align-items: center; gap: 6px; font-weight: 800;">
                     <i class="fa-solid fa-shield-halved" style="color: #00d2ff;"></i> GATEKEEPER
                 </p>
                 <div style="display: flex; align-items: center; gap: 6px;">
@@ -193,31 +194,41 @@
                 </div>
             </div>
             
-            <div style="display: flex; justify-content: space-around; align-items: center; width: 100%; margin-top: 2px;">
-                <div style="text-align: center;">
-                    <p class="mirror-label" style="color: #8b949e; font-size: 0.65rem;">MEMBERS (UNCLAIMED)</p>
-                    <div class="mirror-stat" style="font-size: 1.95rem; line-height: 1; color: #ffffff; margin-top: 1px; font-weight: 800;">
-                        <span id="gk-unclaimed" style="color: #f1c40f;">17</span><span style="color: #8b949e; font-size: 1.25rem; font-weight: 600;">/</span><span id="gk-total-members" style="color: #ffffff;">41</span>
+            <!-- Dual-Card Core Grid -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 100%; margin: 4px 0;">
+                <!-- Left Card: Alliance Chiefs -->
+                <div style="background: rgba(0, 210, 255, 0.04); border: 1px solid rgba(0, 210, 255, 0.18); border-radius: 8px; padding: 6px 4px; text-align: center; display: flex; flex-direction: column; justify-content: space-between;">
+                    <p class="mirror-label" style="color: #8b949e; font-size: 0.60rem; margin: 0; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px;">
+                        <i class="fa-solid fa-users" style="color: #00d2ff;"></i> Chiefs
+                    </p>
+                    <div id="gk-total-members" class="mirror-stat" style="font-size: 1.85rem; line-height: 1; color: #ffffff; font-weight: 800; margin: 2px 0;">41</div>
+                    <div style="display: flex; justify-content: center; gap: 4px; flex-wrap: wrap;">
+                        <span style="background: rgba(63, 185, 80, 0.15); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.3); font-size: 0.56rem; font-weight: 800; padding: 1px 4px; border-radius: 4px; white-space: nowrap;" title="Claimed Chiefs"><i class="fa-solid fa-shield"></i> <span id="gk-claimed">24</span></span>
+                        <span style="background: rgba(241, 196, 15, 0.15); color: #f1c40f; border: 1px solid rgba(241, 196, 15, 0.3); font-size: 0.56rem; font-weight: 800; padding: 1px 4px; border-radius: 4px; white-space: nowrap;" title="Unclaimed Accounts"><i class="fa-solid fa-triangle-exclamation"></i> <span id="gk-unclaimed">17</span></span>
                     </div>
                 </div>
-                <div style="text-align: center;">
-                    <p class="mirror-label" style="color: #3fb950; font-size: 0.65rem;">SIGNUPS (7D)</p>
-                    <div id="gk-new-7d" class="mirror-stat" style="font-size: 1.6rem; line-height: 1.1; color: #3fb950; font-weight: 800;">+0</div>
-                    <span style="font-size: 0.58rem; color: #8b949e;">Today: <span id="gk-new-today" style="color: #58a6ff; font-weight: 700;">+0</span></span>
+
+                <!-- Right Card: Game Sync -->
+                <div style="background: rgba(163, 113, 247, 0.04); border: 1px solid rgba(163, 113, 247, 0.2); border-radius: 8px; padding: 6px 4px; text-align: center; display: flex; flex-direction: column; justify-content: space-between;">
+                    <p class="mirror-label" style="color: #a371f7; font-size: 0.60rem; margin: 0; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px;">
+                        <i class="fa-solid fa-bolt" style="color: #a371f7;"></i> Game Sync
+                    </p>
+                    <div id="gk-valid-tokens" class="mirror-stat" style="font-size: 1.85rem; line-height: 1; color: #a371f7; font-weight: 800; margin: 2px 0;">14</div>
+                    <div style="display: flex; justify-content: center; gap: 4px; flex-wrap: wrap;">
+                        <span style="background: rgba(63, 185, 80, 0.15); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.3); font-size: 0.56rem; font-weight: 800; padding: 1px 4px; border-radius: 4px; white-space: nowrap;" title="Expired Tokens"><i class="fa-solid fa-check"></i> <span id="gk-expired-tokens">0</span> Exp</span>
+                        <span style="background: rgba(227, 179, 65, 0.12); color: #e3b341; border: 1px solid rgba(227, 179, 65, 0.25); font-size: 0.56rem; font-weight: 800; padding: 1px 4px; border-radius: 4px; white-space: nowrap;" title="Unsynced Chiefs"><i class="fa-solid fa-rotate"></i> <span id="gk-unsynced">27</span></span>
+                    </div>
                 </div>
             </div>
 
-            <div class="mirror-row" style="margin-top: 4px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 5px;">
-                <div style="text-align: center;">
-                    <p class="mirror-label" style="color: #3fb950; font-size: 0.62rem;">🔑 EXP. TOKENS</p>
-                    <div id="gk-expired-tokens" class="mirror-stat" style="font-size: 1.25rem; line-height: 1.1; color: #3fb950; font-weight: 800;">0</div>
-                </div>
-                <div style="text-align: center;">
-                    <p class="mirror-label" style="color: #e3b341; font-size: 0.62rem;">🔄 UNSYNCED</p>
-                    <div id="gk-unsynced" class="mirror-stat" style="font-size: 1.25rem; line-height: 1.1; color: #e3b341; font-weight: 800;">27</div>
-                </div>
+            <!-- Footer Strip -->
+            <div class="mirror-row" style="margin-top: 2px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 4px; display: flex; justify-content: space-between; align-items: center;">
+                <span id="gk-footer-ratio" style="font-size: 0.60rem; color: #8b949e; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                    ❄️ State 2089 • <span id="gk-claim-pct" style="color: #00d2ff; font-weight: 700;">58.5%</span> Claimed
+                </span>
+                <span style="font-size: 0.58rem; color: #3fb950; font-weight: 700;"><span id="gk-new-7d">+0</span> (7d)</span>
             </div>
-            <i class="fa-solid fa-arrow-up-right-from-square" style="position: absolute; bottom: 8px; right: 10px; color: rgba(0, 210, 255, 0.35); font-size: 9px;"></i>
+            <i class="fa-solid fa-arrow-up-right-from-square" style="position: absolute; bottom: 6px; right: 8px; color: rgba(0, 210, 255, 0.35); font-size: 8px;"></i>
         </div>
 
         <!-- TICKET ALERTS SYSTEM WIDGET (ROW 2, COL 3) -->
@@ -493,7 +504,7 @@
                     <div id="gk-modal-unclaimed-cnt" style="font-size: 18px; font-weight: 800; color: #f1c40f;">0</div>
                 </div>
                 <div style="background: rgba(163, 113, 247, 0.08); border: 1px solid rgba(163, 113, 247, 0.2); border-radius: 8px; padding: 8px; text-align: center;">
-                    <div style="font-size: 10px; color: #8b949e; font-weight: 700; text-transform: uppercase;">CG Verified</div>
+                    <div style="font-size: 10px; color: #8b949e; font-weight: 700; text-transform: uppercase;">Game Synced</div>
                     <div id="gk-modal-verified-cnt" style="font-size: 18px; font-weight: 800; color: #a371f7;">0</div>
                 </div>
                 <div style="background: rgba(248, 81, 73, 0.08); border: 1px solid rgba(248, 81, 73, 0.2); border-radius: 8px; padding: 8px; text-align: center;">
@@ -508,7 +519,7 @@
                     <button id="gk-tab-all" onclick="filterGatekeeperRoster('all')" style="background: #00d2ff; color: #000; border: none; padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer;">All Chiefs (<span id="gk-tab-all-num">0</span>)</button>
                     <button id="gk-tab-unclaimed" onclick="filterGatekeeperRoster('unclaimed')" style="background: #21262d; color: #f1c40f; border: 1px solid #30363d; padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer;">Unclaimed (<span id="gk-tab-unclaimed-num">0</span>)</button>
                     <button id="gk-tab-claimed" onclick="filterGatekeeperRoster('claimed')" style="background: #21262d; color: #3fb950; border: 1px solid #30363d; padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer;">Claimed (<span id="gk-tab-claimed-num">0</span>)</button>
-                    <button id="gk-tab-tokens" onclick="filterGatekeeperRoster('tokens')" style="background: #21262d; color: #a371f7; border: 1px solid #30363d; padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer;">Century Games Tokens (<span id="gk-tab-tokens-num">0</span>)</button>
+                    <button id="gk-tab-tokens" onclick="filterGatekeeperRoster('tokens')" style="background: #21262d; color: #a371f7; border: 1px solid #30363d; padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer;">Game Synced (<span id="gk-tab-tokens-num">0</span>)</button>
                 </div>
                 <input type="text" id="gk-search-input" oninput="renderGatekeeperRosterTable()" placeholder="🔍 Search chief name or Game ID..." style="background: #161b22; border: 1px solid #30363d; color: #fff; padding: 5px 10px; border-radius: 6px; font-size: 11px; outline: none; width: 230px;">
             </div>
@@ -522,7 +533,7 @@
                             <th style="padding: 10px 8px;">Game ID</th>
                             <th style="padding: 10px 8px;">Furnace Level</th>
                             <th style="padding: 10px 8px;">Portal Status</th>
-                            <th style="padding: 10px 8px;">Century Games Sync</th>
+                            <th style="padding: 10px 8px;">Game Sync Status</th>
                             <th style="padding: 10px 12px; text-align: right;">Joined / Active</th>
                         </tr>
                     </thead>
@@ -1044,18 +1055,27 @@
                 const unclaimed = gk.unclaimedAccounts !== undefined ? gk.unclaimedAccounts : 17;
                 const expTokens = gk.expiredTokens !== undefined ? gk.expiredTokens : 0;
                 const unsynced = gk.unsyncedChiefs !== undefined ? gk.unsyncedChiefs : 27;
+                const validTokens = gk.activeSync !== undefined ? gk.activeSync : 14;
+                const claimed = totMem - unclaimed;
+                const claimPct = ((claimed / (totMem || 1)) * 100).toFixed(1);
 
                 const totEl = document.getElementById('gk-total-members');
-                const n7El = document.getElementById('gk-new-7d');
-                const nTodayEl = document.getElementById('gk-new-today');
+                const clEl = document.getElementById('gk-claimed');
                 const uncEl = document.getElementById('gk-unclaimed');
+                const valTokEl = document.getElementById('gk-valid-tokens');
                 const expEl = document.getElementById('gk-expired-tokens');
                 const unsyncEl = document.getElementById('gk-unsynced');
+                const pctEl = document.getElementById('gk-claim-pct');
+                const n7El = document.getElementById('gk-new-7d');
+                const nTodayEl = document.getElementById('gk-new-today');
 
                 if (totEl) totEl.innerText = fNum(totMem);
+                if (clEl) clEl.innerText = fNum(claimed);
+                if (uncEl) uncEl.innerText = fNum(unclaimed);
+                if (valTokEl) valTokEl.innerText = fNum(validTokens);
+                if (pctEl) pctEl.innerText = `${claimPct}%`;
                 if (n7El) n7El.innerText = (new7d > 0 ? `+${fNum(new7d)}` : `+${new7d}`);
                 if (nTodayEl) nTodayEl.innerText = (newToday > 0 ? `+${fNum(newToday)}` : `+${newToday}`);
-                if (uncEl) uncEl.innerText = fNum(unclaimed);
                 if (expEl) {
                     expEl.innerText = fNum(expTokens);
                     expEl.style.color = expTokens > 0 ? '#f85149' : '#3fb950';
@@ -1096,18 +1116,27 @@
             const unclaimed = gk.unclaimedAccounts !== undefined ? gk.unclaimedAccounts : 17;
             const expTokens = gk.expiredTokens !== undefined ? gk.expiredTokens : 0;
             const unsynced = gk.unsyncedChiefs !== undefined ? gk.unsyncedChiefs : 27;
+            const validTokens = gk.activeSync !== undefined ? gk.activeSync : 14;
+            const claimed = totMem - unclaimed;
+            const claimPct = ((claimed / (totMem || 1)) * 100).toFixed(1);
 
             const totEl = document.getElementById('gk-total-members');
-            const n7El = document.getElementById('gk-new-7d');
-            const nTodayEl = document.getElementById('gk-new-today');
+            const clEl = document.getElementById('gk-claimed');
             const uncEl = document.getElementById('gk-unclaimed');
+            const valTokEl = document.getElementById('gk-valid-tokens');
             const expEl = document.getElementById('gk-expired-tokens');
             const unsyncEl = document.getElementById('gk-unsynced');
+            const pctEl = document.getElementById('gk-claim-pct');
+            const n7El = document.getElementById('gk-new-7d');
+            const nTodayEl = document.getElementById('gk-new-today');
 
             if (totEl) totEl.innerText = fNum(totMem);
+            if (clEl) clEl.innerText = fNum(claimed);
+            if (uncEl) uncEl.innerText = fNum(unclaimed);
+            if (valTokEl) valTokEl.innerText = fNum(validTokens);
+            if (pctEl) pctEl.innerText = `${claimPct}%`;
             if (n7El) n7El.innerText = (new7d > 0 ? `+${fNum(new7d)}` : `+${new7d}`);
             if (nTodayEl) nTodayEl.innerText = (newToday > 0 ? `+${fNum(newToday)}` : `+${newToday}`);
-            if (uncEl) uncEl.innerText = fNum(unclaimed);
             if (expEl) {
                 expEl.innerText = fNum(expTokens);
                 expEl.style.color = expTokens > 0 ? '#f85149' : '#3fb950';
@@ -1372,7 +1401,7 @@
         });
 
         const DEFAULT_GH_REPOS = [
-            { name: "BDClive", owner: "bdclive", fullName: "bdclive/BDClive", htmlUrl: "https://github.com/bdclive/BDClive", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "BDC Live Central Command Dashboard", latestCommit: "v10.2.89 : Added custom sound profiles, volume slider, desktop notifications, and priority filters to ticket alerts" },
+            { name: "BDClive", owner: "bdclive", fullName: "bdclive/BDClive", htmlUrl: "https://github.com/bdclive/BDClive", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "BDC Live Central Command Dashboard", latestCommit: "v10.2.90 : Redesigned Gatekeeper widget with Game Sync dual-card architecture" },
             { name: "wosBDC.github.io", owner: "wosbdc", fullName: "wosbdc/wosBDC.github.io", htmlUrl: "https://github.com/wosbdc/wosBDC.github.io", pushedAt: new Date(Date.now() - 3600000 * 1.5).toISOString(), defaultBranch: "main", description: "WOS BDC Web Application", latestCommit: "v2.9.12 : WOS Alliance web portal & database updates" },
             { name: "DasherTracker.github.io", owner: "DasherTracker", fullName: "DasherTracker/DasherTracker.github.io", htmlUrl: "https://github.com/DasherTracker/DasherTracker.github.io", pushedAt: new Date(Date.now() - 3600000 * 3.5).toISOString(), defaultBranch: "main", description: "Dasher Tracker Portal", latestCommit: "Production sync" },
             { name: "theBDCFcrew.github.io", owner: "theBDCFcrew", fullName: "theBDCFcrew/theBDCFcrew.github.io", htmlUrl: "https://github.com/theBDCFcrew/theBDCFcrew.github.io", pushedAt: new Date(Date.now() - 86400000).toISOString(), defaultBranch: "main", description: "The BDCF Crew Portal", latestCommit: "Production sync" },
@@ -1563,7 +1592,7 @@
             }
         }
 
-        const CURRENT_APP_VERSION = 'v10.2.89';
+        const CURRENT_APP_VERSION = 'v10.2.90';
         let isDeployingLive = false;
         let pendingRemoteVersion = null;
         let autoRefreshTimer = null;
@@ -2145,18 +2174,26 @@
                 }
             });
             
+            const claimedAccounts = totalMembers - unclaimedAccounts;
             const unsyncedChiefs = totalMembers - verifiedGameIds.size;
+            const claimPct = ((claimedAccounts / (totalMembers || 1)) * 100).toFixed(1);
             
             // Update Card DOM Elements
             const totEl = document.getElementById('gk-total-members');
+            const clEl = document.getElementById('gk-claimed');
             const uncEl = document.getElementById('gk-unclaimed');
-            const n7El = document.getElementById('gk-new-7d');
-            const nTodayEl = document.getElementById('gk-new-today');
+            const valTokEl = document.getElementById('gk-valid-tokens');
             const expEl = document.getElementById('gk-expired-tokens');
             const unsyncEl = document.getElementById('gk-unsynced');
+            const pctEl = document.getElementById('gk-claim-pct');
+            const n7El = document.getElementById('gk-new-7d');
+            const nTodayEl = document.getElementById('gk-new-today');
             
             if (totEl) totEl.innerText = fNum(totalMembers);
+            if (clEl) clEl.innerText = fNum(claimedAccounts);
             if (uncEl) uncEl.innerText = fNum(unclaimedAccounts);
+            if (valTokEl) valTokEl.innerText = fNum(validTokens);
+            if (pctEl) pctEl.innerText = `${claimPct}%`;
             if (n7El) n7El.innerText = (new7d > 0 ? `+${fNum(new7d)}` : `+0`);
             if (nTodayEl) nTodayEl.innerText = (newToday > 0 ? `+${fNum(newToday)}` : `+0`);
             if (expEl) {
@@ -2348,11 +2385,11 @@
                     portalBadge = `<span style="background: rgba(241, 196, 15, 0.12); color: #f1c40f; border: 1px solid rgba(241, 196, 15, 0.3); padding: 2px 6px; border-radius: 4px; font-weight: 700; font-size: 10px;">⚠ Unclaimed</span>`;
                 }
                 
-                // Century Games sync badge
+                // Game sync badge
                 let cgBadge = '';
                 if (hasToken) {
                     if (tokenExpired) {
-                        cgBadge = `<span style="background: rgba(248, 81, 73, 0.12); color: #f85149; border: 1px solid rgba(248, 81, 73, 0.3); padding: 2px 6px; border-radius: 4px; font-weight: 700; font-size: 10px;" title="Token Expired: Requires Century Games Re-verification">● Token Expired</span>`;
+                        cgBadge = `<span style="background: rgba(248, 81, 73, 0.12); color: #f85149; border: 1px solid rgba(248, 81, 73, 0.3); padding: 2px 6px; border-radius: 4px; font-weight: 700; font-size: 10px;" title="Token Expired: Requires Game Sync Re-verification">● Token Expired</span>`;
                     } else {
                         cgBadge = `<span style="background: rgba(63, 185, 80, 0.12); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.3); padding: 2px 6px; border-radius: 4px; font-weight: 700; font-size: 10px;" title="Active Live Token Valid">● Active Token</span>`;
                     }
