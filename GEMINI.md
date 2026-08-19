@@ -10,4 +10,5 @@
   2. Flush and purge all stale `__pycache__` directories across both local and network paths.
   3. Delete obsolete remote desktop shortcuts (e.g. `BDC Central Command vX.X.XX.lnk`) and generate the updated shortcut pointing to `Start_Central_Command.bat`.
   4. Ensure `Start_Central_Command.bat` is synchronized to the latest version.
-  5. Update `BDC_Central_Command_Transfer_Package.zip` in `\\DESKTOP-1CC6J72\Users\Brian\Downloads\`.
+  5. Always regenerate and update both `BDC Central Command vX.X.XX.lnk` and `BDC Central Command.lnk` on the Desktop (`\\DESKTOP-1CC6J72\Users\Brian\OneDrive\Desktop` and local desktops) with `central_command_icon.ico`.
+  6. Update `BDC_Central_Command_Transfer_Package.zip` in `\\DESKTOP-1CC6J72\Users\Brian\Downloads\`.
