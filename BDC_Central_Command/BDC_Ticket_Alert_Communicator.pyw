@@ -69,6 +69,18 @@ C_AMBER_BG = "#451a03"     # Amber pill bg
 C_BLUE = "#38bdf8"         # Sky Blue
 C_BLUE_BG = "#0c4a6e"      # Sky Blue pill bg
 
+class AutoScrollbar(tk.Scrollbar):
+    """Intelligent scrollbar that automatically hides itself when content fits the view."""
+    def set(self, lo, hi):
+        if float(lo) <= 0.0 and float(hi) >= 1.0:
+            self.pack_forget()
+        else:
+            if self.cget('orient') == 'horizontal':
+                self.pack(side='bottom', fill='x')
+            else:
+                self.pack(side='right', fill='y')
+        tk.Scrollbar.set(self, lo, hi)
+
 class TicketAlertCommunicator:
     def __init__(self):
         self.root = tk.Tk()
@@ -477,19 +489,18 @@ class TicketAlertCommunicator:
         ent_search.insert(0, "🔍 Search tickets or author...")
         ent_search.bind("<FocusIn>", lambda e: ent_search.delete(0, "end") if "Search" in ent_search.get() else None)
 
-        # Scrollable Ticket Canvas
+        # Scrollable Ticket Canvas with Auto-Hiding Scrollbar
         list_container = tk.Frame(self.left_pane, bg=C_PANEL)
         list_container.pack(fill="both", expand=True)
 
         self.canvas = tk.Canvas(list_container, bg=C_PANEL, highlightthickness=0)
-        self.v_scrollbar = tk.Scrollbar(list_container, orient="vertical", command=self.canvas.yview)
+        self.v_scrollbar = AutoScrollbar(list_container, orient="vertical", command=self.canvas.yview)
         self.scroll_frame = tk.Frame(self.canvas, bg=C_PANEL)
 
         self.scroll_frame.bind("<Configure>", lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all")))
         self.canvas_window_id = self.canvas.create_window((0, 0), window=self.scroll_frame, anchor="nw")
         self.canvas.configure(yscrollcommand=self.v_scrollbar.set)
         
-        self.v_scrollbar.pack(side="right", fill="y")
         self.canvas.pack(side="left", fill="both", expand=True)
         self.canvas.bind("<Configure>", self._on_canvas_resize)
         self.canvas.bind_all("<MouseWheel>", self._on_mousewheel)
@@ -568,7 +579,7 @@ class TicketAlertCommunicator:
 
     def _on_canvas_resize(self, event):
         try:
-            self.canvas.itemconfig(self.canvas_window_id, width=max(event.width, 360))
+            self.canvas.itemconfig(self.canvas_window_id, width=event.width)
         except Exception:
             pass
 
