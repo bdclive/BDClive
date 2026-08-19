@@ -1,3 +1,7 @@
+## [10.2.94] - 2026-08-19
+- Removed gap between top border and page edge.
+- Centered command deck frame directly at page top.
+
 ## [1.0.71] - 2026-08-19
 ### Fixed & Enhanced
 - 🛡️ **Alliance Token Scanner Robustness & Pure Python Fallback Engine**:
