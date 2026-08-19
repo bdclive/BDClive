@@ -14,11 +14,11 @@
       "cliFile": "Threads_Bridge/threads_bridge_cli_v1.0.59_(terminal).py"
     },
     "bdclive_web_dashboard": {
-      "version": "10.2.91",
+      "version": "10.2.92",
       "repository": "https://github.com/bdclive/BDClive",
       "latestChanges": [
-        "v10.2.91: Added real-time Central Command heartbeat and automatic offline watchdog",
-        "v10.2.90: Redesigned Gatekeeper widget with Game Sync dual-card architecture and purged legacy terminology"
+        "v10.2.92: Streamlined Gatekeeper widget header and relocated live status beacon to footer",
+        "v10.2.91: Added real-time Central Command heartbeat and automatic offline watchdog"
       ]
     },
     "wosbdc_alliance_dashboard": {
