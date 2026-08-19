@@ -1,6 +1,19 @@
 # Changelog
 
 ## v10.2.85 / v1.0.65 (2026-08-19)
+- 🛡️ **Alliance Gatekeeper Real-Time Database Engine & Live Sync**:
+  - Connected direct real-time listeners for `wosDb.ref('roster_live')` and `wosDb.ref('users')` (`wos-dashboard-38d4c`), replacing static/stale counts with live dynamic calculations across the 41-Chief Whiteout Survival alliance roster.
+  - Eliminated artificial JavaScript floor clamps (which locked values to `25` / `23`), enabling 100% accurate dynamic metrics: **Total Alliance Roster (41)**, **Claimed Chiefs (24)**, **Unclaimed Accounts (17)**, **Century Games Verified (14)**, **Signups Today / 7D**, and **Expired Tokens**.
+  - Built automatic background synchronization that updates `/labData/gatekeeperCounters` in the primary Firebase RTDB for unified cross-platform consistency.
+- 📋 **Interactive Alliance Gatekeeper Roster & Token Audit Modal (`openGatekeeperModal()`)**:
+  - Clicking the Gatekeeper card now opens a full-featured inspection modal equipped with:
+    - **Live 5-Metric Summary Cards**: Total Roster, Claimed Chiefs, Unclaimed Accounts, Century Games Verified, and Expired Tokens.
+    - **4-Way Filter Tabs & Instant Search**: Filter by `All Chiefs`, `Unclaimed`, `Claimed`, and `Century Games Tokens`, or search in real time by chief name, Game ID, furnace level, or leader name.
+    - **Detailed Chief Roster Table**: Lists all alliance chiefs with their Game ID, Furnace/Stove level (`FC 8`, `FC 7`, `Lv 30`, etc.), portal claim status, token health (Active vs Expired JWT), and join date.
+    - **1-Click Portal Launcher**: Direct header link to the Whiteout Survival BDC Alliance Portal.
+- 🎨 **Polished Gatekeeper Card UI**:
+  - Removed awkward legacy inline margins (`margin-left: 45px; margin-right: 24px;`) for a balanced layout.
+  - Added live pulsing beacon indicator (`● LIVE`), shield badge (`🛡️ GATEKEEPER`), interactive hover states, and click indicator icon.
 - 🎨 **High-Definition Custom Brand Icon Asset (`central_command_icon.ico` & `.png`)**:
   - Designed multi-resolution (256x256 down to 16x16) cybernetic obsidian badge featuring glowing electric cyan & gold border, plasma lightning bolt, and bold `BDC CENTRAL COMMAND` insignia.
   - Linked native Windows window icon into `BDCCentralCommandApp` (`root.iconbitmap`) and attached custom icon to remote Desktop shortcuts (`BDC Central Command v1.0.65.lnk`).

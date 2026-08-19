@@ -1,13 +1,18 @@
-# Task List: Rate Limit Fix & Version Bump (v1.0.64 / v10.2.84)
+# Task List: Alliance Gatekeeper Real-Time Sync & Audit Modal (v10.2.85)
 
-- [x] Create project backup archive (`backups/LiveCounters_v10.2.84_backup.zip`)
-- [x] Eliminate HTTP 429 bounce by adding 30s Discord event interval and smart backoff
-- [x] Implement persistent in-memory UI card cache so Discord status never flickers
-- [x] Optimize user roster scraping to only trigger when user_count > 0
-- [x] Upgrade Central Command to `v1.0.64` (`BDC_Central_Command/bdc_central_command_gui_v1.0.64_(windows).pyw`)
-- [x] Deploy `v1.0.64` directly to server (`\\DESKTOP-1CC6J72\Users\Brian\OneDrive\Desktop\BDC Central Command\`)
-- [x] Update server desktop shortcut: `BDC Central Command v1.0.64.lnk`
-- [x] Bump `New.html`, `index.html`, and `web_dashboards/New.html` to `v10.2.84`
-- [x] Update `sw.js` cache name to `livecounters-cache-v10.2.84`
-- [x] Update `VERSION.json` and `CHANGELOG.md` to `v10.2.84` / Central Command `v1.0.64`
-- [x] Push release to `origin` (`bdclive/BDClive`)
+- [x] Create project backup archive (`backups/LiveCounters_v10.2.85_backup.zip`)
+- [x] Connect real-time listeners for `wosDb.ref('roster_live')` and `wosDb.ref('users')` in `index.html`, `New.html`, `web_dashboards/New.html`
+- [x] Implement dynamic calculations for:
+  - Total Roster Members (from `roster_live`: 41 chiefs)
+  - Unclaimed Accounts (roster members without registered user accounts: 17 unclaimed)
+  - Signups (Today & 7-Day from user registration timestamps)
+  - Expired Tokens (JWT expiration check on linked Century Games tokens: 14 accounts)
+  - Unsynced / Unverified Chiefs (27 chiefs)
+- [x] Update `labData/gatekeeperCounters` in Firebase RTDB for ecosystem consistency
+- [x] Polish Gatekeeper Card UI (clean margins, hover state, click cursor, badge)
+- [x] Build interactive **Alliance Gatekeeper Roster & Token Audit Modal** (`openGatekeeperModal()`)
+- [x] Bump versions to `v10.2.85` in `VERSION.json`, `index.html`, `New.html`, `web_dashboards/New.html`, `sw.js`
+- [x] Update `CHANGELOG.md` with detailed release notes
+- [x] Commit and push to GitHub (`origin main`) with compliant commit message
+
+
