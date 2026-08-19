@@ -35,6 +35,7 @@ if sys.platform == 'win32':
         pass
 
 # --- CONSTANTS & CONFIGURATION ---
+APP_VERSION = "v1.0.67"
 WOS_FIREBASE_URL = "https://wos-dashboard-38d4c-default-rtdb.firebaseio.com"
 WOS_FIREBASE_SECRET = "n5fTnxcK5J5ddNsT77AhZIoQGTogW3ROpk4k03Sv"
 PUBLIC_WEBSITE_URL = "https://wosbdc.github.io/#feedback"
@@ -71,7 +72,7 @@ C_BLUE_BG = "#0c4a6e"      # Sky Blue pill bg
 class TicketAlertCommunicator:
     def __init__(self):
         self.root = tk.Tk()
-        self.root.title("BDC Live Alert Communicator — Bug & Ticket Desk")
+        self.root.title(f"BDC Live Alert Communicator {APP_VERSION} — Bug & Ticket Desk")
         self.root.minsize(920, 600)
         self.root.configure(bg=C_BG)
 
@@ -394,8 +395,14 @@ class TicketAlertCommunicator:
         t_text = tk.Frame(title_box, bg=C_HEADER)
         t_text.pack(side="left")
 
-        lbl_app_name = tk.Label(t_text, text="BDC LIVE TICKET & ALERT DESK", font=("Segoe UI", 13, "bold"), fg=C_TEXT, bg=C_HEADER)
-        lbl_app_name.pack(anchor="w")
+        title_row = tk.Frame(t_text, bg=C_HEADER)
+        title_row.pack(anchor="w")
+
+        lbl_app_name = tk.Label(title_row, text="BDC LIVE TICKET & ALERT DESK", font=("Segoe UI", 13, "bold"), fg=C_TEXT, bg=C_HEADER)
+        lbl_app_name.pack(side="left")
+
+        lbl_ver_badge = tk.Label(title_row, text=APP_VERSION, font=("Segoe UI", 8, "bold"), fg=C_ACCENT, bg="#083344", padx=6, pady=1)
+        lbl_ver_badge.pack(side="left", padx=(8, 0))
 
         status_row = tk.Frame(t_text, bg=C_HEADER)
         status_row.pack(anchor="w", pady=(2, 0))
@@ -503,7 +510,7 @@ class TicketAlertCommunicator:
         self.lbl_save_toast = tk.Label(self.statusbar, text="", fg=C_GREEN, bg=C_INPUT, font=("Segoe UI", 8, "bold"))
         self.lbl_save_toast.pack(side="left", padx=20)
 
-        self.lbl_sb_right = tk.Label(self.statusbar, text="BDC Central Command Live Bridge", fg=C_MUTED, bg=C_INPUT, font=("Segoe UI", 8))
+        self.lbl_sb_right = tk.Label(self.statusbar, text=f"BDC Central Command Live Bridge • {APP_VERSION}", fg=C_MUTED, bg=C_INPUT, font=("Segoe UI", 8, "bold"))
         self.lbl_sb_right.pack(side="right")
 
         # Restore Sash Position after render
@@ -937,11 +944,11 @@ class TicketAlertCommunicator:
                 img = Image.new('RGB', (64, 64), color=(0, 210, 255))
 
             menu = pystray.Menu(
-                pystray.MenuItem("Open Alert Communicator", self.restore_from_tray, default=True),
+                pystray.MenuItem(f"Open Alert Communicator ({APP_VERSION})", self.restore_from_tray, default=True),
                 pystray.MenuItem("Test Alert Chime", self.trigger_test_alert),
                 pystray.MenuItem("Exit Completely", self.quit_application)
             )
-            self.tray_icon = pystray.Icon("BDC_Communicator", img, "BDC Live Alert Communicator", menu)
+            self.tray_icon = pystray.Icon("BDC_Communicator", img, f"BDC Live Alert Communicator {APP_VERSION}", menu)
             threading.Thread(target=self.tray_icon.run, daemon=True).start()
         except Exception as e:
             print(f"[Tray Setup Note] {e}")

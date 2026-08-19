@@ -1,6 +1,11 @@
 # Changelog
 
-## v10.2.88 (2026-08-19)
+## v1.0.67 (2026-08-19)
+- 🛡️ **BDC Ticket Alert Communicator Pro UI & Version Identifier Integration**:
+  - **Prominent Version Number Display**: Embedded `v1.0.67` across window title (`BDC Live Alert Communicator v1.0.67 — Bug & Ticket Desk`), header bar badge pill, status bar footer, and Windows system tray tooltip/menu.
+  - **Window Memory & Sash Persistence**: Window geometry (width, height, screen X/Y) and paned window divider sash position now automatically save to `communicator_config.json` and restore on launch.
+  - **Elevated Cyberpunk Dark UI**: Added card hover glow effects, dynamic status badges, live tab item counters (`All (3)`, `🟡 Pending (1)`, etc.), and refined glass inspector panel with quick response templates and cloud sync confirmation.
+
 - 🔇 **Eliminated Ticket Alerts Sound Chime Loop & Initial Load Silence**:
   - Implemented `isTicketInitialLoadComplete` guard ensuring that existing pending tickets never trigger audio alerts when opening or refreshing the dashboard.
   - Added a 5-second minimum cooldown debounce (`lastTicketSoundPlayedTime`) to prevent machine-gunning or repeating chime sounds.
