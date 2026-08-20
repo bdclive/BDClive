@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BDC LIVE v10.2.103</title>
+    <title>BDC LIVE v10.2.104</title>
     <!-- Open Graph & Social Preview Meta Tags -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="BDC LIVE v10.2.103">
+    <meta property="og:title" content="BDC LIVE v10.2.104">
     <meta property="og:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="og:image" content="./bdclive_banner.jpg">
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="BDC LIVE v10.2.103">
+    <meta property="twitter:title" content="BDC LIVE v10.2.104">
     <meta property="twitter:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="twitter:image" content="./bdclive_banner.jpg">
     <!-- PWA Manifest & Mobile Web App Meta Tags -->
@@ -1524,7 +1524,7 @@
         });
 
         const DEFAULT_GH_REPOS = [
-            { name: "BDClive", owner: "bdclive", fullName: "bdclive/BDClive", htmlUrl: "https://github.com/bdclive/BDClive", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "BDC Live Central Command Dashboard", latestCommit: "v10.2.103 : Live dynamic synchronization across all dropdown option filters and action button counters" },
+            { name: "BDClive", owner: "bdclive", fullName: "bdclive/BDClive", htmlUrl: "https://github.com/bdclive/BDClive", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "BDC Live Central Command Dashboard", latestCommit: "v10.2.104 : Modal protection guard, popup persistence, and unprompted auto-reload removal" },
             { name: "wosBDC.github.io", owner: "wosbdc", fullName: "wosbdc/wosBDC.github.io", htmlUrl: "https://github.com/wosbdc/wosBDC.github.io", pushedAt: new Date(Date.now() - 3600000 * 1.5).toISOString(), defaultBranch: "main", description: "WOS BDC Web Application", latestCommit: "v2.9.86 : Dynamic real-time synchronization for all dropdown filter options and action button counters" },
             { name: "DasherTracker.github.io", owner: "DasherTracker", fullName: "DasherTracker/DasherTracker.github.io", htmlUrl: "https://github.com/DasherTracker/DasherTracker.github.io", pushedAt: new Date(Date.now() - 3600000 * 3.5).toISOString(), defaultBranch: "main", description: "Dasher Tracker Portal", latestCommit: "Production sync" },
             { name: "theBDCFcrew.github.io", owner: "theBDCFcrew", fullName: "theBDCFcrew/theBDCFcrew.github.io", htmlUrl: "https://github.com/theBDCFcrew/theBDCFcrew.github.io", pushedAt: new Date(Date.now() - 86400000).toISOString(), defaultBranch: "main", description: "The BDCF Crew Portal", latestCommit: "Production sync" },
@@ -1715,7 +1715,7 @@
             }
         }
 
-        const CURRENT_APP_VERSION = 'v10.2.103';
+        const CURRENT_APP_VERSION = 'v10.2.104';
         let isDeployingLive = false;
         let pendingRemoteVersion = null;
         let autoRefreshTimer = null;
@@ -1746,6 +1746,17 @@
             } catch(e) {}
         }
 
+        function isAnyModalOpen() {
+            const modalIds = ['ticketAlertsModal', 'gatekeeperModal', 'githubModal', 'counterAuditModal', 'courtModal', 'theaterModal', 'ticketModal'];
+            for (const id of modalIds) {
+                const el = document.getElementById(id);
+                if (el && el.style.display && el.style.display !== 'none') {
+                    return id;
+                }
+            }
+            return null;
+        }
+
         async function performHardRefreshAndPurgeCache(targetVer) {
             if (autoRefreshTimer) {
                 clearInterval(autoRefreshTimer);
@@ -1756,6 +1767,12 @@
                 sessionStorage.setItem('last_auto_reload_for_' + verToRecord, String(Date.now()));
             } catch(e) {}
 
+            // Save active modal to seamlessly restore after reload
+            const openModalId = isAnyModalOpen();
+            if (openModalId) {
+                try { sessionStorage.setItem('active_modal_id', openModalId); } catch(e) {}
+            }
+
             const titleEl = document.getElementById('update-alert-title');
             const descEl = document.getElementById('update-alert-desc');
             const badgeEl = document.getElementById('update-countdown-badge');
@@ -1763,7 +1780,7 @@
             if (iconEl) iconEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="color: #3fb950;"></i>';
             if (titleEl) { titleEl.innerText = "⚡ Purging Caches & Reloading..."; titleEl.style.color = '#3fb950'; }
             if (descEl) descEl.innerText = "Applying latest version...";
-            if (badgeEl) badgeEl.innerText = "Reloading...";
+            if (badgeEl) { badgeEl.innerText = "Reloading..."; badgeEl.style.display = 'inline-block'; }
 
             try {
                 if ('serviceWorker' in navigator) {
@@ -1784,46 +1801,6 @@
             const url = new URL(window.location.href);
             url.searchParams.set('t', Date.now());
             window.location.href = url.toString();
-        }
-
-        function startAutoRefreshCountdown(remoteVer) {
-            if (autoRefreshTimer) clearInterval(autoRefreshTimer);
-            const normVer = normalizeVer(remoteVer);
-            
-            // Loop Guard: If an auto-reload for this version was already attempted in the last 5 minutes, DO NOT loop!
-            const lastAttempt = sessionStorage.getItem('last_auto_reload_for_' + normVer);
-            if (lastAttempt && (Date.now() - parseInt(lastAttempt, 10)) < 300000) {
-                const badgeEl = document.getElementById('update-countdown-badge');
-                if (badgeEl) {
-                    badgeEl.style.display = 'inline-block';
-                    badgeEl.style.background = 'rgba(227, 179, 65, 0.15)';
-                    badgeEl.style.color = '#e3b341';
-                    badgeEl.style.borderColor = 'rgba(227, 179, 65, 0.35)';
-                    badgeEl.innerText = `Click Reload to apply`;
-                }
-                return;
-            }
-
-            autoRefreshCountdown = 5;
-            const badgeEl = document.getElementById('update-countdown-badge');
-            if (badgeEl) {
-                badgeEl.style.display = 'inline-block';
-                badgeEl.style.background = 'rgba(63, 185, 80, 0.15)';
-                badgeEl.style.color = '#3fb950';
-                badgeEl.style.borderColor = 'rgba(63, 185, 80, 0.35)';
-                badgeEl.innerText = `Auto-refreshing in ${autoRefreshCountdown}s...`;
-            }
-
-            autoRefreshTimer = setInterval(() => {
-                autoRefreshCountdown--;
-                if (autoRefreshCountdown > 0) {
-                    if (badgeEl) badgeEl.innerText = `Auto-refreshing in ${autoRefreshCountdown}s...`;
-                } else {
-                    clearInterval(autoRefreshTimer);
-                    autoRefreshTimer = null;
-                    performHardRefreshAndPurgeCache(normVer);
-                }
-            }, 1000);
         }
 
         function parseSemver(vStr) {
@@ -1857,7 +1834,6 @@
             }
 
             if (isBuilding) {
-                if (autoRefreshTimer) { clearInterval(autoRefreshTimer); autoRefreshTimer = null; }
                 banner.style.borderColor = '#d29922';
                 banner.style.boxShadow = '0 12px 36px rgba(0,0,0,0.8), 0 0 20px rgba(210, 153, 34, 0.35)';
                 if (iconEl) iconEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="color: #d29922;"></i>';
@@ -1868,7 +1844,13 @@
                 banner.style.boxShadow = '0 12px 36px rgba(0,0,0,0.8), 0 0 20px rgba(63, 185, 80, 0.35)';
                 if (iconEl) iconEl.innerHTML = '⚡';
                 if (titleEl) { titleEl.innerText = title; titleEl.style.color = '#3fb950'; }
-                startAutoRefreshCountdown(normVer);
+                if (badgeEl) {
+                    badgeEl.style.display = 'inline-block';
+                    badgeEl.style.background = 'rgba(63, 185, 80, 0.15)';
+                    badgeEl.style.color = '#3fb950';
+                    badgeEl.style.borderColor = 'rgba(63, 185, 80, 0.35)';
+                    badgeEl.innerText = 'Click Reload to Apply';
+                }
             }
             if (descEl) descEl.innerText = desc;
             banner.style.display = 'flex';
@@ -3112,12 +3094,14 @@
         }
 
         function openTicketAlertsModal() {
+            try { sessionStorage.setItem('active_modal_id', 'ticketAlertsModal'); } catch(e) {}
             document.getElementById('ticketAlertsModal').style.display = 'block';
             updateTicketSoundUI();
             renderTicketAlertsTable();
         }
 
         function closeTicketAlertsModal() {
+            try { sessionStorage.removeItem('active_modal_id'); } catch(e) {}
             document.getElementById('ticketAlertsModal').style.display = 'none';
         }
 
@@ -3358,11 +3342,13 @@
         });
 
         function openCounterAuditModal() {
+            try { sessionStorage.setItem('active_modal_id', 'counterAuditModal'); } catch(e) {}
             document.getElementById('counterAuditModal').style.display = 'block';
             renderCounterAuditTable();
         }
 
         function closeCounterAuditModal() {
+            try { sessionStorage.removeItem('active_modal_id'); } catch(e) {}
             document.getElementById('counterAuditModal').style.display = 'none';
         }
 
@@ -3588,11 +3574,13 @@
         }
 
         function openGithubModal() {
+            try { sessionStorage.setItem('active_modal_id', 'githubModal'); } catch(e) {}
             document.getElementById('githubModal').style.display = 'block';
             filterGithubModal();
         }
 
         function closeGithubModal() {
+            try { sessionStorage.removeItem('active_modal_id'); } catch(e) {}
             document.getElementById('githubModal').style.display = 'none';
         }
 
@@ -3731,20 +3719,61 @@
         }
 
         function openGatekeeperModal() {
+            try { sessionStorage.setItem('active_modal_id', 'gatekeeperModal'); } catch(e) {}
             document.getElementById('gatekeeperModal').style.display = "block";
             updateGkSoundBtnUI();
             renderGatekeeperRosterTable();
         }
         function closeGatekeeperModal() {
+            try { sessionStorage.removeItem('active_modal_id'); } catch(e) {}
             document.getElementById('gatekeeperModal').style.display = "none";
         }
-        function openCourt() { document.getElementById('modal-player').src = "https://video.ibm.com/embed/23891775?autoplay=1"; document.getElementById('courtModal').style.display = "block"; }
-        function closeCourt() { document.getElementById('modal-player').src = ""; document.getElementById('courtModal').style.display = "none"; }
-        function openTheater() { document.getElementById('theater-player').src = "https://docs.google.com/spreadsheets/d/1NEMy5X5leBqlVs9nxNwY2ynusLgyjmymekFk4avzUv0/edit?gid=428404608&rm=minimal"; document.getElementById('theaterModal').style.display = "block"; }
-        function closeTheater() { document.getElementById('theater-player').src = ""; document.getElementById('theaterModal').style.display = "none"; }
+        function openCourt() { 
+            try { sessionStorage.setItem('active_modal_id', 'courtModal'); } catch(e) {}
+            document.getElementById('modal-player').src = "https://video.ibm.com/embed/23891775?autoplay=1"; 
+            document.getElementById('courtModal').style.display = "block"; 
+        }
+        function closeCourt() { 
+            try { sessionStorage.removeItem('active_modal_id'); } catch(e) {}
+            document.getElementById('modal-player').src = ""; 
+            document.getElementById('courtModal').style.display = "none"; 
+        }
+        function openTheater() { 
+            try { sessionStorage.setItem('active_modal_id', 'theaterModal'); } catch(e) {}
+            document.getElementById('theater-player').src = "https://docs.google.com/spreadsheets/d/1NEMy5X5leBqlVs9nxNwY2ynusLgyjmymekFk4avzUv0/edit?gid=428404608&rm=minimal"; 
+            document.getElementById('theaterModal').style.display = "block"; 
+        }
+        function closeTheater() { 
+            try { sessionStorage.removeItem('active_modal_id'); } catch(e) {}
+            document.getElementById('theater-player').src = ""; 
+            document.getElementById('theaterModal').style.display = "none"; 
+        }
         function openTwitch() { window.open(`Live.html?host=${window.location.hostname}`, 'TwitchStudio', `width=1480,height=820`); }
         async function getBsky() { try { const r = await fetch('https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=briandivacox.bsky.social'); const p = await r.json(); if (p.followersCount !== undefined) document.getElementById('bsky-num').innerText = fNum(p.followersCount); } catch (e) {} }
         getBsky(); setInterval(getBsky, 300000);
+
+        function restoreModalStateOnLoad() {
+            try {
+                const activeModal = sessionStorage.getItem('active_modal_id');
+                if (!activeModal) return;
+                setTimeout(() => {
+                    if (activeModal === 'ticketAlertsModal' && typeof openTicketAlertsModal === 'function') {
+                        openTicketAlertsModal();
+                    } else if (activeModal === 'gatekeeperModal' && typeof openGatekeeperModal === 'function') {
+                        openGatekeeperModal();
+                    } else if (activeModal === 'githubModal' && typeof openGithubModal === 'function') {
+                        openGithubModal();
+                    } else if (activeModal === 'counterAuditModal' && typeof openCounterAuditModal === 'function') {
+                        openCounterAuditModal();
+                    } else if (activeModal === 'theaterModal' && typeof openTheater === 'function') {
+                        openTheater();
+                    } else if (activeModal === 'courtModal' && typeof openCourt === 'function') {
+                        openCourt();
+                    }
+                }, 350);
+            } catch(e) {}
+        }
+        restoreModalStateOnLoad();
 
         // Global Window Click Handler for Modals
         window.addEventListener('click', (e) => {
@@ -3760,6 +3789,18 @@
             if (e.target === ghM) closeGithubModal();
             if (e.target === ctM) closeCourt();
             if (e.target === thM) closeTheater();
+        });
+
+        // Global Escape Key Listener for Modals
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeGatekeeperModal();
+                closeTicketAlertsModal();
+                closeCounterAuditModal();
+                closeGithubModal();
+                closeCourt();
+                closeTheater();
+            }
         });
 
         // PWA Service Worker Registration
