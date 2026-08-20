@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BDC LIVE v10.2.99</title>
+    <title>BDC LIVE v10.2.100</title>
     <!-- Open Graph & Social Preview Meta Tags -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="BDC LIVE v10.2.99">
+    <meta property="og:title" content="BDC LIVE v10.2.100">
     <meta property="og:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="og:image" content="./bdclive_banner.jpg">
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="BDC LIVE v10.2.99">
+    <meta property="twitter:title" content="BDC LIVE v10.2.100">
     <meta property="twitter:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="twitter:image" content="./bdclive_banner.jpg">
     <!-- PWA Manifest & Mobile Web App Meta Tags -->
@@ -692,9 +692,20 @@
                     <button id="ticket-tab-pending" onclick="filterTicketAlerts('pending')" style="background: #21262d; color: #ff7b00; border: 1px solid #30363d; padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer;">Pending (<span id="ticket-tab-pending-num">0</span>)</button>
                     <button id="ticket-tab-inprogress" onclick="filterTicketAlerts('inprogress')" style="background: #21262d; color: #58a6ff; border: 1px solid #30363d; padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer;">In-Progress (<span id="ticket-tab-inprogress-num">0</span>)</button>
                     <button id="ticket-tab-resolved" onclick="filterTicketAlerts('resolved')" style="background: #21262d; color: #3fb950; border: 1px solid #30363d; padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer;">Resolved (<span id="ticket-tab-resolved-num">0</span>)</button>
+                    <select id="ticket-category-filter" onchange="filterTicketCategory(this.value)" style="background: #161b22; border: 1px solid rgba(163, 113, 247, 0.4); color: #bc95ff; padding: 5px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; outline: none; cursor: pointer;">
+                        <option value="all">📁 All Categories</option>
+                        <option value="Bug Report">🐛 Bug Report</option>
+                        <option value="Feature Request">✨ Feature Request</option>
+                        <option value="Account Hub">🛡️ Account / Furnace</option>
+                        <option value="Event / Battle">⚔️ Event / Battle</option>
+                        <option value="Cinema / Movie">🎬 Cinema / Movie</option>
+                        <option value="General Support">💬 General Support</option>
+                        <option value="UI / Display">🎨 UI / Display</option>
+                        <option value="Performance">⚡ Performance</option>
+                    </select>
                 </div>
-                <div style="display: flex; gap: 6px;">
-                    <input type="text" id="ticket-search-input" oninput="renderTicketAlertsTable()" placeholder="🔍 Search tickets, members, category..." style="background: #161b22; border: 1px solid #30363d; color: #fff; padding: 5px 10px; border-radius: 6px; font-size: 11px; outline: none; width: 230px;">
+                <div style="display: flex; gap: 6px; align-items: center;">
+                    <input type="text" id="ticket-search-input" oninput="renderTicketAlertsTable()" placeholder="🔍 Search tickets, members, category..." style="background: #161b22; border: 1px solid #30363d; color: #fff; padding: 5px 10px; border-radius: 6px; font-size: 11px; outline: none; width: 210px;">
                     <button onclick="toggleNewTicketForm()" style="background: rgba(255, 94, 0, 0.15); color: #ff9f43; border: 1px solid rgba(255, 94, 0, 0.35); padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 4px;">
                         <i class="fa-solid fa-plus"></i> <span id="new-ticket-btn-label">New Alert</span>
                     </button>
@@ -1513,7 +1524,7 @@
         });
 
         const DEFAULT_GH_REPOS = [
-            { name: "BDClive", owner: "bdclive", fullName: "bdclive/BDClive", htmlUrl: "https://github.com/bdclive/BDClive", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "BDC Live Central Command Dashboard", latestCommit: "v10.2.99 : Added real-time sound chime engine for Game Sync count changes" },
+            { name: "BDClive", owner: "bdclive", fullName: "bdclive/BDClive", htmlUrl: "https://github.com/bdclive/BDClive", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "BDC Live Central Command Dashboard", latestCommit: "v10.2.100 : Added real-time ticket category editor and category filter system" },
             { name: "wosBDC.github.io", owner: "wosbdc", fullName: "wosbdc/wosBDC.github.io", htmlUrl: "https://github.com/wosbdc/wosBDC.github.io", pushedAt: new Date(Date.now() - 3600000 * 1.5).toISOString(), defaultBranch: "main", description: "WOS BDC Web Application", latestCommit: "v2.9.12 : WOS Alliance web portal & database updates" },
             { name: "DasherTracker.github.io", owner: "DasherTracker", fullName: "DasherTracker/DasherTracker.github.io", htmlUrl: "https://github.com/DasherTracker/DasherTracker.github.io", pushedAt: new Date(Date.now() - 3600000 * 3.5).toISOString(), defaultBranch: "main", description: "Dasher Tracker Portal", latestCommit: "Production sync" },
             { name: "theBDCFcrew.github.io", owner: "theBDCFcrew", fullName: "theBDCFcrew/theBDCFcrew.github.io", htmlUrl: "https://github.com/theBDCFcrew/theBDCFcrew.github.io", pushedAt: new Date(Date.now() - 86400000).toISOString(), defaultBranch: "main", description: "The BDCF Crew Portal", latestCommit: "Production sync" },
@@ -1704,7 +1715,7 @@
             }
         }
 
-        const CURRENT_APP_VERSION = 'v10.2.99';
+        const CURRENT_APP_VERSION = 'v10.2.100';
         let isDeployingLive = false;
         let pendingRemoteVersion = null;
         let autoRefreshTimer = null;
@@ -3141,6 +3152,26 @@
             }
         }
 
+        let currentTicketCategoryFilter = 'all';
+
+        function filterTicketCategory(cat) {
+            currentTicketCategoryFilter = cat || 'all';
+            renderTicketAlertsTable();
+        }
+
+        function updateTicketCategory(ticketId, newCategory) {
+            if (!ticketId || !wosDb) return;
+            wosDb.ref('community_feedback/' + ticketId).update({
+                category: newCategory,
+                updatedAt: Date.now()
+            }).then(() => {
+                if (rawTicketAlerts && rawTicketAlerts[ticketId]) {
+                    rawTicketAlerts[ticketId].category = newCategory;
+                    computeAndRenderTicketAlerts();
+                }
+            }).catch(e => console.error('Error updating ticket category:', e));
+        }
+
         function renderTicketAlertsTable() {
             const tickets = rawTicketAlerts || {};
             const ticketList = Object.entries(tickets).map(([id, t]) => ({ id, ...t }));
@@ -3152,13 +3183,19 @@
                 if (currentTicketFilter === 'inprogress' && !(st === 'in-progress' || st === 'investigating')) return false;
                 if (currentTicketFilter === 'resolved' && !(st === 'resolved' || st === 'closed' || st === 'completed')) return false;
 
+                const catStr = (t.category || (t.type === 'feature' ? 'Feature Request' : (t.type === 'bug' ? 'Bug Report' : 'General Support'))).toLowerCase();
+                if (currentTicketCategoryFilter && currentTicketCategoryFilter !== 'all') {
+                    if (!catStr.includes(currentTicketCategoryFilter.toLowerCase()) && !currentTicketCategoryFilter.toLowerCase().includes(catStr)) {
+                        return false;
+                    }
+                }
+
                 if (searchVal) {
                     const title = (t.title || '').toLowerCase();
                     const desc = (t.description || '').toLowerCase();
-                    const cat = (t.category || '').toLowerCase();
                     const author = ((t.submittedBy && t.submittedBy.name) || t.author || '').toLowerCase();
                     const gid = ((t.submittedBy && t.submittedBy.gameId) || '').toLowerCase();
-                    if (!title.includes(searchVal) && !desc.includes(searchVal) && !cat.includes(searchVal) && !author.includes(searchVal) && !gid.includes(searchVal)) {
+                    if (!title.includes(searchVal) && !desc.includes(searchVal) && !catStr.includes(searchVal) && !author.includes(searchVal) && !gid.includes(searchVal)) {
                         return false;
                     }
                 }
@@ -3174,6 +3211,17 @@
                 tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 24px; color: #8b949e; font-size: 12px;">No tickets match your filter/search criteria.</td></tr>`;
                 return;
             }
+
+            const categoryOptions = [
+                { val: 'Bug Report', label: '🐛 Bug Report' },
+                { val: 'Feature Request', label: '✨ Feature Request' },
+                { val: 'Account Hub', label: '🛡️ Account / Furnace' },
+                { val: 'Event / Battle', label: '⚔️ Event / Battle' },
+                { val: 'Cinema / Movie', label: '🎬 Cinema / Movie' },
+                { val: 'General Support', label: '💬 General Support' },
+                { val: 'UI / Display', label: '🎨 UI / Display' },
+                { val: 'Performance', label: '⚡ Performance' }
+            ];
 
             tbody.innerHTML = filtered.map((t, idx) => {
                 const st = (t.status || 'pending').toLowerCase();
@@ -3203,11 +3251,17 @@
 
                 const bgRow = idx % 2 === 0 ? 'background: #0d1117;' : 'background: #161b22;';
 
+                const catSelectHtml = `<div style="margin-bottom: 3px;">
+                    <select onchange="updateTicketCategory('${t.id}', this.value)" style="background: rgba(163, 113, 247, 0.12); color: #bc95ff; border: 1px solid rgba(163, 113, 247, 0.35); padding: 2px 4px; border-radius: 4px; font-size: 9.5px; font-weight: 700; outline: none; cursor: pointer;" title="Click to reclassify ticket category">
+                        ${categoryOptions.map(opt => `<option value="${opt.val}" ${(categoryStr.toLowerCase().includes(opt.val.toLowerCase()) || opt.val.toLowerCase().includes(categoryStr.toLowerCase())) ? 'selected' : ''}>${opt.label}</option>`).join('')}
+                    </select>
+                </div>`;
+
                 return `<tr style="${bgRow} border-bottom: 1px solid #21262d;">
                     <td style="padding: 9px 12px; white-space: nowrap;">${statusBadge}${priorityBadge}</td>
                     <td style="padding: 9px 8px; font-weight: 700; color: #ff9f43;">
-                        <span style="font-size: 9.5px; color: #8b949e; display: block; font-weight: 600;">${categoryStr}</span>
-                        ${t.title || 'Untitled Ticket'}
+                        ${catSelectHtml}
+                        <div style="font-size: 11px; color: #ff9f43; line-height: 1.2;">${t.title || 'Untitled Ticket'}</div>
                     </td>
                     <td style="padding: 9px 8px; color: #ffffff;">
                         <div style="display: flex; align-items: center; gap: 5px;">

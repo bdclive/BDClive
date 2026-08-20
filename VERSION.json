@@ -14,11 +14,11 @@
       "cliFile": "Threads_Bridge/threads_bridge_cli_v1.0.59_(terminal).py"
     },
     "bdclive_web_dashboard": {
-      "version": "10.2.99",
+      "version": "10.2.100",
       "repository": "https://github.com/bdclive/BDClive",
       "latestChanges": [
-        "v10.2.99: Added real-time audio chime engine for Game Sync count changes",
-        "v10.2.98: Synced app version constant to eliminate stale update alert"
+        "v10.2.100: Added real-time ticket category editor and category filter system",
+        "v10.2.99: Added real-time audio chime engine for Game Sync count changes"
       ]
     },
     "wosbdc_alliance_dashboard": {

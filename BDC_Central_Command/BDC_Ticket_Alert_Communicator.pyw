@@ -348,7 +348,7 @@ class TicketAlertCommunicator:
             for t_id, t_data in new_items_found[:3]:
                 self.show_floating_toast(t_id, t_data)
 
-    def update_ticket_status_remote(self, item_id, new_status, admin_note=None):
+    def update_ticket_status_remote(self, item_id, new_status, admin_note=None, new_category=None):
         def _update():
             try:
                 url = f"{WOS_FIREBASE_URL}/community_feedback/{item_id}.json?auth={WOS_FIREBASE_SECRET}"
@@ -358,6 +358,8 @@ class TicketAlertCommunicator:
                 }
                 if admin_note is not None:
                     payload["adminNote"] = admin_note
+                if new_category is not None:
+                    payload["category"] = new_category
 
                 resp = requests.patch(url, json=payload, timeout=10)
                 if resp.status_code == 200:
@@ -365,6 +367,8 @@ class TicketAlertCommunicator:
                         self.tickets[item_id]["status"] = new_status
                         if admin_note is not None:
                             self.tickets[item_id]["adminNote"] = admin_note
+                        if new_category is not None:
+                            self.tickets[item_id]["category"] = new_category
                     self.root.after(0, self.render_ticket_list)
                     self.root.after(0, self.update_status_bar)
                     self.root.after(0, lambda: self.show_save_toast("✓ Synced to Cloud Database!"))
@@ -645,17 +649,26 @@ class TicketAlertCommunicator:
                                           command=self.open_current_screenshot)
         self.btn_d_screenshot.pack(anchor="w", pady=(0, 10))
 
-        # Status Selector Row
+        # Status & Category Selector Row
         stat_row = tk.Frame(self.detail_container, bg=C_PANEL)
         stat_row.pack(fill="x", pady=(4, 10))
 
-        lbl_stat_lbl = tk.Label(stat_row, text="UPDATE STATUS:", fg=C_TEXT, bg=C_PANEL, font=("Segoe UI", 9, "bold"))
-        lbl_stat_lbl.pack(side="left", padx=(0, 8))
+        lbl_stat_lbl = tk.Label(stat_row, text="STATUS:", fg=C_TEXT, bg=C_PANEL, font=("Segoe UI", 9, "bold"))
+        lbl_stat_lbl.pack(side="left", padx=(0, 6))
 
         self.stat_var = tk.StringVar(value="pending")
         self.cb_status = ttk.Combobox(stat_row, textvariable=self.stat_var, values=["pending", "in_progress", "completed", "archived"],
-                                      state="readonly", width=18, font=("Segoe UI", 9, "bold"))
-        self.cb_status.pack(side="left")
+                                      state="readonly", width=14, font=("Segoe UI", 9, "bold"))
+        self.cb_status.pack(side="left", padx=(0, 14))
+
+        lbl_cat_lbl = tk.Label(stat_row, text="CATEGORY:", fg=C_TEXT, bg=C_PANEL, font=("Segoe UI", 9, "bold"))
+        lbl_cat_lbl.pack(side="left", padx=(0, 6))
+
+        self.cat_var = tk.StringVar(value="Bug Report")
+        self.cb_category = ttk.Combobox(stat_row, textvariable=self.cat_var, values=[
+            "Bug Report", "Feature Request", "Account Hub", "Event / Battle", "Cinema / Movie", "General Support", "UI / Display", "Performance"
+        ], state="readonly", width=16, font=("Segoe UI", 9, "bold"))
+        self.cb_category.pack(side="left")
 
         # Quick Templates Row
         tmpl_row = tk.Frame(self.detail_container, bg=C_PANEL)
@@ -727,8 +740,9 @@ class TicketAlertCommunicator:
         if not self.selected_item_id:
             return
         new_stat = self.stat_var.get()
+        new_cat = self.cat_var.get()
         note = self.txt_d_note.get("1.0", "end").strip()
-        self.update_ticket_status_remote(self.selected_item_id, new_stat, note)
+        self.update_ticket_status_remote(self.selected_item_id, new_stat, note, new_cat)
 
     def show_save_toast(self, msg):
         self.lbl_save_toast.configure(text=msg)
@@ -762,8 +776,9 @@ class TicketAlertCommunicator:
                 q = self.search_query
                 title = str(t.get("title", "")).lower()
                 desc = str(t.get("description", "")).lower()
+                cat = str(t.get("category", "")).lower()
                 auth = str(t.get("submittedBy", {}).get("name", "") if isinstance(t.get("submittedBy"), dict) else "").lower()
-                if q not in title and q not in desc and q not in auth: continue
+                if q not in title and q not in desc and q not in cat and q not in auth: continue
 
             rendered_count += 1
             self.create_ticket_card(t_id, t)
@@ -919,6 +934,7 @@ class TicketAlertCommunicator:
             self.btn_d_screenshot.pack_forget()
 
         self.stat_var.set(t.get("status", "pending"))
+        self.cat_var.set(t.get("category", "General Support"))
         self.txt_d_note.delete("1.0", "end")
         if t.get("adminNote"):
             self.txt_d_note.insert("1.0", t.get("adminNote"))
