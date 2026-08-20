@@ -14,19 +14,19 @@
       "cliFile": "Threads_Bridge/threads_bridge_cli_v1.0.59_(terminal).py"
     },
     "bdclive_web_dashboard": {
-      "version": "10.2.100",
+      "version": "10.2.101",
       "repository": "https://github.com/bdclive/BDClive",
       "latestChanges": [
-        "v10.2.100: Added real-time ticket category editor and category filter system",
-        "v10.2.99: Added real-time audio chime engine for Game Sync count changes"
+        "v10.2.101: Unified single-source database architecture and real-time badge synchronization",
+        "v10.2.100: Added real-time ticket category editor and category filter system"
       ]
     },
     "wosbdc_alliance_dashboard": {
-      "version": "2.9.12",
+      "version": "2.9.84",
       "repository": "https://github.com/wosbdc/wosBDC.github.io",
       "latestChanges": [
-        "v2.9.12: Moved admin entry to Account Hub Leadership suite and Settings Sidebar",
-        "v2.9.11: Automatic routing to Account Hub upon login and session start"
+        "v2.9.84: Unified real-time alliance master store and instant database sync for all badges",
+        "v2.9.83: Discord token report shows full list and real IDs"
       ]
     },
     "google_apps_script_backend": {
