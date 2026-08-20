@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BDC LIVE v10.2.98</title>
+    <title>BDC LIVE v10.2.99</title>
     <!-- Open Graph & Social Preview Meta Tags -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="BDC LIVE v10.2.98">
+    <meta property="og:title" content="BDC LIVE v10.2.99">
     <meta property="og:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="og:image" content="./bdclive_banner.jpg">
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="BDC LIVE v10.2.98">
+    <meta property="twitter:title" content="BDC LIVE v10.2.99">
     <meta property="twitter:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="twitter:image" content="./bdclive_banner.jpg">
     <!-- PWA Manifest & Mobile Web App Meta Tags -->
@@ -509,7 +509,13 @@
                         <span style="font-size: 10px; color: #8b949e;">Whiteout Survival State 2089 • Real-Time Database Sync</span>
                     </div>
                 </div>
-                <div style="display: flex; align-items: center; gap: 12px;">
+                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                    <button id="gk-sound-toggle-btn" onclick="toggleGameSyncSound()" style="background: rgba(163, 113, 247, 0.15); color: #bc95ff; border: 1px solid rgba(163, 113, 247, 0.35); padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; transition: all 0.2s ease;" title="Toggle Game Sync Sound Chime on count change">
+                        <i class="fa-solid fa-volume-high"></i> Sync Sound: ON
+                    </button>
+                    <button onclick="playGameSyncSound('test')" style="background: rgba(0, 210, 255, 0.12); color: #00d2ff; border: 1px solid rgba(0, 210, 255, 0.3); padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; transition: all 0.2s ease;" title="Test Game Sync Chime Audio">
+                        <i class="fa-solid fa-play"></i> Test Chime
+                    </button>
                     <a href="https://wosbdc.github.io/" target="_blank" style="background: rgba(0, 210, 255, 0.12); color: #00d2ff; border: 1px solid rgba(0, 210, 255, 0.3); text-decoration: none; padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 5px; transition: all 0.2s ease;">
                         <i class="fa-solid fa-arrow-up-right-from-square"></i> Open WOS Portal
                     </a>
@@ -1507,7 +1513,7 @@
         });
 
         const DEFAULT_GH_REPOS = [
-            { name: "BDClive", owner: "bdclive", fullName: "bdclive/BDClive", htmlUrl: "https://github.com/bdclive/BDClive", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "BDC Live Central Command Dashboard", latestCommit: "v10.2.93 : Built master Cyber-Glass outer command deck frame" },
+            { name: "BDClive", owner: "bdclive", fullName: "bdclive/BDClive", htmlUrl: "https://github.com/bdclive/BDClive", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "BDC Live Central Command Dashboard", latestCommit: "v10.2.99 : Added real-time sound chime engine for Game Sync count changes" },
             { name: "wosBDC.github.io", owner: "wosbdc", fullName: "wosbdc/wosBDC.github.io", htmlUrl: "https://github.com/wosbdc/wosBDC.github.io", pushedAt: new Date(Date.now() - 3600000 * 1.5).toISOString(), defaultBranch: "main", description: "WOS BDC Web Application", latestCommit: "v2.9.12 : WOS Alliance web portal & database updates" },
             { name: "DasherTracker.github.io", owner: "DasherTracker", fullName: "DasherTracker/DasherTracker.github.io", htmlUrl: "https://github.com/DasherTracker/DasherTracker.github.io", pushedAt: new Date(Date.now() - 3600000 * 3.5).toISOString(), defaultBranch: "main", description: "Dasher Tracker Portal", latestCommit: "Production sync" },
             { name: "theBDCFcrew.github.io", owner: "theBDCFcrew", fullName: "theBDCFcrew/theBDCFcrew.github.io", htmlUrl: "https://github.com/theBDCFcrew/theBDCFcrew.github.io", pushedAt: new Date(Date.now() - 86400000).toISOString(), defaultBranch: "main", description: "The BDCF Crew Portal", latestCommit: "Production sync" },
@@ -1698,7 +1704,7 @@
             }
         }
 
-        const CURRENT_APP_VERSION = 'v10.2.98';
+        const CURRENT_APP_VERSION = 'v10.2.99';
         let isDeployingLive = false;
         let pendingRemoteVersion = null;
         let autoRefreshTimer = null;
@@ -2193,6 +2199,100 @@
         let rawWosUsers = null;
         let currentGkFilter = 'all';
 
+        // Game Sync Audio Chime Suite
+        let gkSoundEnabled = localStorage.getItem('gk_sound_enabled') !== 'false';
+        let gkSoundVolume = parseFloat(localStorage.getItem('gk_sound_volume') || '0.6');
+        let previousGkValidTokens = null;
+        let previousGkExpiredTokens = null;
+        let isGkInitialLoadComplete = false;
+
+        function toggleGameSyncSound() {
+            gkSoundEnabled = !gkSoundEnabled;
+            localStorage.setItem('gk_sound_enabled', gkSoundEnabled ? 'true' : 'false');
+            updateGkSoundBtnUI();
+            if (gkSoundEnabled) {
+                playGameSyncSound('sync_up');
+            }
+        }
+
+        function updateGkSoundBtnUI() {
+            const btn = document.getElementById('gk-sound-toggle-btn');
+            if (!btn) return;
+            if (gkSoundEnabled) {
+                btn.style.background = 'rgba(163, 113, 247, 0.15)';
+                btn.style.color = '#bc95ff';
+                btn.style.borderColor = 'rgba(163, 113, 247, 0.35)';
+                btn.innerHTML = '<i class="fa-solid fa-volume-high"></i> Sync Sound: ON';
+            } else {
+                btn.style.background = 'rgba(110, 118, 129, 0.15)';
+                btn.style.color = '#8b949e';
+                btn.style.borderColor = 'rgba(110, 118, 129, 0.3)';
+                btn.innerHTML = '<i class="fa-solid fa-volume-xmark"></i> Sync Sound: OFF';
+            }
+        }
+
+        function flashGameSyncPulse() {
+            const el = document.getElementById('gk-valid-tokens');
+            if (el) {
+                el.style.transition = 'transform 0.25s ease, color 0.25s ease, text-shadow 0.25s ease';
+                el.style.transform = 'scale(1.25)';
+                el.style.color = '#00ffff';
+                el.style.textShadow = '0 0 15px rgba(0, 255, 255, 0.8)';
+                setTimeout(() => {
+                    el.style.transform = 'scale(1)';
+                    el.style.color = '#a371f7';
+                    el.style.textShadow = 'none';
+                }, 1200);
+            }
+        }
+
+        function playGameSyncSound(type = 'sync_up') {
+            if (!gkSoundEnabled && type !== 'test') return;
+            try {
+                const ctx = getAudioContext();
+                if (!ctx) return;
+                const now = ctx.currentTime;
+                const volume = Math.max(0.01, Math.min(1.0, gkSoundVolume)) * 0.45;
+
+                if (type === 'sync_up' || type === 'test') {
+                    // Ascending Crystal Harmony (F#5 739.99Hz -> A#5 932.33Hz -> C#6 1108.73Hz -> F#6 1479.98Hz)
+                    const notes = [739.99, 932.33, 1108.73, 1479.98];
+                    notes.forEach((freq, i) => {
+                        const startTime = now + (i * 0.07);
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        osc.type = i === 3 ? 'sine' : 'triangle';
+                        osc.frequency.setValueAtTime(freq, startTime);
+                        gain.gain.setValueAtTime(0.001, startTime);
+                        gain.gain.linearRampToValueAtTime(volume * (0.6 + (i * 0.1)), startTime + 0.02);
+                        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.38);
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        osc.start(startTime);
+                        osc.stop(startTime + 0.38);
+                    });
+                } else if (type === 'token_expired') {
+                    // Gentle Warning Harmonic (A4 440Hz -> E4 329.63Hz)
+                    [440, 329.63].forEach((freq, i) => {
+                        const startTime = now + (i * 0.12);
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(freq, startTime);
+                        gain.gain.setValueAtTime(0.001, startTime);
+                        gain.gain.linearRampToValueAtTime(volume * 0.5, startTime + 0.03);
+                        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.45);
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        osc.start(startTime);
+                        osc.stop(startTime + 0.45);
+                    });
+                }
+            } catch(err) {
+                console.warn("Game Sync sound playback failed:", err);
+            }
+        }
+
         function isJwtExpired(tokenStr) {
             if (!tokenStr || typeof tokenStr !== 'string' || !tokenStr.includes('.')) return true;
             try {
@@ -2331,6 +2431,24 @@
                 expEl.style.color = expiredTokens > 0 ? '#f85149' : '#3fb950';
             }
             if (unsyncEl) unsyncEl.innerText = fNum(unsyncedChiefs > 0 ? unsyncedChiefs : 0);
+            
+            // Audio Chime Trigger on Game Sync Count Delta
+            if (!isGkInitialLoadComplete) {
+                previousGkValidTokens = validTokens;
+                previousGkExpiredTokens = expiredTokens;
+                isGkInitialLoadComplete = true;
+            } else {
+                if (previousGkValidTokens !== null && validTokens > previousGkValidTokens) {
+                    // New Chief Game Session Synced!
+                    playGameSyncSound('sync_up');
+                    flashGameSyncPulse();
+                } else if (previousGkExpiredTokens !== null && expiredTokens > previousGkExpiredTokens) {
+                    // Chief Token Expired
+                    playGameSyncSound('token_expired');
+                }
+                previousGkValidTokens = validTokens;
+                previousGkExpiredTokens = expiredTokens;
+            }
             
             // Sync to labData/gatekeeperCounters on primary database for ecosystem health
             try {
@@ -3560,6 +3678,7 @@
 
         function openGatekeeperModal() {
             document.getElementById('gatekeeperModal').style.display = "block";
+            updateGkSoundBtnUI();
             renderGatekeeperRosterTable();
         }
         function closeGatekeeperModal() {

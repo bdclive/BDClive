@@ -54,6 +54,12 @@
   - Updated `Start_Central_Command.bat` and transfer package to `v1.0.68`.
   - Executed Clean House protocol across all local and remote desktop directories.
 
+## v10.2.99 (2026-08-19)
+- Added real-time sound chime when Game Sync count changes.
+- Added ascending crystal harmony chime for new game syncs.
+- Added gentle warning harmonic alert for expired game tokens.
+- Added sound toggle and test chime in Gatekeeper modal.
+
 ## v10.2.93 (2026-08-19)
 - Enclosed dashboard inside master Cyber-Glass outer command deck frame.
 - Added glowing ambient cyan border with glassmorphic depth shadows.
