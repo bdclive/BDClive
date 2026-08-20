@@ -54,6 +54,12 @@
   - Updated `Start_Central_Command.bat` and transfer package to `v1.0.68`.
   - Executed Clean House protocol across all local and remote desktop directories.
 
+## v10.2.104 (2026-08-20)
+- Removed unprompted automatic page reload timer completely.
+- Protected open popup modals from background refresh interruptions.
+- Added session persistence to restore active popups on reload.
+- Added global Escape key listener to close active modals.
+
 ## v10.2.103 (2026-08-20)
 - Dynamically synchronized all dropdown option labels and filter counters.
 - Live token counts update instantly across active and expired states.

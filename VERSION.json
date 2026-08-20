@@ -14,11 +14,11 @@
       "cliFile": "Threads_Bridge/threads_bridge_cli_v1.0.59_(terminal).py"
     },
     "bdclive_web_dashboard": {
-      "version": "10.2.103",
+      "version": "10.2.104",
       "repository": "https://github.com/bdclive/BDClive",
       "latestChanges": [
-        "v10.2.103: Live dynamic synchronization across all dropdown option filters and action button counters",
-        "v10.2.102: Dynamic real-time filter counter synchronization in Alliance Member Database"
+        "v10.2.104: Modal protection guard, popup persistence, and unprompted auto-reload removal",
+        "v10.2.103: Live dynamic synchronization across all dropdown option filters and action button counters"
       ]
     },
     "wosbdc_alliance_dashboard": {
