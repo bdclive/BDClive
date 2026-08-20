@@ -564,6 +564,161 @@ async function actionUpdateFurnace(payload) {
   return { success: true, message: `Furnace updated to ${newLvl}`, level: newLvl };
 }
 
+const CENTURY_GIFTCODE_SECRET = "tB87#kPtk3xvY28NYBaOfgame";
+
+function actionLookupPlayer(gameId) {
+  return new Promise((resolve) => {
+    const cleanId = String(gameId || '').trim();
+    if (!cleanId) return resolve({ success: false, error: 'Missing gameId' });
+
+    const t = Date.now();
+    const signStr = `fid=${cleanId}&time=${t}${CENTURY_GIFTCODE_SECRET}`;
+    const sign = crypto.createHash('md5').update(signStr).digest('hex');
+
+    const postData = new URLSearchParams({
+      fid: cleanId,
+      time: String(t),
+      sign: sign
+    }).toString();
+
+    const options = {
+      hostname: 'wos-giftcode.centurygame.com',
+      port: 443,
+      path: '/api/player',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Length': Buffer.byteLength(postData),
+        'Origin': 'https://wos-giftcode.centurygame.com',
+        'Referer': 'https://wos-giftcode.centurygame.com/',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36'
+      },
+      timeout: 7000
+    };
+
+    const req = https.request(options, (res) => {
+      let data = '';
+      res.on('data', chunk => data += chunk);
+      res.on('end', () => {
+        try {
+          const json = JSON.parse(data);
+          if (json.code === 0 && json.data) {
+            const pData = json.data;
+            let stoveLv = '';
+            if (pData.stove_lv_content && typeof pData.stove_lv_content === 'string') {
+              const pMatch = pData.stove_lv_content.match(/(?:FC|FIRE\s*CRYSTAL)\s*[\.-]?\s*(\d+)/i);
+              if (pMatch) {
+                const pfc = parseInt(pMatch[1], 10);
+                if (pfc >= 1 && pfc <= 10) stoveLv = `FC ${pfc}`;
+                else if (pfc > 30 && pfc <= 40) stoveLv = `FC ${pfc - 30}`;
+                else if (pfc > 40 && pfc <= 80) stoveLv = `FC ${Math.ceil((pfc - 30) / 5)}`;
+              } else {
+                const pNum = pData.stove_lv_content.match(/(\d+)/);
+                if (pNum) {
+                  const pVal = parseInt(pNum[1], 10);
+                  if (pVal > 30 && pVal <= 40) stoveLv = `FC ${pVal - 30}`;
+                  else if (pVal > 40 && pVal <= 80) stoveLv = `FC ${Math.ceil((pVal - 30) / 5)}`;
+                  else if (pVal >= 1 && pVal <= 30) stoveLv = String(pVal);
+                }
+              }
+            }
+            if (!stoveLv && pData.stove_lv !== undefined && pData.stove_lv !== null && pData.stove_lv !== '') {
+              const pslv = parseInt(String(pData.stove_lv).trim(), 10);
+              if (!isNaN(pslv)) {
+                if (pslv > 30 && pslv <= 40) stoveLv = `FC ${pslv - 30}`;
+                else if (pslv > 40 && pslv <= 80) stoveLv = `FC ${Math.ceil((pslv - 30) / 5)}`;
+                else if (pslv >= 1 && pslv <= 30) stoveLv = String(pslv);
+              }
+            }
+
+            return resolve({
+              success: true,
+              code: 0,
+              nickname: pData.nickname || '',
+              stove_lv: stoveLv || 'Unknown',
+              furnaceLevel: stoveLv || 'Unknown',
+              avatar_image: pData.avatar_image || '',
+              kid: pData.kid || '2089',
+              raw: pData
+            });
+          }
+          return resolve({ success: false, code: json.code, message: json.msg || 'Player not found' });
+        } catch (e) {
+          return resolve({ success: false, error: e.message });
+        }
+      });
+    });
+
+    req.on('error', (e) => resolve({ success: false, error: e.message }));
+    req.on('timeout', () => { req.destroy(); resolve({ success: false, error: 'Request timeout' }); });
+    req.write(postData);
+    req.end();
+  });
+}
+
+function actionRedeemGiftCode(gameId, cdk, kid = '2089') {
+  return new Promise((resolve) => {
+    const cleanId = String(gameId || '').trim();
+    const cleanCode = String(cdk || '').trim().toUpperCase();
+    if (!cleanId || !cleanCode) return resolve({ success: false, error: 'Missing gameId or gift code' });
+
+    const t = Math.floor(Date.now() / 1000);
+    const signStr = `cdk=${cleanCode}&fid=${cleanId}&kid=${kid}&time=${t}${CENTURY_GIFTCODE_SECRET}`;
+    const sign = crypto.createHash('md5').update(signStr).digest('hex');
+
+    const postData = new URLSearchParams({
+      cdk: cleanCode,
+      fid: cleanId,
+      kid: String(kid),
+      time: String(t),
+      sign: sign
+    }).toString();
+
+    const options = {
+      hostname: 'wos-giftcode.centurygame.com',
+      port: 443,
+      path: '/api/gift_code',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Length': Buffer.byteLength(postData),
+        'Origin': 'https://wos-giftcode.centurygame.com',
+        'Referer': 'https://wos-giftcode.centurygame.com/',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36'
+      },
+      timeout: 8000
+    };
+
+    const req = https.request(options, (res) => {
+      let data = '';
+      res.on('data', chunk => data += chunk);
+      res.on('end', () => {
+        try {
+          const json = JSON.parse(data);
+          const msg = (json.msg || '').trim();
+          const errCode = json.err_code || json.code;
+          const isSuccess = (errCode === 0 || errCode === 20000 || /success|received|claimed|used/i.test(msg));
+
+          return resolve({
+            success: isSuccess,
+            status: isSuccess ? 'success' : 'error',
+            code: errCode,
+            message: msg || (isSuccess ? 'Code redeemed successfully' : 'Redemption failed'),
+            raw: json
+          });
+        } catch (e) {
+          return resolve({ success: false, error: e.message });
+        }
+      });
+    });
+
+    req.on('error', (e) => resolve({ success: false, error: e.message }));
+    req.on('timeout', () => { req.destroy(); resolve({ success: false, error: 'Request timeout' }); });
+    req.write(postData);
+    req.end();
+  });
+}
+
 // ====================================================================
 // ⚡ FIREBASE REAL-TIME QUEUE CONSUMER (/api_queue)
 // ====================================================================
@@ -593,12 +748,16 @@ async function processQueue() {
           const act = job.action || job.type;
           const payload = job.payload || job.data || job;
 
-          if (act === 'send_code' || act === 'sendCaptcha') {
-            result = await actionSendCode(payload.gameId || payload.roleId);
-          } else if (act === 'verify_code' || act === 'verifyCaptcha') {
-            result = await actionVerifyCode(payload.gameId || payload.roleId, payload.code || payload.captcha_code, payload.uid);
-          } else if (act === 'get_role' || act === 'syncPlayer' || act === 'syncFromGame') {
-            result = await actionGetRole(payload.gameId || payload.roleId, payload.token, payload.uid);
+          if (act === 'send_code' || act === 'sendCaptcha' || act === 'sendGameCaptcha') {
+            result = await actionSendCode(payload.gameId || payload.roleId || payload.id);
+          } else if (act === 'verify_code' || act === 'verifyCaptcha' || act === 'verifyGameCaptcha') {
+            result = await actionVerifyCode(payload.gameId || payload.roleId || payload.id, payload.code || payload.captcha_code, payload.uid);
+          } else if (act === 'get_role' || act === 'syncPlayer' || act === 'syncFromGame' || act === 'syncProfileWithToken') {
+            result = await actionGetRole(payload.gameId || payload.roleId || payload.id, payload.token || payload.cgToken, payload.uid);
+          } else if (act === 'lookup_player' || act === 'lookupPlayer') {
+            result = await actionLookupPlayer(payload.gameId || payload.roleId || payload.id);
+          } else if (act === 'redeem_gift_code' || act === 'redeemGiftCode') {
+            result = await actionRedeemGiftCode(payload.gameId || payload.roleId || payload.id, payload.code || payload.cdk, payload.kid || '2089');
           } else if (act === 'update_furnace' || act === 'updateChiefLevel') {
             result = await actionUpdateFurnace(payload);
           } else if (act === 'ping') {
@@ -956,9 +1115,25 @@ const server = http.createServer(async (req, res) => {
     return sendJson(res, result.success ? 200 : 400, result);
   }
 
-  // Fetch Live Role Stats from Century Games
-  if (pathname === '/api/get_role' || pathname === '/api/sync_player' || pathname === '/api/syncPlayer') {
-    const result = await actionGetRole(params.gameId || params.role_id || params.roleId, params.token, params.uid);
+  // Fetch Live Role Stats from Century Games (with token)
+  if (pathname === '/api/get_role' || pathname === '/api/sync_player' || pathname === '/api/syncPlayer' || pathname === '/api/syncProfileWithToken') {
+    const result = await actionGetRole(params.gameId || params.role_id || params.roleId || params.id, params.token || params.cgToken, params.uid);
+    return sendJson(res, result.success ? 200 : 400, result);
+  }
+
+  // Public Player Lookup from Century Games (no token required)
+  if (pathname === '/api/lookup_player' || pathname === '/api/lookupPlayer') {
+    const result = await actionLookupPlayer(params.gameId || params.role_id || params.roleId || params.id);
+    return sendJson(res, result.success ? 200 : 400, result);
+  }
+
+  // Redeem Promo Gift Code
+  if (pathname === '/api/redeem_gift_code' || pathname === '/api/redeemGiftCode') {
+    const result = await actionRedeemGiftCode(
+      params.gameId || params.role_id || params.roleId || params.id,
+      params.code || params.cdk,
+      params.kid || '2089'
+    );
     return sendJson(res, result.success ? 200 : 400, result);
   }
 
