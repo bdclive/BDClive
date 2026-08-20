@@ -14,19 +14,19 @@
       "cliFile": "Threads_Bridge/threads_bridge_cli_v1.0.59_(terminal).py"
     },
     "bdclive_web_dashboard": {
-      "version": "10.2.102",
+      "version": "10.2.103",
       "repository": "https://github.com/bdclive/BDClive",
       "latestChanges": [
-        "v10.2.102: Dynamic real-time filter counter synchronization in Alliance Member Database",
-        "v10.2.101: Unified single-source database architecture and real-time badge synchronization"
+        "v10.2.103: Live dynamic synchronization across all dropdown option filters and action button counters",
+        "v10.2.102: Dynamic real-time filter counter synchronization in Alliance Member Database"
       ]
     },
     "wosbdc_alliance_dashboard": {
-      "version": "2.9.85",
+      "version": "2.9.86",
       "repository": "https://github.com/wosbdc/wosBDC.github.io",
       "latestChanges": [
-        "v2.9.85: Dynamic real-time filter and population tab counter synchronization in Member Database",
-        "v2.9.84: Unified real-time alliance master store and instant database sync for all badges"
+        "v2.9.86: Dynamic real-time synchronization for all dropdown filter options and action button counters",
+        "v2.9.85: Dynamic real-time filter and population tab counter synchronization in Member Database"
       ]
     },
     "google_apps_script_backend": {
