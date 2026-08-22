@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BDC LIVE v10.2.104</title>
+    <title>BDC LIVE v10.2.105</title>
     <!-- Open Graph & Social Preview Meta Tags -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="BDC LIVE v10.2.104">
+    <meta property="og:title" content="BDC LIVE v10.2.105">
     <meta property="og:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="og:image" content="./bdclive_banner.jpg">
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="BDC LIVE v10.2.104">
+    <meta property="twitter:title" content="BDC LIVE v10.2.105">
     <meta property="twitter:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="twitter:image" content="./bdclive_banner.jpg">
     <!-- PWA Manifest & Mobile Web App Meta Tags -->
@@ -3754,7 +3754,20 @@
 
         function restoreModalStateOnLoad() {
             try {
-                const activeModal = sessionStorage.getItem('active_modal_id');
+                const hash = (window.location.hash || '').toLowerCase();
+                const urlParams = new URLSearchParams(window.location.search);
+                let activeModal = sessionStorage.getItem('active_modal_id');
+
+                if (hash === '#tickets' || hash === '#ticketalertsmodal' || hash === '#ticket-alerts' || urlParams.get('modal') === 'tickets' || urlParams.get('ticket') === 'open') {
+                    activeModal = 'ticketAlertsModal';
+                } else if (hash === '#gatekeeper' || urlParams.get('modal') === 'gatekeeper') {
+                    activeModal = 'gatekeeperModal';
+                } else if (hash === '#github' || urlParams.get('modal') === 'github') {
+                    activeModal = 'githubModal';
+                } else if (hash === '#counters' || urlParams.get('modal') === 'counters') {
+                    activeModal = 'counterAuditModal';
+                }
+
                 if (!activeModal) return;
                 setTimeout(() => {
                     if (activeModal === 'ticketAlertsModal' && typeof openTicketAlertsModal === 'function') {

@@ -1,6 +1,6 @@
 /**
  * ====================================================================
- * ⚡ BDC CENTRAL COMMAND — LIVE API & FIREBASE QUEUE DAEMON (v1.0.73)
+ * ⚡ BDC CENTRAL COMMAND — LIVE API & FIREBASE QUEUE DAEMON (v1.0.75)
  * ====================================================================
  * Standalone, zero-dependency background engine:
  *  • 🌐 HTTP REST API Server (Port 3188) with Full CORS Support
@@ -582,7 +582,7 @@ function actionLookupPlayer(gameId) {
     }).toString();
 
     const options = {
-      hostname: 'wos-giftcode.centurygame.com',
+      hostname: 'wos-giftcode-api.centurygame.com',
       port: 443,
       path: '/api/player',
       method: 'POST',
@@ -659,7 +659,7 @@ function actionLookupPlayer(gameId) {
 function actionRedeemGiftCode(gameId, cdk, kid = '2089') {
   return new Promise((resolve) => {
     const cleanId = String(gameId || '').trim();
-    const cleanCode = String(cdk || '').trim().toUpperCase();
+    const cleanCode = String(cdk || '').trim();
     if (!cleanId || !cleanCode) return resolve({ success: false, error: 'Missing gameId or gift code' });
 
     const t = Math.floor(Date.now() / 1000);
@@ -675,7 +675,7 @@ function actionRedeemGiftCode(gameId, cdk, kid = '2089') {
     }).toString();
 
     const options = {
-      hostname: 'wos-giftcode.centurygame.com',
+      hostname: 'wos-giftcode-api.centurygame.com',
       port: 443,
       path: '/api/gift_code',
       method: 'POST',
@@ -987,7 +987,7 @@ async function updateDiscordGatekeeperReport() {
         body: JSON.stringify(payload)
       });
       if (editRes.status === 200) {
-        log(`🏰 Live Discord Gatekeeper Report updated in #alerts!`);
+        log(`🏰 Live Discord Gatekeeper Report updated in #wos-alerts!`);
         return true;
       }
       if (editRes.status === 404) {
@@ -1006,7 +1006,7 @@ async function updateDiscordGatekeeperReport() {
         if (postData && postData.id) {
           fs.writeFileSync(msgIdPath, JSON.stringify({ message_id: postData.id }), 'utf8');
           await firebasePut('/system/gatekeeper_report_msg_id', postData.id);
-          log(`🏰 Initial Discord Gatekeeper Report posted to #alerts! (ID: ${postData.id})`);
+          log(`🏰 Initial Discord Gatekeeper Report posted to #wos-alerts! (ID: ${postData.id})`);
         }
         return true;
       }

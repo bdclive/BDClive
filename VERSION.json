@@ -14,11 +14,11 @@
       "cliFile": "Threads_Bridge/threads_bridge_cli_v1.0.59_(terminal).py"
     },
     "bdclive_web_dashboard": {
-      "version": "10.2.104",
+      "version": "10.2.105",
       "repository": "https://github.com/bdclive/BDClive",
       "latestChanges": [
-        "v10.2.104: Modal protection guard, popup persistence, and unprompted auto-reload removal",
-        "v10.2.103: Live dynamic synchronization across all dropdown option filters and action button counters"
+        "v10.2.105: Direct deep-linking and URL parameter support for Ticket Alerts popup modal",
+        "v10.2.104: Modal protection guard, popup persistence, and unprompted auto-reload removal"
       ]
     },
     "wosbdc_alliance_dashboard": {

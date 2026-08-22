@@ -1,0 +1,149 @@
+{
+  "week_title": "Aug 20 \u2013 Aug 27, 2026",
+  "podium_vehicle": "Declasse Granger 3600LX ($1,380,000)",
+  "prize_ride": "Enus Paragon R",
+  "prize_ride_challenge": "Place Top 3 in the LS Car Meet Series for 3 days in a row",
+  "hsw_vehicle": "Karin S95 (Next-Gen)",
+  "test_track": [
+    "Vapid Dominator GTT",
+    "Annis Remus",
+    "Dinka RT3000"
+  ],
+  "luxury_autos": [
+    "Grotti Turismo Omaggio",
+    "Declasse Vigero ZX Convert."
+  ],
+  "simeons_pdm": [
+    "Enus Stafford",
+    "Pegassi Zorrusso",
+    "Dewbauchee Seven-70",
+    "Ocelot Swinger",
+    "Vapid Hustler"
+  ],
+  "salvage_yard_targets": [
+    {
+      "car": "Albany Brigham",
+      "robbery": "The McTony Robbery",
+      "claimable": true
+    },
+    {
+      "car": "Pfister Neon",
+      "robbery": "The Podium Robbery",
+      "claimable": false
+    },
+    {
+      "car": "Lampadati Komoda",
+      "robbery": "The Gangbanger Robbery",
+      "claimable": false
+    }
+  ],
+  "gun_van": {
+    "location": "Palmer-Taylor Power Station",
+    "discount_item": "Railgun (40% OFF)",
+    "weapons": [
+      "Railgun",
+      "Combat Shotgun",
+      "Tactical SMG",
+      "Heavy Rifle",
+      "Body Armor (50% OFF)"
+    ]
+  },
+  "bonuses": [
+    {
+      "id": "bunker",
+      "name": "Bunker Sell Missions",
+      "multiplier": "2x GTA$ & RP",
+      "rate": "$2,100,000 / Full Delivery",
+      "hourly": "~$1,400,000/hr",
+      "tier": "S",
+      "solo": true,
+      "type": "Passive / Sale",
+      "tip": "Buy supplies once for $75k, sell at $420k in invite-only session for guaranteed 1 delivery vehicle."
+    },
+    {
+      "id": "agency_contracts",
+      "name": "Agency Security Contracts & Specialist",
+      "multiplier": "3x GTA$ & RP",
+      "rate": "$90,000 \u2013 $210,000 / mission",
+      "hourly": "~$1,200,000/hr",
+      "tier": "S",
+      "solo": true,
+      "type": "Active Missions",
+      "tip": "Focus on Liquidize Assets and Recover Valuables using an Oppressor Mk II or Sparrow for 3-minute clears."
+    },
+    {
+      "id": "cluckin_bell",
+      "name": "Cluckin' Bell Farm Raid Finale",
+      "multiplier": "2x GTA$",
+      "rate": "$1,000,000 / Finale",
+      "hourly": "~$1,100,000/hr",
+      "tier": "A",
+      "solo": true,
+      "type": "Heist",
+      "tip": "Can be completely soloed in ~45 minutes with zero upfront setup cost."
+    },
+    {
+      "id": "nightclub_safe",
+      "name": "Nightclub Safe Daily Income",
+      "multiplier": "2x GTA$",
+      "rate": "$100,000 / 48 mins",
+      "hourly": "~$125,000/hr passive",
+      "tier": "B",
+      "solo": true,
+      "type": "Passive",
+      "tip": "Switch resident DJs from the basement terminal to instantly keep popularity at 100%."
+    },
+    {
+      "id": "community_series",
+      "name": "Community Series & Stunt Races",
+      "multiplier": "3x GTA$ & RP",
+      "rate": "$60,000 \u2013 $100,000 / race",
+      "hourly": "~$400,000/hr",
+      "tier": "B",
+      "solo": false,
+      "type": "PvP Races",
+      "tip": "Outstanding for crew race nights and rapid RP leveling."
+    }
+  ],
+  "discounts": [
+    {
+      "category": "Properties",
+      "item": "Bunkers & Upgrades / Renovations",
+      "discount": "40% OFF"
+    },
+    {
+      "category": "Properties",
+      "item": "Agency Upgrades & Vehicle Workshop",
+      "discount": "30% OFF"
+    },
+    {
+      "category": "Vehicles",
+      "item": "Grotti Turismo Omaggio",
+      "discount": "30% OFF"
+    },
+    {
+      "category": "Vehicles",
+      "item": "Pegassi Zorrusso",
+      "discount": "40% OFF"
+    },
+    {
+      "category": "Vehicles",
+      "item": "Mammoth Patriot Mil-Spec",
+      "discount": "30% OFF"
+    },
+    {
+      "category": "Vehicles",
+      "item": "Vapid Dominator GTT",
+      "discount": "30% OFF"
+    }
+  ],
+  "crew_events": [
+    {
+      "title": "\ud83c\udf34 BDC Friday Night Supercar Meet & Drag Races",
+      "time": "Friday 9:00 PM EST",
+      "location": "LSIA Airport Runway 2",
+      "host": "BDC Crew"
+    }
+  ],
+  "last_updated": 1787266335
+}
