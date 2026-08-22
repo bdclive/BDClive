@@ -581,45 +581,45 @@
 
     <!-- TICKET ALERTS SYSTEM MODAL -->
     <div id="ticketAlertsModal" class="modal">
-        <div class="modal-content" style="border-color: #ff5e00; max-width: 920px; width: 92%; background: #0d1117; max-height: 88vh; display: flex; flex-direction: column; box-shadow: 0 16px 48px rgba(0,0,0,0.8), 0 0 25px rgba(255, 94, 0, 0.2);">
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #30363d; padding-bottom: 12px; margin-bottom: 12px;">
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <i class="fa-solid fa-ticket" style="font-size: 22px; color: #ff7b00;"></i>
+        <div class="modal-content" style="border-color: #ff5e00; max-width: 1080px; width: 95%; background: #0d1117; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 16px 48px rgba(0,0,0,0.85), 0 0 30px rgba(255, 94, 0, 0.25); font-size: 14px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #30363d; padding-bottom: 14px; margin-bottom: 14px;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <i class="fa-solid fa-ticket" style="font-size: 24px; color: #ff7b00;"></i>
                     <div>
-                        <h3 style="margin: 0; color: #ffffff; font-size: 16px; font-weight: 800; letter-spacing: 0.5px;">Ticket Alerts System — Community & Support Telemetry</h3>
-                        <span style="font-size: 10px; color: #8b949e;">Whiteout Survival & Central Command • Live Audio & Push Alerts</span>
+                        <h3 style="margin: 0; color: #ffffff; font-size: 18px; font-weight: 800; letter-spacing: 0.5px;">Ticket Alerts System — Support Desk <span style="font-family: monospace; font-size: 12px; color: var(--accent-cyan); background: #1f293d; padding: 2px 7px; border-radius: 6px; border: 1px solid #303e5c;">v10.2.109</span></h3>
+                        <span style="font-size: 12px; color: #8b949e;">Whiteout Survival & Central Command • Live Audio & Push Alerts</span>
                     </div>
                 </div>
                 <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-                    <a href="./tickets.html" target="_blank" style="background: rgba(0, 210, 255, 0.12); color: #00d2ff; border: 1px solid rgba(0, 210, 255, 0.35); padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; transition: all 0.2s ease;" title="Open Dedicated Full-Page Ticket Desk in New Tab">
+                    <a href="./tickets.html" target="_blank" style="background: rgba(0, 210, 255, 0.14); color: #00d2ff; border: 1px solid rgba(0, 210, 255, 0.4); padding: 7px 12px; border-radius: 8px; font-size: 13px; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s ease;" title="Open Dedicated Full-Page Ticket Desk in New Tab">
                         <i class="fa-solid fa-up-right-from-square"></i> Fullscreen Desk
                     </a>
-                    <button id="modal-alert-settings-toggle-btn" onclick="toggleTicketAlertSettingsPanel()" style="background: rgba(255, 123, 0, 0.12); color: #ff9f43; border: 1px solid rgba(255, 123, 0, 0.35); padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; transition: all 0.2s ease;" title="Customize Sound Profile, Volume, Desktop Notifications & Priority Filters">
+                    <button id="modal-alert-settings-toggle-btn" onclick="toggleTicketAlertSettingsPanel()" style="background: rgba(255, 123, 0, 0.14); color: #ff9f43; border: 1px solid rgba(255, 123, 0, 0.4); padding: 7px 12px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s ease;" title="Customize Sound Profile, Volume, Desktop Notifications & Priority Filters">
                         <i class="fa-solid fa-sliders"></i> Alert Settings
                     </button>
-                    <button id="modal-test-sound-btn" onclick="playTicketAlertSound('test')" style="background: rgba(255, 94, 0, 0.12); color: #ff9f43; border: 1px solid rgba(255, 94, 0, 0.3); padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; transition: all 0.2s ease;">
+                    <button id="modal-test-sound-btn" onclick="playTicketAlertSound('test')" style="background: rgba(255, 94, 0, 0.14); color: #ff9f43; border: 1px solid rgba(255, 94, 0, 0.35); padding: 7px 12px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s ease;">
                         <i class="fa-solid fa-play"></i> 🔊 Test Alert
                     </button>
-                    <button id="modal-ticket-sound-toggle-btn" onclick="toggleTicketSound()" style="background: rgba(63, 185, 80, 0.18); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.4); padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; transition: all 0.2s ease;">
+                    <button id="modal-ticket-sound-toggle-btn" onclick="toggleTicketSound()" style="background: rgba(63, 185, 80, 0.18); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.45); padding: 7px 12px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s ease;">
                         <i class="fa-solid fa-volume-high"></i> Sound Enabled
                     </button>
-                    <span class="close-modal" onclick="closeTicketAlertsModal()" style="font-size: 24px; cursor: pointer; color: #8b949e;">&times;</span>
+                    <span class="close-modal" onclick="closeTicketAlertsModal()" style="font-size: 26px; cursor: pointer; color: #8b949e; margin-left: 4px;">&times;</span>
                 </div>
             </div>
 
             <!-- Custom Alert & Sound Configuration Panel (Collapsible) -->
-            <div id="ticket-alert-settings-panel" style="display: none; background: rgba(255, 94, 0, 0.05); border: 1px solid rgba(255, 94, 0, 0.25); border-radius: 8px; padding: 12px 14px; margin-bottom: 12px; box-shadow: inset 0 0 15px rgba(255, 94, 0, 0.04);">
+            <div id="ticket-alert-settings-panel" style="display: none; background: rgba(255, 94, 0, 0.05); border: 1px solid rgba(255, 94, 0, 0.25); border-radius: 10px; padding: 14px 16px; margin-bottom: 14px; box-shadow: inset 0 0 15px rgba(255, 94, 0, 0.04);">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 6px;">
-                    <h4 style="margin: 0; color: #ff9f43; font-size: 12px; font-weight: 800; display: flex; align-items: center; gap: 6px;">
+                    <h4 style="margin: 0; color: #ff9f43; font-size: 13.5px; font-weight: 800; display: flex; align-items: center; gap: 6px;">
                         <i class="fa-solid fa-sliders"></i> Custom Ticket Alert & Audio Synthesizer Configuration
                     </h4>
-                    <span style="font-size: 10px; color: #8b949e;">Preferences saved automatically in your browser</span>
+                    <span style="font-size: 11.5px; color: #8b949e;">Preferences saved automatically in your browser</span>
                 </div>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; align-items: end;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; align-items: end;">
                     <!-- Sound Profile -->
                     <div>
-                        <label style="display: block; font-size: 10px; color: #8b949e; font-weight: 700; margin-bottom: 4px; text-transform: uppercase;">Sound Profile</label>
-                        <select id="ticket-sound-profile-select" onchange="changeTicketSoundProfile(this.value)" style="width: 100%; background: #161b22; border: 1px solid #30363d; color: #fff; padding: 6px 8px; border-radius: 6px; font-size: 11px; outline: none; cursor: pointer;">
+                        <label style="display: block; font-size: 11.5px; color: #8b949e; font-weight: 700; margin-bottom: 5px; text-transform: uppercase;">Sound Profile</label>
+                        <select id="ticket-sound-profile-select" onchange="changeTicketSoundProfile(this.value)" style="width: 100%; background: #161b22; border: 1px solid #30363d; color: #fff; padding: 8px 10px; border-radius: 7px; font-size: 12.5px; outline: none; cursor: pointer;">
                             <option value="chime">🔔 Melodic Double Chime (D5-A5-D6)</option>
                             <option value="radar">📡 Cyberpunk Radar Ping</option>
                             <option value="soft">✨ Soft Ambient Bell</option>
@@ -630,34 +630,34 @@
                     </div>
                     <!-- Volume Slider -->
                     <div>
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                            <label style="font-size: 10px; color: #8b949e; font-weight: 700; text-transform: uppercase;">Alert Volume</label>
-                            <span id="ticket-volume-val" style="font-size: 10px; color: #ff9f43; font-weight: 700;">50%</span>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                            <label style="font-size: 11.5px; color: #8b949e; font-weight: 700; text-transform: uppercase;">Alert Volume</label>
+                            <span id="ticket-volume-val" style="font-size: 12px; color: #ff9f43; font-weight: 800;">50%</span>
                         </div>
                         <input type="range" id="ticket-volume-slider" min="0.05" max="1" step="0.05" value="0.5" oninput="changeTicketVolume(this.value)" style="width: 100%; accent-color: #ff5e00; cursor: pointer;">
                     </div>
                     <!-- Alert Priority Filter -->
                     <div>
-                        <label style="display: block; font-size: 10px; color: #8b949e; font-weight: 700; margin-bottom: 4px; text-transform: uppercase;">Alert Trigger Condition</label>
-                        <select id="ticket-alert-priority-select" onchange="changeTicketAlertPriority(this.value)" style="width: 100%; background: #161b22; border: 1px solid #30363d; color: #fff; padding: 6px 8px; border-radius: 6px; font-size: 11px; outline: none; cursor: pointer;">
+                        <label style="display: block; font-size: 11.5px; color: #8b949e; font-weight: 700; margin-bottom: 5px; text-transform: uppercase;">Alert Trigger Condition</label>
+                        <select id="ticket-alert-priority-select" onchange="changeTicketAlertPriority(this.value)" style="width: 100%; background: #161b22; border: 1px solid #30363d; color: #fff; padding: 8px 10px; border-radius: 7px; font-size: 12.5px; outline: none; cursor: pointer;">
                             <option value="all">🔔 Alert on All New Tickets</option>
                             <option value="urgent_only">🚨 Alert ONLY on Urgent / Bugs</option>
                         </select>
                     </div>
                     <!-- Desktop Notifications -->
                     <div>
-                        <label style="display: block; font-size: 10px; color: #8b949e; font-weight: 700; margin-bottom: 4px; text-transform: uppercase;">Desktop Push Notifications</label>
-                        <button id="ticket-desktop-notif-btn" onclick="toggleTicketDesktopNotifications()" style="width: 100%; background: #21262d; color: #8b949e; border: 1px solid #30363d; padding: 6px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s ease;">
+                        <label style="display: block; font-size: 11.5px; color: #8b949e; font-weight: 700; margin-bottom: 5px; text-transform: uppercase;">Desktop Push Notifications</label>
+                        <button id="ticket-desktop-notif-btn" onclick="toggleTicketDesktopNotifications()" style="width: 100%; background: #21262d; color: #8b949e; border: 1px solid #30363d; padding: 8px 12px; border-radius: 7px; font-size: 12.5px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s ease;">
                             <i class="fa-solid fa-bell"></i> <span id="ticket-desktop-notif-text">Enable Desktop Alerts</span>
                         </button>
                     </div>
                 </div>
                 <!-- Custom Audio URL Field (Hidden unless 'custom' is selected) -->
-                <div id="ticket-custom-audio-box" style="display: none; margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255, 94, 0, 0.15);">
-                    <label style="display: block; font-size: 10px; color: #8b949e; font-weight: 700; margin-bottom: 4px; text-transform: uppercase;">Custom Audio File URL (MP3 / WAV / OGG)</label>
+                <div id="ticket-custom-audio-box" style="display: none; margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255, 94, 0, 0.15);">
+                    <label style="display: block; font-size: 11.5px; color: #8b949e; font-weight: 700; margin-bottom: 5px; text-transform: uppercase;">Custom Audio File URL (MP3 / WAV / OGG)</label>
                     <div style="display: flex; gap: 8px;">
-                        <input type="url" id="ticket-custom-audio-url" placeholder="https://example.com/alert.mp3" style="flex: 1; background: #161b22; border: 1px solid #30363d; color: #fff; padding: 6px 10px; border-radius: 6px; font-size: 11px; outline: none;">
-                        <button onclick="saveAndTestCustomAudio()" style="background: #238636; color: #fff; border: none; padding: 6px 14px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
+                        <input type="url" id="ticket-custom-audio-url" placeholder="https://example.com/alert.mp3" style="flex: 1; background: #161b22; border: 1px solid #30363d; color: #fff; padding: 8px 12px; border-radius: 7px; font-size: 12.5px; outline: none;">
+                        <button onclick="saveAndTestCustomAudio()" style="background: #238636; color: #fff; border: none; padding: 8px 16px; border-radius: 7px; font-size: 12.5px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
                             <i class="fa-solid fa-floppy-disk"></i> Save & Test
                         </button>
                     </div>
@@ -665,37 +665,53 @@
             </div>
 
             <!-- Ticket Summary Stats Bar -->
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin-bottom: 12px;">
-                <div style="background: rgba(255, 94, 0, 0.08); border: 1px solid rgba(255, 94, 0, 0.2); border-radius: 8px; padding: 8px; text-align: center;">
-                    <div style="font-size: 10px; color: #8b949e; font-weight: 700; text-transform: uppercase;">Total Tickets</div>
-                    <div id="ticket-modal-total-cnt" style="font-size: 18px; font-weight: 800; color: #ff9f43;">0</div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 14px;">
+                <div onclick="filterTicketAlerts('open')" style="background: rgba(255, 94, 0, 0.1); border: 1px solid rgba(255, 94, 0, 0.3); border-radius: 10px; padding: 10px 12px; text-align: center; cursor: pointer; transition: transform 0.15s ease;">
+                    <div style="font-size: 11.5px; color: #ff9f43; font-weight: 800; text-transform: uppercase;">🔥 Open Queue</div>
+                    <div id="ticket-modal-open-cnt" style="font-size: 26px; font-weight: 900; color: #ff7b00; line-height: 1.2;">0</div>
                 </div>
-                <div style="background: rgba(255, 123, 0, 0.08); border: 1px solid rgba(255, 123, 0, 0.2); border-radius: 8px; padding: 8px; text-align: center;">
-                    <div style="font-size: 10px; color: #8b949e; font-weight: 700; text-transform: uppercase;">Pending Action</div>
-                    <div id="ticket-modal-pending-cnt" style="font-size: 18px; font-weight: 800; color: #ff7b00;">0</div>
+                <div onclick="filterTicketAlerts('urgent')" style="background: rgba(248, 81, 73, 0.1); border: 1px solid rgba(248, 81, 73, 0.3); border-radius: 10px; padding: 10px 12px; text-align: center; cursor: pointer; transition: transform 0.15s ease;">
+                    <div style="font-size: 11.5px; color: #f85149; font-weight: 800; text-transform: uppercase;">🚨 Urgent / Bugs</div>
+                    <div id="ticket-modal-urgent-cnt" style="font-size: 26px; font-weight: 900; color: #f85149; line-height: 1.2;">0</div>
                 </div>
-                <div style="background: rgba(88, 166, 255, 0.08); border: 1px solid rgba(88, 166, 255, 0.2); border-radius: 8px; padding: 8px; text-align: center;">
-                    <div style="font-size: 10px; color: #8b949e; font-weight: 700; text-transform: uppercase;">In-Progress</div>
-                    <div id="ticket-modal-inprogress-cnt" style="font-size: 18px; font-weight: 800; color: #58a6ff;">0</div>
+                <div onclick="filterTicketAlerts('inprogress')" style="background: rgba(88, 166, 255, 0.1); border: 1px solid rgba(88, 166, 255, 0.3); border-radius: 10px; padding: 10px 12px; text-align: center; cursor: pointer; transition: transform 0.15s ease;">
+                    <div style="font-size: 11.5px; color: #58a6ff; font-weight: 800; text-transform: uppercase;">⚡ In-Progress</div>
+                    <div id="ticket-modal-inprogress-cnt" style="font-size: 26px; font-weight: 900; color: #58a6ff; line-height: 1.2;">0</div>
                 </div>
-                <div style="background: rgba(63, 185, 80, 0.08); border: 1px solid rgba(63, 185, 80, 0.2); border-radius: 8px; padding: 8px; text-align: center;">
-                    <div style="font-size: 10px; color: #8b949e; font-weight: 700; text-transform: uppercase;">Resolved</div>
-                    <div id="ticket-modal-resolved-cnt" style="font-size: 18px; font-weight: 800; color: #3fb950;">0</div>
+                <div onclick="filterTicketAlerts('resolved')" style="background: rgba(63, 185, 80, 0.1); border: 1px solid rgba(63, 185, 80, 0.3); border-radius: 10px; padding: 10px 12px; text-align: center; cursor: pointer; transition: transform 0.15s ease;">
+                    <div style="font-size: 11.5px; color: #3fb950; font-weight: 800; text-transform: uppercase;">📁 Resolved</div>
+                    <div id="ticket-modal-resolved-cnt" style="font-size: 26px; font-weight: 900; color: #3fb950; line-height: 1.2;">0</div>
                 </div>
-                <div style="background: rgba(248, 81, 73, 0.08); border: 1px solid rgba(248, 81, 73, 0.2); border-radius: 8px; padding: 8px; text-align: center;">
-                    <div style="font-size: 10px; color: #8b949e; font-weight: 700; text-transform: uppercase;">Urgent / Bugs</div>
-                    <div id="ticket-modal-urgent-cnt" style="font-size: 18px; font-weight: 800; color: #f85149;">0</div>
+                <div onclick="filterTicketAlerts('all')" style="background: rgba(188, 149, 255, 0.1); border: 1px solid rgba(188, 149, 255, 0.3); border-radius: 10px; padding: 10px 12px; text-align: center; cursor: pointer; transition: transform 0.15s ease;">
+                    <div style="font-size: 11.5px; color: #bc95ff; font-weight: 800; text-transform: uppercase;">Total Telemetry</div>
+                    <div id="ticket-modal-total-cnt" style="font-size: 26px; font-weight: 900; color: #ffffff; line-height: 1.2;">0</div>
+                </div>
+            </div>
+
+            <!-- Floating Multi-Select Bulk Actions Bar inside Modal -->
+            <div id="ticket-modal-bulk-bar" style="display: none; background: linear-gradient(135deg, #1f293d 0%, #0f172a 100%); border: 1.5px solid var(--accent-cyan); box-shadow: 0 0 20px rgba(0, 210, 255, 0.25); border-radius: 10px; padding: 10px 16px; margin-bottom: 12px; justify-content: space-between; align-items: center;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <i class="fa-solid fa-check-double" style="color: var(--accent-cyan); font-size: 15px;"></i>
+                    <span style="font-weight: 800; font-size: 13px; color: #ffffff;"><span id="modal-bulk-count">0</span> Tickets Selected</span>
+                </div>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <button onclick="bulkResolveModalTickets()" style="background: rgba(63, 185, 80, 0.2); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.4); padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer;">✓ Mark Resolved</button>
+                    <button onclick="bulkSetProgressModalTickets()" style="background: rgba(88, 166, 255, 0.2); color: #58a6ff; border: 1px solid rgba(88, 166, 255, 0.4); padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer;">⚡ Set Working</button>
+                    <button onclick="bulkDeleteModalTickets()" style="background: rgba(248, 81, 73, 0.18); color: #f85149; border: 1px solid rgba(248, 81, 73, 0.35); padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer;">🗑️ Delete</button>
+                    <button onclick="deselectModalTickets()" style="background: #21262d; color: #8b949e; border: 1px solid #30363d; padding: 5px 10px; border-radius: 6px; font-size: 11.5px; cursor: pointer;">Clear</button>
                 </div>
             </div>
 
             <!-- Filter & Search Controls -->
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; gap: 10px; flex-wrap: wrap;">
-                <div style="display: flex; gap: 6px; flex-wrap: wrap;">
-                    <button id="ticket-tab-all" onclick="filterTicketAlerts('all')" style="background: #ff5e00; color: #ffffff; border: none; padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer;">All (<span id="ticket-tab-all-num">0</span>)</button>
-                    <button id="ticket-tab-pending" onclick="filterTicketAlerts('pending')" style="background: #21262d; color: #ff7b00; border: 1px solid #30363d; padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer;">Pending (<span id="ticket-tab-pending-num">0</span>)</button>
-                    <button id="ticket-tab-inprogress" onclick="filterTicketAlerts('inprogress')" style="background: #21262d; color: #58a6ff; border: 1px solid #30363d; padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer;">In-Progress (<span id="ticket-tab-inprogress-num">0</span>)</button>
-                    <button id="ticket-tab-resolved" onclick="filterTicketAlerts('resolved')" style="background: #21262d; color: #3fb950; border: 1px solid #30363d; padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer;">Resolved (<span id="ticket-tab-resolved-num">0</span>)</button>
-                    <select id="ticket-category-filter" onchange="filterTicketCategory(this.value)" style="background: #161b22; border: 1px solid rgba(163, 113, 247, 0.4); color: #bc95ff; padding: 5px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; outline: none; cursor: pointer;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 10px; flex-wrap: wrap;">
+                <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                    <button id="ticket-tab-open" onclick="filterTicketAlerts('open')" style="background: #ff5e00; color: #ffffff; border: none; padding: 7px 14px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer;">🔥 Open Queue (<span id="ticket-tab-open-num">0</span>)</button>
+                    <button id="ticket-tab-urgent" onclick="filterTicketAlerts('urgent')" style="background: #21262d; color: #f85149; border: 1px solid #30363d; padding: 7px 14px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer;">🚨 Urgent (<span id="ticket-tab-urgent-num">0</span>)</button>
+                    <button id="ticket-tab-inprogress" onclick="filterTicketAlerts('inprogress')" style="background: #21262d; color: #58a6ff; border: 1px solid #30363d; padding: 7px 14px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer;">⚡ In-Progress (<span id="ticket-tab-inprogress-num">0</span>)</button>
+                    <button id="ticket-tab-resolved" onclick="filterTicketAlerts('resolved')" style="background: #21262d; color: #3fb950; border: 1px solid #30363d; padding: 7px 14px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer;">📁 Resolved (<span id="ticket-tab-resolved-num">0</span>)</button>
+                    <button id="ticket-tab-all" onclick="filterTicketAlerts('all')" style="background: #21262d; color: #8b949e; border: 1px solid #30363d; padding: 7px 14px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer;">📋 All (<span id="ticket-tab-all-num">0</span>)</button>
+                    
+                    <select id="ticket-category-filter" onchange="filterTicketCategory(this.value)" style="background: #161b22; border: 1px solid rgba(163, 113, 247, 0.4); color: #bc95ff; padding: 7px 10px; border-radius: 8px; font-size: 12.5px; font-weight: 700; outline: none; cursor: pointer;">
                         <option value="all">📁 All Categories</option>
                         <option value="Bug Report">🐛 Bug Report</option>
                         <option value="Feature Request">✨ Feature Request</option>
@@ -707,56 +723,87 @@
                         <option value="Performance">⚡ Performance</option>
                     </select>
                 </div>
-                <div style="display: flex; gap: 6px; align-items: center;">
-                    <input type="text" id="ticket-search-input" oninput="renderTicketAlertsTable()" placeholder="🔍 Search tickets, members, category..." style="background: #161b22; border: 1px solid #30363d; color: #fff; padding: 5px 10px; border-radius: 6px; font-size: 11px; outline: none; width: 210px;">
-                    <button onclick="toggleNewTicketForm()" style="background: rgba(255, 94, 0, 0.15); color: #ff9f43; border: 1px solid rgba(255, 94, 0, 0.35); padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 4px;">
-                        <i class="fa-solid fa-plus"></i> <span id="new-ticket-btn-label">New Alert</span>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <input type="text" id="ticket-search-input" oninput="renderTicketAlertsTable()" placeholder="🔍 Search tickets, chiefs, ID..." style="background: #161b22; border: 1px solid #30363d; color: #fff; padding: 7px 12px; border-radius: 8px; font-size: 13px; outline: none; width: 230px;">
+                    
+                    <!-- Density View Buttons -->
+                    <button id="ticket-modal-view-table-btn" onclick="setModalTicketViewMode('table')" style="background: #222f47; color: var(--accent-cyan); border: 1px solid var(--accent-cyan); padding: 7px 10px; border-radius: 8px; font-size: 13px; cursor: pointer;" title="Table View">
+                        <i class="fa-solid fa-table-list"></i>
+                    </button>
+                    <button id="ticket-modal-view-cards-btn" onclick="setModalTicketViewMode('cards')" style="background: #141c2e; color: #8b949e; border: 1px solid #30363d; padding: 7px 10px; border-radius: 8px; font-size: 13px; cursor: pointer;" title="Card Deck View">
+                        <i class="fa-solid fa-grip"></i>
+                    </button>
+
+                    <button onclick="toggleNewTicketForm()" style="background: rgba(255, 94, 0, 0.18); color: #ff9f43; border: 1px solid rgba(255, 94, 0, 0.4); padding: 7px 12px; border-radius: 8px; font-size: 13px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                        <i class="fa-solid fa-plus"></i> <span id="new-ticket-btn-label">Post Alert</span>
                     </button>
                 </div>
             </div>
 
             <!-- New Ticket Inline Form (Hidden by default) -->
-            <div id="new-ticket-form-panel" style="display: none; background: rgba(255, 94, 0, 0.04); border: 1px solid rgba(255, 94, 0, 0.25); border-radius: 8px; padding: 12px; margin-bottom: 10px;">
-                <h4 style="margin: 0 0 8px 0; color: #ff9f43; font-size: 12px;"><i class="fa-solid fa-bullhorn"></i> Post New Alliance Support Ticket / Broadcast Alert</h4>
-                <div style="display: grid; grid-template-columns: 1fr 1fr 120px; gap: 8px; margin-bottom: 8px;">
-                    <input type="text" id="new-ticket-title" placeholder="Ticket Title / Subject..." style="background: #161b22; border: 1px solid #30363d; color: #fff; padding: 6px 10px; border-radius: 6px; font-size: 11px; outline: none;">
-                    <select id="new-ticket-cat" style="background: #161b22; border: 1px solid #30363d; color: #fff; padding: 6px 10px; border-radius: 6px; font-size: 11px; outline: none;">
-                        <option value="Account Hub">🛡️ Account Hub / Furnace</option>
+            <div id="new-ticket-form-panel" style="display: none; background: rgba(255, 94, 0, 0.05); border: 1px solid rgba(255, 94, 0, 0.3); border-radius: 10px; padding: 14px; margin-bottom: 12px;">
+                <h4 style="margin: 0 0 10px 0; color: #ff9f43; font-size: 13.5px; font-weight: 800;"><i class="fa-solid fa-bullhorn"></i> Post New Alliance Support Ticket / Broadcast Alert</h4>
+                <div style="display: grid; grid-template-columns: 1.5fr 1fr 130px; gap: 10px; margin-bottom: 10px;">
+                    <input type="text" id="new-ticket-title" placeholder="Ticket Title / Subject..." style="background: #161b22; border: 1px solid #30363d; color: #fff; padding: 8px 12px; border-radius: 8px; font-size: 13px; outline: none;">
+                    <select id="new-ticket-cat" style="background: #161b22; border: 1px solid #30363d; color: #fff; padding: 8px 12px; border-radius: 8px; font-size: 13px; outline: none;">
+                        <option value="Bug Report">🐛 Bug Report</option>
+                        <option value="Feature Request">✨ Feature Request</option>
+                        <option value="Account Hub">🛡️ Account / Furnace</option>
                         <option value="Event / Battle">⚔️ Event / Battle Directive</option>
                         <option value="Cinema / Movie">🎬 Cinema / Movie Night</option>
-                        <option value="Bug Report">🐛 Bug Report</option>
-                        <option value="General Support">💬 General Support</option>
+                        <option value="General Support" selected>💬 General Support</option>
+                        <option value="UI / Display">🎨 UI / Display</option>
+                        <option value="Performance">⚡ Performance</option>
                     </select>
-                    <select id="new-ticket-priority" style="background: #161b22; border: 1px solid #30363d; color: #fff; padding: 6px 10px; border-radius: 6px; font-size: 11px; outline: none;">
+                    <select id="new-ticket-priority" style="background: #161b22; border: 1px solid #30363d; color: #fff; padding: 8px 12px; border-radius: 8px; font-size: 13px; outline: none;">
                         <option value="normal">Normal</option>
                         <option value="urgent">🚨 Urgent</option>
-                        <option value="high">High</option>
                     </select>
                 </div>
-                <textarea id="new-ticket-desc" placeholder="Enter ticket description or announcement details..." style="width: 100%; box-sizing: border-box; background: #161b22; border: 1px solid #30363d; color: #fff; padding: 6px 10px; border-radius: 6px; font-size: 11px; outline: none; height: 50px; resize: none; margin-bottom: 8px;"></textarea>
-                <div style="display: flex; justify-content: flex-end; gap: 6px;">
-                    <button onclick="toggleNewTicketForm()" style="background: #21262d; color: #8b949e; border: 1px solid #30363d; padding: 4px 10px; border-radius: 6px; font-size: 11px; cursor: pointer;">Cancel</button>
-                    <button onclick="submitNewTicketAlert()" style="background: #238636; color: #fff; border: none; padding: 4px 14px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer;">🚀 Post Alert</button>
+                <textarea id="new-ticket-desc" placeholder="Enter ticket description or reproduction context..." style="width: 100%; box-sizing: border-box; background: #161b22; border: 1px solid #30363d; color: #fff; padding: 8px 12px; border-radius: 8px; font-size: 13px; outline: none; height: 60px; resize: vertical; margin-bottom: 10px;"></textarea>
+                <div style="display: flex; justify-content: flex-end; gap: 8px;">
+                    <button onclick="toggleNewTicketForm()" style="background: #21262d; color: #8b949e; border: 1px solid #30363d; padding: 6px 14px; border-radius: 7px; font-size: 12.5px; cursor: pointer;">Cancel</button>
+                    <button onclick="submitNewTicketAlert()" style="background: #238636; color: #fff; border: none; padding: 6px 18px; border-radius: 7px; font-size: 12.5px; font-weight: 800; cursor: pointer;">🚀 Post Alert</button>
                 </div>
             </div>
 
-            <!-- Tickets Table Container -->
-            <div style="overflow-y: auto; flex: 1; border: 1px solid #30363d; border-radius: 8px; background: #161b22; max-height: 52vh;">
-                <table style="width: 100%; border-collapse: collapse; font-size: 11px; text-align: left;">
+            <!-- Table View Container -->
+            <div id="ticket-modal-table-container" style="overflow-y: auto; flex: 1; border: 1px solid #30363d; border-radius: 10px; background: #161b22; max-height: 52vh;">
+                <table style="width: 100%; border-collapse: collapse; font-size: 13.5px; text-align: left;">
                     <thead>
-                        <tr style="background: #21262d; border-bottom: 1px solid #30363d; color: #8b949e; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; position: sticky; top: 0; z-index: 2;">
-                            <th style="padding: 10px 12px;">Status / Priority</th>
-                            <th style="padding: 10px 8px;">Category / Title</th>
-                            <th style="padding: 10px 8px;">Submitted By</th>
-                            <th style="padding: 10px 8px;">Details / Message</th>
-                            <th style="padding: 10px 8px;">Created</th>
-                            <th style="padding: 10px 12px; text-align: right;">Actions</th>
+                        <tr style="background: #21262d; border-bottom: 1px solid #30363d; color: #8b949e; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; position: sticky; top: 0; z-index: 2;">
+                            <th style="padding: 12px 14px; width: 36px; text-align: center;">
+                                <input type="checkbox" id="modal-select-all-cb" onchange="toggleSelectAllModal(this.checked)" style="width: 16px; height: 16px; accent-color: var(--primary); cursor: pointer;">
+                            </th>
+                            <th style="padding: 12px 14px; width: 130px;">Status</th>
+                            <th style="padding: 12px 10px; width: 220px;">Category / Title</th>
+                            <th style="padding: 12px 10px; width: 190px;">Submitted By</th>
+                            <th style="padding: 12px 10px;">Details / Message</th>
+                            <th style="padding: 12px 10px; width: 130px;">Created</th>
+                            <th style="padding: 12px 14px; text-align: right; width: 170px;">Actions</th>
                         </tr>
                     </thead>
                     <tbody id="ticket-table-body">
                         <!-- Rendered dynamically -->
                     </tbody>
                 </table>
+            </div>
+
+            <!-- Card Deck View Container (Hidden by default) -->
+            <div id="ticket-modal-cards-container" style="display: none; overflow-y: auto; flex: 1; border: 1px solid #30363d; border-radius: 10px; background: #0d1117; padding: 14px; max-height: 52vh; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px;"></div>
+
+            <!-- In-Modal Quick Resolution Box -->
+            <div id="modal-res-note-box" style="display: none; background: #161b22; border: 1.5px solid var(--accent-green); border-radius: 10px; padding: 14px; margin-top: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.6);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <span style="font-weight: 800; color: #3fb950; font-size: 13px;"><i class="fa-solid fa-circle-check"></i> Complete & Resolve Ticket</span>
+                    <span onclick="closeModalResolveBox()" style="cursor: pointer; color: #8b949e; font-size: 18px;">&times;</span>
+                </div>
+                <p id="modal-res-ticket-title" style="font-size: 13px; font-weight: 700; color: #ffffff; margin-bottom: 8px;"></p>
+                <input type="text" id="modal-res-note-input" placeholder="Optional resolution note (e.g. Code delivered, Fixed in update)..." style="width: 100%; box-sizing: border-box; background: #0d1117; border: 1px solid #30363d; color: #fff; padding: 8px 12px; border-radius: 7px; font-size: 13px; outline: none; margin-bottom: 10px;">
+                <div style="display: flex; justify-content: flex-end; gap: 8px;">
+                    <button onclick="closeModalResolveBox()" style="background: #21262d; color: #8b949e; border: 1px solid #30363d; padding: 5px 12px; border-radius: 6px; font-size: 12px; cursor: pointer;">Cancel</button>
+                    <button onclick="confirmModalResolveTicket()" style="background: #238636; color: #fff; border: none; padding: 5px 16px; border-radius: 6px; font-size: 12px; font-weight: 800; cursor: pointer;">✓ Confirm Resolve</button>
+                </div>
             </div>
         </div>
     </div>
@@ -3067,12 +3114,15 @@
             }
 
             // Update Modal Stats Bar
+            const mOpen = document.getElementById('ticket-modal-open-cnt');
             const mTot = document.getElementById('ticket-modal-total-cnt');
             const mPend = document.getElementById('ticket-modal-pending-cnt');
             const mInProg = document.getElementById('ticket-modal-inprogress-cnt');
             const mRes = document.getElementById('ticket-modal-resolved-cnt');
             const mUrg = document.getElementById('ticket-modal-urgent-cnt');
 
+            const openCount = pendingCount + inProgressCount;
+            if (mOpen) mOpen.innerText = fNum(openCount);
             if (mTot) mTot.innerText = fNum(ticketList.length);
             if (mPend) mPend.innerText = fNum(pendingCount);
             if (mInProg) mInProg.innerText = fNum(inProgressCount);
@@ -3080,21 +3130,28 @@
             if (mUrg) mUrg.innerText = fNum(urgentCount);
 
             // Tab badge numbers
-            const tabAll = document.getElementById('ticket-tab-all-num');
-            const tabPend = document.getElementById('ticket-tab-pending-num');
+            const tabOpen = document.getElementById('ticket-tab-open-num');
+            const tabUrg = document.getElementById('ticket-tab-urgent-num');
             const tabProg = document.getElementById('ticket-tab-inprogress-num');
             const tabRes = document.getElementById('ticket-tab-resolved-num');
+            const tabAll = document.getElementById('ticket-tab-all-num');
 
-            if (tabAll) tabAll.innerText = fNum(ticketList.length);
-            if (tabPend) tabPend.innerText = fNum(pendingCount);
+            if (tabOpen) tabOpen.innerText = fNum(openCount);
+            if (tabUrg) tabUrg.innerText = fNum(urgentCount);
             if (tabProg) tabProg.innerText = fNum(inProgressCount);
             if (tabRes) tabRes.innerText = fNum(resolvedCount);
+            if (tabAll) tabAll.innerText = fNum(ticketList.length);
 
             // If modal is open, refresh table
             if (document.getElementById('ticketAlertsModal') && document.getElementById('ticketAlertsModal').style.display === 'block') {
                 renderTicketAlertsTable();
             }
         }
+
+        let currentTicketFilter = 'open'; // DEFAULT TO OPEN QUEUE ON LOAD
+        let currentModalViewMode = 'table';
+        let selectedModalTicketIds = new Set();
+        let pendingModalResolveId = null;
 
         function openTicketAlertsModal() {
             try { sessionStorage.setItem('active_modal_id', 'ticketAlertsModal'); } catch(e) {}
@@ -3108,19 +3165,42 @@
             document.getElementById('ticketAlertsModal').style.display = 'none';
         }
 
+        function setModalTicketViewMode(mode) {
+            currentModalViewMode = mode;
+            const tblBtn = document.getElementById('ticket-modal-view-table-btn');
+            const crdBtn = document.getElementById('ticket-modal-view-cards-btn');
+            const tblCont = document.getElementById('ticket-modal-table-container');
+            const crdCont = document.getElementById('ticket-modal-cards-container');
+
+            if (mode === 'table') {
+                if (tblBtn) { tblBtn.style.background = '#222f47'; tblBtn.style.color = 'var(--accent-cyan)'; tblBtn.style.borderColor = 'var(--accent-cyan)'; }
+                if (crdBtn) { crdBtn.style.background = '#141c2e'; crdBtn.style.color = '#8b949e'; crdBtn.style.borderColor = '#30363d'; }
+                if (tblCont) tblCont.style.display = 'block';
+                if (crdCont) crdCont.style.display = 'none';
+            } else {
+                if (crdBtn) { crdBtn.style.background = '#222f47'; crdBtn.style.color = 'var(--accent-cyan)'; crdBtn.style.borderColor = 'var(--accent-cyan)'; }
+                if (tblBtn) { tblBtn.style.background = '#141c2e'; tblBtn.style.color = '#8b949e'; tblBtn.style.borderColor = '#30363d'; }
+                if (tblCont) tblCont.style.display = 'none';
+                if (crdCont) crdCont.style.display = 'grid';
+            }
+            renderTicketAlertsTable();
+        }
+
         function filterTicketAlerts(tab) {
             currentTicketFilter = tab;
-            ['all', 'pending', 'inprogress', 'resolved'].forEach(t => {
+            ['open', 'urgent', 'inprogress', 'resolved', 'all'].forEach(t => {
                 const btn = document.getElementById('ticket-tab-' + t);
                 if (btn) {
                     if (t === tab) {
                         btn.style.background = '#ff5e00';
                         btn.style.color = '#ffffff';
+                        btn.style.borderColor = '#ff5e00';
                         btn.style.fontWeight = '700';
                     } else {
                         btn.style.background = '#21262d';
-                        btn.style.color = t === 'pending' ? '#ff7b00' : (t === 'inprogress' ? '#58a6ff' : (t === 'resolved' ? '#3fb950' : '#8b949e'));
-                        btn.style.fontWeight = '600';
+                        btn.style.color = t === 'open' ? '#ff7b00' : (t === 'urgent' ? '#f85149' : (t === 'inprogress' ? '#58a6ff' : (t === 'resolved' ? '#3fb950' : '#8b949e')));
+                        btn.style.borderColor = '#30363d';
+                        btn.style.fontWeight = '700';
                     }
                 }
             });
@@ -3135,7 +3215,7 @@
                 if (label) label.innerText = 'Close Form';
             } else {
                 panel.style.display = 'none';
-                if (label) label.innerText = 'New Alert';
+                if (label) label.innerText = 'Post Alert';
             }
         }
 
@@ -3159,6 +3239,109 @@
             }).catch(e => console.error('Error updating ticket category:', e));
         }
 
+        function toggleSelectModalTicket(id, checked) {
+            if (checked) selectedModalTicketIds.add(id);
+            else selectedModalTicketIds.delete(id);
+            updateModalBulkBar();
+        }
+
+        function toggleSelectAllModal(checked) {
+            const tickets = rawTicketAlerts || {};
+            const list = Object.entries(tickets).map(([id, t]) => ({ id, ...t }));
+            if (checked) {
+                list.forEach(t => selectedModalTicketIds.add(t.id));
+            } else {
+                selectedModalTicketIds.clear();
+            }
+            renderTicketAlertsTable();
+        }
+
+        function deselectModalTickets() {
+            selectedModalTicketIds.clear();
+            const master = document.getElementById('modal-select-all-cb');
+            if (master) master.checked = false;
+            renderTicketAlertsTable();
+        }
+
+        function updateModalBulkBar() {
+            const bar = document.getElementById('ticket-modal-bulk-bar');
+            const cnt = document.getElementById('modal-bulk-count');
+            if (!bar) return;
+            if (selectedModalTicketIds.size > 0) {
+                bar.style.display = 'flex';
+                if (cnt) cnt.innerText = selectedModalTicketIds.size;
+            } else {
+                bar.style.display = 'none';
+            }
+        }
+
+        function bulkResolveModalTickets() {
+            if (selectedModalTicketIds.size === 0) return;
+            const note = prompt(`Enter resolution note for ${selectedModalTicketIds.size} selected tickets:`, 'Bulk resolved by Commander');
+            const ids = Array.from(selectedModalTicketIds);
+            ids.forEach(id => {
+                wosDb.ref('community_feedback/' + id).update({
+                    status: 'resolved',
+                    resolutionNote: note || 'Resolved',
+                    resolvedAt: Date.now(),
+                    updatedAt: Date.now()
+                });
+            });
+            deselectModalTickets();
+        }
+
+        function bulkSetProgressModalTickets() {
+            if (selectedModalTicketIds.size === 0) return;
+            const ids = Array.from(selectedModalTicketIds);
+            ids.forEach(id => {
+                wosDb.ref('community_feedback/' + id).update({
+                    status: 'in-progress',
+                    updatedAt: Date.now()
+                });
+            });
+            deselectModalTickets();
+        }
+
+        function bulkDeleteModalTickets() {
+            if (selectedModalTicketIds.size === 0) return;
+            if (!confirm(`Permanently delete ${selectedModalTicketIds.size} selected tickets?`)) return;
+            const ids = Array.from(selectedModalTicketIds);
+            ids.forEach(id => {
+                wosDb.ref('community_feedback/' + id).remove();
+            });
+            deselectModalTickets();
+        }
+
+        function openModalResolveDialog(id, title) {
+            pendingModalResolveId = id;
+            const box = document.getElementById('modal-res-note-box');
+            const tEl = document.getElementById('modal-res-ticket-title');
+            const inp = document.getElementById('modal-res-note-input');
+            if (tEl) tEl.innerText = title || 'Ticket #' + id;
+            if (inp) inp.value = '';
+            if (box) box.style.display = 'block';
+            if (inp) inp.focus();
+        }
+
+        function closeModalResolveBox() {
+            pendingModalResolveId = null;
+            const box = document.getElementById('modal-res-note-box');
+            if (box) box.style.display = 'none';
+        }
+
+        function confirmModalResolveTicket() {
+            if (!pendingModalResolveId || !wosDb) return;
+            const note = document.getElementById('modal-res-note-input')?.value.trim();
+            wosDb.ref('community_feedback/' + pendingModalResolveId).update({
+                status: 'resolved',
+                resolutionNote: note || 'Resolved & Closed',
+                resolvedAt: Date.now(),
+                updatedAt: Date.now()
+            }).then(() => {
+                closeModalResolveBox();
+            });
+        }
+
         function renderTicketAlertsTable() {
             const tickets = rawTicketAlerts || {};
             const ticketList = Object.entries(tickets).map(([id, t]) => ({ id, ...t }));
@@ -3166,9 +3349,15 @@
 
             const filtered = ticketList.filter(t => {
                 const st = (t.status || 'pending').toLowerCase();
-                if (currentTicketFilter === 'pending' && !(st === 'pending' || st === 'open' || st === 'new')) return false;
+                const isOpen = (st === 'pending' || st === 'open' || st === 'new' || st === 'in-progress' || st === 'investigating');
+                const isResolved = (st === 'resolved' || st === 'closed' || st === 'completed');
+                const isUrgent = (t.priority === 'urgent' || t.priority === 'high' || t.type === 'bug');
+
+                // Tab Filter
+                if (currentTicketFilter === 'open' && !isOpen) return false;
+                if (currentTicketFilter === 'urgent' && (!isUrgent || isResolved)) return false;
                 if (currentTicketFilter === 'inprogress' && !(st === 'in-progress' || st === 'investigating')) return false;
-                if (currentTicketFilter === 'resolved' && !(st === 'resolved' || st === 'closed' || st === 'completed')) return false;
+                if (currentTicketFilter === 'resolved' && !isResolved) return false;
 
                 const catStr = (t.category || (t.type === 'feature' ? 'Feature Request' : (t.type === 'bug' ? 'Bug Report' : 'General Support'))).toLowerCase();
                 if (currentTicketCategoryFilter && currentTicketCategoryFilter !== 'all') {
@@ -3191,11 +3380,22 @@
 
             filtered.sort((a, b) => (b.createdAt || b.timestamp || 0) - (a.createdAt || a.timestamp || 0));
 
+            updateModalBulkBar();
+
+            if (currentModalViewMode === 'cards') {
+                renderModalCards(filtered);
+                return;
+            }
+
             const tbody = document.getElementById('ticket-table-body');
             if (!tbody) return;
 
             if (filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 24px; color: #8b949e; font-size: 12px;">No tickets match your filter/search criteria.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 36px 20px; color: #8b949e;">
+                    <i class="fa-solid fa-circle-check" style="font-size: 32px; color: #3fb950; margin-bottom: 8px; display: block;"></i>
+                    <span style="font-size: 15px; font-weight: 800; color: #ffffff;">Queue is completely clear!</span>
+                    <div style="font-size: 12px; color: #6e7681; margin-top: 4px;">No tickets match your active filter criteria.</div>
+                </td></tr>`;
                 return;
             }
 
@@ -3214,20 +3414,21 @@
                 const st = (t.status || 'pending').toLowerCase();
                 let statusBadge = '';
                 if (st === 'pending' || st === 'open' || st === 'new') {
-                    statusBadge = `<span style="background: rgba(255, 94, 0, 0.15); color: #ff7b00; border: 1px solid rgba(255, 94, 0, 0.35); padding: 2px 6px; border-radius: 4px; font-weight: 700; font-size: 10px;">● Pending</span>`;
+                    statusBadge = `<span style="background: rgba(255, 94, 0, 0.18); color: #ff7b00; border: 1px solid rgba(255, 94, 0, 0.4); padding: 3px 8px; border-radius: 6px; font-weight: 800; font-size: 12px;">● New</span>`;
                 } else if (st === 'in-progress' || st === 'investigating') {
-                    statusBadge = `<span style="background: rgba(88, 166, 255, 0.15); color: #58a6ff; border: 1px solid rgba(88, 166, 255, 0.35); padding: 2px 6px; border-radius: 4px; font-weight: 700; font-size: 10px;">⚡ In-Progress</span>`;
+                    statusBadge = `<span style="background: rgba(88, 166, 255, 0.18); color: #58a6ff; border: 1px solid rgba(88, 166, 255, 0.4); padding: 3px 8px; border-radius: 6px; font-weight: 800; font-size: 12px;">⚡ Working</span>`;
                 } else {
-                    statusBadge = `<span style="background: rgba(63, 185, 80, 0.15); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.35); padding: 2px 6px; border-radius: 4px; font-weight: 700; font-size: 10px;">✓ Resolved</span>`;
+                    statusBadge = `<span style="background: rgba(63, 185, 80, 0.18); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.4); padding: 3px 8px; border-radius: 6px; font-weight: 800; font-size: 12px;">✓ Closed</span>`;
                 }
 
                 let priorityBadge = '';
                 if (t.priority === 'urgent' || t.priority === 'high' || t.type === 'bug') {
-                    priorityBadge = `<span style="background: rgba(248, 81, 73, 0.15); color: #f85149; border: 1px solid rgba(248, 81, 73, 0.35); padding: 1px 4px; border-radius: 4px; font-weight: 800; font-size: 9px; margin-left: 4px;">URGENT</span>`;
+                    priorityBadge = `<span style="background: rgba(248, 81, 73, 0.18); color: #f85149; border: 1px solid rgba(248, 81, 73, 0.45); padding: 2px 6px; border-radius: 5px; font-weight: 900; font-size: 10.5px; margin-left: 5px;">URGENT</span>`;
                 }
 
                 const senderName = (t.submittedBy && t.submittedBy.name) ? t.submittedBy.name : (t.author || 'Alliance Member');
-                const senderGid = (t.submittedBy && t.submittedBy.gameId) ? ` (ID: ${t.submittedBy.gameId})` : '';
+                const rawGid = (t.submittedBy && t.submittedBy.gameId) || '';
+                const senderGidHtml = rawGid ? `<span onclick="copyGameId('${rawGid}')" style="cursor: pointer; color: var(--accent-cyan); font-weight: 700;" title="Click to copy ID">${rawGid} <i class="fa-regular fa-copy" style="font-size: 10px;"></i></span>` : '';
                 const categoryStr = t.category || (t.type === 'feature' ? 'Feature Request' : (t.type === 'bug' ? 'Bug Report' : 'General Support'));
                 const createdTime = t.createdAt || t.timestamp;
                 let dateStr = 'Recent';
@@ -3236,37 +3437,89 @@
                     dateStr = d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 }
 
+                const resNoteHtml = t.resolutionNote ? `<div style="background: rgba(63, 185, 80, 0.12); color: #3fb950; border: 1px dashed rgba(63, 185, 80, 0.35); padding: 3px 8px; border-radius: 5px; font-size: 11.5px; margin-top: 5px; line-height: 1.4;">📝 Note: ${t.resolutionNote}</div>` : '';
                 const bgRow = idx % 2 === 0 ? 'background: #0d1117;' : 'background: #161b22;';
+                const isChecked = selectedModalTicketIds.has(t.id) ? 'checked' : '';
 
-                const catSelectHtml = `<div style="margin-bottom: 3px;">
-                    <select onchange="updateTicketCategory('${t.id}', this.value)" style="background: rgba(163, 113, 247, 0.12); color: #bc95ff; border: 1px solid rgba(163, 113, 247, 0.35); padding: 2px 4px; border-radius: 4px; font-size: 9.5px; font-weight: 700; outline: none; cursor: pointer;" title="Click to reclassify ticket category">
+                const catSelectHtml = `<div style="margin-bottom: 4px;">
+                    <select onchange="updateTicketCategory('${t.id}', this.value)" style="background: rgba(163, 113, 247, 0.14); color: #bc95ff; border: 1px solid rgba(163, 113, 247, 0.35); padding: 3px 7px; border-radius: 5px; font-size: 11px; font-weight: 700; outline: none; cursor: pointer;" title="Click to reclassify ticket category">
                         ${categoryOptions.map(opt => `<option value="${opt.val}" ${(categoryStr.toLowerCase().includes(opt.val.toLowerCase()) || opt.val.toLowerCase().includes(categoryStr.toLowerCase())) ? 'selected' : ''}>${opt.label}</option>`).join('')}
                     </select>
                 </div>`;
 
                 return `<tr style="${bgRow} border-bottom: 1px solid #21262d;">
-                    <td style="padding: 9px 12px; white-space: nowrap;">${statusBadge}${priorityBadge}</td>
-                    <td style="padding: 9px 8px; font-weight: 700; color: #ff9f43;">
+                    <td style="padding: 12px 14px; text-align: center;">
+                        <input type="checkbox" value="${t.id}" ${isChecked} onchange="toggleSelectModalTicket('${t.id}', this.checked)" style="width: 16px; height: 16px; accent-color: var(--primary); cursor: pointer;">
+                    </td>
+                    <td style="padding: 12px 14px; white-space: nowrap;">${statusBadge}${priorityBadge}</td>
+                    <td style="padding: 12px 10px; font-weight: 700; color: #ff9f43;">
                         ${catSelectHtml}
-                        <div style="font-size: 11px; color: #ff9f43; line-height: 1.2;">${t.title || 'Untitled Ticket'}</div>
+                        <div style="font-size: 14.5px; font-weight: 800; color: #ff9f43; line-height: 1.3;">${t.title || 'Untitled Ticket'}</div>
                     </td>
-                    <td style="padding: 9px 8px; color: #ffffff;">
-                        <div style="display: flex; align-items: center; gap: 5px;">
-                            <i class="fa-solid fa-user" style="color: #ff9f43; font-size: 10px;"></i>
-                            <span>${senderName}</span>
-                            <span style="color: #58a6ff; font-family: monospace; font-size: 9px;">${senderGid}</span>
+                    <td style="padding: 12px 10px; color: #ffffff;">
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <i class="fa-solid fa-user" style="color: #ff9f43; font-size: 12px;"></i>
+                            <span style="font-weight: 700; font-size: 13.5px;">${senderName}</span>
                         </div>
+                        <div style="font-family: 'JetBrains Mono', monospace; font-size: 11.5px; margin-top: 3px;">${senderGidHtml}</div>
                     </td>
-                    <td style="padding: 9px 8px; color: #c9d1d9; font-size: 10.5px; max-width: 260px; word-break: break-word;">${t.description || '--'}</td>
-                    <td style="padding: 9px 8px; color: #8b949e; font-size: 9.5px; white-space: nowrap;">${dateStr}</td>
-                    <td style="padding: 9px 12px; text-align: right; white-space: nowrap;">
-                        <div style="display: inline-flex; gap: 4px;">
-                            ${st !== 'resolved' ? `<button onclick="updateTicketStatus('${t.id}', 'resolved')" style="background: rgba(63, 185, 80, 0.15); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.35); padding: 3px 6px; border-radius: 4px; font-size: 9.5px; font-weight: 700; cursor: pointer;" title="Mark as Resolved">✓ Resolve</button>` : ''}
-                            ${(st === 'pending' || st === 'open' || st === 'new') ? `<button onclick="updateTicketStatus('${t.id}', 'in-progress')" style="background: rgba(88, 166, 255, 0.15); color: #58a6ff; border: 1px solid rgba(88, 166, 255, 0.35); padding: 3px 6px; border-radius: 4px; font-size: 9.5px; font-weight: 700; cursor: pointer;" title="Mark In-Progress">⚡ Progress</button>` : ''}
-                            <button onclick="deleteTicketAlert('${t.id}')" style="background: rgba(248, 81, 73, 0.12); color: #f85149; border: 1px solid rgba(248, 81, 73, 0.25); padding: 3px 6px; border-radius: 4px; font-size: 9.5px; cursor: pointer;" title="Delete Ticket">✕</button>
+                    <td style="padding: 12px 10px; color: #e2e8f0; font-size: 13px; line-height: 1.5; max-width: 320px; word-break: break-word;">
+                        ${t.description || '--'}
+                        ${resNoteHtml}
+                    </td>
+                    <td style="padding: 12px 10px; color: #8b949e; font-size: 11.5px; white-space: nowrap;">${dateStr}</td>
+                    <td style="padding: 12px 14px; text-align: right; white-space: nowrap;">
+                        <div style="display: inline-flex; gap: 6px;">
+                            ${st !== 'resolved' ? `<button onclick="openModalResolveDialog('${t.id}', '${(t.title||'').replace(/'/g, "\\'")}')" style="background: rgba(63, 185, 80, 0.18); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.4); padding: 5px 10px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer;" title="Mark as Resolved">✓ Resolve</button>` : ''}
+                            ${(st === 'pending' || st === 'open' || st === 'new') ? `<button onclick="updateTicketStatus('${t.id}', 'in-progress')" style="background: rgba(88, 166, 255, 0.18); color: #58a6ff; border: 1px solid rgba(88, 166, 255, 0.4); padding: 5px 10px; border-radius: 6px; font-size: 12px; font-weight: 700; cursor: pointer;" title="Mark In-Progress">⚡ Progress</button>` : ''}
+                            <button onclick="deleteTicketAlert('${t.id}')" style="background: rgba(248, 81, 73, 0.15); color: #f85149; border: 1px solid rgba(248, 81, 73, 0.3); padding: 5px 9px; border-radius: 6px; font-size: 12px; cursor: pointer;" title="Delete Ticket">✕</button>
                         </div>
                     </td>
                 </tr>`;
+            }).join('');
+        }
+
+        function renderModalCards(filtered) {
+            const container = document.getElementById('ticket-modal-cards-container');
+            if (!container) return;
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<div style="grid-column: 1 / -1; text-align: center; padding: 36px 20px; color: #8b949e;">
+                    <i class="fa-solid fa-circle-check" style="font-size: 32px; color: #3fb950; margin-bottom: 8px; display: block;"></i>
+                    <span style="font-size: 15px; font-weight: 800; color: #ffffff;">Queue is completely clear!</span>
+                </div>`;
+                return;
+            }
+
+            container.innerHTML = filtered.map(t => {
+                const st = (t.status || 'pending').toLowerCase();
+                let statusBadge = st === 'resolved' ? `<span style="background: rgba(63, 185, 80, 0.18); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.4); padding: 3px 8px; border-radius: 6px; font-weight: 800; font-size: 12px;">✓ Closed</span>` : (st === 'in-progress' ? `<span style="background: rgba(88, 166, 255, 0.18); color: #58a6ff; border: 1px solid rgba(88, 166, 255, 0.4); padding: 3px 8px; border-radius: 6px; font-weight: 800; font-size: 12px;">⚡ Working</span>` : `<span style="background: rgba(255, 94, 0, 0.18); color: #ff7b00; border: 1px solid rgba(255, 94, 0, 0.4); padding: 3px 8px; border-radius: 6px; font-weight: 800; font-size: 12px;">● New</span>`);
+                let priorityBadge = (t.priority === 'urgent' || t.type === 'bug') ? `<span style="background: rgba(248, 81, 73, 0.18); color: #f85149; border: 1px solid rgba(248, 81, 73, 0.45); padding: 2px 6px; border-radius: 5px; font-weight: 900; font-size: 10.5px; margin-left: 5px;">URGENT</span>` : '';
+                const senderName = (t.submittedBy && t.submittedBy.name) ? t.submittedBy.name : (t.author || 'Alliance Member');
+                const rawGid = (t.submittedBy && t.submittedBy.gameId) || '';
+                const resNoteHtml = t.resolutionNote ? `<div style="background: rgba(63, 185, 80, 0.12); color: #3fb950; border: 1px dashed rgba(63, 185, 80, 0.35); padding: 3px 8px; border-radius: 5px; font-size: 11.5px; margin-top: 5px; line-height: 1.4;">📝 Note: ${t.resolutionNote}</div>` : '';
+
+                return `<div style="background: #161b22; border: 1px solid #30363d; border-radius: 10px; padding: 14px; display: flex; flex-direction: column; justify-content: space-between;">
+                    <div>
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                            <div>${statusBadge}${priorityBadge}</div>
+                            <span style="font-size: 11px; font-weight: 700; color: #8b949e;">${t.category || 'General'}</span>
+                        </div>
+                        <h4 style="font-size: 15px; font-weight: 800; color: #ff9f43; margin-bottom: 6px; line-height: 1.3;">${t.title || 'Untitled Ticket'}</h4>
+                        <p style="font-size: 13px; color: #e2e8f0; line-height: 1.4; margin-bottom: 8px;">${t.description || '--'}</p>
+                        ${resNoteHtml}
+                    </div>
+                    <div style="border-top: 1px solid #21262d; padding-top: 10px; margin-top: 10px; display: flex; justify-content: space-between; align-items: center;">
+                        <div style="font-size: 12px; color: #8b949e;">
+                            <div style="font-weight: 700; color: #ffffff;">${senderName}</div>
+                            ${rawGid ? `<span onclick="copyGameId('${rawGid}')" style="cursor: pointer; color: var(--accent-cyan); font-family: monospace; font-size: 11px; font-weight: 700;">ID: ${rawGid}</span>` : ''}
+                        </div>
+                        <div style="display: flex; gap: 5px;">
+                            ${st !== 'resolved' ? `<button onclick="openModalResolveDialog('${t.id}', '${(t.title||'').replace(/'/g, "\\'")}')" style="background: rgba(63, 185, 80, 0.18); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.4); padding: 4px 8px; border-radius: 5px; font-size: 11.5px; font-weight: 700; cursor: pointer;">✓ Resolve</button>` : ''}
+                            <button onclick="deleteTicketAlert('${t.id}')" style="background: rgba(248, 81, 73, 0.15); color: #f85149; border: 1px solid rgba(248, 81, 73, 0.3); padding: 4px 7px; border-radius: 5px; font-size: 11.5px; cursor: pointer;">✕</button>
+                        </div>
+                    </div>
+                </div>`;
             }).join('');
         }
 

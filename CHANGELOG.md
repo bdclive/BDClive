@@ -1,3 +1,11 @@
+## [10.2.109] - 2026-08-22
+- Synchronized in-dashboard ticket modal with all standalone desk features.
+- Defaulted in-dashboard ticket popup to Open Queue on load.
+- Added floating multi-select bulk actions inside dashboard modal.
+- Added table and card deck density switcher to modal.
+- Added 1-click resolution notes dialog inside dashboard modal.
+- Enlarged popup modal typography and row padding for readability.
+
 ## [10.2.108] - 2026-08-22
 - Scaled up typography and font sizes for human eyes.
 - Increased table row spacing and badge readability.
