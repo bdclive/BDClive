@@ -1,3 +1,10 @@
+## [1.0.97] - 2026-08-22
+- Maintenance sweep now hits live Century Games API.
+- Added token-authenticated bridge route for accurate data.
+- Added public unsigned player-info fallback (no token needed).
+- Sweep logs now show live source per chief (🔑🌐💾).
+- Furnace upgrades and name changes now auto-detected.
+
 ## [10.2.110] - 2026-08-22
 - Fixed JavaScript variable scope in dashboard popup modal.
 - Added animated toast notifications for 1-click Game ID copying.
