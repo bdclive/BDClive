@@ -14,9 +14,10 @@
       "cliFile": "Threads_Bridge/threads_bridge_cli_v1.0.59_(terminal).py"
     },
     "bdclive_web_dashboard": {
-      "version": "10.2.108",
+      "version": "10.2.109",
       "repository": "https://github.com/bdclive/BDClive",
       "latestChanges": [
+        "v10.2.109: Synchronized in-dashboard modal popup with full ticket desk features",
         "v10.2.108: Scaled up font sizes, typography, and row padding for human readability",
         "v10.2.107: Default Open queue on load, bulk actions, and cards view"
       ]
