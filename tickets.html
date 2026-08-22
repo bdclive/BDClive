@@ -1,0 +1,1273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BDC LIVE — Ticket Alerts & Support Desk v10.2.106</title>
+    <!-- Open Graph & Meta Tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="BDC LIVE — Ticket Alerts & Support Desk">
+    <meta property="og:description" content="Dedicated full-page ticket telemetry, bug tracker, and alert communicator desk for BDC LIVE & Whiteout Survival.">
+    <meta property="og:image" content="./bdclive_banner.jpg">
+    <link rel="icon" type="image/svg+xml" href="./icon-192.svg">
+    
+    <!-- Google Fonts & FontAwesome -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+    <style>
+        :root {
+            --bg-base: #080c14;
+            --bg-surface: #0d131f;
+            --bg-card: #141c2e;
+            --bg-card-hover: #1b253d;
+            --border-color: #212c42;
+            --border-highlight: #ff5e00;
+            --primary: #ff5e00;
+            --primary-glow: rgba(255, 94, 0, 0.25);
+            --accent-cyan: #00d2ff;
+            --accent-blue: #58a6ff;
+            --accent-green: #3fb950;
+            --accent-red: #f85149;
+            --accent-purple: #bc95ff;
+            --text-main: #ffffff;
+            --text-muted: #8b949e;
+            --text-dim: #6e7681;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* Top Header */
+        header {
+            background: linear-gradient(180deg, #0f172a 0%, #080c14 100%);
+            border-bottom: 1px solid var(--border-color);
+            padding: 14px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .brand-badge {
+            background: linear-gradient(135deg, #ff5e00 0%, #d9480f 100%);
+            color: #ffffff;
+            font-weight: 900;
+            font-size: 13px;
+            padding: 6px 12px;
+            border-radius: 8px;
+            letter-spacing: 1px;
+            box-shadow: 0 0 15px rgba(255, 94, 0, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .brand-title {
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .version-badge {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 700;
+            background: #1f293d;
+            color: var(--accent-cyan);
+            padding: 2px 8px;
+            border-radius: 6px;
+            border: 1px solid #303e5c;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-nav {
+            background: #161f30;
+            color: #c9d1d9;
+            border: 1px solid var(--border-color);
+            padding: 7px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-nav:hover {
+            background: #222f47;
+            color: #ffffff;
+            border-color: #3b4e72;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #ffffff;
+            border: none;
+            padding: 7px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 0 12px var(--primary-glow);
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary:hover {
+            background: #ff7324;
+            transform: translateY(-1px);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1440px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 20px 24px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* KPI Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 14px;
+        }
+
+        .stat-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px 18px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            border-color: #3b4e72;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--card-color, #ff5e00);
+        }
+
+        .stat-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-muted);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stat-val {
+            font-size: 32px;
+            font-weight: 900;
+            color: var(--text-main);
+            margin: 8px 0 2px 0;
+            line-height: 1;
+        }
+
+        .stat-sub {
+            font-size: 11px;
+            color: var(--text-dim);
+            font-weight: 600;
+        }
+
+        /* Control / Filter Bar */
+        .controls-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 14px 18px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background: #141c2e;
+            color: #8b949e;
+            border: 1px solid var(--border-color);
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .tab-btn:hover {
+            color: #ffffff;
+            background: #1e293f;
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: #ffffff;
+            border-color: var(--primary);
+            box-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        .tab-pill {
+            background: rgba(0,0,0,0.3);
+            padding: 1px 6px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .search-box {
+            position: relative;
+            flex: 1;
+            max-width: 380px;
+            min-width: 220px;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-dim);
+            font-size: 13px;
+        }
+
+        .search-input {
+            width: 100%;
+            background: #090d16;
+            border: 1px solid var(--border-color);
+            color: #ffffff;
+            padding: 8px 12px 8px 34px;
+            border-radius: 8px;
+            font-size: 12px;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+
+        .search-input:focus {
+            border-color: var(--accent-cyan);
+        }
+
+        .category-select {
+            background: #090d16;
+            border: 1px solid var(--border-color);
+            color: var(--accent-purple);
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            outline: none;
+            cursor: pointer;
+        }
+
+        /* Collapsible Panels */
+        .drawer-panel {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 18px 20px;
+            display: none;
+            animation: fadeIn 0.2s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Table Card Container */
+        .table-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        thead {
+            background: #0f172a;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            padding: 12px 16px;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #172033;
+            transition: background-color 0.15s ease;
+        }
+
+        tbody tr:hover {
+            background-color: var(--bg-card-hover) !important;
+        }
+
+        td {
+            padding: 12px 16px;
+            font-size: 12px;
+            vertical-align: middle;
+        }
+
+        /* Badges & Pills */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.3px;
+        }
+
+        .status-pending { background: rgba(255, 94, 0, 0.15); color: #ff7b00; border: 1px solid rgba(255, 94, 0, 0.35); }
+        .status-inprogress { background: rgba(88, 166, 255, 0.15); color: #58a6ff; border: 1px solid rgba(88, 166, 255, 0.35); }
+        .status-resolved { background: rgba(63, 185, 80, 0.15); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.35); }
+
+        .priority-urgent {
+            background: rgba(248, 81, 73, 0.15);
+            color: #f85149;
+            border: 1px solid rgba(248, 81, 73, 0.4);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 800;
+            margin-left: 6px;
+        }
+
+        .cat-badge {
+            background: rgba(188, 149, 255, 0.12);
+            color: #bc95ff;
+            border: 1px solid rgba(188, 149, 255, 0.3);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10.5px;
+            font-weight: 700;
+        }
+
+        /* Action Buttons */
+        .btn-act {
+            padding: 5px 9px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            border: 1px solid transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.15s ease;
+        }
+
+        .btn-resolve { background: rgba(63, 185, 80, 0.15); color: #3fb950; border-color: rgba(63, 185, 80, 0.35); }
+        .btn-resolve:hover { background: rgba(63, 185, 80, 0.3); }
+
+        .btn-progress { background: rgba(88, 166, 255, 0.15); color: #58a6ff; border-color: rgba(88, 166, 255, 0.35); }
+        .btn-progress:hover { background: rgba(88, 166, 255, 0.3); }
+
+        .btn-del { background: rgba(248, 81, 73, 0.12); color: #f85149; border-color: rgba(248, 81, 73, 0.25); }
+        .btn-del:hover { background: rgba(248, 81, 73, 0.25); }
+
+        /* Form Inputs */
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .form-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        .form-input, .form-textarea, .form-select {
+            width: 100%;
+            background: #090d16;
+            border: 1px solid var(--border-color);
+            color: #ffffff;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+
+        .form-input:focus, .form-textarea:focus, .form-select:focus {
+            border-color: var(--accent-cyan);
+        }
+
+        /* Pulse Beacon */
+        .pulse-beacon {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--accent-green);
+            background: rgba(63, 185, 80, 0.12);
+            padding: 4px 10px;
+            border-radius: 20px;
+            border: 1px solid rgba(63, 185, 80, 0.3);
+        }
+
+        .dot-live {
+            width: 7px;
+            height: 7px;
+            background: var(--accent-green);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--accent-green);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.9); opacity: 0.7; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(0.9); opacity: 0.7; }
+        }
+
+        /* Audio Settings Panel */
+        .audio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 14px;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 48px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-state i {
+            font-size: 36px;
+            color: #3b4e72;
+            margin-bottom: 12px;
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--border-color);
+            padding: 14px 24px;
+            background: #0d131f;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            color: var(--text-dim);
+            margin-top: auto;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Header -->
+    <header>
+        <div class="header-left">
+            <div class="brand-badge">
+                <i class="fa-solid fa-ticket"></i> BDC LIVE
+            </div>
+            <div class="brand-title">
+                Ticket Alerts & Support Desk
+                <span class="version-badge">v10.2.106</span>
+            </div>
+        </div>
+        <div class="header-actions">
+            <div class="pulse-beacon" id="telemetry-beacon">
+                <span class="dot-live"></span> LIVE TELEMETRY
+            </div>
+            <button id="header-sound-btn" class="btn-nav" onclick="toggleTicketSound()">
+                <i id="header-sound-icon" class="fa-solid fa-volume-high" style="color: #3fb950;"></i>
+                <span id="header-sound-text">SOUND ON</span>
+            </button>
+            <button class="btn-nav" onclick="toggleAudioSettings()">
+                <i class="fa-solid fa-sliders"></i> Audio Synth
+            </button>
+            <button class="btn-primary" onclick="toggleNewTicketForm()">
+                <i class="fa-solid fa-plus"></i> <span id="btn-post-label">Post New Alert</span>
+            </button>
+            <a href="./index.html" class="btn-nav">
+                <i class="fa-solid fa-chart-line"></i> Command Center
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <div class="container">
+
+        <!-- KPI Metrics Row -->
+        <div class="stats-grid">
+            <div class="stat-card" style="--card-color: #ff5e00;">
+                <div class="stat-label">
+                    <span>Pending Tickets</span>
+                    <i class="fa-solid fa-clock" style="color: #ff7b00;"></i>
+                </div>
+                <div class="stat-val" id="kpi-pending" style="color: #ff7b00;">0</div>
+                <div class="stat-sub">Awaiting review or triage</div>
+            </div>
+
+            <div class="stat-card" style="--card-color: #58a6ff;">
+                <div class="stat-label">
+                    <span>In-Progress</span>
+                    <i class="fa-solid fa-bolt" style="color: #58a6ff;"></i>
+                </div>
+                <div class="stat-val" id="kpi-inprogress" style="color: #58a6ff;">0</div>
+                <div class="stat-sub">Actively being worked on</div>
+            </div>
+
+            <div class="stat-card" style="--card-color: #f85149;">
+                <div class="stat-label">
+                    <span>Urgent / Bugs</span>
+                    <i class="fa-solid fa-triangle-exclamation" style="color: #f85149;"></i>
+                </div>
+                <div class="stat-val" id="kpi-urgent" style="color: #f85149;">0</div>
+                <div class="stat-sub">High priority alliance issues</div>
+            </div>
+
+            <div class="stat-card" style="--card-color: #3fb950;">
+                <div class="stat-label">
+                    <span>Resolved</span>
+                    <i class="fa-solid fa-circle-check" style="color: #3fb950;"></i>
+                </div>
+                <div class="stat-val" id="kpi-resolved" style="color: #3fb950;">0</div>
+                <div class="stat-sub">Successfully completed</div>
+            </div>
+
+            <div class="stat-card" style="--card-color: #bc95ff;">
+                <div class="stat-label">
+                    <span>Total Telemetry</span>
+                    <i class="fa-solid fa-layer-group" style="color: #bc95ff;"></i>
+                </div>
+                <div class="stat-val" id="kpi-total" style="color: #ffffff;">0</div>
+                <div class="stat-sub">Today: <span id="kpi-today" style="color: #ff9f43; font-weight: 700;">+0</span></div>
+            </div>
+        </div>
+
+        <!-- Post New Ticket Drawer (Collapsible) -->
+        <div id="new-ticket-drawer" class="drawer-panel" style="border-left: 4px solid var(--primary);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                <h3 style="font-size: 14px; font-weight: 800; color: #ff9f43; display: flex; align-items: center; gap: 8px;">
+                    <i class="fa-solid fa-bullhorn"></i> Broadcast New Ticket / Alert to Ecosystem
+                </h3>
+                <span onclick="toggleNewTicketForm()" style="cursor: pointer; color: #8b949e; font-size: 18px;">&times;</span>
+            </div>
+            <div class="form-row">
+                <div>
+                    <label class="form-label">Ticket Title / Summary *</label>
+                    <input type="text" id="new-title" class="form-input" placeholder="e.g. Furnace 30 Battle Cooldown Bug">
+                </div>
+                <div>
+                    <label class="form-label">Category</label>
+                    <select id="new-category" class="form-select">
+                        <option value="Bug Report">🐛 Bug Report</option>
+                        <option value="Feature Request">✨ Feature Request</option>
+                        <option value="Account Hub">🛡️ Account / Furnace</option>
+                        <option value="Event / Battle">⚔️ Event / Battle</option>
+                        <option value="Cinema / Movie">🎬 Cinema / Movie</option>
+                        <option value="General Support" selected>💬 General Support</option>
+                        <option value="UI / Display">🎨 UI / Display</option>
+                        <option value="Performance">⚡ Performance</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="form-label">Priority Level</label>
+                    <select id="new-priority" class="form-select">
+                        <option value="normal">Normal Priority</option>
+                        <option value="urgent">🚨 Urgent Priority (Chimes & Notifications)</option>
+                    </select>
+                </div>
+            </div>
+            <div style="margin-bottom: 14px;">
+                <label class="form-label">Full Description / Context / Reproduction Steps</label>
+                <textarea id="new-desc" class="form-textarea" rows="3" placeholder="Provide full details, steps to reproduce, or notes for the alliance dev team..."></textarea>
+            </div>
+            <div style="display: flex; justify-content: flex-end; gap: 8px;">
+                <button class="btn-nav" onclick="toggleNewTicketForm()">Cancel</button>
+                <button class="btn-primary" onclick="submitNewTicketAlert()">
+                    <i class="fa-solid fa-paper-plane"></i> Dispatch Alert to Cloud
+                </button>
+            </div>
+        </div>
+
+        <!-- Audio Synthesizer Drawer (Collapsible) -->
+        <div id="audio-settings-drawer" class="drawer-panel" style="border-left: 4px solid var(--accent-cyan);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                <h3 style="font-size: 14px; font-weight: 800; color: var(--accent-cyan); display: flex; align-items: center; gap: 8px;">
+                    <i class="fa-solid fa-sliders"></i> Audio Alert Synthesizer & Desktop Push Configuration
+                </h3>
+                <span onclick="toggleAudioSettings()" style="cursor: pointer; color: #8b949e; font-size: 18px;">&times;</span>
+            </div>
+            <div class="audio-grid">
+                <div>
+                    <label class="form-label">Sound Profile</label>
+                    <select id="audio-profile-select" class="form-select" onchange="changeSoundProfile(this.value)">
+                        <option value="chime">🎵 Modern Multi-Tone Chime</option>
+                        <option value="radar">📡 Futuristic Radar Pulse</option>
+                        <option value="cyber">⚡ Subtle Cyber Ping</option>
+                        <option value="alarm">🚨 High-Priority Alarm Stager</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="form-label">Volume (<span id="audio-vol-text">50%</span>)</label>
+                    <input type="range" id="audio-vol-slider" min="0.05" max="1" step="0.05" value="0.5" oninput="changeAudioVolume(this.value)" style="width: 100%; accent-color: var(--primary); margin-top: 8px;">
+                </div>
+                <div>
+                    <label class="form-label">Priority Filter</label>
+                    <select id="audio-priority-select" class="form-select" onchange="changeAudioPriority(this.value)">
+                        <option value="all">🔔 Chime on All New Tickets</option>
+                        <option value="urgent_only">🚨 Chime ONLY on Urgent / Bugs</option>
+                    </select>
+                </div>
+                <div style="display: flex; flex-direction: column; justify-content: flex-end;">
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn-nav" onclick="playTicketAudio('test')" style="flex: 1;">
+                            <i class="fa-solid fa-play"></i> Test Sound
+                        </button>
+                        <button id="btn-desktop-notif" class="btn-nav" onclick="toggleDesktopNotifications()" style="flex: 1.2;">
+                            <i class="fa-solid fa-bell"></i> Enable Push
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Controls / Search / Filter Bar -->
+        <div class="controls-card">
+            <div class="filter-tabs">
+                <button id="tab-all" class="tab-btn active" onclick="setFilter('all')">
+                    All <span id="tab-num-all" class="tab-pill">0</span>
+                </button>
+                <button id="tab-pending" class="tab-btn" onclick="setFilter('pending')">
+                    🟠 Pending <span id="tab-num-pending" class="tab-pill">0</span>
+                </button>
+                <button id="tab-inprogress" class="tab-btn" onclick="setFilter('inprogress')">
+                    ⚡ In-Progress <span id="tab-num-inprogress" class="tab-pill">0</span>
+                </button>
+                <button id="tab-resolved" class="tab-btn" onclick="setFilter('resolved')">
+                    🟢 Resolved <span id="tab-num-resolved" class="tab-pill">0</span>
+                </button>
+                <button id="tab-urgent" class="tab-btn" onclick="setFilter('urgent')">
+                    🔴 Urgent <span id="tab-num-urgent" class="tab-pill">0</span>
+                </button>
+            </div>
+
+            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                <select id="filter-category" class="category-select" onchange="filterCategory(this.value)">
+                    <option value="all">📁 All Categories</option>
+                    <option value="Bug Report">🐛 Bug Report</option>
+                    <option value="Feature Request">✨ Feature Request</option>
+                    <option value="Account Hub">🛡️ Account / Furnace</option>
+                    <option value="Event / Battle">⚔️ Event / Battle</option>
+                    <option value="Cinema / Movie">🎬 Cinema / Movie</option>
+                    <option value="General Support">💬 General Support</option>
+                    <option value="UI / Display">🎨 UI / Display</option>
+                    <option value="Performance">⚡ Performance</option>
+                </select>
+
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="table-search" class="search-input" placeholder="Filter title, chief, ID, description..." oninput="renderTable()">
+                </div>
+
+                <button class="btn-nav" onclick="refreshData()" title="Reload from Firebase">
+                    <i class="fa-solid fa-arrows-rotate"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Tickets Table Container -->
+        <div class="table-card">
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 140px;">Status</th>
+                            <th style="width: 220px;">Category & Title</th>
+                            <th style="width: 200px;">Submitted By</th>
+                            <th>Description / Context</th>
+                            <th style="width: 150px;">Timestamp</th>
+                            <th style="width: 180px; text-align: right;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tickets-tbody">
+                        <tr>
+                            <td colspan="6" class="empty-state">
+                                <i class="fa-solid fa-spinner fa-spin"></i>
+                                <p>Connecting to Firebase Realtime Telemetry...</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div>
+            <span>🛡️ BDC LIVE Alert Telemetry Desk</span>
+            <span style="margin: 0 8px;">•</span>
+            <span>Real-Time Firebase Synchronization</span>
+        </div>
+        <div>
+            <span>Ecosystem Node: <strong>BDCLive / wosBDC</strong></span>
+        </div>
+    </footer>
+
+    <!-- Application Logic & Firebase Synchronization Engine -->
+    <script>
+        // Firebase Configuration
+        const WOS_FIREBASE_URL = "https://wos-dashboard-38d4c-default-rtdb.firebaseio.com";
+        const wosApp = firebase.initializeApp({ databaseURL: WOS_FIREBASE_URL }, "wosApp");
+        const wosDb = wosApp.database();
+
+        // State variables
+        let rawTickets = {};
+        let currentFilter = 'all';
+        let currentCategory = 'all';
+        let isInitialLoad = false;
+        let prevPendingCount = null;
+        let lastSoundTime = 0;
+
+        // Audio & Preferences State
+        let soundMuted = localStorage.getItem('bdc_ticket_sound_muted') === 'true';
+        let soundVolume = parseFloat(localStorage.getItem('bdc_ticket_sound_vol') || '0.5');
+        let soundProfile = localStorage.getItem('bdc_ticket_sound_profile') || 'chime';
+        let priorityFilter = localStorage.getItem('bdc_ticket_priority_filter') || 'all';
+        let desktopNotifs = localStorage.getItem('bdc_ticket_desktop_notifs') === 'true';
+
+        // Web Audio Context
+        let audioCtx = null;
+
+        function getAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            return audioCtx;
+        }
+
+        function playTicketAudio(mode = 'new') {
+            if (soundMuted && mode !== 'test') return;
+            try {
+                const ctx = getAudioContext();
+                const now = ctx.currentTime;
+                const gain = ctx.createGain();
+                gain.gain.setValueAtTime(soundVolume, now);
+                gain.connect(ctx.destination);
+
+                if (soundProfile === 'radar') {
+                    const osc = ctx.createOscillator();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(880, now);
+                    osc.frequency.exponentialRampToValueAtTime(440, now + 0.35);
+                    osc.connect(gain);
+                    osc.start(now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+                    osc.stop(now + 0.35);
+                } else if (soundProfile === 'cyber') {
+                    const osc = ctx.createOscillator();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(1046.5, now);
+                    osc.connect(gain);
+                    osc.start(now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.2);
+                    osc.stop(now + 0.2);
+                } else if (soundProfile === 'alarm') {
+                    [0, 0.12, 0.24].forEach((delay, i) => {
+                        const osc = ctx.createOscillator();
+                        osc.type = 'sawtooth';
+                        osc.frequency.setValueAtTime(i % 2 === 0 ? 800 : 1200, now + delay);
+                        osc.connect(gain);
+                        osc.start(now + delay);
+                        osc.stop(now + delay + 0.08);
+                    });
+                } else {
+                    // Default Modern Multi-Tone Chime
+                    const tones = [523.25, 659.25, 783.99, 1046.50];
+                    tones.forEach((freq, idx) => {
+                        const osc = ctx.createOscillator();
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(freq, now + (idx * 0.07));
+                        osc.connect(gain);
+                        osc.start(now + (idx * 0.07));
+                        osc.stop(now + (idx * 0.07) + 0.22);
+                    });
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
+                }
+            } catch(e) {
+                console.warn('Audio play error:', e);
+            }
+        }
+
+        function toggleTicketSound() {
+            soundMuted = !soundMuted;
+            localStorage.setItem('bdc_ticket_sound_muted', soundMuted);
+            updateAudioUI();
+        }
+
+        function changeAudioVolume(val) {
+            soundVolume = parseFloat(val);
+            localStorage.setItem('bdc_ticket_sound_vol', soundVolume);
+            document.getElementById('audio-vol-text').innerText = `${Math.round(soundVolume * 100)}%`;
+        }
+
+        function changeSoundProfile(val) {
+            soundProfile = val;
+            localStorage.setItem('bdc_ticket_sound_profile', soundProfile);
+            playTicketAudio('test');
+        }
+
+        function changeAudioPriority(val) {
+            priorityFilter = val;
+            localStorage.setItem('bdc_ticket_priority_filter', priorityFilter);
+        }
+
+        function toggleDesktopNotifications() {
+            if (!("Notification" in window)) {
+                alert("Desktop notifications are not supported by this browser.");
+                return;
+            }
+            if (Notification.permission === "granted") {
+                desktopNotifs = !desktopNotifs;
+                localStorage.setItem('bdc_ticket_desktop_notifs', desktopNotifs);
+                updateAudioUI();
+            } else if (Notification.permission !== "denied") {
+                Notification.requestPermission().then(permission => {
+                    if (permission === "granted") {
+                        desktopNotifs = true;
+                        localStorage.setItem('bdc_ticket_desktop_notifs', desktopNotifs);
+                        updateAudioUI();
+                        new Notification("BDC LIVE Alert Desk", { body: "Desktop Notifications Activated!" });
+                    }
+                });
+            }
+        }
+
+        function dispatchDesktopNotif(ticket) {
+            if (!desktopNotifs || !("Notification" in window) || Notification.permission !== "granted") return;
+            try {
+                const author = (ticket.submittedBy && ticket.submittedBy.name) ? ticket.submittedBy.name : (ticket.author || 'Alliance Member');
+                const title = ticket.title || 'New Alliance Ticket';
+                new Notification(`🎟️ Ticket Alert: ${author}`, {
+                    body: title,
+                    icon: './icon-192.svg'
+                });
+            } catch(e) {}
+        }
+
+        function updateAudioUI() {
+            const btn = document.getElementById('header-sound-btn');
+            const icon = document.getElementById('header-sound-icon');
+            const text = document.getElementById('header-sound-text');
+            if (soundMuted) {
+                icon.className = 'fa-solid fa-volume-xmark';
+                icon.style.color = '#f85149';
+                text.innerText = 'MUTED';
+            } else {
+                icon.className = 'fa-solid fa-volume-high';
+                icon.style.color = '#3fb950';
+                text.innerText = 'SOUND ON';
+            }
+
+            const notifBtn = document.getElementById('btn-desktop-notif');
+            if (notifBtn) {
+                if (desktopNotifs && window.Notification && Notification.permission === 'granted') {
+                    notifBtn.innerHTML = '<i class="fa-solid fa-bell" style="color: #3fb950;"></i> Push Active';
+                    notifBtn.style.borderColor = 'rgba(63, 185, 80, 0.4)';
+                } else {
+                    notifBtn.innerHTML = '<i class="fa-solid fa-bell-slash"></i> Enable Push';
+                    notifBtn.style.borderColor = 'var(--border-color)';
+                }
+            }
+        }
+
+        function toggleNewTicketForm() {
+            const drawer = document.getElementById('new-ticket-drawer');
+            const lbl = document.getElementById('btn-post-label');
+            if (drawer.style.display === 'block') {
+                drawer.style.display = 'none';
+                lbl.innerText = 'Post New Alert';
+            } else {
+                drawer.style.display = 'block';
+                lbl.innerText = 'Close Form';
+                document.getElementById('new-title').focus();
+            }
+        }
+
+        function toggleAudioSettings() {
+            const drawer = document.getElementById('audio-settings-drawer');
+            drawer.style.display = (drawer.style.display === 'block') ? 'none' : 'block';
+        }
+
+        function setFilter(tab) {
+            currentFilter = tab;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            const activeBtn = document.getElementById('tab-' + tab);
+            if (activeBtn) activeBtn.classList.add('active');
+            renderTable();
+        }
+
+        function filterCategory(cat) {
+            currentCategory = cat;
+            renderTable();
+        }
+
+        // Live Firebase Listener
+        wosDb.ref('community_feedback').on('value', (snapshot) => {
+            rawTickets = snapshot.val() || {};
+            processTickets();
+        }, (error) => {
+            console.error('Firebase error:', error);
+            document.getElementById('telemetry-beacon').innerHTML = '<span style="color: #f85149;">● CONNECTION ERROR</span>';
+        });
+
+        function refreshData() {
+            wosDb.ref('community_feedback').once('value').then(s => {
+                rawTickets = s.val() || {};
+                processTickets();
+            });
+        }
+
+        function processTickets() {
+            const list = Object.entries(rawTickets).map(([id, t]) => ({ id, ...t }));
+            
+            let pendingCount = 0;
+            let inProgCount = 0;
+            let resolvedCount = 0;
+            let urgentCount = 0;
+            let todayCount = 0;
+            const todayStart = new Date().setHours(0, 0, 0, 0);
+
+            list.forEach(t => {
+                const st = (t.status || 'pending').toLowerCase();
+                if (st === 'pending' || st === 'open' || st === 'new') pendingCount++;
+                else if (st === 'in-progress' || st === 'investigating') inProgCount++;
+                else if (st === 'resolved' || st === 'closed' || st === 'completed') resolvedCount++;
+
+                if (t.priority === 'urgent' || t.priority === 'high' || (t.type === 'bug' && (st === 'pending' || st === 'open'))) {
+                    urgentCount++;
+                }
+
+                const created = t.createdAt || t.timestamp;
+                if (created) {
+                    const tVal = typeof created === 'number' ? created : new Date(created).getTime();
+                    if (tVal >= todayStart) todayCount++;
+                }
+            });
+
+            // Trigger Chime for new tickets arriving live
+            if (isInitialLoad && prevPendingCount !== null && pendingCount > prevPendingCount) {
+                const nowTime = Date.now();
+                if (nowTime - lastSoundTime > 4000) {
+                    lastSoundTime = nowTime;
+                    const shouldAlert = (priorityFilter !== 'urgent_only') || (urgentCount > 0);
+                    if (shouldAlert) {
+                        playTicketAudio('new');
+                        const sorted = [...list].sort((a,b) => (b.createdAt || b.timestamp || 0) - (a.createdAt || a.timestamp || 0));
+                        if (sorted.length > 0) dispatchDesktopNotif(sorted[0]);
+                    }
+                }
+            }
+            prevPendingCount = pendingCount;
+            isInitialLoad = true;
+
+            // Update KPI cards
+            document.getElementById('kpi-pending').innerText = pendingCount;
+            document.getElementById('kpi-inprogress').innerText = inProgCount;
+            document.getElementById('kpi-urgent').innerText = urgentCount;
+            document.getElementById('kpi-resolved').innerText = resolvedCount;
+            document.getElementById('kpi-total').innerText = list.length;
+            document.getElementById('kpi-today').innerText = todayCount > 0 ? `+${todayCount}` : '+0';
+
+            // Update Filter Tab Badges
+            document.getElementById('tab-num-all').innerText = list.length;
+            document.getElementById('tab-num-pending').innerText = pendingCount;
+            document.getElementById('tab-num-inprogress').innerText = inProgCount;
+            document.getElementById('tab-num-resolved').innerText = resolvedCount;
+            document.getElementById('tab-num-urgent').innerText = urgentCount;
+
+            renderTable();
+        }
+
+        const categoryOptions = [
+            { val: 'Bug Report', label: '🐛 Bug Report' },
+            { val: 'Feature Request', label: '✨ Feature Request' },
+            { val: 'Account Hub', label: '🛡️ Account / Furnace' },
+            { val: 'Event / Battle', label: '⚔️ Event / Battle' },
+            { val: 'Cinema / Movie', label: '🎬 Cinema / Movie' },
+            { val: 'General Support', label: '💬 General Support' },
+            { val: 'UI / Display', label: '🎨 UI / Display' },
+            { val: 'Performance', label: '⚡ Performance' }
+        ];
+
+        function renderTable() {
+            const list = Object.entries(rawTickets).map(([id, t]) => ({ id, ...t }));
+            const searchVal = (document.getElementById('table-search')?.value || '').toLowerCase().trim();
+
+            const filtered = list.filter(t => {
+                const st = (t.status || 'pending').toLowerCase();
+                if (currentFilter === 'pending' && !(st === 'pending' || st === 'open' || st === 'new')) return false;
+                if (currentFilter === 'inprogress' && !(st === 'in-progress' || st === 'investigating')) return false;
+                if (currentFilter === 'resolved' && !(st === 'resolved' || st === 'closed' || st === 'completed')) return false;
+                if (currentFilter === 'urgent' && !(t.priority === 'urgent' || t.priority === 'high' || t.type === 'bug')) return false;
+
+                const catStr = (t.category || (t.type === 'feature' ? 'Feature Request' : (t.type === 'bug' ? 'Bug Report' : 'General Support'))).toLowerCase();
+                if (currentCategory !== 'all') {
+                    if (!catStr.includes(currentCategory.toLowerCase()) && !currentCategory.toLowerCase().includes(catStr)) {
+                        return false;
+                    }
+                }
+
+                if (searchVal) {
+                    const title = (t.title || '').toLowerCase();
+                    const desc = (t.description || '').toLowerCase();
+                    const author = ((t.submittedBy && t.submittedBy.name) || t.author || '').toLowerCase();
+                    const gid = ((t.submittedBy && t.submittedBy.gameId) || '').toLowerCase();
+                    if (!title.includes(searchVal) && !desc.includes(searchVal) && !catStr.includes(searchVal) && !author.includes(searchVal) && !gid.includes(searchVal)) {
+                        return false;
+                    }
+                }
+                return true;
+            });
+
+            filtered.sort((a, b) => (b.createdAt || b.timestamp || 0) - (a.createdAt || a.timestamp || 0));
+
+            const tbody = document.getElementById('tickets-tbody');
+            if (!tbody) return;
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="empty-state">
+                    <i class="fa-solid fa-inbox"></i>
+                    <p style="font-weight: 700; color: #c9d1d9;">No tickets match your filter criteria.</p>
+                </td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = filtered.map((t, idx) => {
+                const st = (t.status || 'pending').toLowerCase();
+                let statusBadge = '';
+                if (st === 'pending' || st === 'open' || st === 'new') {
+                    statusBadge = `<span class="status-badge status-pending">● Pending</span>`;
+                } else if (st === 'in-progress' || st === 'investigating') {
+                    statusBadge = `<span class="status-badge status-inprogress">⚡ In-Progress</span>`;
+                } else {
+                    statusBadge = `<span class="status-badge status-resolved">✓ Resolved</span>`;
+                }
+
+                let priorityBadge = '';
+                if (t.priority === 'urgent' || t.priority === 'high' || t.type === 'bug') {
+                    priorityBadge = `<span class="priority-urgent">URGENT</span>`;
+                }
+
+                const senderName = (t.submittedBy && t.submittedBy.name) ? t.submittedBy.name : (t.author || 'Alliance Member');
+                const senderGid = (t.submittedBy && t.submittedBy.gameId) ? ` (ID: ${t.submittedBy.gameId})` : '';
+                const categoryStr = t.category || (t.type === 'feature' ? 'Feature Request' : (t.type === 'bug' ? 'Bug Report' : 'General Support'));
+                const createdTime = t.createdAt || t.timestamp;
+                let dateStr = 'Recent';
+                if (createdTime) {
+                    const d = typeof createdTime === 'number' ? new Date(createdTime) : new Date(createdTime);
+                    dateStr = d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                }
+
+                const bgRow = idx % 2 === 0 ? 'background: #0d131f;' : 'background: #111827;';
+
+                const catSelectHtml = `<div style="margin-bottom: 4px;">
+                    <select onchange="updateTicketCategory('${t.id}', this.value)" style="background: rgba(188, 149, 255, 0.12); color: #bc95ff; border: 1px solid rgba(188, 149, 255, 0.3); padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 700; outline: none; cursor: pointer;">
+                        ${categoryOptions.map(opt => `<option value="${opt.val}" ${(categoryStr.toLowerCase().includes(opt.val.toLowerCase()) || opt.val.toLowerCase().includes(categoryStr.toLowerCase())) ? 'selected' : ''}>${opt.label}</option>`).join('')}
+                    </select>
+                </div>`;
+
+                return `<tr style="${bgRow}">
+                    <td>${statusBadge}${priorityBadge}</td>
+                    <td>
+                        ${catSelectHtml}
+                        <div style="font-size: 12px; font-weight: 700; color: #ff9f43; line-height: 1.3;">${t.title || 'Untitled Ticket'}</div>
+                    </td>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <i class="fa-solid fa-user" style="color: #ff9f43; font-size: 11px;"></i>
+                            <span style="font-weight: 600;">${senderName}</span>
+                        </div>
+                        <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--accent-cyan); margin-top: 2px;">${senderGid}</div>
+                    </td>
+                    <td style="color: #c9d1d9; font-size: 11.5px; line-height: 1.4; max-width: 360px; word-break: break-word;">
+                        ${t.description || '--'}
+                    </td>
+                    <td style="color: var(--text-muted); font-size: 11px; white-space: nowrap;">${dateStr}</td>
+                    <td style="text-align: right; white-space: nowrap;">
+                        <div style="display: inline-flex; gap: 5px;">
+                            ${st !== 'resolved' ? `<button class="btn-act btn-resolve" onclick="updateTicketStatus('${t.id}', 'resolved')" title="Mark Resolved">✓ Resolve</button>` : ''}
+                            ${(st === 'pending' || st === 'open' || st === 'new') ? `<button class="btn-act btn-progress" onclick="updateTicketStatus('${t.id}', 'in-progress')" title="Mark In-Progress">⚡ Progress</button>` : ''}
+                            <button class="btn-act btn-del" onclick="deleteTicket('${t.id}')" title="Delete Ticket">✕</button>
+                        </div>
+                    </td>
+                </tr>`;
+            }).join('');
+        }
+
+        function updateTicketStatus(ticketId, newStatus) {
+            if (!ticketId) return;
+            wosDb.ref('community_feedback/' + ticketId).update({
+                status: newStatus,
+                updatedAt: Date.now()
+            });
+        }
+
+        function updateTicketCategory(ticketId, newCategory) {
+            if (!ticketId) return;
+            wosDb.ref('community_feedback/' + ticketId).update({
+                category: newCategory,
+                updatedAt: Date.now()
+            });
+        }
+
+        function deleteTicket(ticketId) {
+            if (!ticketId) return;
+            if (!confirm('Are you sure you want to permanently delete this ticket alert?')) return;
+            wosDb.ref('community_feedback/' + ticketId).remove();
+        }
+
+        function submitNewTicketAlert() {
+            const title = document.getElementById('new-title')?.value.trim();
+            const desc = document.getElementById('new-desc')?.value.trim();
+            const cat = document.getElementById('new-category')?.value || 'General Support';
+            const priority = document.getElementById('new-priority')?.value || 'normal';
+
+            if (!title) {
+                alert('Please enter a ticket title.');
+                return;
+            }
+
+            const newTicket = {
+                title: title,
+                description: desc || title,
+                category: cat,
+                priority: priority,
+                status: 'pending',
+                type: priority === 'urgent' ? 'bug' : 'feature',
+                createdAt: Date.now(),
+                updatedAt: Date.now(),
+                submittedBy: {
+                    name: 'BrianDCox (Central Command)',
+                    gameId: '318843189',
+                    uid: 'admin_central_command'
+                }
+            };
+
+            const ref = wosDb.ref('community_feedback').push();
+            ref.set({ id: ref.key, ...newTicket }).then(() => {
+                document.getElementById('new-title').value = '';
+                document.getElementById('new-desc').value = '';
+                toggleNewTicketForm();
+                playTicketAudio('new');
+            }).catch(e => {
+                alert('Error creating ticket: ' + e.message);
+            });
+        }
+
+        // Initialize state on page load
+        updateAudioUI();
+        document.getElementById('audio-vol-slider').value = soundVolume;
+        document.getElementById('audio-vol-text').innerText = `${Math.round(soundVolume * 100)}%`;
+        document.getElementById('audio-profile-select').value = soundProfile;
+        document.getElementById('audio-priority-select').value = priorityFilter;
+    </script>
+</body>
+</html>

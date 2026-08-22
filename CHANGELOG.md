@@ -1,3 +1,9 @@
+## [10.2.106] - 2026-08-22
+- Added dedicated full-page Ticket Alerts and Support Desk.
+- Added standalone clean URL path for ticket desk.
+- Integrated live audio synthesizer and telemetry controls.
+- Added fullscreen desk launcher button in ticket modal.
+
 ## [10.2.105] - 2026-08-22
 - Added direct deep-linking for ticket popup modal.
 - Added automatic hash and URL parameter popup launcher.
