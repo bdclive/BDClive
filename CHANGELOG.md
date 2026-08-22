@@ -1,3 +1,142 @@
+## [10.2.105] - 2026-08-22
+- Added direct deep-linking for ticket popup modal.
+- Added automatic hash and URL parameter popup launcher.
+
+## [1.0.96] - 2026-08-21
+- Added Commander Brian account badges and top-row sorting.
+- Added live real-time member and Game ID search bar.
+- Sanitized character nicknames across all alliance roster views.
+
+## [1.0.95] - 2026-08-21
+- Added interactive Gift Code and Alliance Redemption Matrix.
+- View exact Chiefs and Alts claiming each gift code.
+- Added live delivery progress bars and timestamps per account.
+- Added 1-click re-delivery and code status toggle buttons.
+
+## [1.0.94] - 2026-08-21
+- Added rich Alert Center cards for gift code deliveries.
+- Added instant alerts for expired and discarded codes.
+- Optimized Century Games claim parser for all response types.
+- Auto-aborts sweeps on expired codes to prevent spam.
+
+## [1.0.93] - 2026-08-21
+- Fixed gift code JSON decode error handling and validation.
+- Added resilient API fallbacks for Century Games server responses.
+- Updated gift code API hostnames across background services.
+
+## [1.0.92] - 2026-08-21
+- Added 100% automated Alliance-wide gift code delivery.
+- Auto-claims all active promo codes for entire roster.
+- Delivers gift rewards directly to in-game mailboxes.
+- Added manual 1-click Alliance delivery trigger.
+
+## [1.0.91] - 2026-08-21
+- Integrated real-time WoSTools gift code API database.
+- Added auto-discovery for live community-reported reward codes.
+- Enrolled 6 new active gift codes automatically.
+- Preserved case-sensitive promo codes during redemption.
+
+## [1.0.90] - 2026-08-20
+- Fixed literal newline escape character in log output.
+- Ensured every log entry prints on clean separate lines.
+- Stripped repetitive prefix brackets for cleaner activity logs.
+
+## [1.0.89] - 2026-08-20
+- Added clean word-wrap so logs never cut off.
+- Added smart auto-pause when scrolling up through history.
+- Added mousewheel scrolling support across activity log feed.
+- Polished activity feed layout with clean category badges.
+
+## [1.0.88] - 2026-08-20
+- Added live real-time CPU usage and RAM telemetry tracking.
+- Added live CPU and memory load progress bars.
+- Integrated system resource dashboard in Core System hub.
+
+## [1.0.87] - 2026-08-20
+- Updated all Discord channel labels to #wos-alerts.
+- Added Alert Center notifications for Whiteout furnace upgrades.
+- Fixed false upgrade counts when session tokens expire.
+
+## [1.0.86] - 2026-08-20
+- Added Verified Active Tokens table to email health report.
+- Added token expiration days countdown for all active Chiefs.
+- Polished email summary tables with green active status indicators.
+
+## [1.0.85] - 2026-08-20
+- Added live error counter on Web API Server card.
+- Added instant visual error warnings for API health.
+
+## [1.0.84] - 2026-08-20
+- Added dynamic host storage and drive space telemetry tracking.
+- Added Storage & Disk Analyzer app with progress bars.
+- Added automated low-disk space alerts for host computers.
+- Integrated live disk storage status into Core System hub.
+
+## [1.0.83] - 2026-08-20
+- Added automated GUI verification suite testing all four tabs.
+- Fixed webhook resolution method in Los Santos engine.
+- Verified full rendering of all input fields and buttons.
+
+## [1.0.82] - 2026-08-20
+- Fixed widget packing order so paste buttons never disappear.
+- Enhanced high-contrast text inputs with vivid blue focus outline.
+- Optimized dialog dimensions for full-screen and laptop visibility.
+
+## [1.0.81] - 2026-08-20
+- Added top banner shortcut directly to #gta-weekly broadcaster.
+- Added direct 1-click room setup and paste actions.
+- Terminated stale background GUI processes for clean updates.
+
+## [1.0.80] - 2026-08-20
+- Redesigned Action Bar with prominent Save, Test, and Dispatch.
+- Expanded dialog dimensions for clear button layout.
+- Grouped Discord controls into a single intuitive control bar.
+
+## [1.0.79] - 2026-08-20
+- Fixed keyboard focus across all GTA manager input fields.
+- Added direct 1-click paste button for webhook URLs.
+- Unlocked full editing inside the weekly message preview box.
+- Added instant focus capture upon opening dialog windows.
+
+## [1.0.78] - 2026-08-20
+- Added dedicated #gta-weekly Discord channel targeting and broadcaster.
+- Added customizable bot display name and avatar picture controls.
+- Added quick avatar presets for GTA V and Customs.
+- Added instant Discord connection test ping button.
+- Integrated GTA webhook management into Central Command token manager.
+
+## [1.0.77] - 2026-08-20
+- Added Los Santos Weekly Manager with Thursday reset countdown.
+- Added Grinder's Profit Matrix with tier-ranked payouts and hourly rates.
+- Added interactive 2-Hour Grind Session payout calculator.
+- Added 1-click Discord weekly briefing and matrix broadcaster.
+- Added live podium car status and force-fetch sweeps.
+
+## [1.0.76] - 2026-08-20
+- Scaled up all metric and hub fonts for high visibility.
+- Added structured Smart Activity Console with rich color tags.
+- Added quick category filters for game, social, and discord.
+- Added log action bar with pause scroll and copy.
+- Enhanced window geometry with comfortable card padding and spacing.
+
+## [1.0.75] - 2026-08-20
+- Added categorized BDC Alert Center popup with custom tabs.
+- Added floating cyber-glass toast banner notifications with auto-dismiss.
+- Integrated System Tray background minimization with right-click controls.
+- Added master and per-category notification mute toggle switches.
+- Integrated crash watchdog with automatic Web API server recovery.
+- Added live ticket alert notifications from Communicator desk.
+- Added live alerts for discovered gift codes and upgrades.
+
+## [1.0.74] - 2026-08-20
+- Consolidated 18 cluttered boxes into 4 clean Command Hubs.
+- Added live Last Update timestamps across all engine cards.
+- Added real-time countdown timers for all upcoming scheduled runs.
+- Unified social media counters with clear follower and view labels.
+- Streamlined Whiteout Survival automation telemetry into one dedicated panel.
+- Enhanced Discord deck with scheduled event and attendee tracking.
+- Grouped core API server health and host system uptime.
+
 ## [10.2.98] - 2026-08-19
 - Synced client app version constant to eliminate update prompt.
 - Resolved recurring update notification banner on dashboard load.
