@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BDC LIVE — Ticket Alerts & Support Desk v10.2.107</title>
+    <title>BDC LIVE — Ticket Alerts & Support Desk v10.2.108</title>
     <!-- Open Graph & Meta Tags -->
     <meta property="og:type" content="website">
     <meta property="og:title" content="BDC LIVE — Ticket Alerts & Support Desk">
@@ -14,7 +14,7 @@
     <!-- Google Fonts & FontAwesome -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     
     <!-- Firebase SDKs -->
@@ -30,7 +30,7 @@
             --border-color: #212c42;
             --border-highlight: #ff5e00;
             --primary: #ff5e00;
-            --primary-glow: rgba(255, 94, 0, 0.25);
+            --primary-glow: rgba(255, 94, 0, 0.3);
             --accent-cyan: #00d2ff;
             --accent-blue: #58a6ff;
             --accent-green: #3fb950;
@@ -38,8 +38,8 @@
             --accent-purple: #bc95ff;
             --accent-amber: #f59e0b;
             --text-main: #ffffff;
-            --text-muted: #8b949e;
-            --text-dim: #6e7681;
+            --text-muted: #94a3b8;
+            --text-dim: #64748b;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -48,6 +48,8 @@
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background-color: var(--bg-base);
             color: var(--text-main);
+            font-size: 15px;
+            line-height: 1.5;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -58,68 +60,68 @@
         header {
             background: linear-gradient(180deg, #0f172a 0%, #080c14 100%);
             border-bottom: 1px solid var(--border-color);
-            padding: 14px 24px;
+            padding: 16px 28px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             position: sticky;
             top: 0;
             z-index: 100;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            box-shadow: 0 4px 24px rgba(0,0,0,0.6);
         }
 
-        .header-left { display: flex; align-items: center; gap: 14px; }
+        .header-left { display: flex; align-items: center; gap: 16px; }
 
         .brand-badge {
             background: linear-gradient(135deg, #ff5e00 0%, #d9480f 100%);
             color: #ffffff;
             font-weight: 900;
-            font-size: 13px;
-            padding: 6px 12px;
-            border-radius: 8px;
-            letter-spacing: 1px;
-            box-shadow: 0 0 15px rgba(255, 94, 0, 0.4);
+            font-size: 14.5px;
+            padding: 8px 14px;
+            border-radius: 9px;
+            letter-spacing: 0.8px;
+            box-shadow: 0 0 16px rgba(255, 94, 0, 0.45);
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 7px;
         }
 
         .brand-title {
-            font-size: 18px;
+            font-size: 21px;
             font-weight: 800;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
             color: #ffffff;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
 
         .version-badge {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
-            font-weight: 700;
+            font-size: 12.5px;
+            font-weight: 800;
             background: #1f293d;
             color: var(--accent-cyan);
-            padding: 2px 8px;
-            border-radius: 6px;
+            padding: 3px 9px;
+            border-radius: 7px;
             border: 1px solid #303e5c;
         }
 
-        .header-actions { display: flex; align-items: center; gap: 10px; }
+        .header-actions { display: flex; align-items: center; gap: 12px; }
 
         .btn-nav {
             background: #161f30;
-            color: #c9d1d9;
+            color: #e2e8f0;
             border: 1px solid var(--border-color);
-            padding: 7px 14px;
-            border-radius: 8px;
-            font-size: 12px;
+            padding: 9px 16px;
+            border-radius: 9px;
+            font-size: 13.5px;
             font-weight: 700;
             text-decoration: none;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 7px;
             transition: all 0.2s ease;
         }
 
@@ -129,15 +131,15 @@
             background: var(--primary);
             color: #ffffff;
             border: none;
-            padding: 7px 14px;
-            border-radius: 8px;
-            font-size: 12px;
+            padding: 9px 18px;
+            border-radius: 9px;
+            font-size: 14px;
             font-weight: 800;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            box-shadow: 0 0 12px var(--primary-glow);
+            gap: 7px;
+            box-shadow: 0 0 15px var(--primary-glow);
             transition: all 0.2s ease;
         }
 
@@ -145,34 +147,34 @@
 
         /* Container */
         .container {
-            max-width: 1440px;
+            max-width: 1560px;
             width: 100%;
             margin: 0 auto;
-            padding: 20px 24px;
+            padding: 24px 28px;
             flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 18px;
         }
 
         /* KPI Stats Grid */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 12px;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 14px;
         }
 
         .stat-card {
             background: var(--bg-surface);
             border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 14px 16px;
+            border-radius: 14px;
+            padding: 16px 20px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             position: relative;
             overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 18px rgba(0,0,0,0.25);
             transition: transform 0.2s ease, border-color 0.2s ease;
             cursor: pointer;
         }
@@ -185,13 +187,13 @@
             top: 0;
             left: 0;
             right: 0;
-            height: 3px;
+            height: 4px;
             background: var(--card-color, #ff5e00);
         }
 
         .stat-label {
-            font-size: 11px;
-            font-weight: 700;
+            font-size: 13px;
+            font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 0.8px;
             color: var(--text-muted);
@@ -201,22 +203,22 @@
         }
 
         .stat-val {
-            font-size: 28px;
+            font-size: 34px;
             font-weight: 900;
             color: var(--text-main);
-            margin: 6px 0 2px 0;
+            margin: 8px 0 3px 0;
             line-height: 1;
         }
 
-        .stat-sub { font-size: 11px; color: var(--text-dim); font-weight: 600; }
+        .stat-sub { font-size: 12.5px; color: var(--text-dim); font-weight: 600; }
 
         /* Floating Bulk Action Bar */
         .bulk-bar {
             background: linear-gradient(135deg, #1f293d 0%, #0f172a 100%);
-            border: 1px solid var(--accent-cyan);
-            box-shadow: 0 0 20px rgba(0, 210, 255, 0.25);
-            border-radius: 10px;
-            padding: 10px 18px;
+            border: 1.5px solid var(--accent-cyan);
+            box-shadow: 0 0 24px rgba(0, 210, 255, 0.3);
+            border-radius: 12px;
+            padding: 12px 22px;
             display: none;
             justify-content: space-between;
             align-items: center;
@@ -228,35 +230,35 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .bulk-actions-group { display: flex; align-items: center; gap: 8px; }
+        .bulk-actions-group { display: flex; align-items: center; gap: 10px; }
 
         /* Control / Filter Bar */
         .controls-card {
             background: var(--bg-surface);
             border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 12px 16px;
+            border-radius: 14px;
+            padding: 14px 20px;
             display: flex;
             flex-wrap: wrap;
             justify-content: space-between;
             align-items: center;
-            gap: 12px;
+            gap: 14px;
         }
 
-        .filter-tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+        .filter-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
 
         .tab-btn {
             background: #141c2e;
-            color: #8b949e;
+            color: #94a3b8;
             border: 1px solid var(--border-color);
-            padding: 7px 14px;
-            border-radius: 8px;
-            font-size: 12px;
+            padding: 8px 16px;
+            border-radius: 9px;
+            font-size: 13.5px;
             font-weight: 700;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             transition: all 0.2s ease;
         }
 
@@ -266,27 +268,28 @@
             background: var(--primary);
             color: #ffffff;
             border-color: var(--primary);
-            box-shadow: 0 0 10px var(--primary-glow);
+            box-shadow: 0 0 12px var(--primary-glow);
         }
 
         .tab-pill {
-            background: rgba(0,0,0,0.3);
-            padding: 1px 6px;
+            background: rgba(0,0,0,0.35);
+            padding: 2px 7px;
             border-radius: 10px;
-            font-size: 10px;
+            font-size: 11.5px;
             font-family: 'JetBrains Mono', monospace;
+            font-weight: 800;
         }
 
-        .search-box { position: relative; flex: 1; max-width: 340px; min-width: 200px; }
-        .search-box i { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-dim); font-size: 13px; }
+        .search-box { position: relative; flex: 1; max-width: 380px; min-width: 220px; }
+        .search-box i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-dim); font-size: 15px; }
         .search-input {
             width: 100%;
             background: #090d16;
             border: 1px solid var(--border-color);
             color: #ffffff;
-            padding: 8px 12px 8px 34px;
-            border-radius: 8px;
-            font-size: 12px;
+            padding: 9px 14px 9px 40px;
+            border-radius: 9px;
+            font-size: 14px;
             outline: none;
             transition: border-color 0.2s ease;
         }
@@ -296,9 +299,9 @@
             background: #090d16;
             border: 1px solid var(--border-color);
             color: var(--accent-purple);
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-size: 12px;
+            padding: 9px 14px;
+            border-radius: 9px;
+            font-size: 13.5px;
             font-weight: 700;
             outline: none;
             cursor: pointer;
@@ -307,11 +310,11 @@
         /* View Density Switcher */
         .view-switch-btn {
             background: #141c2e;
-            color: #8b949e;
+            color: #94a3b8;
             border: 1px solid var(--border-color);
-            padding: 7px 10px;
-            border-radius: 8px;
-            font-size: 12px;
+            padding: 8px 12px;
+            border-radius: 9px;
+            font-size: 14px;
             cursor: pointer;
             transition: all 0.2s ease;
         }
@@ -321,8 +324,8 @@
         .drawer-panel {
             background: var(--bg-surface);
             border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 16px 18px;
+            border-radius: 14px;
+            padding: 20px 22px;
             display: none;
             animation: fadeIn 0.2s ease;
         }
@@ -336,36 +339,36 @@
         .table-card {
             background: var(--bg-surface);
             border: 1px solid var(--border-color);
-            border-radius: 12px;
+            border-radius: 14px;
             overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 24px rgba(0,0,0,0.35);
         }
 
         .table-responsive { width: 100%; overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; text-align: left; }
-        thead { background: #0f172a; border-bottom: 1px solid var(--border-color); }
-        th { padding: 12px 14px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); white-space: nowrap; }
+        thead { background: #0f172a; border-bottom: 1.5px solid var(--border-color); }
+        th { padding: 14px 18px; font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); white-space: nowrap; }
         tbody tr { border-bottom: 1px solid #172033; transition: background-color 0.15s ease; }
         tbody tr:hover { background-color: var(--bg-card-hover) !important; }
-        td { padding: 11px 14px; font-size: 12px; vertical-align: middle; }
+        td { padding: 14px 18px; font-size: 14.5px; vertical-align: middle; }
 
         /* Cards Grid View */
         .cards-deck-view {
             display: none;
-            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-            gap: 14px;
+            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+            gap: 16px;
         }
 
         .ticket-deck-card {
             background: var(--bg-surface);
             border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 16px;
+            border-radius: 14px;
+            padding: 18px 20px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             position: relative;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+            box-shadow: 0 4px 18px rgba(0,0,0,0.3);
             transition: all 0.2s ease;
         }
 
@@ -375,74 +378,76 @@
         .status-badge {
             display: inline-flex;
             align-items: center;
-            gap: 4px;
-            padding: 3px 8px;
-            border-radius: 6px;
-            font-size: 11px;
+            gap: 5px;
+            padding: 4px 10px;
+            border-radius: 7px;
+            font-size: 13px;
             font-weight: 800;
             letter-spacing: 0.3px;
         }
 
-        .status-pending { background: rgba(255, 94, 0, 0.15); color: #ff7b00; border: 1px solid rgba(255, 94, 0, 0.35); }
-        .status-inprogress { background: rgba(88, 166, 255, 0.15); color: #58a6ff; border: 1px solid rgba(88, 166, 255, 0.35); }
-        .status-resolved { background: rgba(63, 185, 80, 0.15); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.35); }
+        .status-pending { background: rgba(255, 94, 0, 0.18); color: #ff7b00; border: 1px solid rgba(255, 94, 0, 0.4); }
+        .status-inprogress { background: rgba(88, 166, 255, 0.18); color: #58a6ff; border: 1px solid rgba(88, 166, 255, 0.4); }
+        .status-resolved { background: rgba(63, 185, 80, 0.18); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.4); }
 
         .priority-urgent {
-            background: rgba(248, 81, 73, 0.15);
+            background: rgba(248, 81, 73, 0.18);
             color: #f85149;
-            border: 1px solid rgba(248, 81, 73, 0.4);
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 10px;
-            font-weight: 800;
+            border: 1px solid rgba(248, 81, 73, 0.45);
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-size: 11.5px;
+            font-weight: 900;
             margin-left: 6px;
+            letter-spacing: 0.5px;
         }
 
         .res-note-badge {
-            background: rgba(63, 185, 80, 0.1);
+            background: rgba(63, 185, 80, 0.12);
             color: #3fb950;
-            border: 1px dashed rgba(63, 185, 80, 0.3);
-            padding: 3px 6px;
-            border-radius: 4px;
-            font-size: 10.5px;
-            margin-top: 4px;
+            border: 1px dashed rgba(63, 185, 80, 0.35);
+            padding: 4px 9px;
+            border-radius: 6px;
+            font-size: 12.5px;
+            margin-top: 6px;
             display: inline-block;
+            line-height: 1.4;
         }
 
         /* Action Buttons */
         .btn-act {
-            padding: 5px 9px;
-            border-radius: 6px;
-            font-size: 11px;
+            padding: 7px 12px;
+            border-radius: 7px;
+            font-size: 13px;
             font-weight: 700;
             cursor: pointer;
             border: 1px solid transparent;
             display: inline-flex;
             align-items: center;
-            gap: 4px;
+            gap: 5px;
             transition: all 0.15s ease;
         }
 
-        .btn-resolve { background: rgba(63, 185, 80, 0.15); color: #3fb950; border-color: rgba(63, 185, 80, 0.35); }
-        .btn-resolve:hover { background: rgba(63, 185, 80, 0.3); }
+        .btn-resolve { background: rgba(63, 185, 80, 0.18); color: #3fb950; border-color: rgba(63, 185, 80, 0.4); }
+        .btn-resolve:hover { background: rgba(63, 185, 80, 0.35); }
 
-        .btn-progress { background: rgba(88, 166, 255, 0.15); color: #58a6ff; border-color: rgba(88, 166, 255, 0.35); }
-        .btn-progress:hover { background: rgba(88, 166, 255, 0.3); }
+        .btn-progress { background: rgba(88, 166, 255, 0.18); color: #58a6ff; border-color: rgba(88, 166, 255, 0.4); }
+        .btn-progress:hover { background: rgba(88, 166, 255, 0.35); }
 
-        .btn-del { background: rgba(248, 81, 73, 0.12); color: #f85149; border-color: rgba(248, 81, 73, 0.25); }
-        .btn-del:hover { background: rgba(248, 81, 73, 0.25); }
+        .btn-del { background: rgba(248, 81, 73, 0.15); color: #f85149; border-color: rgba(248, 81, 73, 0.3); }
+        .btn-del:hover { background: rgba(248, 81, 73, 0.3); }
 
         /* Form Inputs */
-        .form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 12px; }
-        .form-label { font-size: 11px; font-weight: 700; color: var(--text-muted); margin-bottom: 4px; display: block; }
+        .form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin-bottom: 14px; }
+        .form-label { font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 5px; display: block; }
         .form-input, .form-textarea, .form-select {
             width: 100%;
             background: #090d16;
             border: 1px solid var(--border-color);
             color: #ffffff;
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-size: 12px;
+            padding: 10px 14px;
+            border-radius: 9px;
+            font-size: 14px;
             outline: none;
             transition: border-color 0.2s ease;
         }
@@ -452,55 +457,55 @@
         .pulse-beacon {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            font-size: 11px;
+            gap: 7px;
+            font-size: 12.5px;
             font-weight: 800;
             color: var(--accent-green);
-            background: rgba(63, 185, 80, 0.12);
-            padding: 4px 10px;
+            background: rgba(63, 185, 80, 0.14);
+            padding: 6px 12px;
             border-radius: 20px;
-            border: 1px solid rgba(63, 185, 80, 0.3);
+            border: 1px solid rgba(63, 185, 80, 0.35);
         }
 
         .dot-live {
-            width: 7px;
-            height: 7px;
+            width: 8px;
+            height: 8px;
             background: var(--accent-green);
             border-radius: 50%;
-            box-shadow: 0 0 8px var(--accent-green);
+            box-shadow: 0 0 10px var(--accent-green);
             animation: pulse 1.5s infinite;
         }
 
         @keyframes pulse {
             0% { transform: scale(0.9); opacity: 0.7; }
-            50% { transform: scale(1.2); opacity: 1; }
+            50% { transform: scale(1.25); opacity: 1; }
             100% { transform: scale(0.9); opacity: 0.7; }
         }
 
         /* Toast Container */
         #toast-box {
             position: fixed;
-            bottom: 24px;
-            right: 24px;
+            bottom: 26px;
+            right: 26px;
             z-index: 9999;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
             pointer-events: none;
         }
 
         .toast-msg {
             background: #1f293d;
             color: #ffffff;
-            border: 1px solid var(--accent-cyan);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-            padding: 10px 16px;
-            border-radius: 8px;
-            font-size: 12px;
+            border: 1.5px solid var(--accent-cyan);
+            box-shadow: 0 6px 24px rgba(0,0,0,0.6);
+            padding: 12px 18px;
+            border-radius: 9px;
+            font-size: 13.5px;
             font-weight: 700;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 9px;
             animation: slideIn 0.2s ease;
         }
 
@@ -513,7 +518,7 @@
         #res-modal {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0,0,0,0.7);
+            background: rgba(0,0,0,0.75);
             display: none;
             justify-content: center;
             align-items: center;
@@ -523,27 +528,27 @@
         .res-modal-box {
             background: var(--bg-surface);
             border: 1px solid var(--border-color);
-            border-top: 3px solid var(--accent-green);
-            border-radius: 12px;
-            padding: 20px;
-            max-width: 440px;
+            border-top: 4px solid var(--accent-green);
+            border-radius: 14px;
+            padding: 24px;
+            max-width: 480px;
             width: 90%;
-            box-shadow: 0 16px 40px rgba(0,0,0,0.8);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.85);
         }
 
         /* Empty State */
-        .empty-state { text-align: center; padding: 48px 20px; color: var(--text-muted); }
-        .empty-state i { font-size: 36px; color: #3b4e72; margin-bottom: 12px; }
+        .empty-state { text-align: center; padding: 56px 20px; color: var(--text-muted); }
+        .empty-state i { font-size: 42px; color: #3b4e72; margin-bottom: 14px; }
 
         /* Footer */
         footer {
             border-top: 1px solid var(--border-color);
-            padding: 14px 24px;
+            padding: 16px 28px;
             background: #0d131f;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 11px;
+            font-size: 13px;
             color: var(--text-dim);
             margin-top: auto;
         }
@@ -559,7 +564,7 @@
             </div>
             <div class="brand-title">
                 Ticket Alerts & Support Desk
-                <span class="version-badge">v10.2.107</span>
+                <span class="version-badge">v10.2.108</span>
             </div>
         </div>
         <div class="header-actions">
@@ -590,7 +595,7 @@
             <div class="stat-card" style="--card-color: #ff5e00;" onclick="setFilter('open')">
                 <div class="stat-label">
                     <span>🔥 Open Queue (Default)</span>
-                    <i class="fa-solid fa-fire" style="color: #ff7b00;"></i>
+                    <i class="fa-solid fa-fire" style="color: #ff7b00; font-size: 16px;"></i>
                 </div>
                 <div class="stat-val" id="kpi-open" style="color: #ff7b00;">0</div>
                 <div class="stat-sub">New & active tickets</div>
@@ -599,7 +604,7 @@
             <div class="stat-card" style="--card-color: #f85149;" onclick="setFilter('urgent')">
                 <div class="stat-label">
                     <span>🚨 Urgent / Bugs</span>
-                    <i class="fa-solid fa-triangle-exclamation" style="color: #f85149;"></i>
+                    <i class="fa-solid fa-triangle-exclamation" style="color: #f85149; font-size: 16px;"></i>
                 </div>
                 <div class="stat-val" id="kpi-urgent" style="color: #f85149;">0</div>
                 <div class="stat-sub">High priority alliance issues</div>
@@ -608,7 +613,7 @@
             <div class="stat-card" style="--card-color: #58a6ff;" onclick="setFilter('inprogress')">
                 <div class="stat-label">
                     <span>⚡ In-Progress</span>
-                    <i class="fa-solid fa-bolt" style="color: #58a6ff;"></i>
+                    <i class="fa-solid fa-bolt" style="color: #58a6ff; font-size: 16px;"></i>
                 </div>
                 <div class="stat-val" id="kpi-inprogress" style="color: #58a6ff;">0</div>
                 <div class="stat-sub">Under active investigation</div>
@@ -617,7 +622,7 @@
             <div class="stat-card" style="--card-color: #3fb950;" onclick="setFilter('resolved')">
                 <div class="stat-label">
                     <span>📁 Resolved Archive</span>
-                    <i class="fa-solid fa-circle-check" style="color: #3fb950;"></i>
+                    <i class="fa-solid fa-circle-check" style="color: #3fb950; font-size: 16px;"></i>
                 </div>
                 <div class="stat-val" id="kpi-resolved" style="color: #3fb950;">0</div>
                 <div class="stat-sub">Closed historical records</div>
@@ -626,18 +631,18 @@
             <div class="stat-card" style="--card-color: #bc95ff;" onclick="setFilter('all')">
                 <div class="stat-label">
                     <span>Total Telemetry</span>
-                    <i class="fa-solid fa-layer-group" style="color: #bc95ff;"></i>
+                    <i class="fa-solid fa-layer-group" style="color: #bc95ff; font-size: 16px;"></i>
                 </div>
                 <div class="stat-val" id="kpi-total" style="color: #ffffff;">0</div>
-                <div class="stat-sub">Today: <span id="kpi-today" style="color: #ff9f43; font-weight: 700;">+0</span></div>
+                <div class="stat-sub">Today: <span id="kpi-today" style="color: #ff9f43; font-weight: 800;">+0</span></div>
             </div>
         </div>
 
         <!-- Floating Bulk Batch Actions Bar -->
         <div id="bulk-action-bar" class="bulk-bar">
-            <div style="display: flex; align-items: center; gap: 8px;">
-                <i class="fa-solid fa-check-double" style="color: var(--accent-cyan);"></i>
-                <span style="font-weight: 800; font-size: 12px;"><span id="bulk-selected-count">0</span> Tickets Selected</span>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <i class="fa-solid fa-check-double" style="color: var(--accent-cyan); font-size: 16px;"></i>
+                <span style="font-weight: 800; font-size: 14px;"><span id="bulk-selected-count">0</span> Tickets Selected</span>
             </div>
             <div class="bulk-actions-group">
                 <button class="btn-act btn-resolve" onclick="bulkResolveSelected()">
@@ -649,7 +654,7 @@
                 <button class="btn-act btn-del" onclick="bulkDeleteSelected()">
                     <i class="fa-solid fa-trash"></i> Delete Selected
                 </button>
-                <button class="btn-nav" style="padding: 4px 8px; font-size: 11px;" onclick="deselectAllCheckboxes()">
+                <button class="btn-nav" style="padding: 6px 12px; font-size: 12.5px;" onclick="deselectAllCheckboxes()">
                     Clear Selection
                 </button>
             </div>
@@ -657,11 +662,11 @@
 
         <!-- Post New Ticket Drawer (Collapsible) -->
         <div id="new-ticket-drawer" class="drawer-panel" style="border-left: 4px solid var(--primary);">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-                <h3 style="font-size: 14px; font-weight: 800; color: #ff9f43; display: flex; align-items: center; gap: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h3 style="font-size: 16px; font-weight: 800; color: #ff9f43; display: flex; align-items: center; gap: 8px;">
                     <i class="fa-solid fa-bullhorn"></i> Broadcast New Ticket / Alert to Ecosystem
                 </h3>
-                <span onclick="toggleNewTicketForm()" style="cursor: pointer; color: #8b949e; font-size: 18px;">&times;</span>
+                <span onclick="toggleNewTicketForm()" style="cursor: pointer; color: #8b949e; font-size: 22px;">&times;</span>
             </div>
             <div class="form-row">
                 <div>
@@ -689,11 +694,11 @@
                     </select>
                 </div>
             </div>
-            <div style="margin-bottom: 14px;">
+            <div style="margin-bottom: 16px;">
                 <label class="form-label">Full Description / Context / Reproduction Steps</label>
                 <textarea id="new-desc" class="form-textarea" rows="3" placeholder="Provide full details, steps to reproduce, or notes for the alliance dev team..."></textarea>
             </div>
-            <div style="display: flex; justify-content: flex-end; gap: 8px;">
+            <div style="display: flex; justify-content: flex-end; gap: 10px;">
                 <button class="btn-nav" onclick="toggleNewTicketForm()">Cancel</button>
                 <button class="btn-primary" onclick="submitNewTicketAlert()">
                     <i class="fa-solid fa-paper-plane"></i> Dispatch Alert to Cloud
@@ -703,11 +708,11 @@
 
         <!-- Audio Synthesizer Drawer (Collapsible) -->
         <div id="audio-settings-drawer" class="drawer-panel" style="border-left: 4px solid var(--accent-cyan);">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-                <h3 style="font-size: 14px; font-weight: 800; color: var(--accent-cyan); display: flex; align-items: center; gap: 8px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h3 style="font-size: 16px; font-weight: 800; color: var(--accent-cyan); display: flex; align-items: center; gap: 8px;">
                     <i class="fa-solid fa-sliders"></i> Audio Alert Synthesizer & Desktop Push Configuration
                 </h3>
-                <span onclick="toggleAudioSettings()" style="cursor: pointer; color: #8b949e; font-size: 18px;">&times;</span>
+                <span onclick="toggleAudioSettings()" style="cursor: pointer; color: #8b949e; font-size: 22px;">&times;</span>
             </div>
             <div class="form-row">
                 <div>
@@ -731,7 +736,7 @@
                     </select>
                 </div>
                 <div style="display: flex; flex-direction: column; justify-content: flex-end;">
-                    <div style="display: flex; gap: 8px;">
+                    <div style="display: flex; gap: 10px;">
                         <button class="btn-nav" onclick="playTicketAudio('test')" style="flex: 1;">
                             <i class="fa-solid fa-play"></i> Test Sound
                         </button>
@@ -763,7 +768,7 @@
                 </button>
             </div>
 
-            <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
                 <select id="filter-category" class="category-select" onchange="filterCategory(this.value)">
                     <option value="all">📁 All Categories</option>
                     <option value="Bug Report">🐛 Bug Report</option>
@@ -783,10 +788,10 @@
 
                 <!-- Density Toggle -->
                 <button id="btn-view-table" class="view-switch-btn active" onclick="setViewMode('table')" title="Dense Table View">
-                    <i class="fa-solid fa-table-list"></i>
+                    <i class="fa-solid fa-table-list"></i> Table
                 </button>
                 <button id="btn-view-cards" class="view-switch-btn" onclick="setViewMode('cards')" title="Card Deck View">
-                    <i class="fa-solid fa-grip"></i>
+                    <i class="fa-solid fa-grip"></i> Cards
                 </button>
 
                 <button class="btn-nav" onclick="refreshData()" title="Reload from Firebase">
@@ -801,22 +806,22 @@
                 <table>
                     <thead>
                         <tr>
-                            <th style="width: 36px; text-align: center;">
-                                <input type="checkbox" id="select-all-checkbox" onchange="toggleSelectAll(this.checked)" style="accent-color: var(--primary); cursor: pointer;">
+                            <th style="width: 44px; text-align: center;">
+                                <input type="checkbox" id="select-all-checkbox" onchange="toggleSelectAll(this.checked)" style="width: 17px; height: 17px; accent-color: var(--primary); cursor: pointer;">
                             </th>
-                            <th style="width: 130px;">Status</th>
-                            <th style="width: 220px;">Category & Title</th>
-                            <th style="width: 200px;">Submitted By</th>
+                            <th style="width: 140px;">Status</th>
+                            <th style="width: 250px;">Category & Title</th>
+                            <th style="width: 220px;">Submitted By</th>
                             <th>Description / Context</th>
-                            <th style="width: 140px;">Timestamp</th>
-                            <th style="width: 180px; text-align: right;">Actions</th>
+                            <th style="width: 150px;">Timestamp</th>
+                            <th style="width: 190px; text-align: right;">Actions</th>
                         </tr>
                     </thead>
                     <tbody id="tickets-tbody">
                         <tr>
                             <td colspan="7" class="empty-state">
                                 <i class="fa-solid fa-spinner fa-spin"></i>
-                                <p>Connecting to Firebase Realtime Telemetry...</p>
+                                <p style="font-size: 16px; font-weight: 700;">Connecting to Firebase Realtime Telemetry...</p>
                             </td>
                         </tr>
                     </tbody>
@@ -832,13 +837,13 @@
     <!-- Quick Resolution Note Modal -->
     <div id="res-modal">
         <div class="res-modal-box">
-            <h3 style="font-size: 14px; font-weight: 800; color: #3fb950; display: flex; align-items: center; gap: 6px; margin-bottom: 12px;">
+            <h3 style="font-size: 16px; font-weight: 800; color: #3fb950; display: flex; align-items: center; gap: 8px; margin-bottom: 14px;">
                 <i class="fa-solid fa-circle-check"></i> Resolve & Close Ticket
             </h3>
-            <p id="res-ticket-title" style="font-size: 12px; font-weight: 700; color: #ffffff; margin-bottom: 8px;"></p>
+            <p id="res-ticket-title" style="font-size: 14px; font-weight: 800; color: #ffffff; margin-bottom: 12px;"></p>
             <label class="form-label">Optional Resolution Note / Outcome:</label>
             <textarea id="res-note-input" class="form-textarea" rows="3" placeholder="e.g. Fixed in v1.0.96 update, code sent to game mailbox, or resolved with member."></textarea>
-            <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px;">
+            <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px;">
                 <button class="btn-nav" onclick="closeResolveModal()">Cancel</button>
                 <button class="btn-act btn-resolve" onclick="confirmResolveTicket()">
                     <i class="fa-solid fa-check"></i> Complete & Close
@@ -1025,7 +1030,7 @@
             const box = document.getElementById('toast-box');
             const t = document.createElement('div');
             t.className = 'toast-msg';
-            t.innerHTML = `<i class="fa-solid fa-circle-check" style="color: var(--accent-cyan);"></i> ${msg}`;
+            t.innerHTML = `<i class="fa-solid fa-circle-check" style="color: var(--accent-cyan); font-size: 15px;"></i> ${msg}`;
             box.appendChild(t);
             setTimeout(() => { t.remove(); }, 3000);
         }
@@ -1223,8 +1228,8 @@
             if (filtered.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="7" class="empty-state">
                     <i class="fa-solid fa-circle-check" style="color: #3fb950;"></i>
-                    <p style="font-weight: 700; color: #ffffff;">Queue is completely clear!</p>
-                    <span style="font-size: 11px; color: var(--text-dim);">No open tickets matching your active filters.</span>
+                    <p style="font-size: 16px; font-weight: 800; color: #ffffff;">Queue is completely clear!</p>
+                    <span style="font-size: 13px; color: var(--text-dim);">No open tickets matching your active filters.</span>
                 </td></tr>`;
                 return;
             }
@@ -1247,7 +1252,7 @@
 
                 const senderName = (t.submittedBy && t.submittedBy.name) ? t.submittedBy.name : (t.author || 'Alliance Member');
                 const rawGid = (t.submittedBy && t.submittedBy.gameId) || '';
-                const senderGidHtml = rawGid ? `<span onclick="copyGameId('${rawGid}')" style="cursor: pointer; color: var(--accent-cyan);" title="Click to copy ID">${rawGid} <i class="fa-regular fa-copy" style="font-size: 9px;"></i></span>` : '';
+                const senderGidHtml = rawGid ? `<span onclick="copyGameId('${rawGid}')" style="cursor: pointer; color: var(--accent-cyan); font-weight: 700;" title="Click to copy ID">${rawGid} <i class="fa-regular fa-copy" style="font-size: 11px;"></i></span>` : '';
                 const categoryStr = t.category || (t.type === 'feature' ? 'Feature Request' : (t.type === 'bug' ? 'Bug Report' : 'General Support'));
                 const createdTime = t.createdAt || t.timestamp;
                 let dateStr = 'Recent';
@@ -1260,35 +1265,35 @@
                 const bgRow = idx % 2 === 0 ? 'background: #0d131f;' : 'background: #111827;';
                 const isChecked = selectedTicketIds.has(t.id) ? 'checked' : '';
 
-                const catSelectHtml = `<div style="margin-bottom: 4px;">
-                    <select onchange="updateTicketCategory('${t.id}', this.value)" style="background: rgba(188, 149, 255, 0.12); color: #bc95ff; border: 1px solid rgba(188, 149, 255, 0.3); padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 700; outline: none; cursor: pointer;">
+                const catSelectHtml = `<div style="margin-bottom: 5px;">
+                    <select onchange="updateTicketCategory('${t.id}', this.value)" style="background: rgba(188, 149, 255, 0.14); color: #bc95ff; border: 1px solid rgba(188, 149, 255, 0.35); padding: 3px 8px; border-radius: 5px; font-size: 11.5px; font-weight: 700; outline: none; cursor: pointer;">
                         ${categoryOptions.map(opt => `<option value="${opt.val}" ${(categoryStr.toLowerCase().includes(opt.val.toLowerCase()) || opt.val.toLowerCase().includes(categoryStr.toLowerCase())) ? 'selected' : ''}>${opt.label}</option>`).join('')}
                     </select>
                 </div>`;
 
                 return `<tr style="${bgRow}">
                     <td style="text-align: center;">
-                        <input type="checkbox" value="${t.id}" ${isChecked} onchange="toggleSelectTicket('${t.id}', this.checked)" style="accent-color: var(--primary); cursor: pointer;">
+                        <input type="checkbox" value="${t.id}" ${isChecked} onchange="toggleSelectTicket('${t.id}', this.checked)" style="width: 17px; height: 17px; accent-color: var(--primary); cursor: pointer;">
                     </td>
                     <td>${statusBadge}${priorityBadge}</td>
                     <td>
                         ${catSelectHtml}
-                        <div style="font-size: 12px; font-weight: 700; color: #ff9f43; line-height: 1.3;">${t.title || 'Untitled Ticket'}</div>
+                        <div style="font-size: 15.5px; font-weight: 800; color: #ff9f43; line-height: 1.35;">${t.title || 'Untitled Ticket'}</div>
                     </td>
                     <td>
-                        <div style="display: flex; align-items: center; gap: 6px;">
-                            <i class="fa-solid fa-user" style="color: #ff9f43; font-size: 11px;"></i>
-                            <span style="font-weight: 600;">${senderName}</span>
+                        <div style="display: flex; align-items: center; gap: 7px;">
+                            <i class="fa-solid fa-user" style="color: #ff9f43; font-size: 13px;"></i>
+                            <span style="font-weight: 700; font-size: 14.5px;">${senderName}</span>
                         </div>
-                        <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; margin-top: 2px;">${senderGidHtml}</div>
+                        <div style="font-family: 'JetBrains Mono', monospace; font-size: 12.5px; margin-top: 3px;">${senderGidHtml}</div>
                     </td>
-                    <td style="color: #c9d1d9; font-size: 11.5px; line-height: 1.4; max-width: 360px; word-break: break-word;">
+                    <td style="color: #e2e8f0; font-size: 14px; line-height: 1.5; max-width: 420px; word-break: break-word;">
                         ${t.description || '--'}
                         ${resNoteHtml}
                     </td>
-                    <td style="color: var(--text-muted); font-size: 11px; white-space: nowrap;">${dateStr}</td>
+                    <td style="color: var(--text-muted); font-size: 12.5px; white-space: nowrap;">${dateStr}</td>
                     <td style="text-align: right; white-space: nowrap;">
-                        <div style="display: inline-flex; gap: 5px;">
+                        <div style="display: inline-flex; gap: 6px;">
                             ${st !== 'resolved' ? `<button class="btn-act btn-resolve" onclick="openResolveModal('${t.id}', '${(t.title||'').replace(/'/g, "\\'")}')" title="Resolve Ticket">✓ Resolve</button>` : ''}
                             ${(st === 'pending' || st === 'open' || st === 'new') ? `<button class="btn-act btn-progress" onclick="updateTicketStatus('${t.id}', 'in-progress')" title="Mark In-Progress">⚡ Progress</button>` : ''}
                             <button class="btn-act btn-del" onclick="deleteTicket('${t.id}')" title="Delete Ticket">✕</button>
@@ -1306,7 +1311,7 @@
             if (filtered.length === 0) {
                 deck.innerHTML = `<div class="empty-state" style="grid-column: 1 / -1;">
                     <i class="fa-solid fa-circle-check" style="color: #3fb950;"></i>
-                    <p style="font-weight: 700; color: #ffffff;">Queue is clear!</p>
+                    <p style="font-size: 16px; font-weight: 800; color: #ffffff;">Queue is clear!</p>
                 </div>`;
                 return;
             }
@@ -1321,20 +1326,20 @@
 
                 return `<div class="ticket-deck-card">
                     <div>
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
                             <div>${statusBadge}${priorityBadge}</div>
-                            <span style="font-size: 10px; color: var(--text-dim);">${t.category || 'General'}</span>
+                            <span style="font-size: 12px; font-weight: 700; color: var(--text-dim);">${t.category || 'General'}</span>
                         </div>
-                        <h4 style="font-size: 13px; font-weight: 800; color: #ff9f43; margin-bottom: 6px;">${t.title || 'Untitled Ticket'}</h4>
-                        <p style="font-size: 11.5px; color: #c9d1d9; line-height: 1.4; margin-bottom: 8px;">${t.description || '--'}</p>
+                        <h4 style="font-size: 16px; font-weight: 800; color: #ff9f43; margin-bottom: 8px; line-height: 1.35;">${t.title || 'Untitled Ticket'}</h4>
+                        <p style="font-size: 14px; color: #e2e8f0; line-height: 1.5; margin-bottom: 10px;">${t.description || '--'}</p>
                         ${resNoteHtml}
                     </div>
-                    <div style="border-top: 1px solid var(--border-color); padding-top: 10px; margin-top: 10px; display: flex; justify-content: space-between; align-items: center;">
-                        <div style="font-size: 11px; color: var(--text-muted);">
-                            <div><strong>${senderName}</strong></div>
-                            ${rawGid ? `<span onclick="copyGameId('${rawGid}')" style="cursor: pointer; color: var(--accent-cyan); font-family: monospace; font-size: 10px;">ID: ${rawGid}</span>` : ''}
+                    <div style="border-top: 1px solid var(--border-color); padding-top: 12px; margin-top: 12px; display: flex; justify-content: space-between; align-items: center;">
+                        <div style="font-size: 13px; color: var(--text-muted);">
+                            <div style="font-weight: 700; color: #ffffff;">${senderName}</div>
+                            ${rawGid ? `<span onclick="copyGameId('${rawGid}')" style="cursor: pointer; color: var(--accent-cyan); font-family: monospace; font-size: 12px; font-weight: 700;">ID: ${rawGid}</span>` : ''}
                         </div>
-                        <div style="display: flex; gap: 5px;">
+                        <div style="display: flex; gap: 6px;">
                             ${st !== 'resolved' ? `<button class="btn-act btn-resolve" onclick="openResolveModal('${t.id}', '${(t.title||'').replace(/'/g, "\\'")}')">✓ Resolve</button>` : ''}
                             <button class="btn-act btn-del" onclick="deleteTicket('${t.id}')">✕</button>
                         </div>

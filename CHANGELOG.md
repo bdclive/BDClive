@@ -1,3 +1,9 @@
+## [10.2.108] - 2026-08-22
+- Scaled up typography and font sizes for human eyes.
+- Increased table row spacing and badge readability.
+- Enlarged KPI metric values and card layouts.
+- Expanded form inputs and action buttons for easier tapping.
+
 ## [10.2.107] - 2026-08-22
 - Defaulted Ticket Desk to Open Queue on initial load.
 - Added streamlined 3-tab layout for active and archived tickets.
