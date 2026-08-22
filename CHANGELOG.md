@@ -1,3 +1,9 @@
+## [10.2.110] - 2026-08-22
+- Fixed JavaScript variable scope in dashboard popup modal.
+- Added animated toast notifications for 1-click Game ID copying.
+- Added smooth vertical scrolling to modal container layout.
+- Verified zero console errors across all dashboard views.
+
 ## [10.2.109] - 2026-08-22
 - Synchronized in-dashboard ticket modal with all standalone desk features.
 - Defaulted in-dashboard ticket popup to Open Queue on load.
