@@ -1,3 +1,10 @@
+## [10.2.107] - 2026-08-22
+- Defaulted Ticket Desk to Open Queue on initial load.
+- Added streamlined 3-tab layout for active and archived tickets.
+- Added floating multi-select bulk actions bar for tickets.
+- Added compact table and visual card deck view switcher.
+- Added 1-click Game ID copy and resolution notes modal.
+
 ## [10.2.106] - 2026-08-22
 - Added dedicated full-page Ticket Alerts and Support Desk.
 - Added standalone clean URL path for ticket desk.

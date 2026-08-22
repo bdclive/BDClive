@@ -14,11 +14,11 @@
       "cliFile": "Threads_Bridge/threads_bridge_cli_v1.0.59_(terminal).py"
     },
     "bdclive_web_dashboard": {
-      "version": "10.2.106",
+      "version": "10.2.107",
       "repository": "https://github.com/bdclive/BDClive",
       "latestChanges": [
-        "v10.2.106: Dedicated full-page Ticket Alerts & Support Desk with standalone URL",
-        "v10.2.105: Direct deep-linking and URL parameter support for Ticket Alerts popup modal"
+        "v10.2.107: Default Open queue on load, bulk actions, and cards view",
+        "v10.2.106: Dedicated full-page Ticket Alerts & Support Desk with standalone URL"
       ]
     },
     "wosbdc_alliance_dashboard": {
