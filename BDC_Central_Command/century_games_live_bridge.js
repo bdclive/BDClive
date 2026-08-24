@@ -85,6 +85,16 @@ function callCenturyApi(path, payloadData, token = null) {
   });
 }
 
+function sanitizeNickname(name) {
+  if (!name) return '';
+  return String(name)
+    .replace(/\u00a0/g, ' ')
+    .replace(/\u00c2/g, '')
+    .replace(/Â/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
 function extractCharacterInfo(roleData, defaultRoleId = '') {
   let char = roleData;
   if (roleData && Array.isArray(roleData.user_data) && roleData.user_data.length > 0) {
@@ -94,27 +104,38 @@ function extractCharacterInfo(roleData, defaultRoleId = '') {
   }
 
   let nickname = (char && (char.nickname || char.name)) || (roleData && (roleData.nickname || roleData.name)) || '';
+  nickname = sanitizeNickname(nickname);
+
   let avatar = (char && (char.icon || char.avatar_image)) || (roleData && (roleData.avatar_image || roleData.icon)) || '';
   let section = (char && (char.section || (char.extra_info && char.extra_info.value))) || (roleData && roleData.section) || '2089';
 
   let rawStove = (char && (char.stove_lv || char.furnaceLevel)) || (roleData && (roleData.stove_lv || roleData.furnaceLevel)) || '';
   let formattedFurnace = '';
 
-  if (char && char.rank) {
-    const rankMatch = String(char.rank).match(/stove_lv_(\d+)/i);
+  if (char && char.rank !== undefined && char.rank !== null && char.rank !== '') {
+    const rankStr = String(char.rank).trim();
+    const rankMatch = rankStr.match(/stove_lv_(\d+)/i);
     if (rankMatch) {
       const num = parseInt(rankMatch[1], 10);
       if (num >= 1 && num <= 10) formattedFurnace = 'FC ' + num;
       else if (num > 30 && num <= 40) formattedFurnace = 'FC ' + (num - 30);
       else formattedFurnace = 'Lv ' + num;
       rawStove = String(num);
+    } else {
+      const num = parseInt(rankStr, 10);
+      if (!isNaN(num)) {
+        if (num >= 1 && num <= 30) formattedFurnace = 'Lv ' + num;
+        else if (num > 30 && num <= 40) formattedFurnace = 'FC ' + (num - 30);
+        else formattedFurnace = 'Lv ' + num;
+        rawStove = String(num);
+      }
     }
   }
 
   if (!formattedFurnace && rawStove) {
-    const num = parseInt(rawStove, 10);
+    const num = parseInt(String(rawStove).trim(), 10);
     if (!isNaN(num)) {
-      if (num >= 1 && num <= 10) formattedFurnace = 'FC ' + num;
+      if (num >= 1 && num <= 30) formattedFurnace = 'Lv ' + num;
       else if (num > 30 && num <= 40) formattedFurnace = 'FC ' + (num - 30);
       else formattedFurnace = 'Lv ' + num;
     } else {

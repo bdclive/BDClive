@@ -1,3 +1,10 @@
+## [1.0.98] - 2026-08-24
+- Fixed mojibake encoding in live Century Games bridge.
+- Fixed Unknown furnace levels for pre-Fire Crystal accounts.
+- Enforced UTF-8 encoding across all bridge subprocess streams.
+- Sanitized chief names across email reports and Firebase.
+- Deployed Central Command v1.0.98 across all systems.
+
 ## [1.0.97] - 2026-08-22
 - Maintenance sweep now hits live Century Games API.
 - Added token-authenticated bridge route for accurate data.
