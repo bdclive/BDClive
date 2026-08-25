@@ -3,6 +3,8 @@
 - Fixed Unknown furnace levels for pre-Fire Crystal accounts.
 - Enforced UTF-8 encoding across all bridge subprocess streams.
 - Sanitized chief names across email reports and Firebase.
+- Fixed Apps Script default email dispatching bug.
+- Throttled automated token scan emails to 24 hours.
 - Deployed Central Command v1.0.98 across all systems.
 
 ## [1.0.97] - 2026-08-22

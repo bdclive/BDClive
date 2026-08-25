@@ -148,22 +148,38 @@ function doPost(e) {
   try {
     let payload = {};
     if (e && e.postData && e.postData.contents) {
-      payload = JSON.parse(e.postData.contents);
+      try {
+        payload = JSON.parse(e.postData.contents);
+      } catch (parseErr) {
+        payload = {};
+      }
     }
     
-    const api = payload.api || "sendAlertEmail";
+    const api = payload.api || payload.action || "";
+    
+    if (api === "updateChiefLevel") {
+      return handleUpdateChiefLevel(payload);
+    }
     
     if (api === "sendAlertEmail") {
       const recipient = payload.recipient || "briandivacox@gmail.com";
-      const subject = payload.subject || "🚨 [BDC Central Command] Alert";
-      const htmlBody = payload.htmlBody || payload.body || "<p>Alert from BDC Central Command</p>";
-      const textBody = payload.textBody || "Alert from BDC Central Command";
+      const subject = payload.subject;
+      const htmlBody = payload.htmlBody || payload.body;
+      const textBody = payload.textBody || "";
+      
+      // Strict guard: Never dispatch empty / default placeholder emails
+      if (!subject && !htmlBody && !textBody) {
+        return ContentService.createTextOutput(JSON.stringify({ 
+          success: false, 
+          error: "Empty email payload ignored. No email dispatched." 
+        })).setMimeType(ContentService.MimeType.JSON);
+      }
       
       MailApp.sendEmail({
         to: recipient,
-        subject: subject,
-        body: textBody,
-        htmlBody: htmlBody,
+        subject: subject || "🚨 [BDC Central Command] Alert",
+        body: textBody || "Alert from BDC Central Command",
+        htmlBody: htmlBody || textBody,
         name: "BDC Central Command"
       });
       
@@ -180,8 +196,11 @@ function doPost(e) {
         .setMimeType(ContentService.MimeType.JSON);
     }
     
-    return ContentService.createTextOutput(JSON.stringify({ error: "Unknown API action: " + api }))
-      .setMimeType(ContentService.MimeType.JSON);
+    return ContentService.createTextOutput(JSON.stringify({ 
+      status: "OK", 
+      message: "BDC Task Bridge API ready",
+      receivedApi: api 
+    })).setMimeType(ContentService.MimeType.JSON);
       
   } catch (err) {
     return ContentService.createTextOutput(JSON.stringify({ error: err.toString() }))
