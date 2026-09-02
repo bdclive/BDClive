@@ -1,3 +1,9 @@
+## [1.0.99] - 2026-09-02
+- Fixed false upgrade detection on accounts with Unknown level.
+- Synchronized live furnace levels for all alliance alt accounts.
+- Enforced strict valid level comparison before triggering upgrade emails.
+- Deployed Central Command v1.0.99 across all systems.
+
 ## [1.0.98] - 2026-08-24
 - Fixed mojibake encoding in live Century Games bridge.
 - Fixed Unknown furnace levels for pre-Fire Crystal accounts.
