@@ -1,3 +1,10 @@
+## [1.1.00] - 2026-09-02
+- Added automatic comma formatting to all numbers in GUI.
+- Formatted social followers, view counts, and stream statistics.
+- Formatted server request counts, queues, and system telemetry.
+- Formatted GTA matrix payouts and grinder financial metrics.
+- Deployed Central Command v1.1.00 across all systems.
+
 ## [1.0.99] - 2026-09-02
 - Fixed false upgrade detection on accounts with Unknown level.
 - Synchronized live furnace levels for all alliance alt accounts.
