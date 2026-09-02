@@ -1,17 +1,17 @@
 {
-  "week_title": "Aug 20 \u2013 Aug 27, 2026",
-  "podium_vehicle": "Declasse Granger 3600LX ($1,380,000)",
-  "prize_ride": "Enus Paragon R",
-  "prize_ride_challenge": "Place Top 3 in the LS Car Meet Series for 3 days in a row",
-  "hsw_vehicle": "Karin S95 (Next-Gen)",
+  "week_title": "Aug 27 \u2013 Sep 3, 2026",
+  "podium_vehicle": "Karin Sultan Classic ($1,718,000)",
+  "prize_ride": "Dinka Veto Classic",
+  "prize_ride_challenge": "Place Top 5 in the LS Car Meet Series for 4 days in a row",
+  "hsw_vehicle": "\u00dcbermacht Cypher (Next-Gen)",
   "test_track": [
+    "Annis Elegy Retro Custom",
     "Vapid Dominator GTT",
-    "Annis Remus",
-    "Dinka RT3000"
+    "Invetero Coquette"
   ],
   "luxury_autos": [
-    "Grotti Turismo Omaggio",
-    "Declasse Vigero ZX Convert."
+    "\u00dcbermacht Cypher",
+    "Grotti Turismo Omaggio"
   ],
   "simeons_pdm": [
     "Enus Stafford",
@@ -22,128 +22,129 @@
   ],
   "salvage_yard_targets": [
     {
-      "car": "Albany Brigham",
-      "robbery": "The McTony Robbery",
-      "claimable": true
+      "car": "Dewbauchee Champion",
+      "claimable": false,
+      "robbery": "The Podium Robbery"
     },
     {
-      "car": "Pfister Neon",
-      "robbery": "The Podium Robbery",
-      "claimable": false
+      "car": "Obey Tailgater S",
+      "claimable": false,
+      "robbery": "The Duggan Robbery"
     },
     {
-      "car": "Lampadati Komoda",
-      "robbery": "The Gangbanger Robbery",
-      "claimable": false
+      "car": "Vapid Clique",
+      "claimable": false,
+      "robbery": "The Cargo Ship Robbery"
     }
   ],
   "gun_van": {
+    "discount_item": "Precision Rifle (40% OFF)",
     "location": "Palmer-Taylor Power Station",
-    "discount_item": "Railgun (40% OFF)",
     "weapons": [
       "Railgun",
-      "Combat Shotgun",
-      "Tactical SMG",
-      "Heavy Rifle",
+      "Heavy Pistol",
+      "Military Rifle (30% OFF)",
+      "Crowbar",
       "Body Armor (50% OFF)"
     ]
   },
   "bonuses": [
     {
-      "id": "bunker",
-      "name": "Bunker Sell Missions",
-      "multiplier": "2x GTA$ & RP",
-      "rate": "$2,100,000 / Full Delivery",
       "hourly": "~$1,400,000/hr",
-      "tier": "S",
+      "id": "autoshop_contracts",
+      "multiplier": "2x GTA$ & RP",
+      "name": "Auto Shop Robbery Contracts",
+      "rate": "$300,000 \u2013 $360,000 / Contract",
       "solo": true,
-      "type": "Passive / Sale",
-      "tip": "Buy supplies once for $75k, sell at $420k in invite-only session for guaranteed 1 delivery vehicle."
+      "tier": "S",
+      "tip": "Union Depository contract pays $600k+ on double cash. Complete setups in Oppressor Mk II for 15-minute clears.",
+      "type": "Active Heists"
     },
     {
-      "id": "agency_contracts",
-      "name": "Agency Security Contracts & Specialist",
-      "multiplier": "3x GTA$ & RP",
-      "rate": "$90,000 \u2013 $210,000 / mission",
-      "hourly": "~$1,200,000/hr",
-      "tier": "S",
-      "solo": true,
-      "type": "Active Missions",
-      "tip": "Focus on Liquidize Assets and Recover Valuables using an Oppressor Mk II or Sparrow for 3-minute clears."
-    },
-    {
-      "id": "cluckin_bell",
-      "name": "Cluckin' Bell Farm Raid Finale",
-      "multiplier": "2x GTA$",
-      "rate": "$1,000,000 / Finale",
       "hourly": "~$1,100,000/hr",
-      "tier": "A",
-      "solo": true,
-      "type": "Heist",
-      "tip": "Can be completely soloed in ~45 minutes with zero upfront setup cost."
-    },
-    {
-      "id": "nightclub_safe",
-      "name": "Nightclub Safe Daily Income",
-      "multiplier": "2x GTA$",
-      "rate": "$100,000 / 48 mins",
-      "hourly": "~$125,000/hr passive",
-      "tier": "B",
-      "solo": true,
-      "type": "Passive",
-      "tip": "Switch resident DJs from the basement terminal to instantly keep popularity at 100%."
-    },
-    {
-      "id": "community_series",
-      "name": "Community Series & Stunt Races",
+      "id": "transform_races",
       "multiplier": "3x GTA$ & RP",
-      "rate": "$60,000 \u2013 $100,000 / race",
-      "hourly": "~$400,000/hr",
-      "tier": "B",
+      "name": "Random & Unknown Transform Races",
+      "rate": "$75,000 \u2013 $140,000 / race",
       "solo": false,
-      "type": "PvP Races",
-      "tip": "Outstanding for crew race nights and rapid RP leveling."
+      "tier": "S",
+      "tip": "New 'Known Unknown' and 'Unknown Unknown' tracks give massive RP and fast cash with full lobbies.",
+      "type": "PvP Races"
+    },
+    {
+      "hourly": "~$850,000/hr",
+      "id": "drift_races",
+      "multiplier": "2x GTA$, RP & LS Rep",
+      "name": "Drift Races & Weekly Challenge",
+      "rate": "$50,000 \u2013 $90,000 / race + $100k bonus",
+      "solo": false,
+      "tier": "A",
+      "tip": "Participate in 3 Drift Races to unlock the instant $100,000 GTA$ Weekly Challenge reward.",
+      "type": "Drift Events"
+    },
+    {
+      "hourly": "~$125,000/hr passive",
+      "id": "nightclub_safe",
+      "multiplier": "2x GTA$",
+      "name": "Nightclub Safe Daily Income",
+      "rate": "$100,000 / 48 mins",
+      "solo": true,
+      "tier": "B",
+      "tip": "Switch resident DJs from the basement terminal to instantly keep popularity at 100%.",
+      "type": "Passive"
+    },
+    {
+      "hourly": "~$600,000/hr passive",
+      "id": "bunker",
+      "multiplier": "2x Production Speed",
+      "name": "Bunker Manufacturing Stock",
+      "rate": "$1,050,000 / Full Sale",
+      "solo": true,
+      "tier": "B",
+      "tip": "Buy supplies once for $75k, sell in invite-only session for guaranteed single delivery vehicle.",
+      "type": "Passive Sale"
     }
   ],
   "discounts": [
     {
       "category": "Properties",
-      "item": "Bunkers & Upgrades / Renovations",
-      "discount": "40% OFF"
-    },
-    {
-      "category": "Properties",
-      "item": "Agency Upgrades & Vehicle Workshop",
-      "discount": "30% OFF"
+      "discount": "40% OFF",
+      "item": "Auto Shops & Renovations / Upgrades"
     },
     {
       "category": "Vehicles",
-      "item": "Grotti Turismo Omaggio",
-      "discount": "30% OFF"
+      "discount": "30% OFF",
+      "item": "Karin Sultan Classic"
     },
     {
       "category": "Vehicles",
-      "item": "Pegassi Zorrusso",
-      "discount": "40% OFF"
+      "discount": "30% OFF",
+      "item": "Annis Elegy Retro Custom"
     },
     {
       "category": "Vehicles",
-      "item": "Mammoth Patriot Mil-Spec",
-      "discount": "30% OFF"
+      "discount": "40% OFF",
+      "item": "Vapid Dominator GTT"
     },
     {
       "category": "Vehicles",
-      "item": "Vapid Dominator GTT",
-      "discount": "30% OFF"
+      "discount": "30% OFF",
+      "item": "\u00dcbermacht Cypher"
+    },
+    {
+      "category": "Upgrades",
+      "discount": "30% OFF",
+      "item": "Drift Tuning Modifications"
     }
   ],
   "crew_events": [
     {
-      "title": "\ud83c\udf34 BDC Friday Night Supercar Meet & Drag Races",
-      "time": "Friday 9:00 PM EST",
+      "host": "BDC Crew",
       "location": "LSIA Airport Runway 2",
-      "host": "BDC Crew"
+      "time": "Friday 9:00 PM EST",
+      "title": "\ud83c\udf34 BDC Friday Night Supercar Meet & Drag Races"
     }
   ],
-  "last_updated": 1787266335
+  "last_updated": 1788359275,
+  "source": "Rockstar & Community Verified Live Feed"
 }
