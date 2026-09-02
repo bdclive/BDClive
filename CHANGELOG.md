@@ -4,6 +4,7 @@
 - Formatted server request counts, queues, and system telemetry.
 - Formatted GTA matrix payouts and grinder financial metrics.
 - Added dynamic Thursday-to-Thursday GTA weekly event calculation.
+- Added active weekly dates to Gaming Hub dashboard card.
 - Added multi-tiered cloud sync for live GTA Online updates.
 - Automated periodic background checks for weekly Los Santos updates.
 - Deployed Central Command v1.1.00 across all systems.
