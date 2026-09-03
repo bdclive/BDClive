@@ -14,11 +14,11 @@
       "cliFile": "Threads_Bridge/threads_bridge_cli_v1.0.59_(terminal).py"
     },
     "bdclive_web_dashboard": {
-      "version": "10.2.114",
+      "version": "10.2.115",
       "repository": "https://github.com/bdclive/BDClive",
       "latestChanges": [
-        "v10.2.114: Fixed Task Box total count calculation and added live change pulse highlights",
-        "v10.2.113: Added 1-click interactive follower glow wave test suite"
+        "v10.2.115: Unified auto-refresh alert banners with consistent 5s countdown across all states",
+        "v10.2.114: Fixed Task Box total count calculation and added live change pulse highlights"
       ]
     },
     "wosbdc_alliance_dashboard": {
