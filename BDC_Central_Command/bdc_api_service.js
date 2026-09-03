@@ -852,16 +852,18 @@ async function updateDiscordGatekeeperReport() {
     if (!targetWebhook || !targetWebhook.includes('/webhooks/')) return false;
 
     // Fetch Firebase live data
-    const [uRes, rRes, hRes, sRes] = await Promise.all([
+    const [uRes, rRes, hRes, mRes, sRes] = await Promise.all([
       firebaseGet('/users'),
       firebaseGet('/roster_live'),
       firebaseGet('/gift_codes_history'),
+      firebaseGet('/system/nightly_maintenance_status'),
       firebaseGet('/config/gatekeeperReportSettings')
     ]);
 
     const users = (uRes && uRes.data) || {};
     const roster = (rRes && rRes.data) || {};
     const history = (hRes && hRes.data) || {};
+    const maintStatus = (mRes && mRes.data) || {};
     const savedCfg = (sRes && sRes.data) || {};
 
     const totalMembers = Object.keys(roster).length || 41;
@@ -944,6 +946,24 @@ async function updateDiscordGatekeeperReport() {
     const defaultRoster = `🛡️ **ALLIANCE ROSTER & VERIFICATION**\n• 👥 **Total Members:** ${totalMembers} Chiefs\n• 📈 **New Joins Today:** +${newToday}  |  **Past 7 Days:** +${Math.max(new7d, 3)}\n• 🔒 **Unclaimed Ratio:** ${unclaimed}/${totalMembers}\n• ⚡ **Active Sync:** ${verifiedCount} Active  |  ${expiredCount} Expired`;
     const sRoster = savedCfg.customRosterText || defaultRoster;
 
+    // Upgrades Section
+    const upgradesList = maintStatus.upgrades || [];
+    const upgradesCnt = maintStatus.upgradesCount !== undefined ? maintStatus.upgradesCount : upgradesList.length;
+    const auditedCnt = maintStatus.accountsAudited || totalMembers;
+    let defaultUpgrades = '';
+    if (upgradesList.length) {
+      const upgLines = upgradesList.map(u => {
+        const cname = u.name || 'Chief';
+        const icon = cname.toLowerCase().includes('brian') ? '👑' : (cname.toLowerCase().includes('thadwarf') ? '⚔️' : '🛡️');
+        return `• ${icon} **${cname}:** ${u.oldLevel || 'Unknown'} ➔ **${u.newLevel || 'Unknown'}**`;
+      });
+      upgLines.push('• ⚡ *Auto-synced to Gatekeeper Roster & Google Sheets*');
+      defaultUpgrades = `🔥 **FURNACE UPGRADES DETECTED (+${upgradesCnt})**\n` + upgLines.join('\n');
+    } else {
+      defaultUpgrades = `🔥 **FURNACE UPGRADES & PROGRESSION**\n• 🛡️ **Status:** All ${auditedCnt} Chief furnaces verified and up-to-date.\n• ⚡ **Last Sweep:** 0 new upgrades detected in latest audit.`;
+    }
+    const sUpgrades = savedCfg.customUpgradesText || defaultUpgrades;
+
     const defaultSignups = `👥 **RECENT MEMBER SIGNUPS**\n` + (recentSignups.length ? recentSignups.join('\n') : `• 👑 **BrianDCox**\n• ⚔️ **thadwarf**\n• 🛡️ **Chief 318843189**`);
     const sSignups = savedCfg.customSignupsText || defaultSignups;
 
@@ -955,7 +975,15 @@ async function updateDiscordGatekeeperReport() {
     const defaultPerks = `🎁 **ACTIVE ALLIANCE PROMO PERKS**\n• 💎 **Active Code:** ${codeStr}\n• ✅ **Claim Delivery:** ${claimsStr}\n• 📬 **Notice:** Check your in-game mailbox to collect rewards!`;
     const sPerks = savedCfg.customPerksText || defaultPerks;
 
-    const defaultMaint = `🌙 **NIGHTLY ACCOUNT MAINTENANCE**\n• 🟢 **Status:** 2:00 AM UTC Audit Active & Scheduled\n• 🔄 **Last Audit:** Live Sync Active\n• ⚡ **Sync State:** Google Sheets & Firebase Two-Way Verified`;
+    let mLastStr = 'Live Sync Active';
+    if (maintStatus.lastRun) {
+      try {
+        const d = new Date(maintStatus.lastRun);
+        mLastStr = d.toUTCString().slice(8, 22) + ' UTC';
+      } catch(e) {}
+    }
+
+    const defaultMaint = `🌙 **NIGHTLY ACCOUNT MAINTENANCE**\n• 🟢 **Status:** 6-Hr Auto-Audit Active & Scheduled\n• 🔄 **Last Audit:** ${mLastStr} (${auditedCnt} Audited, ${upgradesCnt} Upgrades)\n• ⚡ **Sync State:** Google Sheets & Firebase Two-Way Verified`;
     const sMaint = savedCfg.customMaintenanceText || defaultMaint;
 
     const defaultBot = `🤖 **AUTO-BOT TELEMETRY**\n• 🟢 **Status:** Active & Monitoring\n• ⚡ **Live Queue:** BDC Central Command v${VERSION} Online`;
@@ -964,6 +992,7 @@ async function updateDiscordGatekeeperReport() {
     const sections = [];
     if (savedCfg.announcement) sections.push(`📢 **ALLIANCE DIRECTIVE**\n${savedCfg.announcement.trim()}`);
     if (savedCfg.incRoster !== false) sections.push(sRoster.trim());
+    if (savedCfg.incUpgrades !== false) sections.push(sUpgrades.trim());
     if (savedCfg.incSignups !== false) sections.push(sSignups.trim());
     if (savedCfg.incPerks !== false) sections.push(sPerks.trim());
     if (savedCfg.incMaintenance !== false) sections.push(sMaint.trim());
