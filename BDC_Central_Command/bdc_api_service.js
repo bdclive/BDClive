@@ -866,7 +866,49 @@ async function updateDiscordGatekeeperReport() {
     const maintStatus = (mRes && mRes.data) || {};
     const savedCfg = (sRes && sRes.data) || {};
 
-    const totalMembers = Object.keys(roster).length || 41;
+    function isMemberBannedOrLeft(node) {
+      if (!node || typeof node !== 'object') return false;
+      const st = String(node.membershipStatus || node.status || '').trim().toLowerCase();
+      return ['banned', 'left', 'kicked', 'inactive', 'removed', 'departed'].includes(st);
+    }
+
+    const bannedIds = new Set();
+    const bannedNames = new Set();
+    for (const [k, r] of Object.entries(roster)) {
+      if (!r || typeof r !== 'object') continue;
+      if (isMemberBannedOrLeft(r)) {
+        bannedIds.add(String(k).trim());
+        if (r.gameId) bannedIds.add(String(r.gameId).trim());
+        const name = String(r.name || k).trim().toLowerCase();
+        if (name) bannedNames.add(name);
+      }
+    }
+    for (const [uid, u] of Object.entries(users)) {
+      if (!u || typeof u !== 'object') continue;
+      if (isMemberBannedOrLeft(u)) {
+        if (u.gameId) bannedIds.add(String(u.gameId).trim());
+        const name = String(u.name || u.chiefName || '').trim().toLowerCase();
+        if (name) bannedNames.add(name);
+      }
+      if (u.altTokens && typeof u.altTokens === 'object') {
+        for (const [aId, aVal] of Object.entries(u.altTokens)) {
+          if (aVal && typeof aVal === 'object' && isMemberBannedOrLeft(aVal)) {
+            bannedIds.add(String(aId).trim());
+            const aName = String(aVal.nickname || aVal.name || '').trim().toLowerCase();
+            if (aName) bannedNames.add(aName);
+          }
+        }
+      }
+    }
+
+    const activeRoster = Object.entries(roster).filter(([k, r]) => {
+      if (!r || typeof r !== 'object') return false;
+      const gid = String(r.gameId || k).trim();
+      const name = String(r.name || k).trim().toLowerCase();
+      return !isMemberBannedOrLeft(r) && !bannedIds.has(gid) && !bannedNames.has(name);
+    });
+
+    const totalMembers = activeRoster.length || 37;
     let verifiedCount = 0;
     let expiredCount = 0;
     let newToday = 0;
@@ -879,9 +921,10 @@ async function updateDiscordGatekeeperReport() {
     const sortedUsers = [];
 
     for (const [uid, u] of Object.entries(users)) {
-      if (!u || typeof u !== 'object') continue;
+      if (!u || typeof u !== 'object' || isMemberBannedOrLeft(u)) continue;
       const gid = String(u.gameId || '').trim();
-      if (gid) {
+      const uName = String(u.name || u.chiefName || '').trim().toLowerCase();
+      if (gid && !bannedIds.has(gid) && !bannedNames.has(uName)) {
         registeredGids.add(gid);
         const tok = u.wos_cg_token;
         if (tok) {
@@ -899,25 +942,29 @@ async function updateDiscordGatekeeperReport() {
       }
       if (u.altTokens && typeof u.altTokens === 'object') {
         for (const [aId, aVal] of Object.entries(u.altTokens)) {
-          registeredGids.add(String(aId).trim());
-          if (aVal && typeof aVal === 'object') {
-            const tok = aVal.token;
-            if (tok) {
-              const daysLeft = getJwtDaysLeft(tok);
-              const isAct = !aVal.tokenExpired && (
-                (aVal.tokenStatus && (aVal.tokenStatus.status === 'active' || aVal.tokenStatus.status === 'expiring_soon')) ||
-                (daysLeft > 0)
-              );
-              if (isAct) {
-                verifiedCount++;
-              } else {
-                expiredCount++;
+          const sAlt = String(aId).trim();
+          const aName = String(aVal && (aVal.nickname || aVal.name) || '').trim().toLowerCase();
+          if (sAlt && !bannedIds.has(sAlt) && !bannedNames.has(aName) && !isMemberBannedOrLeft(aVal)) {
+            registeredGids.add(sAlt);
+            if (aVal && typeof aVal === 'object') {
+              const tok = aVal.token;
+              if (tok) {
+                const daysLeft = getJwtDaysLeft(tok);
+                const isAct = !aVal.tokenExpired && (
+                  (aVal.tokenStatus && (aVal.tokenStatus.status === 'active' || aVal.tokenStatus.status === 'expiring_soon')) ||
+                  (daysLeft > 0)
+                );
+                if (isAct) {
+                  verifiedCount++;
+                } else {
+                  expiredCount++;
+                }
               }
             }
           }
         }
       }
-      if (u.name) sortedUsers.push(u);
+      if (u.name && !bannedIds.has(gid) && !bannedNames.has(uName)) sortedUsers.push(u);
 
       const createdAt = u.createdAt;
       if (createdAt) {
@@ -929,7 +976,7 @@ async function updateDiscordGatekeeperReport() {
       }
     }
 
-    const unclaimed = Object.values(roster).filter(r => r && r.gameId && !registeredGids.has(String(r.gameId).trim())).length;
+    const unclaimed = activeRoster.filter(([k, r]) => r && r.gameId && !registeredGids.has(String(r.gameId).trim())).length;
 
     sortedUsers.sort((a, b) => {
       const ta = new Date(a.createdAt || a.joinedDate || 0).getTime();
@@ -940,9 +987,15 @@ async function updateDiscordGatekeeperReport() {
     const defaultRoster = `🛡️ **ALLIANCE ROSTER & VERIFICATION**\n• 👥 **Total Members:** ${totalMembers} Chiefs\n• 📈 **New Joins Today:** +${newToday}  |  **Past 7 Days:** +${new7d}\n• 🔒 **Unclaimed Ratio:** ${unclaimed}/${totalMembers}\n• ⚡ **Active Sync:** ${verifiedCount} Active  |  ${expiredCount} Expired`;
     const sRoster = savedCfg.customRosterText || defaultRoster;
 
-    // Upgrades Section
-    const upgradesList = maintStatus.upgrades || [];
-    const upgradesCnt = maintStatus.upgradesCount !== undefined ? maintStatus.upgradesCount : upgradesList.length;
+    // Upgrades Section (Excludes banned/departed members)
+    const rawUpgrades = maintStatus.upgrades || [];
+    const upgradesList = rawUpgrades.filter(u => {
+      if (!u) return false;
+      const fid = String(u.fid || '').trim();
+      const name = String(u.name || '').trim().toLowerCase();
+      return !bannedIds.has(fid) && !bannedNames.has(name);
+    });
+    const upgradesCnt = maintStatus.upgradesCount !== undefined ? upgradesList.length : upgradesList.length;
     const auditedCnt = maintStatus.accountsAudited || totalMembers;
     let defaultUpgrades = '';
     if (upgradesList.length) {
