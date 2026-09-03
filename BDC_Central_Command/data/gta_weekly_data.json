@@ -1,5 +1,5 @@
 {
-  "week_title": "Sep 3 \u2013 Sep 10, 2026",
+  "week_title": "Sep 3 \u2013 10, 2026",
   "event_name": "Business Rivalries: Executives Week",
   "podium_vehicle": "Declasse Impaler SZ ($1,280,000)",
   "prize_ride": "Karin Woodlander",
@@ -25,28 +25,28 @@
   "salvage_yard_targets": [
     {
       "car": "Canis Kamacho",
-      "robbery": "The Gangbanger Robbery",
-      "claimable": false
+      "claimable": false,
+      "robbery": "The Gangbanger Robbery"
     },
     {
       "car": "Ocelot Jugular",
-      "robbery": "The Cargo Ship Robbery",
-      "claimable": false
+      "claimable": false,
+      "robbery": "The Cargo Ship Robbery"
     },
     {
       "car": "Pfister Astron",
-      "robbery": "The Duggan Robbery",
-      "claimable": false
+      "claimable": false,
+      "robbery": "The Duggan Robbery"
     }
   ],
   "fib_priority_file": "Project Breakaway File",
   "weekly_challenge": {
-    "task": "Earn $1,000,000 from selling Special Cargo",
-    "reward": "Yeti x LS Customs Tracksuit + $1,000,000 GTA$"
+    "reward": "Yeti x LS Customs Tracksuit + $1,000,000 GTA$",
+    "task": "Earn $1,000,000 from selling Special Cargo"
   },
   "gun_van": {
-    "location": "Murrieta Heights Oil Fields",
     "discount_item": "Combat MG (40% OFF)",
+    "location": "Murrieta Heights Oil Fields",
     "weapons": [
       "Railgun",
       "Heavy Sniper",
@@ -57,106 +57,106 @@
   },
   "bonuses": [
     {
-      "id": "special_vehicle_work",
-      "name": "Special Vehicle Work",
-      "multiplier": "4x GTA$ & RP",
-      "rate": "$140,000 \u2013 $220,000 / Mission",
       "hourly": "~$1,800,000/hr",
-      "tier": "S",
+      "id": "special_vehicle_work",
+      "multiplier": "4x GTA$ & RP",
+      "name": "Special Vehicle Work",
+      "rate": "$140,000 \u2013 $220,000 / Mission",
       "solo": false,
-      "type": "Executive Missions",
-      "tip": "Phantom Wedge and Ramp Buggy missions yield massive 4x payouts. Fast 10-minute completions with a CEO partner."
+      "tier": "S",
+      "tip": "Phantom Wedge and Ramp Buggy missions yield massive 4x payouts. Fast 10-minute completions with a CEO partner.",
+      "type": "Executive Missions"
     },
     {
-      "id": "community_series",
-      "name": "Community Mission Series",
-      "multiplier": "3x GTA$ & RP",
-      "rate": "$80,000 \u2013 $150,000 / Job",
       "hourly": "~$1,200,000/hr",
+      "id": "community_series",
+      "multiplier": "3x GTA$ & RP",
+      "name": "Community Mission Series",
+      "rate": "$80,000 \u2013 $150,000 / Job",
+      "solo": false,
       "tier": "S",
-      "solo": false,
-      "type": "PvP Series",
-      "tip": "High player lobby multipliers grant rapid level-ups and easy six-figure earnings."
+      "tip": "High player lobby multipliers grant rapid level-ups and easy six-figure earnings.",
+      "type": "PvP Series"
     },
     {
-      "id": "export_mixed_goods",
-      "name": "Export Mixed Goods & Madrazo Hits",
-      "multiplier": "2x GTA$ & RP",
-      "rate": "$100,000 / Delivery",
       "hourly": "~$1,000,000/hr",
-      "tier": "A",
-      "solo": true,
-      "type": "Solo Free Roam",
-      "tip": "Speak with Assistant in Executive Office to launch Mixed Goods. Flat $100k for a 4-minute truck delivery to the Docks."
-    },
-    {
-      "id": "special_cargo_staff",
-      "name": "Special Cargo Staff Sourcing Speed",
-      "multiplier": "2x Faster Sourcing",
-      "rate": "Sourced every 24 mins",
-      "hourly": "Passive Cargo Accumulation",
-      "tier": "A",
-      "solo": true,
-      "type": "Passive Business",
-      "tip": "Visit Lupe in all your warehouses to trigger 2x speed sourcing for fast full warehouse sales."
-    },
-    {
-      "id": "diamond_adversary",
-      "name": "Diamond Adversary Series",
+      "id": "export_mixed_goods",
       "multiplier": "2x GTA$ & RP",
-      "rate": "$60,000 \u2013 $110,000 / Match",
+      "name": "Export Mixed Goods & Madrazo Hits",
+      "rate": "$100,000 / Delivery",
+      "solo": true,
+      "tier": "A",
+      "tip": "Speak with Assistant in Executive Office to launch Mixed Goods. Flat $100k for a 4-minute truck delivery to the Docks.",
+      "type": "Solo Free Roam"
+    },
+    {
+      "hourly": "Passive Cargo Accumulation",
+      "id": "special_cargo_staff",
+      "multiplier": "2x Faster Sourcing",
+      "name": "Special Cargo Staff Sourcing Speed",
+      "rate": "Sourced every 24 mins",
+      "solo": true,
+      "tier": "A",
+      "tip": "Visit Lupe in all your warehouses to trigger 2x speed sourcing for fast full warehouse sales.",
+      "type": "Passive Business"
+    },
+    {
       "hourly": "~$750,000/hr",
-      "tier": "B",
+      "id": "diamond_adversary",
+      "multiplier": "2x GTA$ & RP",
+      "name": "Diamond Adversary Series",
+      "rate": "$60,000 \u2013 $110,000 / Match",
       "solo": false,
-      "type": "Adversary",
-      "tip": "Competitive close-quarters combat inside the Diamond Casino interior."
+      "tier": "B",
+      "tip": "Competitive close-quarters combat inside the Diamond Casino interior.",
+      "type": "Adversary"
     }
   ],
   "discounts": [
     {
       "category": "Properties",
-      "item": "Executive Offices & Renovations",
-      "discount": "50% OFF"
+      "discount": "50% OFF",
+      "item": "Executive Offices & Renovations"
     },
     {
       "category": "Properties",
-      "item": "Special Cargo Warehouses",
-      "discount": "40% OFF"
+      "discount": "40% OFF",
+      "item": "Special Cargo Warehouses"
     },
     {
       "category": "Vehicles",
-      "item": "Declasse Impaler SZ",
-      "discount": "30% OFF"
+      "discount": "30% OFF",
+      "item": "Declasse Impaler SZ"
     },
     {
       "category": "Vehicles",
-      "item": "Canis Kamacho",
-      "discount": "40% OFF"
+      "discount": "40% OFF",
+      "item": "Canis Kamacho"
     },
     {
       "category": "Vehicles",
-      "item": "Ocelot Jugular",
-      "discount": "30% OFF"
+      "discount": "30% OFF",
+      "item": "Ocelot Jugular"
     },
     {
       "category": "Vehicles",
-      "item": "Pfister Astron",
-      "discount": "30% OFF"
+      "discount": "30% OFF",
+      "item": "Pfister Astron"
     },
     {
       "category": "Vehicles",
-      "item": "Grotti Turismo Omaggio",
-      "discount": "30% OFF"
+      "discount": "30% OFF",
+      "item": "Grotti Turismo Omaggio"
     }
   ],
   "crew_events": [
     {
-      "title": "\ud83c\udf34 BDC Friday Night Supercar Meet & Executive Convoy",
-      "time": "Friday 9:00 PM EST",
+      "host": "BDC Crew",
       "location": "Arcadius Business Center Helipad",
-      "host": "BDC Crew"
+      "time": "Friday 9:00 PM EST",
+      "title": "\ud83c\udf34 BDC Friday Night Supercar Meet & Executive Convoy"
     }
   ],
-  "last_updated": 1788443705,
+  "last_updated": 1788443759,
   "source": "Rockstar Official Newswire & Verified Sep 3 Intel"
 }
