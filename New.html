@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BDC LIVE v10.2.114</title>
+    <title>BDC LIVE v10.2.115</title>
     <!-- Open Graph & Social Preview Meta Tags -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="BDC LIVE v10.2.114">
+    <meta property="og:title" content="BDC LIVE v10.2.115">
     <meta property="og:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="og:image" content="./bdclive_banner.jpg">
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="BDC LIVE v10.2.114">
+    <meta property="twitter:title" content="BDC LIVE v10.2.115">
     <meta property="twitter:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="twitter:image" content="./bdclive_banner.jpg">
     <!-- PWA Manifest & Mobile Web App Meta Tags -->
@@ -1836,7 +1836,7 @@
         });
 
         const DEFAULT_GH_REPOS = [
-            { name: "BDClive", owner: "bdclive", fullName: "bdclive/BDClive", htmlUrl: "https://github.com/bdclive/BDClive", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "BDC Live Central Command Dashboard", latestCommit: "v10.2.114 : Fixed Task Box total count calculation and added live change pulse highlights" },
+            { name: "BDClive", owner: "bdclive", fullName: "bdclive/BDClive", htmlUrl: "https://github.com/bdclive/BDClive", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "BDC Live Central Command Dashboard", latestCommit: "v10.2.115 : Unified auto-refresh alert banners with consistent 5s countdown across all states" },
             { name: "wosBDC.github.io", owner: "wosbdc", fullName: "wosbdc/wosBDC.github.io", htmlUrl: "https://github.com/wosbdc/wosBDC.github.io", pushedAt: new Date(Date.now() - 3600000 * 1.5).toISOString(), defaultBranch: "main", description: "WOS BDC Web Application", latestCommit: "v2.9.86 : Dynamic real-time synchronization for all dropdown filter options and action button counters" },
             { name: "DasherTracker.github.io", owner: "DasherTracker", fullName: "DasherTracker/DasherTracker.github.io", htmlUrl: "https://github.com/DasherTracker/DasherTracker.github.io", pushedAt: new Date(Date.now() - 3600000 * 3.5).toISOString(), defaultBranch: "main", description: "Dasher Tracker Portal", latestCommit: "Production sync" },
             { name: "theBDCFcrew.github.io", owner: "theBDCFcrew", fullName: "theBDCFcrew/theBDCFcrew.github.io", htmlUrl: "https://github.com/theBDCFcrew/theBDCFcrew.github.io", pushedAt: new Date(Date.now() - 86400000).toISOString(), defaultBranch: "main", description: "The BDCF Crew Portal", latestCommit: "Production sync" },
@@ -2027,7 +2027,7 @@
             }
         }
 
-        const CURRENT_APP_VERSION = 'v10.2.114';
+        const CURRENT_APP_VERSION = 'v10.2.115';
         let isDeployingLive = false;
         let pendingRemoteVersion = null;
         let autoRefreshTimer = null;
@@ -2132,23 +2132,12 @@
         }
 
         function startAutoRefreshCountdown(remoteVer) {
-            if (autoRefreshTimer) clearInterval(autoRefreshTimer);
-            const normVer = normalizeVer(remoteVer);
-            
-            // Loop Guard: If an auto-reload for this version was already attempted in the last 3 minutes, DO NOT loop!
-            const lastAttempt = sessionStorage.getItem('last_auto_reload_for_' + normVer);
-            if (lastAttempt && (Date.now() - parseInt(lastAttempt, 10)) < 180000) {
-                const badgeEl = document.getElementById('update-countdown-badge');
-                if (badgeEl) {
-                    badgeEl.style.display = 'inline-block';
-                    badgeEl.style.background = 'rgba(227, 179, 65, 0.15)';
-                    badgeEl.style.color = '#e3b341';
-                    badgeEl.style.borderColor = 'rgba(227, 179, 65, 0.35)';
-                    badgeEl.innerText = `Click Reload to apply`;
-                }
-                return;
+            if (autoRefreshTimer) {
+                clearInterval(autoRefreshTimer);
+                autoRefreshTimer = null;
             }
-
+            const normVer = normalizeVer(remoteVer || pendingRemoteVersion || CURRENT_APP_VERSION);
+            
             autoRefreshCountdown = 5;
             const badgeEl = document.getElementById('update-countdown-badge');
             if (badgeEl) {
@@ -2208,7 +2197,13 @@
                 banner.style.boxShadow = '0 12px 36px rgba(0,0,0,0.8), 0 0 20px rgba(210, 153, 34, 0.35)';
                 if (iconEl) iconEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="color: #d29922;"></i>';
                 if (titleEl) { titleEl.innerText = title; titleEl.style.color = '#d29922'; }
-                if (badgeEl) badgeEl.style.display = 'none';
+                if (badgeEl) {
+                    badgeEl.style.display = 'inline-block';
+                    badgeEl.style.background = 'rgba(210, 153, 34, 0.15)';
+                    badgeEl.style.color = '#d29922';
+                    badgeEl.style.borderColor = 'rgba(210, 153, 34, 0.35)';
+                    badgeEl.innerText = 'Building in Cloud...';
+                }
             } else {
                 banner.style.borderColor = '#3fb950';
                 banner.style.boxShadow = '0 12px 36px rgba(0,0,0,0.8), 0 0 20px rgba(63, 185, 80, 0.35)';
