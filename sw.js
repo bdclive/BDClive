@@ -1,5 +1,5 @@
 // LiveCounters PWA Service Worker
-const CACHE_NAME = 'livecounters-cache-v10.2.115';
+const CACHE_NAME = 'livecounters-cache-v10.2.116';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',

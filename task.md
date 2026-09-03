@@ -1,11 +1,12 @@
-## ✅ Completed: Unified Auto-Refresh Alert & Banner Consistency (v10.2.115)
-- [x] Create project backup archive (`backups/Unified_Update_Alert_v10.2.115_backup.zip`)
-- [x] Unify All Update Alert Banner States in `index.html`:
-  - Guarantee 5-second countdown timer runs on EVERY update alert without conflicting static states
-  - In-progress deployments show clear `🚀 Building in cloud...` badge, then seamlessly transition to 5s auto-countdown when done
-  - Streamline `checkDirectVersionUpdate` and `checkAppUpdateAlert` into a single, cohesive update engine
+## ✅ Completed: Google Tasks Category Breakdown Modal & Audit (v10.2.116)
+- [x] Create project backup archive (`backups/Tasks_Breakdown_Modal_v10.2.116_backup.zip`)
+- [x] Build Google Tasks Live Category Breakdown & Inspector Modal (`#tasksBreakdownModal`):
+  - Dynamic table displaying all 13 Google Tasks lists (Movie Reviews, Movie List, Photos Needed, FunFacts, Ideas, Bills, My Tasks, DivaCox, Update, etc.)
+  - Clear count badges showing where all 50 tasks reside
+  - 1-click direct link to open each specific task list in Google Tasks
+  - Wire `#tasks-box` total click & breakdown button to open the modal
 - [x] Automated Pre-Delivery Verification Script testing (0 errors)
-- [x] Synchronize `CURRENT_APP_VERSION = 'v10.2.115'` across `index.html`, `New.html`, `web_dashboards/New.html`
+- [x] Synchronize `CURRENT_APP_VERSION = 'v10.2.116'` across `index.html`, `New.html`, `web_dashboards/New.html`
 - [x] Bump `VERSION.json` & `sw.js` cache name
 - [x] Update `CHANGELOG.md` with App Store style release notes (<= 10 words per bullet)
 - [x] Commit and push to GitHub (`origin main`)

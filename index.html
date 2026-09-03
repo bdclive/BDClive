@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BDC LIVE v10.2.115</title>
+    <title>BDC LIVE v10.2.116</title>
     <!-- Open Graph & Social Preview Meta Tags -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="BDC LIVE v10.2.115">
+    <meta property="og:title" content="BDC LIVE v10.2.116">
     <meta property="og:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="og:image" content="./bdclive_banner.jpg">
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="BDC LIVE v10.2.115">
+    <meta property="twitter:title" content="BDC LIVE v10.2.116">
     <meta property="twitter:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="twitter:image" content="./bdclive_banner.jpg">
     <!-- PWA Manifest & Mobile Web App Meta Tags -->
@@ -400,12 +400,15 @@
         </div>
 
         <!-- TASKS BOX WIDGET -->
-        <div class="counter-item mirror-box" id="tasks-box" style="border-top: 3px solid var(--tasks-blue); padding: 10px 12px 5px 12px; grid-area: 3 / 2 / 4 / 4; height: 150px;">
+        <div class="counter-item mirror-box" id="tasks-box" style="border-top: 3px solid var(--tasks-blue); padding: 10px 12px 5px 12px; grid-area: 3 / 2 / 4 / 4; height: 150px; position: relative;">
             <i class="fa-solid fa-list-check box-logo" style="color: var(--tasks-blue);"></i>
+            <button onclick="openTasksBreakdownModal()" style="position: absolute; top: 8px; right: 10px; background: rgba(66, 133, 244, 0.15); color: #58a6ff; border: 1px solid rgba(66, 133, 244, 0.35); border-radius: 6px; padding: 2px 7px; font-size: 8.5px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s ease; z-index: 2;" title="View All 13 Task List Categories & Live Counts">
+                <i class="fa-solid fa-layer-group"></i> Breakdown
+            </button>
             <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px 6px; width: 100%; height: 100%; align-items: center; box-sizing: border-box;">
                 
-                <div class="task-click-node" onclick="openSpecificTaskList('Task')" style="grid-column: span 6; margin-bottom: 2px;">
-                    <p class="mirror-label" style="color: var(--tasks-blue); font-size: 10px; white-space: nowrap;">📋 Total</p>
+                <div class="task-click-node" onclick="openTasksBreakdownModal()" style="grid-column: span 6; margin-bottom: 2px;" title="Click for Full Google Tasks Category Breakdown & Inspector">
+                    <p class="mirror-label" style="color: var(--tasks-blue); font-size: 10px; white-space: nowrap;">📋 Total Tasks (All Lists)</p>
                     <div id="task-k1" class="mirror-stat" style="font-size: 2rem; font-weight:800; line-height:1.1;">0</div>
                 </div>
                 
@@ -862,6 +865,50 @@
                         </tr>
                     </thead>
                     <tbody id="counter-audit-table-body">
+                        <!-- Rows rendered dynamically -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- GOOGLE TASKS CATEGORY BREAKDOWN & INSPECTOR MODAL -->
+    <div id="tasksBreakdownModal" class="modal">
+        <div class="modal-content" style="border-color: var(--tasks-blue); max-width: 780px; width: 92%; background: #0d1117; max-height: 88vh; display: flex; flex-direction: column; box-shadow: 0 16px 48px rgba(0,0,0,0.8), 0 0 25px rgba(66, 133, 244, 0.25);">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #30363d; padding-bottom: 12px; margin-bottom: 12px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <i class="fa-solid fa-list-check" style="font-size: 20px; color: var(--tasks-blue);"></i>
+                    <h3 style="margin: 0; color: #ffffff; font-size: 16px; font-weight: 800; letter-spacing: 0.5px;">Google Tasks — Category Breakdown & Inspector</h3>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <button onclick="openSpecificTaskList('Task')" style="background: rgba(66, 133, 244, 0.18); color: #58a6ff; border: 1px solid rgba(66, 133, 244, 0.4); padding: 5px 12px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; transition: all 0.2s ease;">
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i> Open in Google Tasks
+                    </button>
+                    <span class="close-modal" onclick="closeTasksBreakdownModal()" style="font-size: 24px; cursor: pointer; color: #8b949e; margin-left: 4px;">&times;</span>
+                </div>
+            </div>
+
+            <!-- Summary Statistics Bar -->
+            <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 8px 12px; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+                <div style="display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 700;">
+                    <span style="background: rgba(66, 133, 244, 0.15); color: #58a6ff; border: 1px solid rgba(66, 133, 244, 0.3); padding: 3px 8px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px;">📋 <span id="tasks-modal-total-cnt">0</span> Total Open Tasks</span>
+                    <span style="background: rgba(63, 185, 80, 0.15); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.3); padding: 3px 8px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px;">📁 <span id="tasks-modal-lists-cnt">0</span> Lists Tracked</span>
+                    <span style="background: rgba(227, 179, 65, 0.15); color: #e3b341; border: 1px solid rgba(227, 179, 65, 0.3); padding: 3px 8px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px;">⚡ Real-time Firebase Sync</span>
+                </div>
+            </div>
+
+            <!-- Task Categories Table -->
+            <div style="overflow-y: auto; flex: 1; border: 1px solid #30363d; border-radius: 8px; background: #161b22; max-height: 56vh;">
+                <table style="width: 100%; border-collapse: collapse; font-size: 11px; text-align: left;">
+                    <thead>
+                        <tr style="background: #21262d; border-bottom: 1px solid #30363d; color: #8b949e; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">
+                            <th style="padding: 10px 12px;">Task List Category</th>
+                            <th style="padding: 10px 8px; text-align: center;">Open Tasks</th>
+                            <th style="padding: 10px 8px; text-align: center;">% Share</th>
+                            <th style="padding: 10px 12px; text-align: right;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tasks-breakdown-table-body">
                         <!-- Rows rendered dynamically -->
                     </tbody>
                 </table>
@@ -1602,6 +1649,11 @@
             updateMetricAndFlash('task-k5', 'task_mytasks', cMyTasks);
             updateMetricAndFlash('task-k6', 'task_bdcf', cBDCF);
             updateMetricAndFlash('task-k7', 'task_wos', cWOS);
+
+            const tModal = document.getElementById('tasksBreakdownModal');
+            if (tModal && tModal.style.display === 'block') {
+                renderTasksBreakdownTable();
+            }
         });
 
         // Real-Time GitHub Pipeline Stream Listener (Zero-latency WebSocket pushes)
@@ -1640,6 +1692,110 @@
                 }
             }
         });
+
+        function openTasksBreakdownModal() {
+            renderTasksBreakdownTable();
+            const modal = document.getElementById('tasksBreakdownModal');
+            if (modal) modal.style.display = 'block';
+        }
+
+        function closeTasksBreakdownModal() {
+            const modal = document.getElementById('tasksBreakdownModal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function renderTasksBreakdownTable() {
+            const tbody = document.getElementById('tasks-breakdown-table-body');
+            const totalCntEl = document.getElementById('tasks-modal-total-cnt');
+            const listsCntEl = document.getElementById('tasks-modal-lists-cnt');
+            if (!tbody) return;
+
+            const t = currentTasksDatabaseSnapshot || {};
+            const safeNum = (val) => { const n = parseInt(val, 10); return isNaN(n) ? 0 : n; };
+            const totalTasks = safeNum(t.Task_count) || Object.entries(t).filter(([k]) => k.endsWith('_count') && k !== 'Task_count').reduce((acc, [, v]) => acc + safeNum(v), 0);
+
+            if (totalCntEl) totalCntEl.innerText = fNum(totalTasks);
+
+            const knownMeta = {
+                'movie_reviews__count': { name: 'Movie Reviews', icon: '🎬', color: '#ff7b72' },
+                'movie_list_count': { name: 'Movie List', icon: '🍿', color: '#d2a8ff' },
+                'photos_needed_count': { name: 'Photos Needed', icon: '📸', color: '#79c0ff' },
+                'FunFacts_count': { name: 'FunFacts', icon: '💡', color: '#e3b341' },
+                '___idea_s__count': { name: 'Ideas', icon: '💡', color: '#e3b341' },
+                'Bills_count': { name: 'Bills', icon: '💳', color: '#3fb950' },
+                'My_Tasks_count': { name: 'My Tasks', icon: '⚙️', color: '#58a6ff' },
+                'BrianDivaCox_count': { name: 'BrianDivaCox', icon: '✨', color: '#f778ba' },
+                'Tweet_to_Facebook_count': { name: 'Update (Tweet to Facebook)', icon: '🎤', color: '#bc8cff' },
+                'Update_count': { name: 'Update', icon: '🎤', color: '#bc8cff' },
+                'Brian_s_Theater_count': { name: 'BriansTheater', icon: '🎬', color: '#56d364' },
+                'BriansTheater_count': { name: 'BriansTheater', icon: '🎬', color: '#56d364' },
+                'The_BDCF_Crew_count': { name: 'The BDCF Crew', icon: '👥', color: '#a5d6ff' },
+                'WOS_count': { name: 'WOS Alliance', icon: '❄️', color: '#ff9b5e' },
+                'Old_Google_Keep_reminders_count': { name: 'Google Keep Reminders', icon: '📝', color: '#8b949e' }
+            };
+
+            const taskEntries = [];
+            Object.entries(t).forEach(([key, val]) => {
+                if (!key.endsWith('_count') || key === 'Task_count') return;
+                const count = safeNum(val);
+                const rawKey = key.replace(/_count$/, '');
+                const meta = knownMeta[key] || {
+                    name: rawKey.replace(/^_+|_+$/g, '').replace(/_+/g, ' ').trim(),
+                    icon: '📋',
+                    color: '#58a6ff'
+                };
+                taskEntries.push({
+                    key: rawKey,
+                    name: meta.name,
+                    icon: meta.icon,
+                    color: meta.color,
+                    count: count
+                });
+            });
+
+            // Sort: highest count first, then alphabetical
+            taskEntries.sort((a, b) => (b.count - a.count) || a.name.localeCompare(b.name));
+
+            if (listsCntEl) listsCntEl.innerText = taskEntries.length;
+
+            tbody.innerHTML = taskEntries.map(item => {
+                const pct = totalTasks > 0 ? Math.round((item.count / totalTasks) * 100) : 0;
+                const badgeBg = item.count > 0 ? 'rgba(63, 185, 80, 0.18)' : 'rgba(255, 255, 255, 0.05)';
+                const badgeColor = item.count > 0 ? '#3fb950' : '#8b949e';
+                const badgeBorder = item.count > 0 ? 'rgba(63, 185, 80, 0.4)' : 'rgba(255, 255, 255, 0.1)';
+
+                return `
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.06); transition: background 0.2s ease;">
+                        <td style="padding: 10px 12px;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 15px;">${item.icon}</span>
+                                <div>
+                                    <div style="font-weight: 700; color: #ffffff; font-size: 12px;">${item.name}</div>
+                                    <div style="color: #8b949e; font-size: 10px;">Key: ${item.key}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td style="padding: 10px 8px; text-align: center;">
+                            <span style="background: ${badgeBg}; color: ${badgeColor}; border: 1px solid ${badgeBorder}; padding: 3px 10px; border-radius: 6px; font-weight: 800; font-size: 12px;">
+                                ${fNum(item.count)}
+                            </span>
+                        </td>
+                        <td style="padding: 10px 8px; text-align: center; color: #8b949e; font-size: 11px;">
+                            ${pct}%
+                        </td>
+                        <td style="padding: 10px 12px; text-align: right;">
+                            <button onclick="openSpecificTaskList('${item.key}')" style="background: rgba(66, 133, 244, 0.14); color: #58a6ff; border: 1px solid rgba(66, 133, 244, 0.35); padding: 5px 10px; border-radius: 6px; font-size: 10.5px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: all 0.2s ease;">
+                                Open List <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 9px;"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        window.openTasksBreakdownModal = openTasksBreakdownModal;
+        window.closeTasksBreakdownModal = closeTasksBreakdownModal;
+        window.renderTasksBreakdownTable = renderTasksBreakdownTable;
 
         function openSpecificTaskList(listKey) {
             let targetListId = "";
@@ -1836,7 +1992,7 @@
         });
 
         const DEFAULT_GH_REPOS = [
-            { name: "BDClive", owner: "bdclive", fullName: "bdclive/BDClive", htmlUrl: "https://github.com/bdclive/BDClive", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "BDC Live Central Command Dashboard", latestCommit: "v10.2.115 : Unified auto-refresh alert banners with consistent 5s countdown across all states" },
+            { name: "BDClive", owner: "bdclive", fullName: "bdclive/BDClive", htmlUrl: "https://github.com/bdclive/BDClive", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "BDC Live Central Command Dashboard", latestCommit: "v10.2.116 : Added Google Tasks 13-category live breakdown modal and inspector" },
             { name: "wosBDC.github.io", owner: "wosbdc", fullName: "wosbdc/wosBDC.github.io", htmlUrl: "https://github.com/wosbdc/wosBDC.github.io", pushedAt: new Date(Date.now() - 3600000 * 1.5).toISOString(), defaultBranch: "main", description: "WOS BDC Web Application", latestCommit: "v2.9.86 : Dynamic real-time synchronization for all dropdown filter options and action button counters" },
             { name: "DasherTracker.github.io", owner: "DasherTracker", fullName: "DasherTracker/DasherTracker.github.io", htmlUrl: "https://github.com/DasherTracker/DasherTracker.github.io", pushedAt: new Date(Date.now() - 3600000 * 3.5).toISOString(), defaultBranch: "main", description: "Dasher Tracker Portal", latestCommit: "Production sync" },
             { name: "theBDCFcrew.github.io", owner: "theBDCFcrew", fullName: "theBDCFcrew/theBDCFcrew.github.io", htmlUrl: "https://github.com/theBDCFcrew/theBDCFcrew.github.io", pushedAt: new Date(Date.now() - 86400000).toISOString(), defaultBranch: "main", description: "The BDCF Crew Portal", latestCommit: "Production sync" },
@@ -2027,7 +2183,7 @@
             }
         }
 
-        const CURRENT_APP_VERSION = 'v10.2.115';
+        const CURRENT_APP_VERSION = 'v10.2.116';
         let isDeployingLive = false;
         let pendingRemoteVersion = null;
         let autoRefreshTimer = null;
@@ -4364,6 +4520,8 @@
                     activeModal = 'githubModal';
                 } else if (hash === '#counters' || urlParams.get('modal') === 'counters') {
                     activeModal = 'counterAuditModal';
+                } else if (hash === '#tasks' || hash === '#tasksbreakdownmodal' || urlParams.get('modal') === 'tasks') {
+                    activeModal = 'tasksBreakdownModal';
                 }
 
                 if (!activeModal) return;
@@ -4380,6 +4538,8 @@
                         openTheater();
                     } else if (activeModal === 'courtModal' && typeof openCourt === 'function') {
                         openCourt();
+                    } else if (activeModal === 'tasksBreakdownModal' && typeof openTasksBreakdownModal === 'function') {
+                        openTasksBreakdownModal();
                     }
                 }, 350);
             } catch(e) {}
@@ -4394,12 +4554,14 @@
             const ghM = document.getElementById('githubModal');
             const ctM = document.getElementById('courtModal');
             const thM = document.getElementById('theaterModal');
+            const tbM = document.getElementById('tasksBreakdownModal');
             if (e.target === gkM) closeGatekeeperModal();
             if (e.target === tkM) closeTicketAlertsModal();
             if (e.target === caM) closeCounterAuditModal();
             if (e.target === ghM) closeGithubModal();
             if (e.target === ctM) closeCourt();
             if (e.target === thM) closeTheater();
+            if (e.target === tbM) closeTasksBreakdownModal();
         });
 
         // Global Escape Key Listener for Modals
@@ -4411,6 +4573,7 @@
                 closeGithubModal();
                 closeCourt();
                 closeTheater();
+                closeTasksBreakdownModal();
             }
         });
 
