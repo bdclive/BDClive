@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BDC LIVE v10.2.118</title>
+    <title>BDC LIVE v10.2.119</title>
     <!-- Open Graph & Social Preview Meta Tags -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="BDC LIVE v10.2.118">
+    <meta property="og:title" content="BDC LIVE v10.2.119">
     <meta property="og:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="og:image" content="./bdclive_banner.jpg">
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="BDC LIVE v10.2.118">
+    <meta property="twitter:title" content="BDC LIVE v10.2.119">
     <meta property="twitter:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="twitter:image" content="./bdclive_banner.jpg">
     <!-- PWA Manifest & Mobile Web App Meta Tags -->
@@ -2192,9 +2192,13 @@
             const updatedRepos = Object.values(data);
             if (Array.isArray(updatedRepos) && updatedRepos.length > 0) {
                 updatedRepos.forEach(uRepo => {
-                    const existing = allGithubRepos.find(r => r.name === uRepo.name || r.fullName === uRepo.fullName);
-                    if (existing) {
-                        Object.assign(existing, uRepo);
+                    if (!uRepo || (!uRepo.name && !uRepo.fullName)) return;
+                    const existingIdx = allGithubRepos.findIndex(r => 
+                        (r.fullName && uRepo.fullName && r.fullName.toLowerCase() === uRepo.fullName.toLowerCase()) ||
+                        (r.name && uRepo.name && r.name.toLowerCase() === uRepo.name.toLowerCase())
+                    );
+                    if (existingIdx !== -1) {
+                        allGithubRepos[existingIdx] = Object.assign({}, allGithubRepos[existingIdx], uRepo);
                     } else {
                         allGithubRepos.push(uRepo);
                     }
@@ -2206,7 +2210,7 @@
                     const pA = bA ? bA.priority : 99;
                     const pB = bB ? bB.priority : 99;
                     if ((pA <= 2 || pB <= 2) && pA !== pB) return pA - pB;
-                    return new Date(b.pushedAt) - new Date(a.pushedAt);
+                    return new Date(b.pushedAt || 0) - new Date(a.pushedAt || 0);
                 });
 
                 try {
@@ -2508,7 +2512,7 @@
         renderTheaterHeartbeat();
 
         // ================= GITHUB STATUS MONITOR & ACTIONS PIPELINE =================
-        let GITHUB_ACCOUNTS = ['bdclive', 'wosbdc', 'DasherTracker', 'theBDCFcrew', 'BrianDivaCox'];
+        let GITHUB_ACCOUNTS = ['bdclive', 'wosbdc', 'DasherTracker', 'BDCvault', 'theBDCFcrew', 'BrianDivaCox'];
         
         // Dynamic Future-Proof Organization Auto-Discovery Listener
         sDb.ref('labData/githubAccounts').on('value', (s) => {
@@ -2521,7 +2525,8 @@
         });
 
         const DEFAULT_GH_REPOS = [
-            { name: "BDClive", owner: "bdclive", fullName: "bdclive/BDClive", htmlUrl: "https://github.com/bdclive/BDClive", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "BDC Live Central Command Dashboard", latestCommit: "v10.2.118 : Cleaned up Grand Totals header with sleek Options dropdown menu" },
+            { name: "BDClive", owner: "bdclive", fullName: "bdclive/BDClive", htmlUrl: "https://github.com/bdclive/BDClive", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "BDC Live Central Command Dashboard", latestCommit: "v10.2.119 : Restored real-time GitHub Pipeline live stream engine" },
+            { name: "BDCvault.github.io", owner: "BDCvault", fullName: "BDCvault/BDCvault.github.io", htmlUrl: "https://github.com/BDCvault/BDCvault.github.io", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "BDC Vault Web Application", latestCommit: "v4.8.0 : Added 1-click Automated Financial Engines and APR interest bot", actionStatus: "completed", actionConclusion: "success", actionName: "💎 BDC Vault Web App Deployment & Release" },
             { name: "wosBDC.github.io", owner: "wosbdc", fullName: "wosbdc/wosBDC.github.io", htmlUrl: "https://github.com/wosbdc/wosBDC.github.io", pushedAt: new Date(Date.now() - 3600000 * 1.5).toISOString(), defaultBranch: "main", description: "WOS BDC Web Application", latestCommit: "v2.9.86 : Dynamic real-time synchronization for all dropdown filter options and action button counters" },
             { name: "DasherTracker.github.io", owner: "DasherTracker", fullName: "DasherTracker/DasherTracker.github.io", htmlUrl: "https://github.com/DasherTracker/DasherTracker.github.io", pushedAt: new Date(Date.now() - 3600000 * 3.5).toISOString(), defaultBranch: "main", description: "Dasher Tracker Portal", latestCommit: "Production sync" },
             { name: "theBDCFcrew.github.io", owner: "theBDCFcrew", fullName: "theBDCFcrew/theBDCFcrew.github.io", htmlUrl: "https://github.com/theBDCFcrew/theBDCFcrew.github.io", pushedAt: new Date(Date.now() - 86400000).toISOString(), defaultBranch: "main", description: "The BDCF Crew Portal", latestCommit: "Production sync" },
@@ -2653,9 +2658,17 @@
                 }
 
                 if (fetched.length > 0) {
-                    // Sort by pushed_at
-                    fetched.sort((a, b) => new Date(b.pushedAt) - new Date(a.pushedAt));
-                    allGithubRepos = fetched;
+                    fetched.forEach(fRepo => {
+                        const existingIdx = allGithubRepos.findIndex(r => 
+                            (r.fullName && fRepo.fullName && r.fullName.toLowerCase() === fRepo.fullName.toLowerCase()) ||
+                            (r.name && fRepo.name && r.name.toLowerCase() === fRepo.name.toLowerCase())
+                        );
+                        if (existingIdx !== -1) {
+                            allGithubRepos[existingIdx] = Object.assign({}, allGithubRepos[existingIdx], fRepo);
+                        } else {
+                            allGithubRepos.push(fRepo);
+                        }
+                    });
 
                     // Fetch latest commit & action status for top 4 repos
                     const topRepos = allGithubRepos.slice(0, 4);
@@ -2665,13 +2678,13 @@
                                 fetch(`https://api.github.com/repos/${repo.owner}/${repo.name}/commits?per_page=1`),
                                 fetch(`https://api.github.com/repos/${repo.owner}/${repo.name}/actions/runs?per_page=1`)
                             ]);
-                            if (cRes.status === 'fulfilled' && cRes.value.ok) {
+                            if (cRes.status === 'fulfilled' && cRes.value && cRes.value.ok) {
                                 const cData = await cRes.value.json();
                                 if (Array.isArray(cData) && cData.length > 0) {
                                     repo.latestCommit = cData[0].commit.message.split('\n')[0];
                                 }
                             }
-                            if (aRes.status === 'fulfilled' && aRes.value.ok) {
+                            if (aRes.status === 'fulfilled' && aRes.value && aRes.value.ok) {
                                 const aData = await aRes.value.json();
                                 if (aData.workflow_runs && aData.workflow_runs.length > 0) {
                                     const run = aData.workflow_runs[0];
@@ -2691,7 +2704,7 @@
                         const pA = bA ? bA.priority : 99;
                         const pB = bB ? bB.priority : 99;
                         if ((pA <= 2 || pB <= 2) && pA !== pB) return pA - pB;
-                        return new Date(b.pushedAt) - new Date(a.pushedAt);
+                        return new Date(b.pushedAt || 0) - new Date(a.pushedAt || 0);
                     });
 
                     try {
@@ -2712,7 +2725,7 @@
             }
         }
 
-        const CURRENT_APP_VERSION = 'v10.2.118';
+        const CURRENT_APP_VERSION = 'v10.2.119';
         let isDeployingLive = false;
         let pendingRemoteVersion = null;
         let autoRefreshTimer = null;
@@ -2983,20 +2996,38 @@
         let ghModalTab = 'active'; // 'active' or 'all'
 
         function getActiveRepositories() {
+            if (!Array.isArray(allGithubRepos) || allGithubRepos.length === 0) return [];
             const now = new Date();
-            const MAX_AGE_MS = 60 * 60 * 1000; // strictly 1 hour max
-            return allGithubRepos.filter(repo => {
+            
+            // 1. First Priority: In-progress, queued, or failed workflow runs
+            const buildingOrFailed = allGithubRepos.filter(repo => {
                 const actBadge = getActionBadge(repo);
-                if (actBadge && actBadge.priority <= 2) return true; // in_progress, queued, failed
-                const diffMs = now - new Date(repo.pushedAt);
-                return diffMs <= MAX_AGE_MS;
+                return actBadge && actBadge.priority <= 2;
             });
+            if (buildingOrFailed.length > 0) {
+                return buildingOrFailed;
+            }
+
+            // 2. Second Priority: Repositories updated in the last 48 hours
+            const recent48h = allGithubRepos.filter(repo => {
+                if (!repo.pushedAt) return false;
+                const diffMs = now - new Date(repo.pushedAt);
+                return diffMs <= 48 * 60 * 60 * 1000;
+            });
+            if (recent48h.length > 0) {
+                return recent48h;
+            }
+
+            // 3. Fallback: Always return top tracked repositories so the pipeline NEVER appears empty
+            return allGithubRepos.slice(0, 8);
         }
 
         function getTimeAgeTheme(diffMs) {
             const FIFTEEN_MINS = 15 * 60 * 1000;
             const THIRTY_MINS = 30 * 60 * 1000;
             const ONE_HOUR = 60 * 60 * 1000;
+            const TWELVE_HOURS = 12 * 60 * 60 * 1000;
+            const TWENTY_FOUR_HOURS = 24 * 60 * 60 * 1000;
 
             if (diffMs < FIFTEEN_MINS) {
                 return {
@@ -3019,12 +3050,26 @@
                     badgeBorder: 'rgba(227, 179, 65, 0.45)',
                     label: '● <1H'
                 };
+            } else if (diffMs <= TWELVE_HOURS) {
+                return {
+                    color: '#bc95ff', // Light Purple (1-12H)
+                    badgeBg: 'rgba(188, 149, 255, 0.18)',
+                    badgeBorder: 'rgba(188, 149, 255, 0.45)',
+                    label: '● <12H'
+                };
+            } else if (diffMs <= TWENTY_FOUR_HOURS) {
+                return {
+                    color: '#58a6ff', // Meta Blue (<24H)
+                    badgeBg: 'rgba(88, 166, 255, 0.18)',
+                    badgeBorder: 'rgba(88, 166, 255, 0.45)',
+                    label: '● TODAY'
+                };
             } else {
                 return {
-                    color: '#8b949e', // Muted Grey (1H+)
+                    color: '#8b949e', // Muted Grey (24H+)
                     badgeBg: 'rgba(139, 148, 158, 0.12)',
                     badgeBorder: 'rgba(139, 148, 158, 0.25)',
-                    label: '● 1H+'
+                    label: '● LIVE'
                 };
             }
         }
@@ -3077,10 +3122,10 @@
                 } else if (hasQueued) {
                     badge.innerHTML = '<span style="color: #d29922; font-weight: 800;">⌛ QUEUED</span>';
                 } else {
-                    badge.innerText = `${activeRepos.length} Recent`;
+                    badge.innerText = `${activeRepos.length} Active`;
                 }
             }
-            if (activeCountEl) activeCountEl.innerText = activeRepos.length;
+            if (activeCountEl) activeCountEl.innerText = `${allGithubRepos.length} Repos`;
 
             const modalActiveCnt = document.getElementById('gh-modal-active-cnt');
             const modalAllCnt = document.getElementById('gh-modal-all-cnt');
@@ -3108,11 +3153,14 @@
 
         function getRepoShortName(repo) {
             if (!repo || !repo.name) return "";
-            if (repo.name.toLowerCase() === 'wosbdc.github.io' || repo.owner.toLowerCase() === 'wosbdc') {
+            if (repo.name.toLowerCase() === 'wosbdc.github.io' || (repo.owner && repo.owner.toLowerCase() === 'wosbdc')) {
                 return 'wosbdc';
             }
-            if (repo.name.toLowerCase() === 'dashertracker.github.io' || repo.owner.toLowerCase() === 'dashertracker') {
+            if (repo.name.toLowerCase() === 'dashertracker.github.io' || (repo.owner && repo.owner.toLowerCase() === 'dashertracker')) {
                 return 'DasherTracker';
+            }
+            if (repo.name.toLowerCase() === 'bdcvault.github.io' || (repo.owner && repo.owner.toLowerCase() === 'bdcvault')) {
+                return 'BDCvault';
             }
             if (repo.name.toLowerCase().endsWith('.github.io')) {
                 return repo.name.replace(/\.github\.io$/i, '');
