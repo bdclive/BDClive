@@ -1,3 +1,8 @@
+## [10.2.114] - 2026-09-02
+- Fixed Task Box Total to show all 72 tasks.
+- Synchronized real-time Google Tasks updates across all lists.
+- Added neon glow pulses to Task Box upon changes.
+
 ## [10.2.113] - 2026-09-02
 - Added 1-click Test Glow Wave across all 9 platforms.
 - Added individual platform glow and chime test buttons.
