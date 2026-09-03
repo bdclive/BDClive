@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BDC LIVE v10.2.117</title>
+    <title>BDC LIVE v10.2.118</title>
     <!-- Open Graph & Social Preview Meta Tags -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="BDC LIVE v10.2.117">
+    <meta property="og:title" content="BDC LIVE v10.2.118">
     <meta property="og:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="og:image" content="./bdclive_banner.jpg">
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="BDC LIVE v10.2.117">
+    <meta property="twitter:title" content="BDC LIVE v10.2.118">
     <meta property="twitter:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="twitter:image" content="./bdclive_banner.jpg">
     <!-- PWA Manifest & Mobile Web App Meta Tags -->
@@ -96,6 +96,28 @@
         
         .task-click-node { cursor: pointer; border-radius: 6px; padding: 2px 0; transition: background 0.2s ease; text-align: center; }
         .task-click-node:hover { background: rgba(255,255,255,0.05); }
+
+        .grand-opt-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 14px;
+            font-size: 11.5px;
+            font-weight: 600;
+            color: #c9d1d9;
+            cursor: pointer;
+            transition: background 0.15s ease, color 0.15s ease;
+            text-align: left;
+        }
+        .grand-opt-item:hover {
+            background: rgba(145, 70, 255, 0.22);
+            color: #ffffff;
+        }
+        .grand-opt-item i {
+            width: 16px;
+            text-align: center;
+            font-size: 13px;
+        }
     </style>
 </head>
 <body>
@@ -296,22 +318,49 @@
 
         <!-- GRAND TOTALS BOX (ROW 1, COL 4) -->
         <div class="counter-item mirror-box" id="grand-totals-box" onclick="openCounterAuditModal()" style="border-top: 3px solid #f1e05a; grid-area: 1 / 4; padding: 10px 14px 8px 14px; display: flex; flex-direction: column; justify-content: space-between; box-sizing: border-box; background: linear-gradient(135deg, rgba(145, 70, 255, 0.1) 0%, rgba(241, 224, 90, 0.08) 50%, rgba(13, 17, 23, 0.9) 100%); box-shadow: 0 0 25px rgba(145, 70, 255, 0.15); position: relative; cursor: pointer;">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; justify-content: space-between; align-items: center; position: relative;">
                 <p class="mirror-label" style="color:#f1e05a; font-size: 0.75rem; letter-spacing: 1px;"><i class="fa-solid fa-globe" style="color: #9146FF;"></i> GRAND TOTALS</p>
-                <div style="display: flex; align-items: center; gap: 5px;">
-                    <button id="follower-log-header-btn" onclick="event.stopPropagation(); openFollowerActivityLogModal();" style="background: rgba(63, 185, 80, 0.18); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.4); border-radius: 6px; padding: 2px 7px; font-size: 8px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s ease;" title="Open Real-time Follower Change History & Activity Log">
-                        <i class="fa-solid fa-clock-rotate-left"></i> Log
-                    </button>
-                    <button id="test-glow-header-btn" onclick="event.stopPropagation(); testFollowerGlow('all', 'gain');" style="background: linear-gradient(135deg, rgba(63, 185, 80, 0.22) 0%, rgba(0, 210, 255, 0.22) 100%); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.45); border-radius: 6px; padding: 2px 7px; font-size: 8px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s ease; box-shadow: 0 0 8px rgba(63, 185, 80, 0.2);" title="Test Follower Glow & Chimes Across All Platforms">
-                        <i class="fa-solid fa-wand-magic-sparkles"></i> ✨ TEST GLOW
-                    </button>
-                    <button id="follower-sound-toggle-btn" onclick="event.stopPropagation(); toggleFollowerSound();" style="background: rgba(63, 185, 80, 0.15); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.35); border-radius: 6px; padding: 2px 7px; font-size: 8px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s ease;" title="Toggle Follower Sound Chimes & Highlight Pulses">
-                        <i id="follower-sound-icon" class="fa-solid fa-bell"></i> <span id="follower-sound-text">CHIMES ON</span>
-                    </button>
-                    <button id="counter-audit-btn" onclick="event.stopPropagation(); openCounterAuditModal();" style="background: rgba(241, 196, 15, 0.15); color: #f1e05a; border: 1px solid rgba(241, 196, 15, 0.35); border-radius: 6px; padding: 2px 7px; font-size: 8px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s ease;" title="Platform Counter Health & API Audit">
-                        <i class="fa-solid fa-heart-pulse"></i> Health & Audit
-                    </button>
+                <div style="display: flex; align-items: center; gap: 6px; position: relative;">
                     <span style="font-size: 0.62rem; color: #bc95ff; background: rgba(145, 70, 255, 0.15); border: 1px solid rgba(145, 70, 255, 0.3); padding: 2px 6px; border-radius: 6px; font-weight: 700;">9 Platforms</span>
+                    
+                    <!-- CLEAN OPTIONS MENU DROPDOWN -->
+                    <div style="position: relative; display: inline-block;">
+                        <button id="grand-options-btn" onclick="event.stopPropagation(); toggleGrandOptionsMenu();" style="background: rgba(241, 224, 90, 0.12); color: #f1e05a; border: 1px solid rgba(241, 224, 90, 0.35); border-radius: 6px; padding: 2.5px 8px; font-size: 9px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: all 0.2s ease; box-shadow: 0 0 8px rgba(241, 224, 90, 0.15);" title="Grand Totals & Follower System Options">
+                            <i class="fa-solid fa-sliders"></i> Options <i class="fa-solid fa-chevron-down" style="font-size: 7.5px; margin-left: 1px;"></i>
+                        </button>
+                        
+                        <div id="grand-options-dropdown" style="display: none; position: absolute; top: calc(100% + 6px); right: 0; background: #161b22; border: 1px solid #30363d; border-radius: 8px; box-shadow: 0 12px 32px rgba(0,0,0,0.85), 0 0 16px rgba(145, 70, 255, 0.25); min-width: 210px; z-index: 10000; padding: 6px 0; overflow: hidden; backdrop-filter: blur(12px);">
+                            <div class="grand-opt-item" onclick="event.stopPropagation(); closeGrandOptionsMenu(); openFollowerActivityLogModal();">
+                                <i class="fa-solid fa-clock-rotate-left" style="color: #3fb950;"></i>
+                                <div style="display: flex; flex-direction: column;">
+                                    <span style="font-weight: 700;">Follower Activity Log</span>
+                                    <span style="font-size: 9px; color: #8b949e;">History of gains & losses</span>
+                                </div>
+                            </div>
+                            <div class="grand-opt-item" onclick="event.stopPropagation(); closeGrandOptionsMenu(); testFollowerGlow('all', 'gain');">
+                                <i class="fa-solid fa-wand-magic-sparkles" style="color: #00d2ff;"></i>
+                                <div style="display: flex; flex-direction: column;">
+                                    <span style="font-weight: 700;">Test 9-Platform Glow</span>
+                                    <span style="font-size: 9px; color: #8b949e;">Simulate +1 follower wave</span>
+                                </div>
+                            </div>
+                            <div class="grand-opt-item" onclick="event.stopPropagation(); toggleFollowerSound();">
+                                <i id="menu-follower-sound-icon" class="fa-solid fa-bell" style="color: #3fb950;"></i>
+                                <div style="display: flex; flex-direction: column;">
+                                    <span id="menu-follower-sound-text" style="font-weight: 700;">Follower Chimes: ON</span>
+                                    <span style="font-size: 9px; color: #8b949e;">Audio chimes on gains/losses</span>
+                                </div>
+                            </div>
+                            <div style="border-top: 1px solid #30363d; margin: 4px 0;"></div>
+                            <div class="grand-opt-item" onclick="event.stopPropagation(); closeGrandOptionsMenu(); openCounterAuditModal();">
+                                <i class="fa-solid fa-heart-pulse" style="color: #f1e05a;"></i>
+                                <div style="display: flex; flex-direction: column;">
+                                    <span style="font-weight: 700;">Counter Health & Audit</span>
+                                    <span style="font-size: 9px; color: #8b949e;">API health & status monitor</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div style="margin-top: 3px;">
@@ -1569,11 +1618,25 @@
             }
         }
 
+        function toggleGrandOptionsMenu() {
+            const menu = document.getElementById('grand-options-dropdown');
+            if (!menu) return;
+            const isVisible = menu.style.display === 'block';
+            menu.style.display = isVisible ? 'none' : 'block';
+        }
+
+        function closeGrandOptionsMenu() {
+            const menu = document.getElementById('grand-options-dropdown');
+            if (menu) menu.style.display = 'none';
+        }
+
         function updateFollowerSoundUI() {
             const btn = document.getElementById('follower-sound-toggle-btn');
             const icon = document.getElementById('follower-sound-icon');
             const text = document.getElementById('follower-sound-text');
             const modalBtn = document.getElementById('modal-follower-sound-toggle-btn');
+            const menuIcon = document.getElementById('menu-follower-sound-icon');
+            const menuText = document.getElementById('menu-follower-sound-text');
             
             if (btn && icon && text) {
                 if (followerSoundEnabled) {
@@ -1588,6 +1651,18 @@
                     btn.style.borderColor = 'rgba(139, 148, 158, 0.25)';
                     icon.className = 'fa-solid fa-bell-slash';
                     text.innerText = 'MUTED';
+                }
+            }
+
+            if (menuIcon && menuText) {
+                if (followerSoundEnabled) {
+                    menuIcon.className = 'fa-solid fa-bell';
+                    menuIcon.style.color = '#3fb950';
+                    menuText.innerText = 'Follower Chimes: ON';
+                } else {
+                    menuIcon.className = 'fa-solid fa-bell-slash';
+                    menuIcon.style.color = '#8b949e';
+                    menuText.innerText = 'Follower Chimes: OFF';
                 }
             }
 
@@ -1668,6 +1743,8 @@
         window.simulateTestFollowerLog = simulateTestFollowerLog;
         window.setFollowerLogFilter = setFollowerLogFilter;
         window.filterFollowerLogTable = filterFollowerLogTable;
+        window.toggleGrandOptionsMenu = toggleGrandOptionsMenu;
+        window.closeGrandOptionsMenu = closeGrandOptionsMenu;
         updateFollowerSoundUI();
 
         setTimeout(() => {
@@ -2444,7 +2521,7 @@
         });
 
         const DEFAULT_GH_REPOS = [
-            { name: "BDClive", owner: "bdclive", fullName: "bdclive/BDClive", htmlUrl: "https://github.com/bdclive/BDClive", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "BDC Live Central Command Dashboard", latestCommit: "v10.2.117 : Added Follower Activity Log, persistent change badge, and Tasks box total fix" },
+            { name: "BDClive", owner: "bdclive", fullName: "bdclive/BDClive", htmlUrl: "https://github.com/bdclive/BDClive", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "BDC Live Central Command Dashboard", latestCommit: "v10.2.118 : Cleaned up Grand Totals header with sleek Options dropdown menu" },
             { name: "wosBDC.github.io", owner: "wosbdc", fullName: "wosbdc/wosBDC.github.io", htmlUrl: "https://github.com/wosbdc/wosBDC.github.io", pushedAt: new Date(Date.now() - 3600000 * 1.5).toISOString(), defaultBranch: "main", description: "WOS BDC Web Application", latestCommit: "v2.9.86 : Dynamic real-time synchronization for all dropdown filter options and action button counters" },
             { name: "DasherTracker.github.io", owner: "DasherTracker", fullName: "DasherTracker/DasherTracker.github.io", htmlUrl: "https://github.com/DasherTracker/DasherTracker.github.io", pushedAt: new Date(Date.now() - 3600000 * 3.5).toISOString(), defaultBranch: "main", description: "Dasher Tracker Portal", latestCommit: "Production sync" },
             { name: "theBDCFcrew.github.io", owner: "theBDCFcrew", fullName: "theBDCFcrew/theBDCFcrew.github.io", htmlUrl: "https://github.com/theBDCFcrew/theBDCFcrew.github.io", pushedAt: new Date(Date.now() - 86400000).toISOString(), defaultBranch: "main", description: "The BDCF Crew Portal", latestCommit: "Production sync" },
@@ -2635,7 +2712,7 @@
             }
         }
 
-        const CURRENT_APP_VERSION = 'v10.2.117';
+        const CURRENT_APP_VERSION = 'v10.2.118';
         let isDeployingLive = false;
         let pendingRemoteVersion = null;
         let autoRefreshTimer = null;
@@ -5002,7 +5079,7 @@
         }
         restoreModalStateOnLoad();
 
-        // Global Window Click Handler for Modals
+        // Global Window Click Handler for Modals & Menus
         window.addEventListener('click', (e) => {
             const gkM = document.getElementById('gatekeeperModal');
             const tkM = document.getElementById('ticketAlertsModal');
@@ -5020,6 +5097,13 @@
             if (e.target === thM) closeTheater();
             if (e.target === tbM) closeTasksBreakdownModal();
             if (e.target === flM) closeFollowerActivityLogModal();
+
+            // Auto close options dropdown if clicking outside
+            const optBtn = document.getElementById('grand-options-btn');
+            const optMenu = document.getElementById('grand-options-dropdown');
+            if (optMenu && optMenu.style.display === 'block' && optBtn && !optBtn.contains(e.target) && !optMenu.contains(e.target)) {
+                closeGrandOptionsMenu();
+            }
         });
 
         // Global Escape Key Listener for Modals
@@ -5033,6 +5117,7 @@
                 closeTheater();
                 closeTasksBreakdownModal();
                 closeFollowerActivityLogModal();
+                closeGrandOptionsMenu();
             }
         });
 

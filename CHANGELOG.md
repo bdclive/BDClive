@@ -1,3 +1,8 @@
+## [10.2.118] - 2026-09-03
+- Replaced cluttered Grand Totals buttons with clean Options dropdown.
+- Unified Follower Log, Glow Test, and Audio controls.
+- Added auto-closing dropdown menu with cyber-glass styling.
+
 ## [10.2.117] - 2026-09-03
 - Added Follower Activity & Change History Log modal.
 - Displays timestamps, gains, losses, and net follower delta.
