@@ -1,3 +1,11 @@
+## [10.2.117] - 2026-09-03
+- Added Follower Activity & Change History Log modal.
+- Displays timestamps, gains, losses, and net follower delta.
+- Added 45-second persistent change badge to platform cards.
+- Lengthened follower glow animation to 3.5 seconds.
+- Added floating follower activity notification toast banners.
+- Fixed Tasks Box total to show displayed categories sum.
+
 ## [10.2.116] - 2026-09-02
 - Added Google Tasks 13-category live breakdown modal.
 - Shows all lists including Movie Reviews and Photos Needed.
