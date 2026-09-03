@@ -41,6 +41,9 @@
 - Added active weekly dates to Gaming Hub dashboard card.
 - Added multi-tiered cloud sync for live GTA Online updates.
 - Automated periodic background checks for weekly Los Santos updates.
+- Added live Furnace Upgrades section to Gatekeeper Discord report.
+- Dynamically displays detected furnace upgrades and chief names.
+- Synchronized live maintenance audit timestamps in Gatekeeper report.
 - Deployed Central Command v1.1.00 across all systems.
 
 ## [1.0.99] - 2026-09-02
