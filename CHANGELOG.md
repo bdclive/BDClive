@@ -1,3 +1,8 @@
+## [10.2.116] - 2026-09-02
+- Added Google Tasks 13-category live breakdown modal.
+- Shows all lists including Movie Reviews and Photos Needed.
+- Added 1-click links to open individual task lists.
+
 ## [10.2.115] - 2026-09-02
 - Unified update alert banner states into single cohesive engine.
 - Guaranteed hands-free 5-second countdown on all update alerts.
