@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BDC LIVE v10.2.105</title>
+    <title>BDC LIVE v10.2.111</title>
     <!-- Open Graph & Social Preview Meta Tags -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="BDC LIVE v10.2.105">
+    <meta property="og:title" content="BDC LIVE v10.2.111">
     <meta property="og:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="og:image" content="./bdclive_banner.jpg">
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="BDC LIVE v10.2.105">
+    <meta property="twitter:title" content="BDC LIVE v10.2.111">
     <meta property="twitter:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="twitter:image" content="./bdclive_banner.jpg">
     <!-- PWA Manifest & Mobile Web App Meta Tags -->
@@ -299,6 +299,9 @@
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <p class="mirror-label" style="color:#f1e05a; font-size: 0.75rem; letter-spacing: 1px;"><i class="fa-solid fa-globe" style="color: #9146FF;"></i> GRAND TOTALS</p>
                 <div style="display: flex; align-items: center; gap: 5px;">
+                    <button id="follower-sound-toggle-btn" onclick="event.stopPropagation(); toggleFollowerSound();" style="background: rgba(63, 185, 80, 0.15); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.35); border-radius: 6px; padding: 2px 7px; font-size: 8px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s ease;" title="Toggle Follower Sound Chimes & Highlight Pulses">
+                        <i id="follower-sound-icon" class="fa-solid fa-bell"></i> <span id="follower-sound-text">CHIMES ON</span>
+                    </button>
                     <button id="counter-audit-btn" onclick="event.stopPropagation(); openCounterAuditModal();" style="background: rgba(241, 196, 15, 0.15); color: #f1e05a; border: 1px solid rgba(241, 196, 15, 0.35); border-radius: 6px; padding: 2px 7px; font-size: 8px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s ease;" title="Platform Counter Health & API Audit">
                         <i class="fa-solid fa-heart-pulse"></i> Health & Audit
                     </button>
@@ -816,7 +819,15 @@
                     <i class="fa-solid fa-heart-pulse" style="font-size: 20px; color: #f1e05a;"></i>
                     <h3 style="margin: 0; color: #ffffff; font-size: 16px; font-weight: 800; letter-spacing: 0.5px;">Platform Counter Health & Audit</h3>
                 </div>
-                <span class="close-modal" onclick="closeCounterAuditModal()" style="font-size: 24px; cursor: pointer; color: #8b949e;">&times;</span>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <button id="modal-follower-sound-toggle-btn" onclick="toggleFollowerSound()" style="background: rgba(63, 185, 80, 0.18); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.4); padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; transition: all 0.2s ease;">
+                        <i class="fa-solid fa-bell"></i> Follower Chimes: ON
+                    </button>
+                    <button id="modal-test-follower-sound-btn" onclick="playFollowerSound('test')" style="background: rgba(241, 224, 90, 0.14); color: #f1e05a; border: 1px solid rgba(241, 224, 90, 0.35); padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; transition: all 0.2s ease;" title="Test Celebratory Follower Chime">
+                        <i class="fa-solid fa-volume-high"></i> Test Chime
+                    </button>
+                    <span class="close-modal" onclick="closeCounterAuditModal()" style="font-size: 24px; cursor: pointer; color: #8b949e;">&times;</span>
+                </div>
             </div>
 
             <!-- Audit Summary Bar & Actions -->
@@ -919,6 +930,195 @@
             return isNaN(num) ? fallback : Math.round(num);
         };
         
+        // ================= GLOBAL WEB AUDIO ENGINE =================
+        let audioCtx = null;
+        function getAudioContext() {
+            if (!audioCtx) {
+                const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                if (AudioContextClass) {
+                    audioCtx = new AudioContextClass();
+                }
+            }
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            return audioCtx;
+        }
+        document.addEventListener('click', () => { getAudioContext(); }, { once: true });
+        document.addEventListener('keydown', () => { getAudioContext(); }, { once: true });
+
+        // ================= FOLLOWER AUDIO & VISUAL HIGHLIGHT PULSE SUITE =================
+        let followerSoundEnabled = localStorage.getItem('follower_sound_enabled') !== 'false';
+        let followerSoundVolume = parseFloat(localStorage.getItem('follower_sound_volume') || '0.55');
+        let _isFollowersInitialLoadComplete = false;
+        const _prevFollowerMetrics = {};
+
+        function playFollowerSound(type = 'gain') {
+            if (!followerSoundEnabled && type !== 'test') return;
+            try {
+                const ctx = getAudioContext();
+                if (!ctx) return;
+                const now = ctx.currentTime;
+                const vol = Math.max(0.01, Math.min(1.0, followerSoundVolume)) * 0.42;
+
+                if (type === 'gain' || type === 'test' || type === 'views_gain') {
+                    // Ascending Sparkling Celebration Arpeggio (C5 523.25Hz -> E5 659.25Hz -> G5 783.99Hz -> C6 1046.50Hz)
+                    const notes = (type === 'views_gain') ? [659.25, 783.99, 1046.50] : [523.25, 659.25, 783.99, 1046.50];
+                    notes.forEach((freq, idx) => {
+                        const noteStart = now + (idx * 0.075);
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        
+                        osc.type = (idx === notes.length - 1) ? 'sine' : 'triangle';
+                        osc.frequency.setValueAtTime(freq, noteStart);
+                        
+                        gain.gain.setValueAtTime(0.001, noteStart);
+                        gain.gain.linearRampToValueAtTime(vol * (0.6 + (idx * 0.12)), noteStart + 0.02);
+                        gain.gain.exponentialRampToValueAtTime(0.001, noteStart + 0.36);
+                        
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        
+                        osc.start(noteStart);
+                        osc.stop(noteStart + 0.38);
+                    });
+                } else if (type === 'loss') {
+                    // Gentle 2-tone harmonic drop (E5 659.25Hz -> C5 523.25Hz)
+                    const notes = [659.25, 523.25];
+                    notes.forEach((freq, idx) => {
+                        const noteStart = now + (idx * 0.10);
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(freq, noteStart);
+                        
+                        gain.gain.setValueAtTime(0.001, noteStart);
+                        gain.gain.linearRampToValueAtTime(vol * 0.45, noteStart + 0.02);
+                        gain.gain.exponentialRampToValueAtTime(0.001, noteStart + 0.40);
+                        
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        
+                        osc.start(noteStart);
+                        osc.stop(noteStart + 0.42);
+                    });
+                }
+            } catch (err) {
+                console.warn("Follower sound playback error:", err);
+            }
+        }
+
+        function flashFollowerPulse(elementId, type = 'gain', customColor = null) {
+            const el = document.getElementById(elementId);
+            if (!el) return;
+            
+            const originalColor = el.getAttribute('data-original-color') || window.getComputedStyle(el).color || '#ffffff';
+            if (!el.getAttribute('data-original-color')) {
+                el.setAttribute('data-original-color', originalColor);
+            }
+            
+            const pulseColor = customColor || (type === 'gain' ? '#3fb950' : '#f85149');
+            const shadowColor = type === 'gain' ? 'rgba(63, 185, 80, 0.95)' : 'rgba(248, 81, 73, 0.95)';
+            const scaleVal = type === 'gain' ? '1.20' : '0.94';
+            
+            el.style.transition = 'transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.25s ease, text-shadow 0.25s ease';
+            el.style.transform = `scale(${scaleVal})`;
+            el.style.color = pulseColor;
+            el.style.textShadow = `0 0 16px ${shadowColor}`;
+            
+            const parentBox = el.closest('.counter-item') || el.parentElement;
+            if (parentBox) {
+                parentBox.style.transition = 'box-shadow 0.3s ease, border-color 0.3s ease';
+                parentBox.style.boxShadow = `0 0 20px ${type === 'gain' ? 'rgba(63, 185, 80, 0.35)' : 'rgba(248, 81, 73, 0.35)'}`;
+            }
+            
+            setTimeout(() => {
+                el.style.transform = 'scale(1)';
+                el.style.color = el.getAttribute('data-original-color') || '';
+                el.style.textShadow = 'none';
+                if (parentBox) {
+                    parentBox.style.boxShadow = '';
+                }
+            }, 2000);
+        }
+
+        function updateMetricAndFlash(elementId, metricKey, newVal, isView = false) {
+            const el = document.getElementById(elementId);
+            if (!el) return;
+
+            const oldVal = _prevFollowerMetrics[metricKey];
+            el.innerText = fNum(newVal);
+
+            if (_isFollowersInitialLoadComplete && oldVal !== undefined && oldVal !== null && oldVal !== newVal) {
+                const diff = newVal - oldVal;
+                if (diff > 0) {
+                    flashFollowerPulse(elementId, 'gain', isView ? '#00d2ff' : '#3fb950');
+                    playFollowerSound(isView ? 'views_gain' : 'gain');
+                } else if (diff < 0) {
+                    flashFollowerPulse(elementId, 'loss', '#f85149');
+                    playFollowerSound('loss');
+                }
+            }
+            _prevFollowerMetrics[metricKey] = newVal;
+        }
+
+        function toggleFollowerSound() {
+            followerSoundEnabled = !followerSoundEnabled;
+            localStorage.setItem('follower_sound_enabled', followerSoundEnabled ? 'true' : 'false');
+            updateFollowerSoundUI();
+            if (followerSoundEnabled) {
+                playFollowerSound('test');
+            }
+        }
+
+        function updateFollowerSoundUI() {
+            const btn = document.getElementById('follower-sound-toggle-btn');
+            const icon = document.getElementById('follower-sound-icon');
+            const text = document.getElementById('follower-sound-text');
+            const modalBtn = document.getElementById('modal-follower-sound-toggle-btn');
+            
+            if (btn && icon && text) {
+                if (followerSoundEnabled) {
+                    btn.style.background = 'rgba(63, 185, 80, 0.15)';
+                    btn.style.color = '#3fb950';
+                    btn.style.borderColor = 'rgba(63, 185, 80, 0.35)';
+                    icon.className = 'fa-solid fa-bell';
+                    text.innerText = 'CHIMES ON';
+                } else {
+                    btn.style.background = 'rgba(139, 148, 158, 0.12)';
+                    btn.style.color = '#8b949e';
+                    btn.style.borderColor = 'rgba(139, 148, 158, 0.25)';
+                    icon.className = 'fa-solid fa-bell-slash';
+                    text.innerText = 'MUTED';
+                }
+            }
+
+            if (modalBtn) {
+                if (followerSoundEnabled) {
+                    modalBtn.style.background = 'rgba(63, 185, 80, 0.18)';
+                    modalBtn.style.color = '#3fb950';
+                    modalBtn.style.borderColor = 'rgba(63, 185, 80, 0.4)';
+                    modalBtn.innerHTML = '<i class="fa-solid fa-bell"></i> Follower Chimes: ON';
+                } else {
+                    modalBtn.style.background = 'rgba(139, 148, 158, 0.14)';
+                    modalBtn.style.color = '#8b949e';
+                    modalBtn.style.borderColor = 'rgba(139, 148, 158, 0.3)';
+                    modalBtn.innerHTML = '<i class="fa-solid fa-bell-slash"></i> Follower Chimes: OFF';
+                }
+            }
+        }
+        window.playFollowerSound = playFollowerSound;
+        window.flashFollowerPulse = flashFollowerPulse;
+        window.updateMetricAndFlash = updateMetricAndFlash;
+        window.toggleFollowerSound = toggleFollowerSound;
+        window.updateFollowerSoundUI = updateFollowerSoundUI;
+        updateFollowerSoundUI();
+
+        setTimeout(() => {
+            _isFollowersInitialLoadComplete = true;
+        }, 2500);
+
         let lastPulseTime = 0; let alertTimeout = null;
 
         // Viewers / Visitors Trackers
@@ -1042,22 +1242,27 @@
         sDb.ref('labData').on('value', (s) => {
             const d = s.val(); if (!d) return;
             recordCentralCommandHeartbeat(d.timestamp || d.lastTelemetryTimestamp || (d.gatekeeperCounters && d.gatekeeperCounters.timestamp));
-            document.getElementById('plex-count-num').innerText = fNum(d.plexCount);
-            document.getElementById('threads-fol-num').innerText = fNum(d.threadsFol);
-            document.getElementById('threads-views-num').innerText = fNum(d.threadsViews);
-            document.getElementById('snap-fol-num').innerText = fNum(d.snapFol || "3303");
-            if (document.getElementById('snap-views-num')) document.getElementById('snap-views-num').innerText = fNum(d.snapViews || "1200");
-            document.getElementById('fb-page-num').innerText = fNum(d.fbPage || "1011");
-            document.getElementById('fb-views-num').innerText = fNum(d.fbViews || "8051");
-            document.getElementById('fb-personal-num').innerText = fNum(d.fbPersonal || "5478");
-            document.getElementById('twitch-view-num').innerText = fNum(d.twitchViewers);
-            document.getElementById('twitch-chatter-num').innerText = fNum(d.twitchChatters);
-            document.getElementById('ig-fol-num').innerText = fNum(d.igFol);
-            document.getElementById('ig-views-num').innerText = fNum(d.igViews || "0");
+            updateMetricAndFlash('plex-count-num', 'plexCount', parseMetricNum(d.plexCount, 0));
+            updateMetricAndFlash('threads-fol-num', 'threadsFol', parseMetricNum(d.threadsFol, 335));
+            updateMetricAndFlash('threads-views-num', 'threadsViews', parseMetricNum(d.threadsViews, 6600), true);
+            updateMetricAndFlash('snap-fol-num', 'snapFol', parseMetricNum(d.snapFol, 3303));
+            if (document.getElementById('snap-views-num')) {
+                updateMetricAndFlash('snap-views-num', 'snapViews', parseMetricNum(d.snapViews, 1200), true);
+            }
+            updateMetricAndFlash('fb-page-num', 'fbPage', parseMetricNum(d.fbPage, 1011));
+            updateMetricAndFlash('fb-views-num', 'fbViews', parseMetricNum(d.fbViews, 8051), true);
+            updateMetricAndFlash('fb-personal-num', 'fbPersonal', parseMetricNum(d.fbPersonal, 5478));
+            updateMetricAndFlash('twitch-view-num', 'twitchViewers', parseMetricNum(d.twitchViewers, 0));
+            updateMetricAndFlash('twitch-chatter-num', 'twitchChatters', parseMetricNum(d.twitchChatters, 0));
+            updateMetricAndFlash('ig-fol-num', 'igFol', parseMetricNum(d.igFol, 5860));
+            updateMetricAndFlash('ig-views-num', 'igViews', parseMetricNum(d.igViews, 5342), true);
 
-            if(d.ytSub) document.getElementById('yt-sub-num').innerText = fNum(d.ytSub);
-            if(d.ttFol) document.getElementById('tt-fol-num').innerText = fNum(d.ttFol);
-            if(d.xFol) document.getElementById('xFol') ? document.getElementById('xFol').innerText = fNum(d.xFol) : (document.getElementById('x-fol-num') && (document.getElementById('x-fol-num').innerText = fNum(d.xFol)));
+            if(d.ytSub) updateMetricAndFlash('yt-sub-num', 'ytSub', parseMetricNum(d.ytSub, 799));
+            if(d.ttFol) updateMetricAndFlash('tt-fol-num', 'ttFol', parseMetricNum(d.ttFol, 255));
+            if(d.xFol) {
+                updateMetricAndFlash('x-fol-num', 'xFol', parseMetricNum(d.xFol, 50551));
+                if (document.getElementById('xFol')) updateMetricAndFlash('xFol', 'xFol_alt', parseMetricNum(d.xFol, 50551));
+            }
 
             // Dynamic Grand Total Calculations across 9 platforms
             const igF = parseMetricNum(d.igFol, 5860);
@@ -1574,7 +1779,7 @@
         });
 
         const DEFAULT_GH_REPOS = [
-            { name: "BDClive", owner: "bdclive", fullName: "bdclive/BDClive", htmlUrl: "https://github.com/bdclive/BDClive", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "BDC Live Central Command Dashboard", latestCommit: "v10.2.104 : Modal protection guard, popup persistence, and unprompted auto-reload removal" },
+            { name: "BDClive", owner: "bdclive", fullName: "bdclive/BDClive", htmlUrl: "https://github.com/bdclive/BDClive", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "BDC Live Central Command Dashboard", latestCommit: "v10.2.111 : Added real-time follower change audio chime and visual highlight pulse suite" },
             { name: "wosBDC.github.io", owner: "wosbdc", fullName: "wosbdc/wosBDC.github.io", htmlUrl: "https://github.com/wosbdc/wosBDC.github.io", pushedAt: new Date(Date.now() - 3600000 * 1.5).toISOString(), defaultBranch: "main", description: "WOS BDC Web Application", latestCommit: "v2.9.86 : Dynamic real-time synchronization for all dropdown filter options and action button counters" },
             { name: "DasherTracker.github.io", owner: "DasherTracker", fullName: "DasherTracker/DasherTracker.github.io", htmlUrl: "https://github.com/DasherTracker/DasherTracker.github.io", pushedAt: new Date(Date.now() - 3600000 * 3.5).toISOString(), defaultBranch: "main", description: "Dasher Tracker Portal", latestCommit: "Production sync" },
             { name: "theBDCFcrew.github.io", owner: "theBDCFcrew", fullName: "theBDCFcrew/theBDCFcrew.github.io", htmlUrl: "https://github.com/theBDCFcrew/theBDCFcrew.github.io", pushedAt: new Date(Date.now() - 86400000).toISOString(), defaultBranch: "main", description: "The BDCF Crew Portal", latestCommit: "Production sync" },
@@ -1765,7 +1970,7 @@
             }
         }
 
-        const CURRENT_APP_VERSION = 'v10.2.104';
+        const CURRENT_APP_VERSION = 'v10.2.111';
         let isDeployingLive = false;
         let pendingRemoteVersion = null;
         let autoRefreshTimer = null;
@@ -2721,23 +2926,6 @@
         let ticketCustomAudioUrl = localStorage.getItem('ticket_custom_audio_url') || '';
         let ticketNotifyDesktop = localStorage.getItem('ticket_notify_desktop') === 'true';
         let ticketAlertPriorityFilter = localStorage.getItem('ticket_alert_priority_filter') || 'all';
-        let audioCtx = null;
-
-        function getAudioContext() {
-            if (!audioCtx) {
-                const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-                if (AudioContextClass) {
-                    audioCtx = new AudioContextClass();
-                }
-            }
-            if (audioCtx && audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-            return audioCtx;
-        }
-
-        document.addEventListener('click', () => { getAudioContext(); }, { once: true });
-        document.addEventListener('keydown', () => { getAudioContext(); }, { once: true });
 
         function playTicketAlertSound(mode = 'alert') {
             if (!ticketSoundEnabled && mode !== 'test') return;
@@ -3627,6 +3815,7 @@
         function openCounterAuditModal() {
             try { sessionStorage.setItem('active_modal_id', 'counterAuditModal'); } catch(e) {}
             document.getElementById('counterAuditModal').style.display = 'block';
+            updateFollowerSoundUI();
             renderCounterAuditTable();
         }
 
@@ -3971,7 +4160,15 @@
         });
         
         const twitchLabApi = 'https://script.google.com/macros/s/AKfycby0ndGELJv0Q6yAR8PKMsvo3u-hZ2qAL80sVahxyeyrLy_qDXhkcYZkKBoq6HhdrhyO/exec';
-        async function syncTwitchFollowers() { try { const res = await fetch(twitchLabApi + '?t=' + Date.now()); const data = await res.json(); if (data.twitch) document.getElementById('twitch-fol-num').innerText = fNum(data.twitch.followers); } catch (e) {} }
+        async function syncTwitchFollowers() { 
+            try { 
+                const res = await fetch(twitchLabApi + '?t=' + Date.now()); 
+                const data = await res.json(); 
+                if (data.twitch && data.twitch.followers !== undefined) {
+                    updateMetricAndFlash('twitch-fol-num', 'twitchFol', parseMetricNum(data.twitch.followers, 695));
+                }
+            } catch (e) {} 
+        }
         setInterval(syncTwitchFollowers, 60000); syncTwitchFollowers();
         
         function switchSocialTab(platform) {
@@ -4032,7 +4229,15 @@
             document.getElementById('theaterModal').style.display = "none"; 
         }
         function openTwitch() { window.open(`Live.html?host=${window.location.hostname}`, 'TwitchStudio', `width=1480,height=820`); }
-        async function getBsky() { try { const r = await fetch('https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=briandivacox.bsky.social'); const p = await r.json(); if (p.followersCount !== undefined) document.getElementById('bsky-num').innerText = fNum(p.followersCount); } catch (e) {} }
+        async function getBsky() { 
+            try { 
+                const r = await fetch('https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=briandivacox.bsky.social'); 
+                const p = await r.json(); 
+                if (p.followersCount !== undefined) {
+                    updateMetricAndFlash('bsky-num', 'bskyFol', parseMetricNum(p.followersCount, 29));
+                }
+            } catch (e) {} 
+        }
         getBsky(); setInterval(getBsky, 300000);
 
         function restoreModalStateOnLoad() {

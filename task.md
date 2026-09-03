@@ -1,17 +1,22 @@
-## 📋 Completed: Unified Single-Source Database Architecture & Deep Audit (v10.2.101)
-- [x] Create project backup archive (`backups/Unified_Database_Architecture_v10.2.101_backup.zip`)
-- [x] Phase 1: Establish Unified Real-Time Firebase Master Store in `wosBDC/main.js` and `index.html`:
-  - Hook live reactive listener to `ref(db, 'users')` and `ref(db, 'roster_live')`
-  - Global `window.allianceMasterStore` with instantaneous sync across all modules
-- [x] Phase 2: Unify Badges & Endpoints:
-  - 👥 **Alliance Characters & Alts**: Real-time token status, furnace levels, and linked alts from Firebase
-  - 👥 **Admin Menu: Members & Player Database**: Live `✅ Enrolled`, `👑 Staff Roles`, and furnace badges from master store
-  - 🎁 **Automatic Gift Code Redemption**: Real-time enrollment and 1-click opt-in synced to Firebase
-  - 🏰 **Alliance Gatekeeper & Game Sync**: Mismatches eliminated between web portal and LiveCounters dashboard
-- [x] Phase 3: Deep Audit of other features & views (Leaderboards, Activity, Bear Trap, Showdown, Avatars)
-- [x] Synchronize `CURRENT_APP_VERSION = 'v10.2.101'` across `index.html`, `New.html`, `web_dashboards/New.html`
+## ✅ Completed: Follower Counter Audio & Visual Highlight Suite (v10.2.111)
+- [x] Create project backup archive (`backups/Follower_Audio_Highlight_Suite_v10.2.105_backup.zip`)
+- [x] Build Web Audio Chime Synthesizer for Follower changes (`playFollowerSound(type)`):
+  - Ascending 4-tone crystal celebration chime for follower gains (`523Hz` -> `659Hz` -> `783Hz` -> `1046Hz` with warm harmonics)
+  - Gentle 2-tone melodic chime for follower drops
+  - Initial startup guard preventing sound playback during initial data load
+  - Follower sound toggle & volume state persisted in `localStorage`
+- [x] Build Visual Highlight & Pulse Engine (`flashFollowerPulse(elementId, type)`):
+  - Neon scale & glow pulse on individual platform counter elements (`#twitch-fol-num`, `#yt-sub-num`, `#tt-fol-num`, `#ig-fol-num`, `#threads-fol-num`, `#snap-fol-num`, `#fb-page-num`, `#fb-personal-num`, `#x-fol-num`, `#bsky-num`, `#grand-total-fol-num`, `#grand-total-views-num`)
+  - Green neon pulse for gains and coral red pulse for losses
+- [x] Track previous state per platform across Firebase `labData`, Twitch API, and Bluesky API
+- [x] Add Follower Sound Controls (Toggle ON/OFF & Test Chime) to Grand Totals and Audit modal header
+- [x] Automated Pre-Delivery Verification Script testing:
+  - 0 console syntax / runtime errors
+  - Audio synthesizer execution without exceptions
+  - Follower change detection and pulse animation triggers
+- [x] Synchronize `CURRENT_APP_VERSION = 'v10.2.111'` across `index.html`, `New.html`, `web_dashboards/New.html`
 - [x] Bump `VERSION.json` & `sw.js` cache name
-- [x] Update `CHANGELOG.md` with 10-word punchy release notes
+- [x] Update `CHANGELOG.md` with App Store style release notes (<= 10 words per bullet)
 - [x] Commit and push to GitHub (`origin main`)
 
 ## ✅ Completed Tasks (v10.2.99)
