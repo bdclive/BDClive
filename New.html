@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BDC LIVE v10.2.112</title>
+    <title>BDC LIVE v10.2.113</title>
     <!-- Open Graph & Social Preview Meta Tags -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="BDC LIVE v10.2.112">
+    <meta property="og:title" content="BDC LIVE v10.2.113">
     <meta property="og:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="og:image" content="./bdclive_banner.jpg">
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="BDC LIVE v10.2.112">
+    <meta property="twitter:title" content="BDC LIVE v10.2.113">
     <meta property="twitter:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="twitter:image" content="./bdclive_banner.jpg">
     <!-- PWA Manifest & Mobile Web App Meta Tags -->
@@ -299,6 +299,9 @@
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <p class="mirror-label" style="color:#f1e05a; font-size: 0.75rem; letter-spacing: 1px;"><i class="fa-solid fa-globe" style="color: #9146FF;"></i> GRAND TOTALS</p>
                 <div style="display: flex; align-items: center; gap: 5px;">
+                    <button id="test-glow-header-btn" onclick="event.stopPropagation(); testFollowerGlow('all', 'gain');" style="background: linear-gradient(135deg, rgba(63, 185, 80, 0.22) 0%, rgba(0, 210, 255, 0.22) 100%); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.45); border-radius: 6px; padding: 2px 7px; font-size: 8px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s ease; box-shadow: 0 0 8px rgba(63, 185, 80, 0.2);" title="Test Follower Glow & Chimes Across All Platforms">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> ✨ TEST GLOW
+                    </button>
                     <button id="follower-sound-toggle-btn" onclick="event.stopPropagation(); toggleFollowerSound();" style="background: rgba(63, 185, 80, 0.15); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.35); border-radius: 6px; padding: 2px 7px; font-size: 8px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s ease;" title="Toggle Follower Sound Chimes & Highlight Pulses">
                         <i id="follower-sound-icon" class="fa-solid fa-bell"></i> <span id="follower-sound-text">CHIMES ON</span>
                     </button>
@@ -313,7 +316,7 @@
                     <p class="mirror-label" style="color:#8b949e; font-size: 0.65rem;">TOTAL FOLLOWERS</p>
                     <span id="grand-fol-delta" style="font-size: 0.65rem; font-weight: 800; padding: 1px 5px; border-radius: 4px; display: none; transition: all 0.3s ease;">--</span>
                 </div>
-                <div id="grand-total-fol-num" class="mirror-stat" style="font-size: 1.85rem; line-height: 1; color: #f1e05a; margin-top: 1px; transition: transform 0.3s ease, color 0.3s ease, text-shadow 0.3s ease;">68,316</div>
+                <div id="grand-total-fol-num" onclick="event.stopPropagation(); testFollowerGlow('all', 'gain');" title="Click to test live glowing effect" class="mirror-stat" style="font-size: 1.85rem; line-height: 1; color: #f1e05a; margin-top: 1px; transition: transform 0.3s ease, color 0.3s ease, text-shadow 0.3s ease; cursor: pointer;">68,316</div>
             </div>
             <div style="margin-top: 3px;">
                 <div style="display: flex; justify-content: space-between; align-items: baseline;">
@@ -819,14 +822,17 @@
                     <i class="fa-solid fa-heart-pulse" style="font-size: 20px; color: #f1e05a;"></i>
                     <h3 style="margin: 0; color: #ffffff; font-size: 16px; font-weight: 800; letter-spacing: 0.5px;">Platform Counter Health & Audit</h3>
                 </div>
-                <div style="display: flex; align-items: center; gap: 8px;">
+                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                    <button id="modal-test-glow-btn" onclick="testFollowerGlow('all', 'gain')" style="background: linear-gradient(135deg, rgba(63, 185, 80, 0.22) 0%, rgba(0, 210, 255, 0.22) 100%); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.5); padding: 5px 11px; border-radius: 6px; font-size: 11px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; transition: all 0.2s ease; box-shadow: 0 0 10px rgba(63, 185, 80, 0.25);" title="Test Real-Time Glow Effect & Chimes Across All 9 Platforms">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> ✨ Test 9-Platform Glow Wave
+                    </button>
                     <button id="modal-follower-sound-toggle-btn" onclick="toggleFollowerSound()" style="background: rgba(63, 185, 80, 0.18); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.4); padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; transition: all 0.2s ease;">
                         <i class="fa-solid fa-bell"></i> Follower Chimes: ON
                     </button>
                     <button id="modal-test-follower-sound-btn" onclick="playFollowerSound('test')" style="background: rgba(241, 224, 90, 0.14); color: #f1e05a; border: 1px solid rgba(241, 224, 90, 0.35); padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; transition: all 0.2s ease;" title="Test Celebratory Follower Chime">
                         <i class="fa-solid fa-volume-high"></i> Test Chime
                     </button>
-                    <span class="close-modal" onclick="closeCounterAuditModal()" style="font-size: 24px; cursor: pointer; color: #8b949e;">&times;</span>
+                    <span class="close-modal" onclick="closeCounterAuditModal()" style="font-size: 24px; cursor: pointer; color: #8b949e; margin-left: 4px;">&times;</span>
                 </div>
             </div>
 
@@ -1108,11 +1114,61 @@
                 }
             }
         }
+
+        function testFollowerGlow(target = 'all', type = 'gain') {
+            const platformMap = {
+                'all': ['grand-total-fol-num', 'yt-sub-num', 'twitch-fol-num', 'ig-fol-num', 'tt-fol-num', 'threads-fol-num', 'snap-fol-num', 'fb-page-num', 'fb-personal-num', 'x-fol-num', 'bsky-num'],
+                'grand': ['grand-total-fol-num'],
+                'yt': ['yt-sub-num'],
+                'youtube': ['yt-sub-num'],
+                'twitch': ['twitch-fol-num'],
+                'ig': ['ig-fol-num'],
+                'instagram': ['ig-fol-num'],
+                'tt': ['tt-fol-num'],
+                'tiktok': ['tt-fol-num'],
+                'threads': ['threads-fol-num'],
+                'snap': ['snap-fol-num'],
+                'snapchat': ['snap-fol-num'],
+                'fb_page': ['fb-page-num'],
+                'facebookpage': ['fb-page-num'],
+                'fb_personal': ['fb-personal-num'],
+                'facebookpersonal': ['fb-personal-num'],
+                'fb': ['fb-page-num', 'fb-personal-num'],
+                'x': ['x-fol-num'],
+                'xtwitter': ['x-fol-num'],
+                'bsky': ['bsky-num'],
+                'bluesky': ['bsky-num']
+            };
+
+            const key = String(target || 'all').toLowerCase().replace(/[^a-z0-9_]/g, '');
+            const elemIds = platformMap[key] || (document.getElementById(target) ? [target] : ['grand-total-fol-num']);
+            playFollowerSound(type);
+
+            elemIds.forEach((id, idx) => {
+                setTimeout(() => {
+                    const el = document.getElementById(id);
+                    if (!el) return;
+                    flashFollowerPulse(id, type);
+                    
+                    const curText = (el.innerText || '').replace(/,/g, '');
+                    const curNum = parseInt(curText, 10);
+                    if (!isNaN(curNum)) {
+                        const testVal = type === 'gain' ? (curNum + 1) : (curNum - 1);
+                        el.innerText = fNum(testVal);
+                        setTimeout(() => {
+                            el.innerText = fNum(curNum);
+                        }, 2200);
+                    }
+                }, idx * 120);
+            });
+        }
+
         window.playFollowerSound = playFollowerSound;
         window.flashFollowerPulse = flashFollowerPulse;
         window.updateMetricAndFlash = updateMetricAndFlash;
         window.toggleFollowerSound = toggleFollowerSound;
         window.updateFollowerSoundUI = updateFollowerSoundUI;
+        window.testFollowerGlow = testFollowerGlow;
         updateFollowerSoundUI();
 
         setTimeout(() => {
@@ -1779,7 +1835,7 @@
         });
 
         const DEFAULT_GH_REPOS = [
-            { name: "BDClive", owner: "bdclive", fullName: "bdclive/BDClive", htmlUrl: "https://github.com/bdclive/BDClive", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "BDC Live Central Command Dashboard", latestCommit: "v10.2.112 : Restored smart hands-free auto-refresh countdown timer with typing pause detector" },
+            { name: "BDClive", owner: "bdclive", fullName: "bdclive/BDClive", htmlUrl: "https://github.com/bdclive/BDClive", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "BDC Live Central Command Dashboard", latestCommit: "v10.2.113 : Added 1-click interactive follower glow wave test suite" },
             { name: "wosBDC.github.io", owner: "wosbdc", fullName: "wosbdc/wosBDC.github.io", htmlUrl: "https://github.com/wosbdc/wosBDC.github.io", pushedAt: new Date(Date.now() - 3600000 * 1.5).toISOString(), defaultBranch: "main", description: "WOS BDC Web Application", latestCommit: "v2.9.86 : Dynamic real-time synchronization for all dropdown filter options and action button counters" },
             { name: "DasherTracker.github.io", owner: "DasherTracker", fullName: "DasherTracker/DasherTracker.github.io", htmlUrl: "https://github.com/DasherTracker/DasherTracker.github.io", pushedAt: new Date(Date.now() - 3600000 * 3.5).toISOString(), defaultBranch: "main", description: "Dasher Tracker Portal", latestCommit: "Production sync" },
             { name: "theBDCFcrew.github.io", owner: "theBDCFcrew", fullName: "theBDCFcrew/theBDCFcrew.github.io", htmlUrl: "https://github.com/theBDCFcrew/theBDCFcrew.github.io", pushedAt: new Date(Date.now() - 86400000).toISOString(), defaultBranch: "main", description: "The BDCF Crew Portal", latestCommit: "Production sync" },
@@ -1970,7 +2026,7 @@
             }
         }
 
-        const CURRENT_APP_VERSION = 'v10.2.112';
+        const CURRENT_APP_VERSION = 'v10.2.113';
         let isDeployingLive = false;
         let pendingRemoteVersion = null;
         let autoRefreshTimer = null;
@@ -4048,14 +4104,20 @@
                     <td style="padding: 8px 8px; font-weight: 700; color: #f1e05a; font-size: 11px;">${folStr}</td>
                     <td style="padding: 8px 8px; font-weight: 700; color: #bc95ff; font-size: 11px;">${viewsStr}</td>
                     <td style="padding: 8px 8px; font-size: 9.5px; color: #c9d1d9;">${p.tokenHealth}</td>
-                    <td style="padding: 8px 12px; text-align: right;">
-                        <button onclick="runSinglePlatformSync('${p.name}')" style="background: rgba(255,255,255,0.06); color: #c9d1d9; border: 1px solid rgba(255,255,255,0.12); padding: 3px 8px; border-radius: 4px; font-size: 9.5px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; font-weight: 600;">
-                            <i class="fa-solid fa-arrows-rotate"></i> Test
+                    <td style="padding: 8px 12px; text-align: right; white-space: nowrap;">
+                        <button onclick="testFollowerGlow('${p.name}', 'gain')" style="background: rgba(63, 185, 80, 0.16); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.38); padding: 3px 8px; border-radius: 4px; font-size: 9.5px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; font-weight: 700; margin-right: 4px; transition: all 0.2s ease;" title="Test Live Glow & Sound for ${p.name}">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> ✨ Test Glow
+                        </button>
+                        <button onclick="runSinglePlatformSync('${p.name}')" style="background: rgba(255,255,255,0.06); color: #c9d1d9; border: 1px solid rgba(255,255,255,0.12); padding: 3px 7px; border-radius: 4px; font-size: 9.5px; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; font-weight: 600;" title="Sync Live Data">
+                            <i class="fa-solid fa-arrows-rotate"></i> Sync
                         </button>
                     </td>
                 </tr>`;
             }).join('');
         }
+        window.renderCounterAuditTable = renderCounterAuditTable;
+        window.openCounterAuditModal = openCounterAuditModal;
+        window.closeCounterAuditModal = closeCounterAuditModal;
 
         async function runPlatformHealthAudit() {
             const btn = document.getElementById('run-audit-btn');
