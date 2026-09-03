@@ -14,11 +14,11 @@
       "cliFile": "Threads_Bridge/threads_bridge_cli_v1.0.59_(terminal).py"
     },
     "bdclive_web_dashboard": {
-      "version": "10.2.111",
+      "version": "10.2.112",
       "repository": "https://github.com/bdclive/BDClive",
       "latestChanges": [
-        "v10.2.111: Added real-time follower change audio chime and visual highlight pulse suite",
-        "v10.2.110: Fixed modal variable scope, toast copy helper, and scroll layout"
+        "v10.2.112: Restored smart hands-free auto-refresh countdown timer with typing pause detector",
+        "v10.2.111: Added real-time follower change audio chime and visual highlight pulse suite"
       ]
     },
     "wosbdc_alliance_dashboard": {

@@ -1,3 +1,9 @@
+## [10.2.112] - 2026-09-02
+- Restored hands-free 5-second auto-refresh countdown timer.
+- Auto-refreshes updates without needing mouse click.
+- Pauses countdown automatically while actively typing in forms.
+- Preserves and restores active popup modals across updates.
+
 ## [10.2.111] - 2026-09-02
 - Added celebratory ascending Web Audio chime for follower gains.
 - Added gentle descending chime for follower count losses.
