@@ -44,6 +44,9 @@
 - Added live Furnace Upgrades section to Gatekeeper Discord report.
 - Dynamically displays detected furnace upgrades and chief names.
 - Synchronized live maintenance audit timestamps in Gatekeeper report.
+- Added 30-day dynamic recency filter for member signups.
+- Removed obsolete hardcoded signups fallback from Gatekeeper report.
+- Accurately displays newest signups with date and stable status.
 - Deployed Central Command v1.1.00 across all systems.
 
 ## [1.0.99] - 2026-09-02
