@@ -1,3 +1,9 @@
+## [10.2.113] - 2026-09-02
+- Added 1-click Test Glow Wave across all 9 platforms.
+- Added individual platform glow and chime test buttons.
+- Added 1-click Test Glow button in Grand Totals header.
+- Simulates live +1 follower change and neon glow pulse.
+
 ## [10.2.112] - 2026-09-02
 - Restored hands-free 5-second auto-refresh countdown timer.
 - Auto-refreshes updates without needing mouse click.
