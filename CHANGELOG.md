@@ -1,3 +1,10 @@
+## [10.2.111] - 2026-09-02
+- Added celebratory ascending Web Audio chime for follower gains.
+- Added gentle descending chime for follower count losses.
+- Added bright neon glow pulse on updated follower cards.
+- Integrated Follower Chimes audio toggle button and test preview.
+- Follower audio and pulse synchronized across all 9 platforms.
+
 ## [1.1.00] - 2026-09-02
 - Added automatic comma formatting to all numbers in GUI.
 - Formatted social followers, view counts, and stream statistics.
