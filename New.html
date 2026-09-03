@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BDC LIVE v10.2.116</title>
+    <title>BDC LIVE v10.2.117</title>
     <!-- Open Graph & Social Preview Meta Tags -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="BDC LIVE v10.2.116">
+    <meta property="og:title" content="BDC LIVE v10.2.117">
     <meta property="og:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="og:image" content="./bdclive_banner.jpg">
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="BDC LIVE v10.2.116">
+    <meta property="twitter:title" content="BDC LIVE v10.2.117">
     <meta property="twitter:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="twitter:image" content="./bdclive_banner.jpg">
     <!-- PWA Manifest & Mobile Web App Meta Tags -->
@@ -299,6 +299,9 @@
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <p class="mirror-label" style="color:#f1e05a; font-size: 0.75rem; letter-spacing: 1px;"><i class="fa-solid fa-globe" style="color: #9146FF;"></i> GRAND TOTALS</p>
                 <div style="display: flex; align-items: center; gap: 5px;">
+                    <button id="follower-log-header-btn" onclick="event.stopPropagation(); openFollowerActivityLogModal();" style="background: rgba(63, 185, 80, 0.18); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.4); border-radius: 6px; padding: 2px 7px; font-size: 8px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s ease;" title="Open Real-time Follower Change History & Activity Log">
+                        <i class="fa-solid fa-clock-rotate-left"></i> Log
+                    </button>
                     <button id="test-glow-header-btn" onclick="event.stopPropagation(); testFollowerGlow('all', 'gain');" style="background: linear-gradient(135deg, rgba(63, 185, 80, 0.22) 0%, rgba(0, 210, 255, 0.22) 100%); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.45); border-radius: 6px; padding: 2px 7px; font-size: 8px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s ease; box-shadow: 0 0 8px rgba(63, 185, 80, 0.2);" title="Test Follower Glow & Chimes Across All Platforms">
                         <i class="fa-solid fa-wand-magic-sparkles"></i> ✨ TEST GLOW
                     </button>
@@ -408,7 +411,7 @@
             <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px 6px; width: 100%; height: 100%; align-items: center; box-sizing: border-box;">
                 
                 <div class="task-click-node" onclick="openTasksBreakdownModal()" style="grid-column: span 6; margin-bottom: 2px;" title="Click for Full Google Tasks Category Breakdown & Inspector">
-                    <p class="mirror-label" style="color: var(--tasks-blue); font-size: 10px; white-space: nowrap;">📋 Total Tasks (All Lists)</p>
+                    <p class="mirror-label" style="color: var(--tasks-blue); font-size: 10px; white-space: nowrap;">📋 Total</p>
                     <div id="task-k1" class="mirror-stat" style="font-size: 2rem; font-weight:800; line-height:1.1;">0</div>
                 </div>
                 
@@ -826,6 +829,9 @@
                     <h3 style="margin: 0; color: #ffffff; font-size: 16px; font-weight: 800; letter-spacing: 0.5px;">Platform Counter Health & Audit</h3>
                 </div>
                 <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                    <button id="modal-follower-log-btn" onclick="openFollowerActivityLogModal()" style="background: rgba(63, 185, 80, 0.18); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.4); padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; transition: all 0.2s ease;" title="Open Real-time Follower Change History Log">
+                        <i class="fa-solid fa-clock-rotate-left"></i> Follower Log
+                    </button>
                     <button id="modal-test-glow-btn" onclick="testFollowerGlow('all', 'gain')" style="background: linear-gradient(135deg, rgba(63, 185, 80, 0.22) 0%, rgba(0, 210, 255, 0.22) 100%); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.5); padding: 5px 11px; border-radius: 6px; font-size: 11px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; transition: all 0.2s ease; box-shadow: 0 0 10px rgba(63, 185, 80, 0.25);" title="Test Real-Time Glow Effect & Chimes Across All 9 Platforms">
                         <i class="fa-solid fa-wand-magic-sparkles"></i> ✨ Test 9-Platform Glow Wave
                     </button>
@@ -909,6 +915,81 @@
                         </tr>
                     </thead>
                     <tbody id="tasks-breakdown-table-body">
+                        <!-- Rows rendered dynamically -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOLLOWER ACTIVITY & CHANGE HISTORY LOG MODAL -->
+    <div id="followerActivityLogModal" class="modal">
+        <div class="modal-content" style="border-color: #3fb950; max-width: 960px; width: 94%; background: #0d1117; max-height: 88vh; display: flex; flex-direction: column; box-shadow: 0 16px 48px rgba(0,0,0,0.8), 0 0 25px rgba(63, 185, 80, 0.25);">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #30363d; padding-bottom: 12px; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <i class="fa-solid fa-clock-rotate-left" style="font-size: 20px; color: #3fb950;"></i>
+                    <h3 style="margin: 0; color: #ffffff; font-size: 16px; font-weight: 800; letter-spacing: 0.5px;">Follower Activity & Change History Log</h3>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                    <button onclick="simulateTestFollowerLog('YouTube', 1)" style="background: rgba(63, 185, 80, 0.18); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.4); padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
+                        ✨ Test Gain (+1)
+                    </button>
+                    <button onclick="simulateTestFollowerLog('Twitch', -1)" style="background: rgba(248, 81, 73, 0.18); color: #f85149; border: 1px solid rgba(248, 81, 73, 0.4); padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
+                        🔻 Test Loss (-1)
+                    </button>
+                    <button onclick="exportFollowerActivityLogCSV()" style="background: rgba(88, 166, 255, 0.18); color: #58a6ff; border: 1px solid rgba(88, 166, 255, 0.4); padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
+                        <i class="fa-solid fa-download"></i> Export CSV
+                    </button>
+                    <button onclick="clearFollowerActivityLog()" style="background: rgba(255, 255, 255, 0.06); color: #8b949e; border: 1px solid rgba(255, 255, 255, 0.15); padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer;">
+                        <i class="fa-solid fa-trash-can"></i> Clear Log
+                    </button>
+                    <span class="close-modal" onclick="closeFollowerActivityLogModal()" style="font-size: 24px; cursor: pointer; color: #8b949e; margin-left: 4px;">&times;</span>
+                </div>
+            </div>
+
+            <!-- Summary KPI Bar -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin-bottom: 12px;">
+                <div style="background: rgba(63, 185, 80, 0.1); border: 1px solid rgba(63, 185, 80, 0.3); border-radius: 8px; padding: 8px 12px;">
+                    <div style="font-size: 10px; color: #8b949e; font-weight: 700;">TOTAL GAINS</div>
+                    <div id="log-total-gains" style="font-size: 18px; font-weight: 900; color: #3fb950; margin-top: 2px;">+0</div>
+                </div>
+                <div style="background: rgba(248, 81, 73, 0.1); border: 1px solid rgba(248, 81, 73, 0.3); border-radius: 8px; padding: 8px 12px;">
+                    <div style="font-size: 10px; color: #8b949e; font-weight: 700;">TOTAL LOSSES</div>
+                    <div id="log-total-losses" style="font-size: 18px; font-weight: 900; color: #f85149; margin-top: 2px;">-0</div>
+                </div>
+                <div style="background: rgba(88, 166, 255, 0.1); border: 1px solid rgba(88, 166, 255, 0.3); border-radius: 8px; padding: 8px 12px;">
+                    <div style="font-size: 10px; color: #8b949e; font-weight: 700;">NET FOLLOWER DELTA</div>
+                    <div id="log-net-delta" style="font-size: 18px; font-weight: 900; color: #58a6ff; margin-top: 2px;">0</div>
+                </div>
+                <div style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 8px 12px;">
+                    <div style="font-size: 10px; color: #8b949e; font-weight: 700;">EVENTS LOGGED</div>
+                    <div id="log-total-events" style="font-size: 18px; font-weight: 900; color: #ffffff; margin-top: 2px;">0</div>
+                </div>
+            </div>
+
+            <!-- Filter Controls -->
+            <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 8px 12px; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <button id="log-filter-all" onclick="setFollowerLogFilter('all')" style="background: #238636; color: #fff; border: 1px solid rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer;">All Events</button>
+                    <button id="log-filter-gain" onclick="setFollowerLogFilter('gain')" style="background: rgba(255,255,255,0.06); color: #8b949e; border: 1px solid rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer;">Gains Only (+)</button>
+                    <button id="log-filter-loss" onclick="setFollowerLogFilter('loss')" style="background: rgba(255,255,255,0.06); color: #8b949e; border: 1px solid rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer;">Losses Only (-)</button>
+                </div>
+                <input type="text" id="log-search-input" onkeyup="filterFollowerLogTable()" placeholder="Search platform or change..." style="flex: 1; max-width: 240px; background: #161b22; border: 1px solid #30363d; color: #fff; padding: 5px 10px; border-radius: 6px; font-size: 11px; outline: none;">
+            </div>
+
+            <!-- Activity Table -->
+            <div style="overflow-y: auto; flex: 1; border: 1px solid #30363d; border-radius: 8px; background: #161b22; max-height: 52vh;">
+                <table style="width: 100%; border-collapse: collapse; font-size: 11.5px; text-align: left;">
+                    <thead>
+                        <tr style="background: #21262d; border-bottom: 1px solid #30363d; color: #8b949e; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">
+                            <th style="padding: 10px 12px;">Time / Date</th>
+                            <th style="padding: 10px 10px;">Platform & Metric</th>
+                            <th style="padding: 10px 10px; text-align: center;">Change Delta</th>
+                            <th style="padding: 10px 10px;">Previous ➔ New Count</th>
+                            <th style="padding: 10px 12px; text-align: right;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="follower-activity-log-table-body">
                         <!-- Rows rendered dynamically -->
                     </tbody>
                 </table>
@@ -1062,7 +1143,345 @@
             }
         }
 
-        function flashFollowerPulse(elementId, type = 'gain', customColor = null) {
+        const METRIC_PLATFORM_MAP = {
+            'ytSub': { name: 'YouTube', icon: '📺', color: '#ff0000', type: 'followers', unit: 'Subscribers' },
+            'twitchFol': { name: 'Twitch', icon: '👾', color: '#9146FF', type: 'followers', unit: 'Followers' },
+            'twitchFollowers': { name: 'Twitch', icon: '👾', color: '#9146FF', type: 'followers', unit: 'Followers' },
+            'twitchViewers': { name: 'Twitch', icon: '👾', color: '#9146FF', type: 'views', unit: 'Live Viewers' },
+            'twitchChatters': { name: 'Twitch', icon: '👾', color: '#9146FF', type: 'views', unit: 'Chatters' },
+            'igFol': { name: 'Instagram', icon: '📸', color: '#E1306C', type: 'followers', unit: 'Followers' },
+            'igViews': { name: 'Instagram', icon: '📸', color: '#E1306C', type: 'views', unit: 'Views' },
+            'ttFol': { name: 'TikTok', icon: '🎵', color: '#00f2fe', type: 'followers', unit: 'Followers' },
+            'threadsFol': { name: 'Threads', icon: '🧵', color: '#ffffff', type: 'followers', unit: 'Followers' },
+            'threadsViews': { name: 'Threads', icon: '🧵', color: '#ffffff', type: 'views', unit: 'Views' },
+            'snapFol': { name: 'Snapchat', icon: '👻', color: '#FFFC00', type: 'followers', unit: 'Subscribers' },
+            'snapViews': { name: 'Snapchat', icon: '👻', color: '#FFFC00', type: 'views', unit: 'Views' },
+            'fbPage': { name: 'Facebook Page', icon: '👥', color: '#1877F2', type: 'followers', unit: 'Followers' },
+            'fbViews': { name: 'Facebook Page', icon: '👥', color: '#1877F2', type: 'views', unit: 'Views' },
+            'fbPersonal': { name: 'Facebook Profile', icon: '👤', color: '#1877F2', type: 'followers', unit: 'Friends' },
+            'xFol': { name: 'X (Twitter)', icon: '𝕏', color: '#ffffff', type: 'followers', unit: 'Followers' },
+            'xFol_alt': { name: 'X (Twitter)', icon: '𝕏', color: '#ffffff', type: 'followers', unit: 'Followers' },
+            'bskyFol': { name: 'Bluesky', icon: '🦋', color: '#0085ff', type: 'followers', unit: 'Followers' },
+            'plexCount': { name: 'Plex Media', icon: '🍿', color: '#e5a00d', type: 'media', unit: 'Items' }
+        };
+
+        let followerActivityLog = [];
+        try {
+            const savedLog = localStorage.getItem('follower_activity_log');
+            followerActivityLog = savedLog ? JSON.parse(savedLog) : [];
+        } catch(e) { followerActivityLog = []; }
+
+        let currentLogFilter = 'all';
+
+        function recordFollowerActivityEvent(metricKey, diff, oldVal, newVal, isView = false, customSource = null) {
+            const meta = METRIC_PLATFORM_MAP[metricKey] || {
+                name: customSource || metricKey,
+                icon: isView ? '👁️' : '👥',
+                color: '#58a6ff',
+                type: isView ? 'views' : 'followers',
+                unit: isView ? 'Views' : 'Followers'
+            };
+
+            const now = new Date();
+            const eventEntry = {
+                id: 'evt_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+                timestamp: now.getTime(),
+                timeStr: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+                dateStr: now.toLocaleDateString(),
+                platform: meta.name,
+                icon: meta.icon,
+                color: meta.color,
+                metricType: isView ? 'views' : meta.type,
+                unit: meta.unit,
+                type: diff > 0 ? 'gain' : 'loss',
+                diff: diff,
+                deltaStr: diff > 0 ? `+${fNum(diff)}` : `${fNum(diff)}`,
+                oldVal: oldVal,
+                newVal: newVal
+            };
+
+            followerActivityLog.unshift(eventEntry);
+            if (followerActivityLog.length > 150) followerActivityLog = followerActivityLog.slice(0, 150);
+
+            try {
+                localStorage.setItem('follower_activity_log', JSON.stringify(followerActivityLog));
+            } catch(e) {}
+
+            showFollowerActivityToast(eventEntry);
+
+            const modal = document.getElementById('followerActivityLogModal');
+            if (modal && modal.style.display === 'block') {
+                renderFollowerActivityLogTable();
+            }
+        }
+
+        function showFollowerActivityToast(entry) {
+            let toastBox = document.getElementById('follower-activity-toast-container');
+            if (!toastBox) {
+                toastBox = document.createElement('div');
+                toastBox.id = 'follower-activity-toast-container';
+                toastBox.style.cssText = 'position: fixed; bottom: 24px; right: 24px; z-index: 99999999; display: flex; flex-direction: column; gap: 8px; pointer-events: auto; max-width: 360px; width: 90vw;';
+                document.body.appendChild(toastBox);
+            }
+
+            const toast = document.createElement('div');
+            const isGain = entry.type === 'gain';
+            const accentColor = isGain ? '#3fb950' : '#f85149';
+            const bgGlow = isGain ? 'rgba(63, 185, 80, 0.25)' : 'rgba(248, 81, 73, 0.25)';
+
+            toast.style.cssText = `background: #161b22; border: 1.5px solid ${accentColor}; box-shadow: 0 8px 24px rgba(0,0,0,0.8), 0 0 16px ${bgGlow}; border-radius: 10px; padding: 10px 14px; color: #ffffff; display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 12px; cursor: pointer; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); transform: translateX(50px); opacity: 0;`;
+
+            toast.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-size: 18px;">${entry.icon}</span>
+                    <div>
+                        <div style="font-weight: 800; color: #ffffff; font-size: 12.5px; display: flex; align-items: center; gap: 6px;">
+                            ${entry.platform}
+                            <span style="background: ${isGain ? 'rgba(63, 185, 80, 0.2)' : 'rgba(248, 81, 73, 0.2)'}; color: ${accentColor}; border: 1px solid ${accentColor}; padding: 1px 6px; border-radius: 5px; font-size: 10px; font-weight: 800;">
+                                ${entry.deltaStr} ${entry.unit}
+                            </span>
+                        </div>
+                        <div style="color: #8b949e; font-size: 10.5px; margin-top: 1px;">
+                            ${fNum(entry.oldVal)} ➔ <strong style="color: ${accentColor};">${fNum(entry.newVal)}</strong> • ${entry.timeStr}
+                        </div>
+                    </div>
+                </div>
+                <div style="font-size: 10px; color: #58a6ff; font-weight: 700; white-space: nowrap;">
+                    View Log ↗
+                </div>
+            `;
+
+            const removeToast = () => {
+                if (!toast) return;
+                if (typeof toast.remove === 'function') {
+                    toast.remove();
+                } else if (toast.parentNode) {
+                    toast.parentNode.removeChild(toast);
+                }
+            };
+
+            toast.onclick = () => {
+                openFollowerActivityLogModal();
+                removeToast();
+            };
+
+            toastBox.appendChild(toast);
+            requestAnimationFrame(() => {
+                toast.style.transform = 'translateX(0)';
+                toast.style.opacity = '1';
+            });
+
+            setTimeout(() => {
+                toast.style.transform = 'translateX(50px)';
+                toast.style.opacity = '0';
+                setTimeout(removeToast, 300);
+            }, 6500);
+        }
+
+        function openFollowerActivityLogModal() {
+            renderFollowerActivityLogTable();
+            const modal = document.getElementById('followerActivityLogModal');
+            if (modal) modal.style.display = 'block';
+        }
+
+        function closeFollowerActivityLogModal() {
+            const modal = document.getElementById('followerActivityLogModal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function setFollowerLogFilter(filter) {
+            currentLogFilter = filter;
+            const btnAll = document.getElementById('log-filter-all');
+            const btnGain = document.getElementById('log-filter-gain');
+            const btnLoss = document.getElementById('log-filter-loss');
+            if (btnAll && btnGain && btnLoss) {
+                [btnAll, btnGain, btnLoss].forEach(b => {
+                    b.style.background = 'rgba(255,255,255,0.06)';
+                    b.style.color = '#8b949e';
+                    b.style.borderColor = 'rgba(255,255,255,0.1)';
+                    b.style.fontWeight = '600';
+                });
+                const active = filter === 'gain' ? btnGain : (filter === 'loss' ? btnLoss : btnAll);
+                active.style.background = filter === 'gain' ? 'rgba(63, 185, 80, 0.25)' : (filter === 'loss' ? 'rgba(248, 81, 73, 0.25)' : '#238636');
+                active.style.color = filter === 'gain' ? '#3fb950' : (filter === 'loss' ? '#f85149' : '#ffffff');
+                active.style.borderColor = filter === 'gain' ? '#3fb950' : (filter === 'loss' ? '#f85149' : 'rgba(255,255,255,0.2)');
+                active.style.fontWeight = '800';
+            }
+            renderFollowerActivityLogTable();
+        }
+
+        function filterFollowerLogTable() {
+            renderFollowerActivityLogTable();
+        }
+
+        function clearFollowerActivityLog() {
+            if (confirm('Clear all recorded follower activity history?')) {
+                followerActivityLog = [];
+                try { localStorage.removeItem('follower_activity_log'); } catch(e) {}
+                renderFollowerActivityLogTable();
+            }
+        }
+
+        function exportFollowerActivityLogCSV() {
+            if (!followerActivityLog || followerActivityLog.length === 0) {
+                alert('No follower activity entries to export.');
+                return;
+            }
+            let csv = 'Timestamp,Date,Time,Platform,Metric,Type,Delta,OldCount,NewCount\n';
+            followerActivityLog.forEach(row => {
+                csv += `"${row.timestamp}","${row.dateStr}","${row.timeStr}","${row.platform}","${row.unit}","${row.type}","${row.diff}","${row.oldVal}","${row.newVal}"\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `bdclive_follower_activity_log_${new Date().toISOString().slice(0, 10)}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        function simulateTestFollowerLog(platform = 'YouTube', diff = 1) {
+            const keyMap = {
+                'YouTube': 'ytSub',
+                'Twitch': 'twitchFol',
+                'Instagram': 'igFol',
+                'TikTok': 'ttFol',
+                'Threads': 'threadsFol',
+                'Snapchat': 'snapFol',
+                'Facebook': 'fbPage',
+                'Bluesky': 'bskyFol',
+                'X': 'xFol'
+            };
+            const metricKey = keyMap[platform] || 'ytSub';
+            const oldVal = _prevFollowerMetrics[metricKey] || 1000;
+            const newVal = oldVal + diff;
+            _prevFollowerMetrics[metricKey] = newVal;
+            
+            const elMap = {
+                'ytSub': 'yt-sub-num',
+                'twitchFol': 'twitch-fol-num',
+                'igFol': 'ig-fol-num',
+                'ttFol': 'tt-fol-num',
+                'threadsFol': 'threads-fol-num',
+                'snapFol': 'snap-fol-num',
+                'fbPage': 'fb-page-num',
+                'bskyFol': 'bsky-num',
+                'xFol': 'x-fol-num'
+            };
+            const elId = elMap[metricKey] || 'grand-total-fol-num';
+            const badge = diff > 0 ? `+${diff} Just Now` : `${diff} Just Now`;
+            flashFollowerPulse(elId, diff > 0 ? 'gain' : 'loss', null, badge);
+            playFollowerSound(diff > 0 ? 'gain' : 'loss');
+            recordFollowerActivityEvent(metricKey, diff, oldVal, newVal, false, platform);
+        }
+
+        function renderFollowerActivityLogTable() {
+            const tbody = document.getElementById('follower-activity-log-table-body');
+            const totalGainsEl = document.getElementById('log-total-gains');
+            const totalLossesEl = document.getElementById('log-total-losses');
+            const netDeltaEl = document.getElementById('log-net-delta');
+            const totalEventsEl = document.getElementById('log-total-events');
+            if (!tbody) return;
+
+            const searchVal = ((document.getElementById('log-search-input')?.value) || '').toLowerCase().trim();
+
+            let totalGains = 0;
+            let totalLosses = 0;
+
+            followerActivityLog.forEach(item => {
+                if (item.diff > 0) totalGains += item.diff;
+                else if (item.diff < 0) totalLosses += Math.abs(item.diff);
+            });
+
+            if (totalGainsEl) totalGainsEl.innerText = `+${fNum(totalGains)}`;
+            if (totalLossesEl) totalLossesEl.innerText = `-${fNum(totalLosses)}`;
+            if (netDeltaEl) {
+                const net = totalGains - totalLosses;
+                netDeltaEl.innerText = net > 0 ? `+${fNum(net)}` : (net < 0 ? `-${fNum(Math.abs(net))}` : '0');
+                netDeltaEl.style.color = net > 0 ? '#3fb950' : (net < 0 ? '#f85149' : '#58a6ff');
+            }
+            if (totalEventsEl) totalEventsEl.innerText = fNum(followerActivityLog.length);
+
+            let filtered = followerActivityLog.filter(item => {
+                if (currentLogFilter === 'gain' && item.type !== 'gain') return false;
+                if (currentLogFilter === 'loss' && item.type !== 'loss') return false;
+                if (searchVal) {
+                    const match = item.platform.toLowerCase().includes(searchVal) ||
+                                  item.unit.toLowerCase().includes(searchVal) ||
+                                  item.timeStr.toLowerCase().includes(searchVal) ||
+                                  item.deltaStr.toLowerCase().includes(searchVal);
+                    if (!match) return false;
+                }
+                return true;
+            });
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 30px; color: #8b949e;">
+                            <i class="fa-solid fa-bell-slash" style="font-size: 24px; opacity: 0.5; margin-bottom: 8px; display: block;"></i>
+                            No follower changes recorded yet.<br>
+                            <span style="font-size: 10px; opacity: 0.7;">Click <strong>✨ Test Gain (+1)</strong> or <strong>🔻 Test Loss (-1)</strong> above to preview live activity logging!</span>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = filtered.map(item => {
+                const isGain = item.type === 'gain';
+                const badgeBg = isGain ? 'rgba(63, 185, 80, 0.18)' : 'rgba(248, 81, 73, 0.18)';
+                const badgeColor = isGain ? '#3fb950' : '#f85149';
+                const badgeBorder = isGain ? 'rgba(63, 185, 80, 0.4)' : 'rgba(248, 81, 73, 0.4)';
+
+                const timeAgoSecs = Math.floor((Date.now() - item.timestamp) / 1000);
+                let timeAgoStr = 'Just Now';
+                if (timeAgoSecs >= 60) {
+                    const mins = Math.floor(timeAgoSecs / 60);
+                    timeAgoStr = `${mins}m ago`;
+                    if (mins >= 60) {
+                        const hrs = Math.floor(mins / 60);
+                        timeAgoStr = `${hrs}h ago`;
+                    }
+                }
+
+                return `
+                    <tr style="border-bottom: 1px solid rgba(255,255,255,0.06); transition: background 0.2s ease;">
+                        <td style="padding: 10px 12px; white-space: nowrap;">
+                            <div style="font-weight: 700; color: #ffffff; font-size: 11.5px;">${item.timeStr}</div>
+                            <div style="color: #8b949e; font-size: 10px;">${item.dateStr} • <span style="color: #58a6ff;">${timeAgoStr}</span></div>
+                        </td>
+                        <td style="padding: 10px 10px;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 16px;">${item.icon}</span>
+                                <div>
+                                    <div style="font-weight: 800; color: #ffffff; font-size: 12px;">${item.platform}</div>
+                                    <div style="color: #8b949e; font-size: 10px;">Metric: ${item.unit}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td style="padding: 10px 10px; text-align: center;">
+                            <span style="background: ${badgeBg}; color: ${badgeColor}; border: 1px solid ${badgeBorder}; padding: 3px 10px; border-radius: 6px; font-weight: 900; font-size: 12px; display: inline-flex; align-items: center; gap: 4px;">
+                                ${isGain ? '▲' : '▼'} ${item.deltaStr}
+                            </span>
+                        </td>
+                        <td style="padding: 10px 10px; white-space: nowrap;">
+                            <div style="font-size: 11.5px; color: #8b949e;">
+                                ${fNum(item.oldVal)} ➔ <strong style="color: ${badgeColor}; font-size: 12.5px;">${fNum(item.newVal)}</strong>
+                            </div>
+                        </td>
+                        <td style="padding: 10px 12px; text-align: right;">
+                            <button onclick="simulateTestFollowerLog('${item.platform}', ${isGain ? 1 : -1})" style="background: rgba(255,255,255,0.06); color: #8b949e; border: 1px solid rgba(255,255,255,0.1); padding: 4px 8px; border-radius: 6px; font-size: 10px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 3px; transition: all 0.2s ease;">
+                                Re-test <i class="fa-solid fa-rotate-right" style="font-size: 9px;"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function flashFollowerPulse(elementId, type = 'gain', customColor = null, deltaBadgeText = null) {
             const el = document.getElementById(elementId);
             if (!el) return;
             
@@ -1073,17 +1492,39 @@
             
             const pulseColor = customColor || (type === 'gain' ? '#3fb950' : '#f85149');
             const shadowColor = type === 'gain' ? 'rgba(63, 185, 80, 0.95)' : 'rgba(248, 81, 73, 0.95)';
-            const scaleVal = type === 'gain' ? '1.20' : '0.94';
+            const scaleVal = type === 'gain' ? '1.22' : '0.92';
             
-            el.style.transition = 'transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.25s ease, text-shadow 0.25s ease';
+            el.style.transition = 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.3s ease, text-shadow 0.3s ease';
             el.style.transform = `scale(${scaleVal})`;
             el.style.color = pulseColor;
-            el.style.textShadow = `0 0 16px ${shadowColor}`;
+            el.style.textShadow = `0 0 20px ${shadowColor}`;
             
             const parentBox = el.closest('.counter-item') || el.parentElement;
             if (parentBox) {
                 parentBox.style.transition = 'box-shadow 0.3s ease, border-color 0.3s ease';
-                parentBox.style.boxShadow = `0 0 20px ${type === 'gain' ? 'rgba(63, 185, 80, 0.35)' : 'rgba(248, 81, 73, 0.35)'}`;
+                parentBox.style.boxShadow = `0 0 24px ${type === 'gain' ? 'rgba(63, 185, 80, 0.45)' : 'rgba(248, 81, 73, 0.45)'}`;
+                
+                // Add or update persistent "Just Updated" floating badge on the card
+                let badge = parentBox.querySelector('.card-recent-change-badge');
+                if (!badge) {
+                    badge = document.createElement('div');
+                    badge.className = 'card-recent-change-badge';
+                    badge.style.cssText = 'position: absolute; top: -8px; right: 12px; font-size: 9px; font-weight: 800; padding: 2px 7px; border-radius: 6px; z-index: 10; pointer-events: none; transition: all 0.3s ease;';
+                    parentBox.appendChild(badge);
+                }
+                const bText = deltaBadgeText || (type === 'gain' ? '+1 Just Now' : '-1 Just Now');
+                badge.innerText = bText;
+                badge.style.background = type === 'gain' ? '#238636' : '#da3633';
+                badge.style.color = '#ffffff';
+                badge.style.boxShadow = `0 0 10px ${type === 'gain' ? 'rgba(63, 185, 80, 0.6)' : 'rgba(248, 81, 73, 0.6)'}`;
+                badge.style.display = 'block';
+                badge.style.opacity = '1';
+
+                if (parentBox._badgeTimer) clearTimeout(parentBox._badgeTimer);
+                parentBox._badgeTimer = setTimeout(() => {
+                    badge.style.opacity = '0';
+                    setTimeout(() => { if (badge) badge.style.display = 'none'; }, 300);
+                }, 45000);
             }
             
             setTimeout(() => {
@@ -1093,7 +1534,7 @@
                 if (parentBox) {
                     parentBox.style.boxShadow = '';
                 }
-            }, 2000);
+            }, 3500);
         }
 
         function updateMetricAndFlash(elementId, metricKey, newVal, isView = false) {
@@ -1105,12 +1546,15 @@
 
             if (_isFollowersInitialLoadComplete && oldVal !== undefined && oldVal !== null && oldVal !== newVal) {
                 const diff = newVal - oldVal;
+                const deltaBadge = diff > 0 ? `+${diff} Just Now` : `${diff} Just Now`;
                 if (diff > 0) {
-                    flashFollowerPulse(elementId, 'gain', isView ? '#00d2ff' : '#3fb950');
+                    flashFollowerPulse(elementId, 'gain', isView ? '#00d2ff' : '#3fb950', deltaBadge);
                     playFollowerSound(isView ? 'views_gain' : 'gain');
+                    recordFollowerActivityEvent(metricKey, diff, oldVal, newVal, isView);
                 } else if (diff < 0) {
-                    flashFollowerPulse(elementId, 'loss', '#f85149');
+                    flashFollowerPulse(elementId, 'loss', '#f85149', deltaBadge);
                     playFollowerSound('loss');
+                    recordFollowerActivityEvent(metricKey, diff, oldVal, newVal, isView);
                 }
             }
             _prevFollowerMetrics[metricKey] = newVal;
@@ -1195,7 +1639,7 @@
                 setTimeout(() => {
                     const el = document.getElementById(id);
                     if (!el) return;
-                    flashFollowerPulse(id, type);
+                    flashFollowerPulse(id, type, null, type === 'gain' ? '+1 Test' : '-1 Test');
                     
                     const curText = (el.innerText || '').replace(/,/g, '');
                     const curNum = parseInt(curText, 10);
@@ -1204,7 +1648,7 @@
                         el.innerText = fNum(testVal);
                         setTimeout(() => {
                             el.innerText = fNum(curNum);
-                        }, 2200);
+                        }, 3500);
                     }
                 }, idx * 120);
             });
@@ -1216,6 +1660,14 @@
         window.toggleFollowerSound = toggleFollowerSound;
         window.updateFollowerSoundUI = updateFollowerSoundUI;
         window.testFollowerGlow = testFollowerGlow;
+        window.openFollowerActivityLogModal = openFollowerActivityLogModal;
+        window.closeFollowerActivityLogModal = closeFollowerActivityLogModal;
+        window.renderFollowerActivityLogTable = renderFollowerActivityLogTable;
+        window.clearFollowerActivityLog = clearFollowerActivityLog;
+        window.exportFollowerActivityLogCSV = exportFollowerActivityLogCSV;
+        window.simulateTestFollowerLog = simulateTestFollowerLog;
+        window.setFollowerLogFilter = setFollowerLogFilter;
+        window.filterFollowerLogTable = filterFollowerLogTable;
         updateFollowerSoundUI();
 
         setTimeout(() => {
@@ -1639,10 +2091,10 @@
             const cBDCF = safeNum(t.The_BDCF_Crew_count);
             const cWOS = safeNum(t.WOS_count);
 
-            const dynamicSubTotal = cDiva + cUpdate + cTheater + cMyTasks + cBDCF + cWOS;
-            const totalTasks = safeNum(t.Task_count) > 0 ? safeNum(t.Task_count) : dynamicSubTotal;
+            // Calculate sum of ONLY the categories displayed in this widget box
+            const displayedCategoriesTotal = cDiva + cUpdate + cTheater + cMyTasks + cBDCF + cWOS;
             
-            updateMetricAndFlash('task-k1', 'task_total', totalTasks);
+            updateMetricAndFlash('task-k1', 'task_displayed_total', displayedCategoriesTotal);
             updateMetricAndFlash('task-k2', 'task_diva', cDiva);
             updateMetricAndFlash('task-k3', 'task_update', cUpdate);
             updateMetricAndFlash('task-k4', 'task_theater', cTheater);
@@ -1992,7 +2444,7 @@
         });
 
         const DEFAULT_GH_REPOS = [
-            { name: "BDClive", owner: "bdclive", fullName: "bdclive/BDClive", htmlUrl: "https://github.com/bdclive/BDClive", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "BDC Live Central Command Dashboard", latestCommit: "v10.2.116 : Added Google Tasks 13-category live breakdown modal and inspector" },
+            { name: "BDClive", owner: "bdclive", fullName: "bdclive/BDClive", htmlUrl: "https://github.com/bdclive/BDClive", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "BDC Live Central Command Dashboard", latestCommit: "v10.2.117 : Added Follower Activity Log, persistent change badge, and Tasks box total fix" },
             { name: "wosBDC.github.io", owner: "wosbdc", fullName: "wosbdc/wosBDC.github.io", htmlUrl: "https://github.com/wosbdc/wosBDC.github.io", pushedAt: new Date(Date.now() - 3600000 * 1.5).toISOString(), defaultBranch: "main", description: "WOS BDC Web Application", latestCommit: "v2.9.86 : Dynamic real-time synchronization for all dropdown filter options and action button counters" },
             { name: "DasherTracker.github.io", owner: "DasherTracker", fullName: "DasherTracker/DasherTracker.github.io", htmlUrl: "https://github.com/DasherTracker/DasherTracker.github.io", pushedAt: new Date(Date.now() - 3600000 * 3.5).toISOString(), defaultBranch: "main", description: "Dasher Tracker Portal", latestCommit: "Production sync" },
             { name: "theBDCFcrew.github.io", owner: "theBDCFcrew", fullName: "theBDCFcrew/theBDCFcrew.github.io", htmlUrl: "https://github.com/theBDCFcrew/theBDCFcrew.github.io", pushedAt: new Date(Date.now() - 86400000).toISOString(), defaultBranch: "main", description: "The BDCF Crew Portal", latestCommit: "Production sync" },
@@ -2183,7 +2635,7 @@
             }
         }
 
-        const CURRENT_APP_VERSION = 'v10.2.116';
+        const CURRENT_APP_VERSION = 'v10.2.117';
         let isDeployingLive = false;
         let pendingRemoteVersion = null;
         let autoRefreshTimer = null;
@@ -4522,6 +4974,8 @@
                     activeModal = 'counterAuditModal';
                 } else if (hash === '#tasks' || hash === '#tasksbreakdownmodal' || urlParams.get('modal') === 'tasks') {
                     activeModal = 'tasksBreakdownModal';
+                } else if (hash === '#followerlog' || hash === '#activitylog' || urlParams.get('modal') === 'followerlog') {
+                    activeModal = 'followerActivityLogModal';
                 }
 
                 if (!activeModal) return;
@@ -4540,6 +4994,8 @@
                         openCourt();
                     } else if (activeModal === 'tasksBreakdownModal' && typeof openTasksBreakdownModal === 'function') {
                         openTasksBreakdownModal();
+                    } else if (activeModal === 'followerActivityLogModal' && typeof openFollowerActivityLogModal === 'function') {
+                        openFollowerActivityLogModal();
                     }
                 }, 350);
             } catch(e) {}
@@ -4555,6 +5011,7 @@
             const ctM = document.getElementById('courtModal');
             const thM = document.getElementById('theaterModal');
             const tbM = document.getElementById('tasksBreakdownModal');
+            const flM = document.getElementById('followerActivityLogModal');
             if (e.target === gkM) closeGatekeeperModal();
             if (e.target === tkM) closeTicketAlertsModal();
             if (e.target === caM) closeCounterAuditModal();
@@ -4562,6 +5019,7 @@
             if (e.target === ctM) closeCourt();
             if (e.target === thM) closeTheater();
             if (e.target === tbM) closeTasksBreakdownModal();
+            if (e.target === flM) closeFollowerActivityLogModal();
         });
 
         // Global Escape Key Listener for Modals
@@ -4574,6 +5032,7 @@
                 closeCourt();
                 closeTheater();
                 closeTasksBreakdownModal();
+                closeFollowerActivityLogModal();
             }
         });
 
