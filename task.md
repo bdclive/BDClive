@@ -1,11 +1,13 @@
-## ✅ Completed: Grand Totals Header Options Menu Cleanup (v10.2.118)
-- [x] Create project backup archive (`backups/Grand_Totals_Options_Menu_v10.2.118_backup.zip`)
-- [x] Clean up Grand Totals Box Header:
-  - Replace 4 cluttered horizontal buttons with a unified, sleek `⚙️ Options ▾` dropdown menu
-  - Embed items for: Follower Activity Log, 9-Platform Glow Test, Sound/Chimes Toggle, and Health & Audit
-  - Style dropdown with frosted dark theme, hover accents, and auto-dismiss on outside clicks
+## ✅ Completed: GitHub Pipeline Live Stream Restoration (v10.2.119)
+- [x] Create project backup archive (`backups/Github_Pipeline_Restoration_v10.2.119_backup.zip`)
+- [x] Fix GitHub Pipeline Ticker and Display Engine:
+  - Upgrade `getActiveRepositories()` to never drop active repos (prioritize in-progress/queued/failed, then 48h recency, with full fallback to all tracked repos)
+  - Ensure Firebase `labData/githubPipeline` real-time WebSocket pushes cleanly merge all 14 repositories
+  - Update `getTimeAgeTheme()` to handle modern time brackets (`<15M`, `<30M`, `<1H`, `<12H`, `TODAY`, `LIVE`)
+  - Ensure `allGithubRepos` is populated with latest commit messages and deployment statuses on startup
+  - Fix modal and badge counts so `Uploaded:` shows active/tracked count
 - [x] Automated Pre-Delivery Verification Script testing (0 errors)
-- [x] Synchronize `CURRENT_APP_VERSION = 'v10.2.118'` across `index.html`, `New.html`, `web_dashboards/New.html`
+- [x] Synchronize `CURRENT_APP_VERSION = 'v10.2.119'` across `index.html`, `New.html`, `web_dashboards/New.html`
 - [x] Bump `VERSION.json` & `sw.js` cache name
 - [x] Update `CHANGELOG.md` with App Store style release notes (<= 10 words per bullet)
 - [x] Commit and push to GitHub (`origin main`)

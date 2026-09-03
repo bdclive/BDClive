@@ -14,11 +14,11 @@
       "cliFile": "Threads_Bridge/threads_bridge_cli_v1.0.59_(terminal).py"
     },
     "bdclive_web_dashboard": {
-      "version": "10.2.118",
+      "version": "10.2.119",
       "repository": "https://github.com/bdclive/BDClive",
       "latestChanges": [
-        "v10.2.118: Cleaned up Grand Totals header with sleek Options dropdown menu",
-        "v10.2.117: Added Follower Activity Log, persistent change badge, and Tasks box total fix"
+        "v10.2.119: Restored real-time GitHub Pipeline live stream engine",
+        "v10.2.118: Cleaned up Grand Totals header with sleek Options dropdown menu"
       ]
     },
     "wosbdc_alliance_dashboard": {

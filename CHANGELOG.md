@@ -1,3 +1,8 @@
+## [10.2.119] - 2026-09-03
+- Restored real-time GitHub Pipeline WebSocket stream and live ticker.
+- Prevented idle pipeline states by displaying all tracked repositories.
+- Upgraded multi-organization discovery including BDCvault, bdclive, and wosbdc.
+
 ## [10.2.118] - 2026-09-03
 - Replaced cluttered Grand Totals buttons with clean Options dropdown.
 - Unified Follower Log, Glow Test, and Audio controls.
