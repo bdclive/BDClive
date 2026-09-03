@@ -937,13 +937,7 @@ async function updateDiscordGatekeeperReport() {
       return tb - ta;
     });
 
-    const recentSignups = sortedUsers.slice(0, 3).map(u => {
-      const cname = u.name || u.chiefName || 'Chief';
-      const icon = cname.toLowerCase().includes('brian') ? '👑' : (cname.toLowerCase().includes('thadwarf') ? '⚔️' : '🛡️');
-      return `• ${icon} **${cname}**`;
-    });
-
-    const defaultRoster = `🛡️ **ALLIANCE ROSTER & VERIFICATION**\n• 👥 **Total Members:** ${totalMembers} Chiefs\n• 📈 **New Joins Today:** +${newToday}  |  **Past 7 Days:** +${Math.max(new7d, 3)}\n• 🔒 **Unclaimed Ratio:** ${unclaimed}/${totalMembers}\n• ⚡ **Active Sync:** ${verifiedCount} Active  |  ${expiredCount} Expired`;
+    const defaultRoster = `🛡️ **ALLIANCE ROSTER & VERIFICATION**\n• 👥 **Total Members:** ${totalMembers} Chiefs\n• 📈 **New Joins Today:** +${newToday}  |  **Past 7 Days:** +${new7d}\n• 🔒 **Unclaimed Ratio:** ${unclaimed}/${totalMembers}\n• ⚡ **Active Sync:** ${verifiedCount} Active  |  ${expiredCount} Expired`;
     const sRoster = savedCfg.customRosterText || defaultRoster;
 
     // Upgrades Section
@@ -964,7 +958,33 @@ async function updateDiscordGatekeeperReport() {
     }
     const sUpgrades = savedCfg.customUpgradesText || defaultUpgrades;
 
-    const defaultSignups = `👥 **RECENT MEMBER SIGNUPS**\n` + (recentSignups.length ? recentSignups.join('\n') : `• 👑 **BrianDCox**\n• ⚔️ **thadwarf**\n• 🛡️ **Chief 318843189**`);
+    // Signups Section (Dynamic 30-day recency filter)
+    const thirtyDaysAgo = now - (30 * 86400000);
+    const recentSignups = [];
+    for (const u of sortedUsers) {
+      if (u.createdAt) {
+        try {
+          const t = new Date(u.createdAt).getTime();
+          if (t >= thirtyDaysAgo) {
+            recentSignups.push({ t, u });
+          }
+        } catch(e) {}
+      }
+    }
+    recentSignups.sort((a, b) => b.t - a.t);
+
+    let defaultSignups = '';
+    if (recentSignups.length) {
+      const lines = recentSignups.slice(0, 3).map(item => {
+        const cname = item.u.name || item.u.chiefName || 'Chief';
+        const icon = cname.toLowerCase().includes('brian') ? '👑' : (cname.toLowerCase().includes('thadwarf') ? '⚔️' : '🛡️');
+        const dStr = new Date(item.t).toUTCString().slice(8, 16);
+        return `• ${icon} **${cname}** *(${dStr})*`;
+      });
+      defaultSignups = `👥 **RECENT MEMBER SIGNUPS (+${recentSignups.length})**\n` + lines.join('\n');
+    } else {
+      defaultSignups = `👥 **ALLIANCE MEMBER STABILITY**\n• 🛡️ **Status:** Roster stable (0 new signups in past 30 days)\n• 👑 **Alliance Core:** ${totalMembers} verified Chiefs on roster`;
+    }
     const sSignups = savedCfg.customSignupsText || defaultSignups;
 
     const activeCodes = Object.values(history).filter(c => c && c.status === 'active');
