@@ -69,6 +69,10 @@
 - Updated podium vehicle to Declasse Impaler SZ.
 - Updated LS Car Meet prize ride to Karin Woodlander.
 - Added automatic cloud refresh on Thursday rollover detection.
+- Filtered banned and departed members across all systems.
+- Excluded banned accounts from maintenance sweeps and audits.
+- Excluded banned accounts from Gatekeeper reports and upgrades.
+- Purged ghost duplicate numeric entries from live roster.
 - Deployed Central Command v1.1.00 across all systems.
 
 ## [1.0.99] - 2026-09-02
