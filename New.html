@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BDC LIVE v10.2.119</title>
+    <title>BDC LIVE v10.2.120</title>
     <!-- Open Graph & Social Preview Meta Tags -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="BDC LIVE v10.2.119">
+    <meta property="og:title" content="BDC LIVE v10.2.120">
     <meta property="og:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="og:image" content="./bdclive_banner.jpg">
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="BDC LIVE v10.2.119">
+    <meta property="twitter:title" content="BDC LIVE v10.2.120">
     <meta property="twitter:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="twitter:image" content="./bdclive_banner.jpg">
     <!-- PWA Manifest & Mobile Web App Meta Tags -->
@@ -222,9 +222,20 @@
             </div>
         </div>
 
-        <div class="counter-item mirror-box" id="twitch-box" onclick="openTwitch()" style="border-top: 3px solid var(--twitch-purple); cursor: pointer; grid-area: 1 / 3;">
+        <div class="counter-item mirror-box" id="twitch-box" onclick="openTwitch('briandivacox')" style="border-top: 3px solid var(--twitch-purple); cursor: pointer; grid-area: 1 / 3;">
             <i class="fa-brands fa-twitch box-logo" style="color:var(--twitch-purple);"></i>
-            <div><p class="mirror-label" style="color:var(--twitch-purple);">🟣 Followers</p><div id="twitch-fol-num" class="mirror-stat" style="font-size: 2.5rem;">---</div></div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; padding-right: 28px;">
+                <p class="mirror-label" style="color:var(--twitch-purple);">🟣 Followers</p>
+                <div style="display: flex; gap: 4px;">
+                    <button onclick="event.stopPropagation(); openTwitch('briandivacox');" style="background: rgba(145, 70, 255, 0.18); color: #c084fc; border: 1px solid rgba(145, 70, 255, 0.4); border-radius: 4px; padding: 1.5px 6px; font-size: 8px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 3px; transition: all 0.2s ease;" title="Open BrianDivaCox Twitch Studio">
+                        <i class="fa-solid fa-crown" style="font-size: 7px;"></i> Mine
+                    </button>
+                    <button onclick="event.stopPropagation(); openTwitch('javaggz');" style="background: rgba(0, 210, 255, 0.15); color: #00d2ff; border: 1px solid rgba(0, 210, 255, 0.35); border-radius: 4px; padding: 1.5px 6px; font-size: 8px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 3px; transition: all 0.2s ease;" title="Open Javaggz Twitch Studio">
+                        <i class="fa-solid fa-bolt" style="font-size: 7px;"></i> Java
+                    </button>
+                </div>
+            </div>
+            <div><div id="twitch-fol-num" class="mirror-stat" style="font-size: 2.3rem;">---</div></div>
             <div class="mirror-row">
                 <div><p class="mirror-label">🎬 Viewers</p><div id="twitch-view-num" class="mirror-stat">0</div></div>
                 <div><p class="mirror-label">💬 Chatters<span id="chat-alert-dot" class="notification-dot"></span></p><div id="twitch-chatter-num" class="mirror-stat">0</div></div>
@@ -2525,7 +2536,7 @@
         });
 
         const DEFAULT_GH_REPOS = [
-            { name: "BDClive", owner: "bdclive", fullName: "bdclive/BDClive", htmlUrl: "https://github.com/bdclive/BDClive", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "BDC Live Central Command Dashboard", latestCommit: "v10.2.119 : Restored real-time GitHub Pipeline live stream engine" },
+            { name: "BDClive", owner: "bdclive", fullName: "bdclive/BDClive", htmlUrl: "https://github.com/bdclive/BDClive", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "BDC Live Central Command Dashboard", latestCommit: "v10.2.120 : Upgraded Twitch Studio Deck with multi-channel support for Brian & Javaggz" },
             { name: "BDCvault.github.io", owner: "BDCvault", fullName: "BDCvault/BDCvault.github.io", htmlUrl: "https://github.com/BDCvault/BDCvault.github.io", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "BDC Vault Web Application", latestCommit: "v4.8.0 : Added 1-click Automated Financial Engines and APR interest bot", actionStatus: "completed", actionConclusion: "success", actionName: "💎 BDC Vault Web App Deployment & Release" },
             { name: "wosBDC.github.io", owner: "wosbdc", fullName: "wosbdc/wosBDC.github.io", htmlUrl: "https://github.com/wosbdc/wosBDC.github.io", pushedAt: new Date(Date.now() - 3600000 * 1.5).toISOString(), defaultBranch: "main", description: "WOS BDC Web Application", latestCommit: "v2.9.86 : Dynamic real-time synchronization for all dropdown filter options and action button counters" },
             { name: "DasherTracker.github.io", owner: "DasherTracker", fullName: "DasherTracker/DasherTracker.github.io", htmlUrl: "https://github.com/DasherTracker/DasherTracker.github.io", pushedAt: new Date(Date.now() - 3600000 * 3.5).toISOString(), defaultBranch: "main", description: "Dasher Tracker Portal", latestCommit: "Production sync" },
@@ -2725,7 +2736,7 @@
             }
         }
 
-        const CURRENT_APP_VERSION = 'v10.2.119';
+        const CURRENT_APP_VERSION = 'v10.2.120';
         let isDeployingLive = false;
         let pendingRemoteVersion = null;
         let autoRefreshTimer = null;
@@ -5071,7 +5082,12 @@
             document.getElementById('theater-player').src = ""; 
             document.getElementById('theaterModal').style.display = "none"; 
         }
-        function openTwitch() { window.open(`Live.html?host=${window.location.hostname}`, 'TwitchStudio', `width=1480,height=820`); }
+        function openTwitch(channel = 'briandivacox') { 
+            const host = window.location.hostname || 'localhost';
+            window.open(`Live.html?channel=${encodeURIComponent(channel)}&host=${encodeURIComponent(host)}`, `TwitchStudio_${channel}`, `width=1480,height=820`); 
+        }
+        window.openTwitch = openTwitch;
+
         async function getBsky() { 
             try { 
                 const r = await fetch('https://public.api.bsky.app/xrpc/app.bsky.actor.getProfile?actor=briandivacox.bsky.social'); 

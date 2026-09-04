@@ -1,13 +1,15 @@
-## ✅ Completed: GitHub Pipeline Live Stream Restoration (v10.2.119)
-- [x] Create project backup archive (`backups/Github_Pipeline_Restoration_v10.2.119_backup.zip`)
-- [x] Fix GitHub Pipeline Ticker and Display Engine:
-  - Upgrade `getActiveRepositories()` to never drop active repos (prioritize in-progress/queued/failed, then 48h recency, with full fallback to all tracked repos)
-  - Ensure Firebase `labData/githubPipeline` real-time WebSocket pushes cleanly merge all 14 repositories
-  - Update `getTimeAgeTheme()` to handle modern time brackets (`<15M`, `<30M`, `<1H`, `<12H`, `TODAY`, `LIVE`)
-  - Ensure `allGithubRepos` is populated with latest commit messages and deployment statuses on startup
-  - Fix modal and badge counts so `Uploaded:` shows active/tracked count
+## ✅ Completed: Twitch Studio Deck & Java Popups Upgrade (v10.2.120)
+- [x] Create project backup archive (`backups/Twitch_Studio_Java_Restoration_v10.2.120_backup.zip`)
+- [x] Overhaul `Live.html` Broadcast Studio Deck:
+  - Add dynamic Twitch parent domain resolver supporting `bdclive.github.io`, `briandivacox.github.io`, `localhost`, `127.0.0.1`, and query param `?host=`
+  - Add multi-channel switcher tabs in header: `Mine (briandivacox)`, `Javaggz (javaggz)`, and `Dual Stream`
+  - Add dual-stream mode with split player view and channel-switchable live chat
+  - Add quick action buttons: direct Twitch.tv external link and instant reload
+- [x] Create dedicated `Live_Java.html` and `Java.html` default-configured for Javaggz
+- [x] Add 1-click `Mine` and `Java` launch buttons in Dashboard Twitch box (`#twitch-box`)
 - [x] Automated Pre-Delivery Verification Script testing (0 errors)
-- [x] Synchronize `CURRENT_APP_VERSION = 'v10.2.119'` across `index.html`, `New.html`, `web_dashboards/New.html`
+- [x] Synchronize `CURRENT_APP_VERSION = 'v10.2.120'` across `index.html`, `New.html`, `web_dashboards/New.html`
+- [x] Sync `Live.html`, `Live_Java.html`, `Java.html` to `web_dashboards/`
 - [x] Bump `VERSION.json` & `sw.js` cache name
 - [x] Update `CHANGELOG.md` with App Store style release notes (<= 10 words per bullet)
 - [x] Commit and push to GitHub (`origin main`)

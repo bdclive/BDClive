@@ -1,3 +1,9 @@
+## [10.2.120] - 2026-09-03
+- Fixed Twitch popup embed restrictions for bdclive.github.io domain.
+- Added multi-channel studio switcher supporting BrianDivaCox and Javaggz.
+- Created dedicated Live_Java broadcast deck with dual stream view.
+- Added 1-click Mine and Java launch buttons on dashboard.
+
 ## [10.2.119] - 2026-09-03
 - Restored real-time GitHub Pipeline WebSocket stream and live ticker.
 - Prevented idle pipeline states by displaying all tracked repositories.
