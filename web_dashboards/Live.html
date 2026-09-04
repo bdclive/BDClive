@@ -6,75 +6,198 @@
     <title>Live Broadcast Studio Deck</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
+        :root {
+            --twitch-purple: #9146FF;
+            --twitch-dark: #0d1117;
+            --twitch-card: #161b22;
+            --twitch-border: #30363d;
+            --java-color: #00d2ff;
+        }
         body {
-            font-family: 'Segoe UI', sans-serif;
-            background-color: #0d1117;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--twitch-dark);
             color: #ffffff;
             margin: 0;
-            padding: 15px;
-            height: calc(100vh - 30px);
+            padding: 12px 16px;
+            height: calc(100vh - 24px);
             overflow: hidden;
             display: flex;
             flex-direction: column;
+            box-sizing: border-box;
         }
         .studio-header {
             display: flex;
             align-items: center;
-            justify-content: space-between; /* Pushes the version label to the far right */
-            padding-bottom: 12px;
-            border-bottom: 1px solid #30363d;
-            margin-bottom: 15px;
+            justify-content: space-between;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--twitch-border);
+            margin-bottom: 12px;
+            flex-shrink: 0;
+            gap: 12px;
+            flex-wrap: wrap;
         }
         .header-title-area {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
         .studio-header h3 {
             margin: 0;
-            color: #9146FF;
-            font-size: 16px;
+            color: #ffffff;
+            font-size: 15px;
             letter-spacing: 0.5px;
-            text-transform: uppercase;
             font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
-        .version-tag {
-            font-size: 11px;
+        .channel-switcher-bar {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(22, 27, 34, 0.9);
+            padding: 3px 5px;
+            border-radius: 8px;
+            border: 1px solid var(--twitch-border);
+        }
+        .chan-tab-btn {
+            background: transparent;
             color: #8b949e;
-            font-weight: bold;
-            background: #161b22;
-            padding: 3px 8px;
+            border: 1px solid transparent;
             border-radius: 6px;
-            border: 1px solid #30363d;
+            padding: 4px 10px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s ease;
+        }
+        .chan-tab-btn:hover {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .chan-tab-btn.active-mine {
+            background: rgba(145, 70, 255, 0.2);
+            color: #c084fc;
+            border-color: rgba(145, 70, 255, 0.5);
+            box-shadow: 0 0 10px rgba(145, 70, 255, 0.25);
+        }
+        .chan-tab-btn.active-java {
+            background: rgba(0, 210, 255, 0.18);
+            color: #00d2ff;
+            border-color: rgba(0, 210, 255, 0.45);
+            box-shadow: 0 0 10px rgba(0, 210, 255, 0.25);
+        }
+        .chan-tab-btn.active-dual {
+            background: linear-gradient(135deg, rgba(145, 70, 255, 0.25) 0%, rgba(0, 210, 255, 0.25) 100%);
+            color: #ffffff;
+            border-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 0 12px rgba(145, 70, 255, 0.3);
+        }
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .action-icon-btn {
+            background: #161b22;
+            color: #c9d1d9;
+            border: 1px solid var(--twitch-border);
+            padding: 5px 9px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s ease;
+        }
+        .action-icon-btn:hover {
+            color: #ffffff;
+            border-color: #8b949e;
+            background: #21262d;
         }
         .workspace-deck {
             display: flex;
-            gap: 15px;
+            gap: 12px;
             flex: 1;
             width: 100%;
-            height: calc(100% - 45px);
+            height: calc(100% - 50px);
+            min-height: 0;
+        }
+        .player-deck {
+            flex: 2.6;
+            display: flex;
+            gap: 10px;
+            height: 100%;
+            min-width: 0;
         }
         .player-container {
-            flex: 2.5;
+            flex: 1;
             background: #000;
             border-radius: 8px;
             overflow: hidden;
             height: 100%;
-            border: 1px solid #30363d;
+            border: 1px solid var(--twitch-border);
+            position: relative;
         }
         .chat-container {
-            flex: 1.3;
-            background: #1f1f23;
+            flex: 1.2;
+            background: #18181b;
             border-radius: 8px;
             overflow: hidden;
             height: 100%;
-            border: 1px solid #30363d;
+            border: 1px solid var(--twitch-border);
             position: relative;
+            display: flex;
+            flex-direction: column;
+            min-width: 320px;
+            max-width: 420px;
+        }
+        .chat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 6px 12px;
+            background: #1f1f23;
+            border-bottom: 1px solid #2d2d35;
+            font-size: 11px;
+            font-weight: 700;
+            color: #adadb8;
+            flex-shrink: 0;
+        }
+        .chat-toggle-btn {
+            background: transparent;
+            border: none;
+            color: #adadb8;
+            cursor: pointer;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        .chat-toggle-btn.active {
+            color: #ffffff;
+            background: rgba(145, 70, 255, 0.35);
         }
         iframe {
             width: 100%;
             height: 100%;
             border: none;
+            display: block;
+        }
+        .version-tag {
+            font-size: 10.5px;
+            color: #8b949e;
+            font-weight: bold;
+            background: #161b22;
+            padding: 3px 8px;
+            border-radius: 6px;
+            border: 1px solid var(--twitch-border);
         }
     </style>
 </head>
@@ -82,29 +205,215 @@
 
     <div class="studio-header">
         <div class="header-title-area">
-            <i class="fa-brands fa-twitch" style="color: #9146FF; font-size: 20px;"></i>
-            <h3>briandivacox Live Broadcast Studio</h3>
+            <i class="fa-brands fa-twitch" style="color: var(--twitch-purple); font-size: 22px;"></i>
+            <h3><span id="studio-channel-title">briandivacox</span> <span style="font-weight: 400; color: #8b949e; font-size: 12px;">Live Broadcast Studio</span></h3>
         </div>
-        <div class="version-tag">v1.0.0</div>
+
+        <!-- Channel Switcher Tabs -->
+        <div class="channel-switcher-bar">
+            <button id="tab-mine" class="chan-tab-btn active-mine" onclick="switchChannel('briandivacox')">
+                <i class="fa-solid fa-crown" style="color: #c084fc;"></i> Mine (briandivacox)
+            </button>
+            <button id="tab-java" class="chan-tab-btn" onclick="switchChannel('javaggz')">
+                <i class="fa-solid fa-bolt" style="color: #00d2ff;"></i> Javaggz (Java)
+            </button>
+            <button id="tab-dual" class="chan-tab-btn" onclick="switchChannel('dual')">
+                <i class="fa-solid fa-table-columns"></i> Dual Stream
+            </button>
+        </div>
+
+        <div class="header-actions">
+            <button class="action-icon-btn" onclick="reloadStreamFrames()" title="Reload Stream & Chat Frames">
+                <i class="fa-solid fa-rotate"></i> Reload
+            </button>
+            <a id="ext-twitch-link" href="https://www.twitch.tv/briandivacox" target="_blank" rel="noopener noreferrer" class="action-icon-btn" title="Open Stream directly on Twitch.tv">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i> Twitch.tv
+            </a>
+            <div class="version-tag">v10.2.120</div>
+        </div>
     </div>
 
+    <!-- Main Workspace Deck -->
     <div class="workspace-deck">
-        <div class="player-container">
-            <iframe id="studio-player" allowfullscreen></iframe>
+        <!-- Player Deck (Handles Single or Dual Stream) -->
+        <div class="player-deck" id="player-deck-container">
+            <!-- Primary Player -->
+            <div class="player-container" id="container-player-primary">
+                <iframe id="studio-player-primary" allowfullscreen allow="autoplay; fullscreen"></iframe>
+            </div>
+            <!-- Secondary Player (Used in Dual Mode) -->
+            <div class="player-container" id="container-player-secondary" style="display: none;">
+                <iframe id="studio-player-secondary" allowfullscreen allow="autoplay; fullscreen"></iframe>
+            </div>
         </div>
-        <div class="chat-container">
-            <iframe id="studio-chat" style="position: absolute; top: 0; left: 0;"></iframe>
+
+        <!-- Chat Container -->
+        <div class="chat-container" id="studio-chat-wrapper">
+            <div class="chat-header">
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <i class="fa-regular fa-comment-dots" style="color: #9146FF;"></i>
+                    <span id="chat-channel-label">Stream Chat</span>
+                </div>
+                <div id="dual-chat-toggles" style="display: none; gap: 4px;">
+                    <button id="chat-toggle-mine" class="chat-toggle-btn active" onclick="switchChatChannel('briandivacox')">Mine</button>
+                    <button id="chat-toggle-java" class="chat-toggle-btn" onclick="switchChatChannel('javaggz')">Java</button>
+                </div>
+            </div>
+            <div style="flex: 1; position: relative;">
+                <iframe id="studio-chat" style="position: absolute; top: 0; left: 0;"></iframe>
+            </div>
         </div>
     </div>
 
     <script>
-        const p1 = "briandivacox.github.io";
-        const p2 = "livecounters.nicepage.io";
-        const p3 = "localhost";
+        // Supported Channels
+        const CHANNELS = {
+            'briandivacox': { name: 'BrianDivaCox', slug: 'briandivacox', url: 'https://www.twitch.tv/briandivacox', label: 'briandivacox' },
+            'javaggz': { name: 'Javaggz', slug: 'javaggz', url: 'https://www.twitch.tv/javaggz', label: 'javaggz' }
+        };
 
-        document.getElementById('studio-player').src = `https://player.twitch.tv/?channel=briandivacox&parent=${p1}&parent=${p2}&parent=${p3}&autoplay=1&muted=0`;
-        document.getElementById('studio-chat').src = `https://www.twitch.tv/embed/briandivacox/chat?parent=${p1}&parent=${p2}&parent=${p3}&darkpopout=true`;
+        let currentMode = 'briandivacox'; // 'briandivacox', 'javaggz', or 'dual'
+        let currentChatChannel = 'briandivacox';
+
+        // Gather all potential parent domains dynamically to ensure 100% Twitch embed compliance
+        function getTwitchParents() {
+            const parents = new Set([
+                'bdclive.github.io',
+                'briandivacox.github.io',
+                'livecounters.nicepage.io',
+                'localhost',
+                '127.0.0.1'
+            ]);
+
+            // Add current hostname
+            if (window.location.hostname) {
+                parents.add(window.location.hostname);
+            }
+
+            // Check URL search param ?host=
+            const urlParams = new URLSearchParams(window.location.search);
+            const hostParam = urlParams.get('host');
+            if (hostParam) {
+                parents.add(hostParam.replace(/:\d+$/, ''));
+            }
+
+            // Check document referrer
+            if (document.referrer) {
+                try {
+                    const refHost = new URL(document.referrer).hostname;
+                    if (refHost) parents.add(refHost);
+                } catch(e) {}
+            }
+
+            return Array.from(parents).filter(p => p && p.trim().length > 0);
+        }
+
+        function buildParentQuery() {
+            const pList = getTwitchParents();
+            return pList.map(p => `parent=${encodeURIComponent(p)}`).join('&');
+        }
+
+        function buildPlayerUrl(channel) {
+            const parents = buildParentQuery();
+            return `https://player.twitch.tv/?channel=${channel}&${parents}&autoplay=1&muted=0`;
+        }
+
+        function buildChatUrl(channel) {
+            const parents = buildParentQuery();
+            return `https://www.twitch.tv/embed/${channel}/chat?${parents}&darkpopout=true`;
+        }
+
+        function switchChannel(mode) {
+            currentMode = mode;
+            const parentPQuery = buildParentQuery();
+
+            const tabMine = document.getElementById('tab-mine');
+            const tabJava = document.getElementById('tab-java');
+            const tabDual = document.getElementById('tab-dual');
+            const titleEl = document.getElementById('studio-channel-title');
+            const extLink = document.getElementById('ext-twitch-link');
+            const dualChatToggles = document.getElementById('dual-chat-toggles');
+            const secPlayerCont = document.getElementById('container-player-secondary');
+            const primaryPlayerIframe = document.getElementById('studio-player-primary');
+            const secondaryPlayerIframe = document.getElementById('studio-player-secondary');
+            const chatIframe = document.getElementById('studio-chat');
+
+            // Reset tab classes
+            tabMine.className = 'chan-tab-btn';
+            tabJava.className = 'chan-tab-btn';
+            tabDual.className = 'chan-tab-btn';
+
+            if (mode === 'dual') {
+                tabDual.className = 'chan-tab-btn active-dual';
+                titleEl.innerHTML = '<span style="color: #c084fc;">briandivacox</span> & <span style="color: #00d2ff;">javaggz</span>';
+                extLink.href = 'https://www.twitch.tv/briandivacox';
+                dualChatToggles.style.display = 'flex';
+                secPlayerCont.style.display = 'block';
+
+                primaryPlayerIframe.src = buildPlayerUrl('briandivacox');
+                secondaryPlayerIframe.src = buildPlayerUrl('javaggz');
+                chatIframe.src = buildChatUrl(currentChatChannel);
+                document.getElementById('chat-channel-label').innerText = `Chat: ${currentChatChannel}`;
+            } else if (mode === 'javaggz') {
+                tabJava.className = 'chan-tab-btn active-java';
+                titleEl.innerHTML = '<span style="color: #00d2ff;">javaggz</span>';
+                extLink.href = 'https://www.twitch.tv/javaggz';
+                dualChatToggles.style.display = 'none';
+                secPlayerCont.style.display = 'none';
+                secondaryPlayerIframe.src = '';
+
+                primaryPlayerIframe.src = buildPlayerUrl('javaggz');
+                chatIframe.src = buildChatUrl('javaggz');
+                document.getElementById('chat-channel-label').innerText = 'Javaggz Chat';
+                currentChatChannel = 'javaggz';
+            } else {
+                tabMine.className = 'chan-tab-btn active-mine';
+                titleEl.innerHTML = '<span style="color: #c084fc;">briandivacox</span>';
+                extLink.href = 'https://www.twitch.tv/briandivacox';
+                dualChatToggles.style.display = 'none';
+                secPlayerCont.style.display = 'none';
+                secondaryPlayerIframe.src = '';
+
+                primaryPlayerIframe.src = buildPlayerUrl('briandivacox');
+                chatIframe.src = buildChatUrl('briandivacox');
+                document.getElementById('chat-channel-label').innerText = 'BrianDivaCox Chat';
+                currentChatChannel = 'briandivacox';
+            }
+        }
+
+        function switchChatChannel(ch) {
+            currentChatChannel = ch;
+            const btnMine = document.getElementById('chat-toggle-mine');
+            const btnJava = document.getElementById('chat-toggle-java');
+            if (ch === 'javaggz') {
+                btnMine.className = 'chat-toggle-btn';
+                btnJava.className = 'chat-toggle-btn active';
+                document.getElementById('studio-chat').src = buildChatUrl('javaggz');
+                document.getElementById('chat-channel-label').innerText = 'Chat: javaggz';
+            } else {
+                btnJava.className = 'chat-toggle-btn';
+                btnMine.className = 'chat-toggle-btn active';
+                document.getElementById('studio-chat').src = buildChatUrl('briandivacox');
+                document.getElementById('chat-channel-label').innerText = 'Chat: briandivacox';
+            }
+        }
+
+        function reloadStreamFrames() {
+            switchChannel(currentMode);
+        }
+
+        // Initialize from URL query parameter
+        window.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const chan = (params.get('channel') || params.get('c') || '').toLowerCase();
+            if (chan === 'java' || chan === 'javaggz') {
+                switchChannel('javaggz');
+            } else if (chan === 'dual' || chan === 'both') {
+                switchChannel('dual');
+            } else {
+                switchChannel('briandivacox');
+            }
+        });
     </script>
-
 </body>
 </html>

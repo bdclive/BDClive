@@ -402,16 +402,16 @@
             switchChannel(currentMode);
         }
 
-        // Initialize from URL query parameter
+        // Initialize from URL query parameter (Default: javaggz)
         window.addEventListener('DOMContentLoaded', () => {
             const params = new URLSearchParams(window.location.search);
-            const chan = (params.get('channel') || params.get('c') || '').toLowerCase();
-            if (chan === 'java' || chan === 'javaggz') {
-                switchChannel('javaggz');
+            const chan = (params.get('channel') || params.get('c') || 'javaggz').toLowerCase();
+            if (chan === 'mine' || chan === 'briandivacox') {
+                switchChannel('briandivacox');
             } else if (chan === 'dual' || chan === 'both') {
                 switchChannel('dual');
             } else {
-                switchChannel('briandivacox');
+                switchChannel('javaggz');
             }
         });
     </script>
