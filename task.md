@@ -19,7 +19,7 @@
   - Verify Python syntax & byte compilation of `BDC_Central_Command_GUI_v1.1.01.pyw`
   - Verify batch launchers discover and resolve `v1.1.01.pyw`
   - Verify desktop shortcut targets and icons
-- [ ] Git commit and push with format `v1.1.01 : description`
+- [x] Git commit and push with format `v1.1.01 : description`
 
 ## ✅ Completed: Theater Sync Heartbeat & Live Movie Detection (v10.2.121)
 - [x] Create project backup archive (`backups/Theater_Sync_Heartbeat_v10.2.121_backup.zip`)
