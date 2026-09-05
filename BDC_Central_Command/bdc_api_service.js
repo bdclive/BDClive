@@ -1087,15 +1087,17 @@ async function updateDiscordGatekeeperReport() {
       }]
     };
 
-    // Load message ID
+    // Load message ID (Firebase cloud-first with local fallback)
     let msgId = null;
     const msgIdPath = path.join(__dirname, 'discord_gatekeeper_report_id.json');
-    if (fs.existsSync(msgIdPath)) {
-      try { msgId = JSON.parse(fs.readFileSync(msgIdPath, 'utf8')).message_id; } catch(e) {}
-    }
-    if (!msgId) {
+    try {
       const fbMsgSnap = await firebaseGet('/system/gatekeeper_report_msg_id');
-      if (fbMsgSnap.success && fbMsgSnap.data) msgId = fbMsgSnap.data;
+      if (fbMsgSnap && fbMsgSnap.success && fbMsgSnap.data) {
+        msgId = typeof fbMsgSnap.data === 'object' ? fbMsgSnap.data.message_id : fbMsgSnap.data;
+      }
+    } catch(e) {}
+    if (!msgId && fs.existsSync(msgIdPath)) {
+      try { msgId = JSON.parse(fs.readFileSync(msgIdPath, 'utf8')).message_id; } catch(e) {}
     }
 
     const parts = targetWebhook.split('/webhooks/')[1].split('/');
@@ -1111,9 +1113,26 @@ async function updateDiscordGatekeeperReport() {
       });
       if (editRes.status === 200) {
         log(`🏰 Live Discord Gatekeeper Report updated in #wos-alerts!`);
+        try { fs.writeFileSync(msgIdPath, JSON.stringify({ message_id: String(msgId).trim() }), 'utf8'); } catch(e) {}
         return true;
       }
       if (editRes.status === 404) {
+        // Re-check Firebase in case another instance updated the active message ID
+        try {
+          const freshFb = await firebaseGet('/system/gatekeeper_report_msg_id');
+          const freshId = freshFb && freshFb.success && (typeof freshFb.data === 'object' ? freshFb.data.message_id : freshFb.data);
+          if (freshId && String(freshId) !== String(msgId)) {
+            const retryRes = await fetch(`https://discord.com/api/webhooks/${whId}/${whToken}/messages/${freshId}`, {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload)
+            });
+            if (retryRes.status === 200) {
+              try { fs.writeFileSync(msgIdPath, JSON.stringify({ message_id: String(freshId).trim() }), 'utf8'); } catch(e) {}
+              return true;
+            }
+          }
+        } catch(e) {}
         msgId = null;
       }
     }
