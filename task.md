@@ -1,3 +1,26 @@
+# Task List: BDC Central Command Version Bump to v1.1.01
+
+## 📋 Active Tasks: Central Command Version Bump (v1.1.01)
+- [x] Create backup archive (`backups/BDC_Central_Command_v1.1.00_pre_v1.1.01_*.zip`)
+- [x] Bump Central Command script to `BDC_Central_Command_GUI_v1.1.01.pyw`:
+  - Update internal version strings from `v1.1.00` to `v1.1.01` (window title, headers, logs, tray icon, runner metadata)
+  - Purge superseded `BDC_Central_Command_GUI_v1.1.00.pyw` in `BDC_Central_Command/`
+- [x] Update version registry `VERSION.json`:
+  - Bump `bdc_central_command_desktop` to `1.1.01`
+- [x] Update `CHANGELOG.md`:
+  - Add App Store style release notes for `[1.1.01]` with strict <= 10 words per bullet
+- [x] Execute Central Command Clean House Protocol across local and network targets:
+  - Deploy `BDC_Central_Command_GUI_v1.1.01.pyw` to Desktop (`C:\Users\Brian\OneDrive\Desktop\BDC Central Command\`)
+  - Purge superseded `v1.1.00.pyw` and any older versions from Desktop folder
+  - Flush all stale `__pycache__` bytecode folders
+  - Synchronize evergreen desktop shortcut `BDC Central Command.lnk` (`central_command_icon.ico`)
+  - Update `BDC_Central_Command_Transfer_Package.zip` in `\\DESKTOP-1CC6J72\Users\Brian\Downloads\`
+- [x] Run Automated Pre-Delivery Verification Script:
+  - Verify Python syntax & byte compilation of `BDC_Central_Command_GUI_v1.1.01.pyw`
+  - Verify batch launchers discover and resolve `v1.1.01.pyw`
+  - Verify desktop shortcut targets and icons
+- [ ] Git commit and push with format `v1.1.01 : description`
+
 ## ✅ Completed: Theater Sync Heartbeat & Live Movie Detection (v10.2.121)
 - [x] Create project backup archive (`backups/Theater_Sync_Heartbeat_v10.2.121_backup.zip`)
 - [x] Overhaul `sDb.ref('theaterSync')` listener in `index.html`:
