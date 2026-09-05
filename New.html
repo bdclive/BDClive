@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BDC LIVE v10.2.123</title>
+    <title>BDC LIVE v10.2.124</title>
     <!-- Open Graph & Social Preview Meta Tags -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="BDC LIVE v10.2.123">
+    <meta property="og:title" content="BDC LIVE v10.2.124">
     <meta property="og:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="og:image" content="./bdclive_banner.jpg">
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="BDC LIVE v10.2.123">
+    <meta property="twitter:title" content="BDC LIVE v10.2.124">
     <meta property="twitter:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="twitter:image" content="./bdclive_banner.jpg">
     <!-- PWA Manifest & Mobile Web App Meta Tags -->
@@ -992,16 +992,22 @@
                 </div>
                 <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
                     <button onclick="simulateTestFollowerLog('YouTube', 1)" style="background: rgba(63, 185, 80, 0.18); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.4); padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
-                        ✨ Test Gain (+1)
+                        ✨ Test Follower (+1)
                     </button>
                     <button onclick="simulateTestFollowerLog('Twitch', -1)" style="background: rgba(248, 81, 73, 0.18); color: #f85149; border: 1px solid rgba(248, 81, 73, 0.4); padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
-                        🔻 Test Loss (-1)
+                        🔻 Test Follower (-1)
                     </button>
                     <button onclick="simulateTestViewsLog('Threads', 100)" style="background: rgba(0, 210, 255, 0.18); color: #00d2ff; border: 1px solid rgba(0, 210, 255, 0.4); padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
                         👁️ Test Views (+100)
                     </button>
                     <button onclick="simulateTestViewsLog('Threads', -50)" style="background: rgba(248, 81, 73, 0.18); color: #f85149; border: 1px solid rgba(248, 81, 73, 0.4); padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
                         📉 Test Views (-50)
+                    </button>
+                    <button onclick="simulateTestTaskLog('My Tasks', 1)" style="background: rgba(188, 140, 255, 0.18); color: #bc8cff; border: 1px solid rgba(188, 140, 255, 0.4); padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
+                        📋 Test Task (+1)
+                    </button>
+                    <button onclick="simulateTestTaskLog('My Tasks', -1)" style="background: rgba(63, 185, 80, 0.18); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.4); padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
+                        ✅ Complete Task (-1)
                     </button>
                     <button onclick="exportFollowerActivityLogCSV()" style="background: rgba(88, 166, 255, 0.18); color: #58a6ff; border: 1px solid rgba(88, 166, 255, 0.4); padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
                         <i class="fa-solid fa-download"></i> Export CSV
@@ -1013,8 +1019,8 @@
                 </div>
             </div>
 
-            <!-- Dedicated Tracking KPI Boxes: Followers vs Views -->
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 12px; margin-bottom: 12px;">
+            <!-- Dedicated Tracking KPI Boxes: Followers vs Views vs Tasks -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; margin-bottom: 12px;">
                 <!-- 👥 Follower Activity Box -->
                 <div style="background: rgba(63, 185, 80, 0.04); border: 1.5px solid rgba(63, 185, 80, 0.35); border-radius: 10px; padding: 10px 14px; box-shadow: inset 0 0 15px rgba(63, 185, 80, 0.05);">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px solid rgba(63, 185, 80, 0.2); padding-bottom: 5px;">
@@ -1062,6 +1068,30 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- 📋 Tasks Activity Box -->
+                <div style="background: rgba(188, 140, 255, 0.04); border: 1.5px solid rgba(188, 140, 255, 0.35); border-radius: 10px; padding: 10px 14px; box-shadow: inset 0 0 15px rgba(188, 140, 255, 0.05);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px solid rgba(188, 140, 255, 0.2); padding-bottom: 5px;">
+                        <div style="font-size: 11.5px; font-weight: 800; color: #bc8cff; display: flex; align-items: center; gap: 6px;">
+                            <span>📋</span> TASKS ADDED & COMPLETED
+                        </div>
+                        <span style="font-size: 10px; color: #8b949e; font-weight: 600;">Productivity & Lists</span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
+                        <div style="background: rgba(188, 140, 255, 0.12); border: 1px solid rgba(188, 140, 255, 0.25); border-radius: 6px; padding: 6px 8px; text-align: center;">
+                            <div style="font-size: 9.5px; color: #8b949e; font-weight: 700;">ADDED (+)</div>
+                            <div id="log-tasks-gains" style="font-size: 16px; font-weight: 900; color: #bc8cff; margin-top: 2px;">+0</div>
+                        </div>
+                        <div style="background: rgba(63, 185, 80, 0.12); border: 1px solid rgba(63, 185, 80, 0.25); border-radius: 6px; padding: 6px 8px; text-align: center;">
+                            <div style="font-size: 9.5px; color: #8b949e; font-weight: 700;">DONE (-)</div>
+                            <div id="log-tasks-losses" style="font-size: 16px; font-weight: 900; color: #3fb950; margin-top: 2px;">-0</div>
+                        </div>
+                        <div style="background: rgba(88, 166, 255, 0.12); border: 1px solid rgba(88, 166, 255, 0.25); border-radius: 6px; padding: 6px 8px; text-align: center;">
+                            <div style="font-size: 9.5px; color: #8b949e; font-weight: 700;">NET DELTA</div>
+                            <div id="log-tasks-net" style="font-size: 16px; font-weight: 900; color: #58a6ff; margin-top: 2px;">0</div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Filter Controls & Event Count -->
@@ -1070,8 +1100,9 @@
                     <button id="log-filter-all" onclick="setFollowerLogFilter('all')" style="background: #238636; color: #fff; border: 1px solid rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer;">All Activity</button>
                     <button id="log-filter-followers" onclick="setFollowerLogFilter('followers')" style="background: rgba(255,255,255,0.06); color: #8b949e; border: 1px solid rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer;">👥 Followers Only</button>
                     <button id="log-filter-views" onclick="setFollowerLogFilter('views')" style="background: rgba(255,255,255,0.06); color: #8b949e; border: 1px solid rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer;">👁️ Views Only</button>
-                    <button id="log-filter-gain" onclick="setFollowerLogFilter('gain')" style="background: rgba(255,255,255,0.06); color: #8b949e; border: 1px solid rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer;">▲ Gains (+)</button>
-                    <button id="log-filter-loss" onclick="setFollowerLogFilter('loss')" style="background: rgba(255,255,255,0.06); color: #8b949e; border: 1px solid rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer;">▼ Losses (-)</button>
+                    <button id="log-filter-tasks" onclick="setFollowerLogFilter('tasks')" style="background: rgba(255,255,255,0.06); color: #8b949e; border: 1px solid rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer;">📋 Tasks Only</button>
+                    <button id="log-filter-gain" onclick="setFollowerLogFilter('gain')" style="background: rgba(255,255,255,0.06); color: #8b949e; border: 1px solid rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer;">▲ Gains / Added (+)</button>
+                    <button id="log-filter-loss" onclick="setFollowerLogFilter('loss')" style="background: rgba(255,255,255,0.06); color: #8b949e; border: 1px solid rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer;">▼ Losses / Done (-)</button>
                 </div>
                 <div style="display: flex; align-items: center; gap: 8px; flex: 1; justify-content: flex-end;">
                     <div style="font-size: 11px; color: #8b949e; white-space: nowrap;">Total Events: <strong id="log-total-events" style="color: #ffffff;">0</strong></div>
@@ -1275,26 +1306,52 @@
 
         let currentLogFilter = 'all';
 
-        function isViewItem(item) {
+        function isTaskItem(item) {
             if (!item) return false;
-            if (item.isView === true || item.metricType === 'views') return true;
-            if (item.unit && (item.unit.toLowerCase().includes('view') || item.unit.toLowerCase().includes('chatter'))) return true;
-            if (item.platform && (item.platform.toLowerCase().includes('view') || item.platform.toLowerCase().includes('chatter'))) return true;
+            if (item.isTask === true || item.metricType === 'tasks' || item.category === 'tasks') return true;
+            const p = (item.platform || '').toLowerCase();
+            const u = (item.unit || '').toLowerCase();
+            const k = (item.metricKey || '').toLowerCase();
+            
+            // Check if matches known tasks indicators
+            if (p.includes('task') || u.includes('task') || k.startsWith('task_') || k.endsWith('_count')) return true;
+            if (p.includes('divacox') || p.includes('bdcf') || p.includes('wos') || p.includes('keep reminder') || p.includes('funfact') || p.includes('bill') || p.includes('idea')) return true;
+            if (p.includes('movie review') || k.includes('movie_review') || u.includes('movie review')) return true;
+            if (p.includes('movie list') || k.includes('movie_list')) return true;
+            if (p.includes('photos needed') || k.includes('photos_needed')) return true;
             return false;
         }
 
-        function recordFollowerActivityEvent(metricKey, diff, oldVal, newVal, isView = false, customSource = null) {
-            if (!metricKey || (typeof metricKey === 'string' && metricKey.startsWith('task_'))) return;
+        function isViewItem(item) {
+            if (!item) return false;
+            if (isTaskItem(item)) return false; // STRICT: Tasks can NEVER be views!
+            if (item.isView === true || item.metricType === 'views') return true;
+            const u = (item.unit || '').toLowerCase();
+            const p = (item.platform || '').toLowerCase();
+            if (u.includes('view') || u.includes('chatter') || u.includes('impression') || u.includes('viewer')) return true;
+            if (p.includes('view') && !p.includes('review')) return true;
+            if (p.includes('chatter') || p.includes('impression')) return true;
+            return false;
+        }
 
+        function isFollowerItem(item) {
+            if (!item) return false;
+            if (isTaskItem(item)) return false;
+            if (isViewItem(item)) return false;
+            return true;
+        }
+
+        function recordFollowerActivityEvent(metricKey, diff, oldVal, newVal, isView = false, customSource = null, isTask = false) {
             const meta = METRIC_PLATFORM_MAP[metricKey] || {
                 name: customSource || metricKey,
-                icon: isView ? '👁️' : '👥',
-                color: isView ? '#00d2ff' : '#58a6ff',
-                type: isView ? 'views' : 'followers',
-                unit: isView ? 'Views' : 'Followers'
+                icon: isTask ? '📋' : (isView ? '👁️' : '👥'),
+                color: isTask ? '#bc8cff' : (isView ? '#00d2ff' : '#58a6ff'),
+                type: isTask ? 'tasks' : (isView ? 'views' : 'followers'),
+                unit: isTask ? 'Tasks' : (isView ? 'Views' : 'Followers')
             };
 
-            const resolvedIsView = isView || meta.type === 'views' || (meta.unit && (meta.unit.toLowerCase().includes('view') || meta.unit.toLowerCase().includes('chatter')));
+            const resolvedIsTask = isTask || meta.type === 'tasks' || (typeof metricKey === 'string' && (metricKey.startsWith('task_') || metricKey.endsWith('_count')));
+            const resolvedIsView = !resolvedIsTask && (isView || meta.type === 'views' || (meta.unit && (meta.unit.toLowerCase().includes('view') || meta.unit.toLowerCase().includes('chatter'))));
 
             const now = new Date();
             const eventEntry = {
@@ -1303,11 +1360,13 @@
                 timeStr: now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
                 dateStr: now.toLocaleDateString(),
                 platform: meta.name,
-                icon: meta.icon,
-                color: meta.color,
-                metricType: resolvedIsView ? 'views' : (meta.type || 'followers'),
+                icon: resolvedIsTask ? '📋' : meta.icon,
+                color: resolvedIsTask ? '#bc8cff' : meta.color,
+                metricKey: metricKey,
+                metricType: resolvedIsTask ? 'tasks' : (resolvedIsView ? 'views' : (meta.type || 'followers')),
+                isTask: resolvedIsTask,
                 isView: resolvedIsView,
-                unit: meta.unit,
+                unit: resolvedIsTask ? 'Tasks' : meta.unit,
                 type: diff > 0 ? 'gain' : 'loss',
                 diff: diff,
                 deltaStr: diff > 0 ? `+${fNum(diff)}` : `${fNum(diff)}`,
@@ -1409,10 +1468,11 @@
             const btnAll = document.getElementById('log-filter-all');
             const btnFol = document.getElementById('log-filter-followers');
             const btnViews = document.getElementById('log-filter-views');
+            const btnTasks = document.getElementById('log-filter-tasks');
             const btnGain = document.getElementById('log-filter-gain');
             const btnLoss = document.getElementById('log-filter-loss');
 
-            const allBtns = [btnAll, btnFol, btnViews, btnGain, btnLoss].filter(Boolean);
+            const allBtns = [btnAll, btnFol, btnViews, btnTasks, btnGain, btnLoss].filter(Boolean);
             allBtns.forEach(b => {
                 b.style.background = 'rgba(255,255,255,0.06)';
                 b.style.color = '#8b949e';
@@ -1434,6 +1494,13 @@
                     active.style.background = 'rgba(0, 210, 255, 0.25)';
                     active.style.color = '#00d2ff';
                     active.style.borderColor = '#00d2ff';
+                }
+            } else if (filter === 'tasks') {
+                active = btnTasks;
+                if (active) {
+                    active.style.background = 'rgba(188, 140, 255, 0.25)';
+                    active.style.color = '#bc8cff';
+                    active.style.borderColor = '#bc8cff';
                 }
             } else if (filter === 'gain') {
                 active = btnGain;
@@ -1466,7 +1533,7 @@
         }
 
         function clearFollowerActivityLog() {
-            if (confirm('Clear all recorded follower & views activity history?')) {
+            if (confirm('Clear all recorded activity history (Followers, Views & Tasks)?')) {
                 followerActivityLog = [];
                 try { localStorage.removeItem('follower_activity_log'); } catch(e) {}
                 renderFollowerActivityLogTable();
@@ -1475,12 +1542,12 @@
 
         function exportFollowerActivityLogCSV() {
             if (!followerActivityLog || followerActivityLog.length === 0) {
-                alert('No follower activity entries to export.');
+                alert('No activity entries to export.');
                 return;
             }
             let csv = 'Timestamp,Date,Time,Category,Platform,Metric,Type,Delta,OldCount,NewCount\n';
             followerActivityLog.forEach(row => {
-                const cat = isViewItem(row) ? 'Views' : 'Followers';
+                const cat = isTaskItem(row) ? 'Tasks' : (isViewItem(row) ? 'Views' : 'Followers');
                 csv += `"${row.timestamp}","${row.dateStr}","${row.timeStr}","${cat}","${row.platform}","${row.unit}","${row.type}","${row.diff}","${row.oldVal}","${row.newVal}"\n`;
             });
             const blob = new Blob([csv], { type: 'text/csv' });
@@ -1526,7 +1593,7 @@
             const badge = diff > 0 ? `+${diff} Just Now` : `${diff} Just Now`;
             flashFollowerPulse(elId, diff > 0 ? 'gain' : 'loss', null, badge);
             playFollowerSound(diff > 0 ? 'gain' : 'loss');
-            recordFollowerActivityEvent(metricKey, diff, oldVal, newVal, false, platform);
+            recordFollowerActivityEvent(metricKey, diff, oldVal, newVal, false, platform, false);
         }
 
         function simulateTestViewsLog(platform = 'Threads', diff = 100) {
@@ -1554,7 +1621,17 @@
             const badge = diff > 0 ? `+${diff} Just Now` : `${diff} Just Now`;
             flashFollowerPulse(elId, diff > 0 ? 'gain' : 'loss', '#00d2ff', badge);
             playFollowerSound(diff > 0 ? 'views_gain' : 'loss');
-            recordFollowerActivityEvent(metricKey, diff, oldVal, newVal, true, platform);
+            recordFollowerActivityEvent(metricKey, diff, oldVal, newVal, true, platform, false);
+        }
+
+        function simulateTestTaskLog(taskName = 'My Tasks', diff = 1) {
+            const key = 'task_mytasks';
+            const oldVal = _prevFollowerMetrics[key] || 12;
+            const newVal = Math.max(0, oldVal + diff);
+            _prevFollowerMetrics[key] = newVal;
+            const badge = diff > 0 ? `+${diff} Added` : `${diff} Done`;
+            flashFollowerPulse('task-k5', diff > 0 ? 'gain' : 'loss', '#bc8cff', badge);
+            recordFollowerActivityEvent(key, diff, oldVal, newVal, false, taskName, true);
         }
 
         function renderFollowerActivityLogTable() {
@@ -1567,20 +1644,25 @@
             const viewsLossesEl = document.getElementById('log-views-losses');
             const viewsNetEl = document.getElementById('log-views-net');
 
+            const tasksGainsEl = document.getElementById('log-tasks-gains');
+            const tasksLossesEl = document.getElementById('log-tasks-losses');
+            const tasksNetEl = document.getElementById('log-tasks-net');
+
             const totalEventsEl = document.getElementById('log-total-events');
             if (!tbody) return;
 
             const searchVal = ((document.getElementById('log-search-input')?.value) || '').toLowerCase().trim();
 
-            let folGains = 0;
-            let folLosses = 0;
-            let viewsGains = 0;
-            let viewsLosses = 0;
+            let folGains = 0, folLosses = 0;
+            let viewsGains = 0, viewsLosses = 0;
+            let tasksGains = 0, tasksLosses = 0;
 
             followerActivityLog.forEach(item => {
-                const isView = isViewItem(item);
                 const diff = item.diff || 0;
-                if (isView) {
+                if (isTaskItem(item)) {
+                    if (diff > 0) tasksGains += diff;
+                    else if (diff < 0) tasksLosses += Math.abs(diff);
+                } else if (isViewItem(item)) {
                     if (diff > 0) viewsGains += diff;
                     else if (diff < 0) viewsLosses += Math.abs(diff);
                 } else {
@@ -1605,12 +1687,24 @@
                 viewsNetEl.style.color = viewsNet > 0 ? '#00d2ff' : (viewsNet < 0 ? '#f85149' : '#00d2ff');
             }
 
+            if (tasksGainsEl) tasksGainsEl.innerText = `+${fNum(tasksGains)}`;
+            if (tasksLossesEl) tasksLossesEl.innerText = `-${fNum(tasksLosses)}`;
+            if (tasksNetEl) {
+                const tasksNet = tasksGains - tasksLosses;
+                tasksNetEl.innerText = tasksNet > 0 ? `+${fNum(tasksNet)}` : (tasksNet < 0 ? `-${fNum(Math.abs(tasksNet))}` : '0');
+                tasksNetEl.style.color = tasksNet > 0 ? '#bc8cff' : (tasksNet < 0 ? '#3fb950' : '#58a6ff');
+            }
+
             if (totalEventsEl) totalEventsEl.innerText = fNum(followerActivityLog.length);
 
             let filtered = followerActivityLog.filter(item => {
-                const isView = isViewItem(item);
-                if (currentLogFilter === 'followers' && isView) return false;
+                const isTask = isTaskItem(item);
+                const isView = !isTask && isViewItem(item);
+                const isFol = !isTask && !isView;
+
+                if (currentLogFilter === 'followers' && !isFol) return false;
                 if (currentLogFilter === 'views' && !isView) return false;
+                if (currentLogFilter === 'tasks' && !isTask) return false;
                 if (currentLogFilter === 'gain' && item.type !== 'gain') return false;
                 if (currentLogFilter === 'loss' && item.type !== 'loss') return false;
                 if (searchVal) {
@@ -1629,7 +1723,7 @@
                         <td colspan="5" style="text-align: center; padding: 30px; color: #8b949e;">
                             <i class="fa-solid fa-bell-slash" style="font-size: 24px; opacity: 0.5; margin-bottom: 8px; display: block;"></i>
                             No activity changes recorded matching this filter.<br>
-                            <span style="font-size: 10px; opacity: 0.7;">Click <strong>✨ Test Gain</strong>, <strong>🔻 Test Loss</strong>, or <strong>👁️ Test Views</strong> above to test live tracking!</span>
+                            <span style="font-size: 10px; opacity: 0.7;">Click <strong>✨ Test Follower</strong>, <strong>👁️ Test Views</strong>, or <strong>📋 Test Task</strong> above to test live tracking!</span>
                         </td>
                     </tr>
                 `;
@@ -1637,11 +1731,23 @@
             }
 
             tbody.innerHTML = filtered.map(item => {
-                const isView = isViewItem(item);
+                const isTask = isTaskItem(item);
+                const isView = !isTask && isViewItem(item);
                 const isGain = item.type === 'gain';
-                const badgeBg = isGain ? (isView ? 'rgba(0, 210, 255, 0.18)' : 'rgba(63, 185, 80, 0.18)') : 'rgba(248, 81, 73, 0.18)';
-                const badgeColor = isGain ? (isView ? '#00d2ff' : '#3fb950') : '#f85149';
-                const badgeBorder = isGain ? (isView ? 'rgba(0, 210, 255, 0.4)' : 'rgba(63, 185, 80, 0.4)') : 'rgba(248, 81, 73, 0.4)';
+
+                let badgeBg = isGain ? 'rgba(63, 185, 80, 0.18)' : 'rgba(248, 81, 73, 0.18)';
+                let badgeColor = isGain ? '#3fb950' : '#f85149';
+                let badgeBorder = isGain ? 'rgba(63, 185, 80, 0.4)' : 'rgba(248, 81, 73, 0.4)';
+
+                if (isTask) {
+                    badgeBg = isGain ? 'rgba(188, 140, 255, 0.18)' : 'rgba(63, 185, 80, 0.18)';
+                    badgeColor = isGain ? '#bc8cff' : '#3fb950';
+                    badgeBorder = isGain ? 'rgba(188, 140, 255, 0.4)' : 'rgba(63, 185, 80, 0.4)';
+                } else if (isView) {
+                    badgeBg = isGain ? 'rgba(0, 210, 255, 0.18)' : 'rgba(248, 81, 73, 0.18)';
+                    badgeColor = isGain ? '#00d2ff' : '#f85149';
+                    badgeBorder = isGain ? 'rgba(0, 210, 255, 0.4)' : 'rgba(248, 81, 73, 0.4)';
+                }
 
                 const timeAgoSecs = Math.floor((Date.now() - (item.timestamp || Date.now())) / 1000);
                 let timeAgoStr = 'Just Now';
@@ -1654,13 +1760,16 @@
                     }
                 }
 
-                const categoryBadge = isView
-                    ? `<span style="background: rgba(0, 210, 255, 0.14); color: #00d2ff; border: 1px solid rgba(0, 210, 255, 0.35); padding: 1px 6px; border-radius: 4px; font-size: 9px; font-weight: 800; letter-spacing: 0.3px;">👁️ VIEWS</span>`
-                    : `<span style="background: rgba(63, 185, 80, 0.14); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.35); padding: 1px 6px; border-radius: 4px; font-size: 9px; font-weight: 800; letter-spacing: 0.3px;">👥 FOLLOWER</span>`;
+                let categoryBadge = `<span style="background: rgba(63, 185, 80, 0.14); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.35); padding: 1px 6px; border-radius: 4px; font-size: 9px; font-weight: 800; letter-spacing: 0.3px;">👥 FOLLOWER</span>`;
+                let reTestFn = `simulateTestFollowerLog('${item.platform}', ${isGain ? 1 : -1})`;
 
-                const reTestFn = isView 
-                    ? `simulateTestViewsLog('${item.platform}', ${isGain ? 100 : -50})`
-                    : `simulateTestFollowerLog('${item.platform}', ${isGain ? 1 : -1})`;
+                if (isTask) {
+                    categoryBadge = `<span style="background: rgba(188, 140, 255, 0.14); color: #bc8cff; border: 1px solid rgba(188, 140, 255, 0.35); padding: 1px 6px; border-radius: 4px; font-size: 9px; font-weight: 800; letter-spacing: 0.3px;">📋 TASK</span>`;
+                    reTestFn = `simulateTestTaskLog('${item.platform}', ${isGain ? 1 : -1})`;
+                } else if (isView) {
+                    categoryBadge = `<span style="background: rgba(0, 210, 255, 0.14); color: #00d2ff; border: 1px solid rgba(0, 210, 255, 0.35); padding: 1px 6px; border-radius: 4px; font-size: 9px; font-weight: 800; letter-spacing: 0.3px;">👁️ VIEWS</span>`;
+                    reTestFn = `simulateTestViewsLog('${item.platform}', ${isGain ? 100 : -50})`;
+                }
 
                 return `
                     <tr style="border-bottom: 1px solid rgba(255,255,255,0.06); transition: background 0.2s ease;">
@@ -1756,30 +1865,27 @@
             }, 3500);
         }
 
-        function updateMetricAndFlash(elementId, metricKey, newVal, isView = false) {
+        function updateMetricAndFlash(elementId, metricKey, newVal, isView = false, isTask = false) {
             const el = document.getElementById(elementId);
             if (!el) return;
 
             const oldVal = _prevFollowerMetrics[metricKey];
             el.innerText = fNum(newVal);
 
-            // Suppress internal task counters from follower/view logging and alerts
-            if (metricKey && typeof metricKey === 'string' && metricKey.startsWith('task_')) {
-                _prevFollowerMetrics[metricKey] = newVal;
-                return;
-            }
+            const resolvedIsTask = isTask || (typeof metricKey === 'string' && (metricKey.startsWith('task_') || metricKey.endsWith('_count')));
 
             if (_isFollowersInitialLoadComplete && oldVal !== undefined && oldVal !== null && oldVal !== newVal) {
                 const diff = newVal - oldVal;
-                const deltaBadge = diff > 0 ? `+${diff} Just Now` : `${diff} Just Now`;
+                const deltaBadge = diff > 0 ? (resolvedIsTask ? `+${diff} Added` : `+${diff} Just Now`) : (resolvedIsTask ? `${diff} Done` : `${diff} Just Now`);
+                const pulseColor = resolvedIsTask ? '#bc8cff' : (isView ? '#00d2ff' : '#3fb950');
                 if (diff > 0) {
-                    flashFollowerPulse(elementId, 'gain', isView ? '#00d2ff' : '#3fb950', deltaBadge);
-                    playFollowerSound(isView ? 'views_gain' : 'gain');
-                    recordFollowerActivityEvent(metricKey, diff, oldVal, newVal, isView);
+                    flashFollowerPulse(elementId, 'gain', pulseColor, deltaBadge);
+                    if (!resolvedIsTask) playFollowerSound(isView ? 'views_gain' : 'gain');
+                    recordFollowerActivityEvent(metricKey, diff, oldVal, newVal, isView, null, resolvedIsTask);
                 } else if (diff < 0) {
                     flashFollowerPulse(elementId, 'loss', '#f85149', deltaBadge);
-                    playFollowerSound('loss');
-                    recordFollowerActivityEvent(metricKey, diff, oldVal, newVal, isView);
+                    if (!resolvedIsTask) playFollowerSound('loss');
+                    recordFollowerActivityEvent(metricKey, diff, oldVal, newVal, isView, null, resolvedIsTask);
                 }
             }
             _prevFollowerMetrics[metricKey] = newVal;
@@ -2347,13 +2453,13 @@
             // Calculate sum of ONLY the categories displayed in this widget box
             const displayedCategoriesTotal = cDiva + cUpdate + cTheater + cMyTasks + cBDCF + cWOS;
             
-            updateMetricAndFlash('task-k1', 'task_displayed_total', displayedCategoriesTotal);
-            updateMetricAndFlash('task-k2', 'task_diva', cDiva);
-            updateMetricAndFlash('task-k3', 'task_update', cUpdate);
-            updateMetricAndFlash('task-k4', 'task_theater', cTheater);
-            updateMetricAndFlash('task-k5', 'task_mytasks', cMyTasks);
-            updateMetricAndFlash('task-k6', 'task_bdcf', cBDCF);
-            updateMetricAndFlash('task-k7', 'task_wos', cWOS);
+            updateMetricAndFlash('task-k1', 'task_displayed_total', displayedCategoriesTotal, false, true);
+            updateMetricAndFlash('task-k2', 'task_diva', cDiva, false, true);
+            updateMetricAndFlash('task-k3', 'task_update', cUpdate, false, true);
+            updateMetricAndFlash('task-k4', 'task_theater', cTheater, false, true);
+            updateMetricAndFlash('task-k5', 'task_mytasks', cMyTasks, false, true);
+            updateMetricAndFlash('task-k6', 'task_bdcf', cBDCF, false, true);
+            updateMetricAndFlash('task-k7', 'task_wos', cWOS, false, true);
 
             const tModal = document.getElementById('tasksBreakdownModal');
             if (tModal && tModal.style.display === 'block') {
@@ -2987,7 +3093,7 @@
             }
         }
 
-        const CURRENT_APP_VERSION = 'v10.2.123';
+        const CURRENT_APP_VERSION = 'v10.2.124';
         let isDeployingLive = false;
         let pendingRemoteVersion = null;
         let autoRefreshTimer = null;

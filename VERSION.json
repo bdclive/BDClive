@@ -14,9 +14,10 @@
       "cliFile": "Threads_Bridge/threads_bridge_cli_v1.0.59_(terminal).py"
     },
     "bdclive_web_dashboard": {
-      "version": "10.2.123",
+      "version": "10.2.124",
       "repository": "https://github.com/bdclive/BDClive",
       "latestChanges": [
+        "v10.2.124: Separated Followers, Views, and Tasks tracking into dedicated KPI boxes",
         "v10.2.123: Separated Follower and Views Activity Tracking into dedicated KPI boxes",
         "v10.2.122: Synchronized Theater Up Next with Discord and Central Command"
       ]
