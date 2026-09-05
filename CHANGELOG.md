@@ -1,3 +1,9 @@
+## [1.1.01] - 2026-09-04
+- Separated Now Playing and Up Next cards in Central Command.
+- Displays live movie title alongside upcoming feature and RSVPs.
+- Updated Central Command desktop application to version 1.1.01.
+- Cleaned and synchronized desktop shortcuts and deployment packages.
+
 ## [10.2.121] - 2026-09-04
 - Fixed Brian's Theater box showing currently playing movie in Up Next.
 - Added live movie auto-detection with remaining runtime countdowns.
