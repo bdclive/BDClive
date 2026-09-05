@@ -1,8 +1,8 @@
 {
   "name": "BDC Ecosystem Master Version Registry",
-  "lastUpdated": "2026-09-04T20:09:00-07:00",
+  "lastUpdated": "2026-09-04T20:25:00-07:00",
   "components": {
-    "bdc_central_command_desktop": "1.1.01",
+    "bdc_central_command_desktop": "1.1.02",
     "daemons": {
       "folder": "Daemons/",
       "counterChecker": "Daemons/counter_checker_daemon.py",
@@ -14,11 +14,11 @@
       "cliFile": "Threads_Bridge/threads_bridge_cli_v1.0.59_(terminal).py"
     },
     "bdclive_web_dashboard": {
-      "version": "10.2.121",
+      "version": "10.2.122",
       "repository": "https://github.com/bdclive/BDClive",
       "latestChanges": [
-        "v10.2.121: Synchronized Theater Heartbeat with live active movie detection",
-        "v10.2.120: Upgraded Twitch Studio Deck with multi-channel support for Brian & Javaggz"
+        "v10.2.122: Synchronized Theater Up Next with Discord and Central Command",
+        "v10.2.121: Synchronized Theater Heartbeat with live active movie detection"
       ]
     },
     "wosbdc_alliance_dashboard": {
