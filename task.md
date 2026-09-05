@@ -16,7 +16,7 @@
 - [x] Update `VERSION.json` & bump `sw.js` cache name
 - [x] Update `CHANGELOG.md` with App Store style release notes (<= 10 words per bullet)
 - [x] Run Automated Pre-Delivery Verification Script
-- [ ] Commit and push to GitHub
+- [x] Commit and push to GitHub
 
 ## ✅ Completed: Central Command Version Bump (v1.1.01)
 - [x] Create backup archive (`backups/BDC_Central_Command_v1.1.00_pre_v1.1.01_*.zip`)
