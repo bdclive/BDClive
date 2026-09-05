@@ -1,8 +1,8 @@
 {
   "name": "BDC Ecosystem Master Version Registry",
-  "lastUpdated": "2026-09-04T20:25:00-07:00",
+  "lastUpdated": "2026-09-04T21:00:00-07:00",
   "components": {
-    "bdc_central_command_desktop": "1.1.02",
+    "bdc_central_command_desktop": "1.1.03",
     "daemons": {
       "folder": "Daemons/",
       "counterChecker": "Daemons/counter_checker_daemon.py",

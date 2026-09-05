@@ -1,22 +1,24 @@
-# Task List: Synchronize Brian's Theater Box & BDC Central Command (v10.2.122 & v1.1.02)
+# Task List: Streamline Theater RSVP with Dynamic Event Deep Link & Reaction Sync (v1.1.03)
 
-## 📋 Active Tasks: Synchronize Theater Up Next Between BDC CC & Dashboard (v10.2.122 & v1.1.02)
-- [x] Create project backup archive
-- [x] Update `index.html`, `New.html`, and `web_dashboards/New.html`:
-  - Prioritize `m.nextTitle` pushed by BDC Central Command over outdated static schedule entries
-  - Clean emoji prefixes (`🎬`, `🍿`) for crystal-clear title rendering
-  - Correctly synchronize `targetShowDate` from `m.nextTime`
-- [x] Upgrade BDC Central Command to `BDC_Central_Command_GUI_v1.1.02.pyw`:
-  - Build live, dynamic `schedule` array directly from Discord scheduled events
-  - Push complete synchronized payload (`nowPlaying`, `nextTitle`, `nextTime`, `rsvpCount`, `schedule`)
-  - Bump internal version strings from `v1.1.01` to `v1.1.02`
-  - Purge superseded `v1.1.01.pyw`
-- [x] Update Firebase `theaterSync.json` with synchronized Discord events payload
+## 📋 Active Tasks: Theater RSVP Streamlining (v1.1.03)
+- [x] Create project backup archive (`BDC_Central_Command_backup_20260904_204914.zip`)
+- [x] Upgrade Central Command to `BDC_Central_Command_GUI_v1.1.03.pyw`:
+  - Dynamically generate official Discord Event deep link (`https://discord.com/events/{target_g_id}/{ev_id}`) for the active/upcoming movie
+  - Add prominent clickable 1-tap RSVP link in the embed description
+  - Add clear call-to-action tip for members (`Click link or react with 🎟️ below to RSVP`)
+  - Auto-react with `🎟️` on the posted card via Bot API
+  - Fetch users who reacted with `🎟️` or `👍` on the message in `#🎟️・rsvp-alerts`
+  - Merge and deduplicate event attendees and reaction attendees into `Confirmed Attendees` list
+  - Synchronize updated RSVP count to Firebase and Central Command GUI
+  - Bump internal version strings from `v1.1.02` to `v1.1.03`
+  - Purge superseded `v1.1.02.pyw`
+- [x] Update version registry `VERSION.json` (`bdc_central_command_desktop: 1.1.03`)
 - [x] Clean House Protocol across Central Command destinations (Desktop, Shortcuts, Transfer Zip)
-- [x] Update `VERSION.json` & bump `sw.js` cache name
 - [x] Update `CHANGELOG.md` with App Store style release notes (<= 10 words per bullet)
 - [x] Run Automated Pre-Delivery Verification Script
-- [x] Commit and push to GitHub
+- [x] Commit and push to GitHub (`v1.1.03 : Streamlined Theater RSVP with direct event deep link and emoji reaction sync`)
+
+## ✅ Completed: Synchronize Theater Up Next Between BDC CC & Dashboard (v10.2.122 & v1.1.02)
 
 ## ✅ Completed: Central Command Version Bump (v1.1.01)
 - [x] Create backup archive (`backups/BDC_Central_Command_v1.1.00_pre_v1.1.01_*.zip`)

@@ -1,3 +1,12 @@
+## [1.1.03] - 2026-09-04
+- Added 1-tap Discord Event RSVP link to movie cards.
+- Dynamically links directly to active scheduled movie event.
+- Added automatic emoji reaction RSVP tracking in Discord channel.
+- Merged emoji reactions and event attendees into confirmed list.
+- Automatically adds ticket reaction to movie alert cards.
+- Upgraded Central Command desktop application to version 1.1.03.
+- Cleaned and deployed shortcuts and transfer packages across systems.
+
 ## [10.2.122] - 2026-09-04
 - Synchronized Brian's Theater box with Discord and Central Command.
 - Prioritized live Central Command nextTitle over outdated static schedule.
