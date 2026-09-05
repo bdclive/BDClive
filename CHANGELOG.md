@@ -1,3 +1,8 @@
+## [10.2.121] - 2026-09-04
+- Fixed Brian's Theater box showing currently playing movie in Up Next.
+- Added live movie auto-detection with remaining runtime countdowns.
+- Properly separated active movies from upcoming scheduled features.
+
 ## [10.2.120] - 2026-09-03
 - Fixed Twitch popup embed restrictions for bdclive.github.io domain.
 - Added multi-channel studio switcher supporting BrianDivaCox and Javaggz.

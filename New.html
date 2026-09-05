@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BDC LIVE v10.2.120</title>
+    <title>BDC LIVE v10.2.121</title>
     <!-- Open Graph & Social Preview Meta Tags -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="BDC LIVE v10.2.120">
+    <meta property="og:title" content="BDC LIVE v10.2.121">
     <meta property="og:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="og:image" content="./bdclive_banner.jpg">
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="BDC LIVE v10.2.120">
+    <meta property="twitter:title" content="BDC LIVE v10.2.121">
     <meta property="twitter:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="twitter:image" content="./bdclive_banner.jpg">
     <!-- PWA Manifest & Mobile Web App Meta Tags -->
@@ -2403,42 +2403,86 @@
             THEATER_STATE.moviesCount = m.moviesCount || m.movieCount || 0;
             THEATER_STATE.daysOpen = m.daysOpen || "0";
             THEATER_STATE.tvCount = m.tvCount || m.showCount || 0;
-            THEATER_STATE.nowPlaying = m.nowPlaying || "No Movie Playing";
-            THEATER_STATE.nextTitle = m.nextTitle || "Masters of the Universe";
-            THEATER_STATE.showEndTime = m.showEndTime || null;
-            THEATER_STATE.nextTime = m.nextTime || null;
-
-            document.getElementById('m-count').innerText = fNum(THEATER_STATE.moviesCount);
-            document.getElementById('m-open').innerText = THEATER_STATE.daysOpen;
-            document.getElementById('tv-count').innerText = fNum(THEATER_STATE.tvCount);
             if (m.rsvpCount !== undefined) {
                 document.getElementById('m-rsvp').innerText = fNum(m.rsvpCount);
             } else if (m.discordRsvp !== undefined) {
                 document.getElementById('m-rsvp').innerText = fNum(m.discordRsvp);
             }
+            document.getElementById('m-count').innerText = fNum(THEATER_STATE.moviesCount);
+            document.getElementById('m-open').innerText = THEATER_STATE.daysOpen;
+            document.getElementById('tv-count').innerText = fNum(THEATER_STATE.tvCount);
 
             const now = new Date();
-            let targetShow = null;
-            if (m.nextTime && m.nextTime !== "TBD" && !m.nextTime.includes("None")) {
-                targetShow = new Date(m.nextTime);
-                if (isNaN(targetShow.getTime())) {
-                    let relSecs = parseToSeconds(m.nextTime);
-                    if (relSecs > 0) {
-                        targetShow = new Date(now.getTime() + (relSecs * 1000));
-                    } else {
-                        let clean = m.nextTime.includes("202") ? m.nextTime : m.nextTime + ", 2026";
-                        targetShow = new Date(clean);
+            const nowMs = now.getTime();
+
+            // 1. Check if schedule array exists in theaterSync
+            let scheduleLive = null;
+            let scheduleNext = null;
+
+            if (Array.isArray(m.schedule) && m.schedule.length > 0) {
+                for (let i = 0; i < m.schedule.length; i++) {
+                    const item = m.schedule[i];
+                    if (!item) continue;
+                    const isLive = (item.status && item.status.includes('LIVE')) || 
+                                   (item.startMs && item.endMs && nowMs >= item.startMs && nowMs <= item.endMs);
+                    if (isLive && !scheduleLive) {
+                        scheduleLive = item;
+                        scheduleNext = m.schedule[i + 1] || null;
+                        break;
+                    } else if (item.startMs && item.startMs > nowMs && !scheduleNext) {
+                        scheduleNext = item;
                     }
                 }
             }
-            
-            if (!targetShow || isNaN(targetShow.getTime())) {
-                targetShow = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 19, 0, 0);
-                if (now >= new Date(now.getFullYear(), now.getMonth(), now.getDate(), 20, 56, 0)) {
-                    targetShow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 19, 0, 0);
+
+            if (scheduleLive) {
+                THEATER_STATE.nowPlaying = scheduleLive.title;
+                THEATER_STATE.showEndTime = scheduleLive.endMs;
+                if (scheduleNext) {
+                    THEATER_STATE.nextTitle = scheduleNext.title;
+                    THEATER_STATE.targetShowDate = new Date(scheduleNext.startMs);
+                    THEATER_STATE.nextTime = scheduleNext.startMs;
+                } else if (m.nextTitle && !m.nextTitle.toLowerCase().includes(scheduleLive.title.toLowerCase())) {
+                    THEATER_STATE.nextTitle = m.nextTitle;
+                    THEATER_STATE.targetShowDate = m.nextStartMs ? new Date(m.nextStartMs) : (m.nextTime ? new Date(m.nextTime) : null);
+                } else {
+                    THEATER_STATE.nextTitle = "Upcoming Feature";
+                    THEATER_STATE.targetShowDate = null;
                 }
+            } else {
+                THEATER_STATE.nowPlaying = m.nowPlaying || "No Movie Playing";
+                THEATER_STATE.nextTitle = m.nextTitle || (scheduleNext ? scheduleNext.title : "No Movie Scheduled");
+                THEATER_STATE.showEndTime = m.showEndTime || m.endMs || null;
+                THEATER_STATE.nextTime = m.nextTime || (scheduleNext ? scheduleNext.startMs : null);
+
+                let targetShow = null;
+                if (scheduleNext && scheduleNext.startMs) {
+                    targetShow = new Date(scheduleNext.startMs);
+                } else if (m.nextStartMs) {
+                    targetShow = new Date(m.nextStartMs);
+                } else if (m.nextTime && m.nextTime !== "TBD" && !m.nextTime.includes("None")) {
+                    targetShow = new Date(m.nextTime);
+                    if (isNaN(targetShow.getTime())) {
+                        let relSecs = parseToSeconds(m.nextTime);
+                        if (relSecs > 0) {
+                            targetShow = new Date(now.getTime() + (relSecs * 1000));
+                        } else {
+                            let clean = m.nextTime.includes("202") ? m.nextTime : m.nextTime + ", 2026";
+                            targetShow = new Date(clean);
+                        }
+                    }
+                }
+                
+                if (!targetShow || isNaN(targetShow.getTime())) {
+                    targetShow = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 19, 0, 0);
+                    if (now >= new Date(now.getFullYear(), now.getMonth(), now.getDate(), 20, 56, 0)) {
+                        targetShow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 19, 0, 0);
+                    }
+                }
+                THEATER_STATE.targetShowDate = targetShow;
             }
-            THEATER_STATE.targetShowDate = targetShow;
+
+            renderTheaterHeartbeat();
         });
 
         function renderTheaterHeartbeat() {
@@ -2450,15 +2494,35 @@
             const todayLabelEl = document.getElementById('m-today-label');
             if (!nowTitleEl || !nowTimeEl || !nextTitleEl || !nextTimeEl) return;
 
+            // Check if nowPlaying is set to an active movie
+            let isIdle = !THEATER_STATE.nowPlaying || THEATER_STATE.nowPlaying.toLowerCase().includes("no movie playing");
+            let activeMovie = THEATER_STATE.nowPlaying;
+            let activeEnd = (THEATER_STATE.showEndTime && !isNaN(new Date(THEATER_STATE.showEndTime).getTime()))
+                ? new Date(THEATER_STATE.showEndTime)
+                : null;
+            let targetShow = THEATER_STATE.targetShowDate;
+            let displayNextTitle = THEATER_STATE.nextTitle;
+            let displayTargetShow = targetShow;
+
+            // SMART AUTO-DETECTION FALLBACK:
+            // If marked idle, but nextTime has already arrived (within the last 3.5 hours),
+            // the movie in nextTitle has actually started playing!
+            if (isIdle && targetShow && targetShow <= now) {
+                const elapsedMs = now - targetShow;
+                if (elapsedMs >= 0 && elapsedMs < 3.5 * 3600 * 1000) {
+                    isIdle = false;
+                    activeMovie = THEATER_STATE.nextTitle;
+                    activeEnd = activeEnd || new Date(targetShow.getTime() + 2 * 3600 * 1000);
+                    displayNextTitle = "Upcoming Feature";
+                    displayTargetShow = null;
+                }
+            }
+
             // 1. Render Now Playing & Left Ticker
-            const isIdle = !THEATER_STATE.nowPlaying || THEATER_STATE.nowPlaying.toLowerCase().includes("no movie playing");
-            nowTitleEl.innerText = isIdle ? "No Movie Playing" : THEATER_STATE.nowPlaying;
+            nowTitleEl.innerText = isIdle ? "No Movie Playing" : activeMovie;
 
             if (!isIdle) {
-                const showEnd = (THEATER_STATE.showEndTime && !isNaN(new Date(THEATER_STATE.showEndTime).getTime())) 
-                    ? new Date(THEATER_STATE.showEndTime) 
-                    : new Date(now.getFullYear(), now.getMonth(), now.getDate(), 20, 56, 0);
-                
+                const showEnd = activeEnd || new Date(now.getTime() + 60 * 60 * 1000);
                 const secsLeft = Math.floor((showEnd - now) / 1000);
                 if (secsLeft <= 0) {
                     nowTimeEl.innerText = "Cinema Idle";
@@ -2478,16 +2542,15 @@
             }
 
             // 2. Render Up Next & Countdown Ticker
-            nextTitleEl.innerText = THEATER_STATE.nextTitle;
+            nextTitleEl.innerText = displayNextTitle;
 
-            const targetShow = THEATER_STATE.targetShowDate;
-            if (targetShow) {
-                const secsLeft = Math.floor((targetShow - now) / 1000);
+            if (displayTargetShow) {
+                const secsLeft = Math.floor((displayTargetShow - now) / 1000);
                 if (secsLeft <= 0) {
                     if (todayLabelEl) todayLabelEl.style.display = "none";
                     nextTimeEl.innerText = "Show Starting...";
                 } else {
-                    const isToday = (targetShow.toDateString() === now.toDateString());
+                    const isToday = (displayTargetShow.toDateString() === now.toDateString());
                     if (secsLeft <= 86400 && isToday) {
                         if (todayLabelEl) todayLabelEl.style.display = "inline-flex";
                         let hours = Math.floor(secsLeft / 3600);
@@ -2516,7 +2579,7 @@
                 }
             } else {
                 if (todayLabelEl) todayLabelEl.style.display = "none";
-                nextTimeEl.innerText = "--";
+                nextTimeEl.innerText = isIdle ? "--" : "Scheduled Soon";
             }
         }
         setInterval(renderTheaterHeartbeat, 1000);
@@ -2536,7 +2599,7 @@
         });
 
         const DEFAULT_GH_REPOS = [
-            { name: "BDClive", owner: "bdclive", fullName: "bdclive/BDClive", htmlUrl: "https://github.com/bdclive/BDClive", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "BDC Live Central Command Dashboard", latestCommit: "v10.2.120 : Upgraded Twitch Studio Deck with multi-channel support for Brian & Javaggz" },
+            { name: "BDClive", owner: "bdclive", fullName: "bdclive/BDClive", htmlUrl: "https://github.com/bdclive/BDClive", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "BDC Live Central Command Dashboard", latestCommit: "v10.2.121 : Synchronized Theater Heartbeat with live active movie detection" },
             { name: "BDCvault.github.io", owner: "BDCvault", fullName: "BDCvault/BDCvault.github.io", htmlUrl: "https://github.com/BDCvault/BDCvault.github.io", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "BDC Vault Web Application", latestCommit: "v4.8.0 : Added 1-click Automated Financial Engines and APR interest bot", actionStatus: "completed", actionConclusion: "success", actionName: "💎 BDC Vault Web App Deployment & Release" },
             { name: "wosBDC.github.io", owner: "wosbdc", fullName: "wosbdc/wosBDC.github.io", htmlUrl: "https://github.com/wosbdc/wosBDC.github.io", pushedAt: new Date(Date.now() - 3600000 * 1.5).toISOString(), defaultBranch: "main", description: "WOS BDC Web Application", latestCommit: "v2.9.86 : Dynamic real-time synchronization for all dropdown filter options and action button counters" },
             { name: "DasherTracker.github.io", owner: "DasherTracker", fullName: "DasherTracker/DasherTracker.github.io", htmlUrl: "https://github.com/DasherTracker/DasherTracker.github.io", pushedAt: new Date(Date.now() - 3600000 * 3.5).toISOString(), defaultBranch: "main", description: "Dasher Tracker Portal", latestCommit: "Production sync" },
@@ -2736,7 +2799,7 @@
             }
         }
 
-        const CURRENT_APP_VERSION = 'v10.2.120';
+        const CURRENT_APP_VERSION = 'v10.2.121';
         let isDeployingLive = false;
         let pendingRemoteVersion = null;
         let autoRefreshTimer = null;
