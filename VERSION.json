@@ -14,11 +14,11 @@
       "cliFile": "Threads_Bridge/threads_bridge_cli_v1.0.59_(terminal).py"
     },
     "bdclive_web_dashboard": {
-      "version": "10.2.122",
+      "version": "10.2.123",
       "repository": "https://github.com/bdclive/BDClive",
       "latestChanges": [
-        "v10.2.122: Synchronized Theater Up Next with Discord and Central Command",
-        "v10.2.121: Synchronized Theater Heartbeat with live active movie detection"
+        "v10.2.123: Separated Follower and Views Activity Tracking into dedicated KPI boxes",
+        "v10.2.122: Synchronized Theater Up Next with Discord and Central Command"
       ]
     },
     "wosbdc_alliance_dashboard": {

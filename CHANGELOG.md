@@ -1,3 +1,12 @@
+## [10.2.123] - 2026-09-05
+- Separated follower and views tracking into dedicated KPI boxes.
+- Added dedicated follower gains, losses, and net change tracking.
+- Added dedicated views gains, losses, and net change tracking.
+- Added instant filter buttons for followers only and views only.
+- Added test buttons for simulating follower and view changes.
+- Filtered task counters out of follower activity change logs.
+- Added color-coded badges to differentiate followers and views.
+
 ## [1.1.04] - 2026-09-04
 - Eliminated duplicate Gatekeeper report messages in Discord alerts channel.
 - Purged older duplicate message and restored single live report.

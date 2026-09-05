@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BDC LIVE v10.2.122</title>
+    <title>BDC LIVE v10.2.123</title>
     <!-- Open Graph & Social Preview Meta Tags -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="BDC LIVE v10.2.122">
+    <meta property="og:title" content="BDC LIVE v10.2.123">
     <meta property="og:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="og:image" content="./bdclive_banner.jpg">
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="BDC LIVE v10.2.122">
+    <meta property="twitter:title" content="BDC LIVE v10.2.123">
     <meta property="twitter:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="twitter:image" content="./bdclive_banner.jpg">
     <!-- PWA Manifest & Mobile Web App Meta Tags -->
@@ -997,6 +997,12 @@
                     <button onclick="simulateTestFollowerLog('Twitch', -1)" style="background: rgba(248, 81, 73, 0.18); color: #f85149; border: 1px solid rgba(248, 81, 73, 0.4); padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
                         🔻 Test Loss (-1)
                     </button>
+                    <button onclick="simulateTestViewsLog('Threads', 100)" style="background: rgba(0, 210, 255, 0.18); color: #00d2ff; border: 1px solid rgba(0, 210, 255, 0.4); padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
+                        👁️ Test Views (+100)
+                    </button>
+                    <button onclick="simulateTestViewsLog('Threads', -50)" style="background: rgba(248, 81, 73, 0.18); color: #f85149; border: 1px solid rgba(248, 81, 73, 0.4); padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
+                        📉 Test Views (-50)
+                    </button>
                     <button onclick="exportFollowerActivityLogCSV()" style="background: rgba(88, 166, 255, 0.18); color: #58a6ff; border: 1px solid rgba(88, 166, 255, 0.4); padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
                         <i class="fa-solid fa-download"></i> Export CSV
                     </button>
@@ -1007,34 +1013,70 @@
                 </div>
             </div>
 
-            <!-- Summary KPI Bar -->
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin-bottom: 12px;">
-                <div style="background: rgba(63, 185, 80, 0.1); border: 1px solid rgba(63, 185, 80, 0.3); border-radius: 8px; padding: 8px 12px;">
-                    <div style="font-size: 10px; color: #8b949e; font-weight: 700;">TOTAL GAINS</div>
-                    <div id="log-total-gains" style="font-size: 18px; font-weight: 900; color: #3fb950; margin-top: 2px;">+0</div>
+            <!-- Dedicated Tracking KPI Boxes: Followers vs Views -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 12px; margin-bottom: 12px;">
+                <!-- 👥 Follower Activity Box -->
+                <div style="background: rgba(63, 185, 80, 0.04); border: 1.5px solid rgba(63, 185, 80, 0.35); border-radius: 10px; padding: 10px 14px; box-shadow: inset 0 0 15px rgba(63, 185, 80, 0.05);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px solid rgba(63, 185, 80, 0.2); padding-bottom: 5px;">
+                        <div style="font-size: 11.5px; font-weight: 800; color: #3fb950; display: flex; align-items: center; gap: 6px;">
+                            <span>👥</span> FOLLOWER GAINS & LOSSES
+                        </div>
+                        <span style="font-size: 10px; color: #8b949e; font-weight: 600;">Audience Community</span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
+                        <div style="background: rgba(63, 185, 80, 0.12); border: 1px solid rgba(63, 185, 80, 0.25); border-radius: 6px; padding: 6px 8px; text-align: center;">
+                            <div style="font-size: 9.5px; color: #8b949e; font-weight: 700;">GAINS (+)</div>
+                            <div id="log-fol-gains" style="font-size: 16px; font-weight: 900; color: #3fb950; margin-top: 2px;">+0</div>
+                        </div>
+                        <div style="background: rgba(248, 81, 73, 0.12); border: 1px solid rgba(248, 81, 73, 0.25); border-radius: 6px; padding: 6px 8px; text-align: center;">
+                            <div style="font-size: 9.5px; color: #8b949e; font-weight: 700;">LOSSES (-)</div>
+                            <div id="log-fol-losses" style="font-size: 16px; font-weight: 900; color: #f85149; margin-top: 2px;">-0</div>
+                        </div>
+                        <div style="background: rgba(88, 166, 255, 0.12); border: 1px solid rgba(88, 166, 255, 0.25); border-radius: 6px; padding: 6px 8px; text-align: center;">
+                            <div style="font-size: 9.5px; color: #8b949e; font-weight: 700;">NET DELTA</div>
+                            <div id="log-fol-net" style="font-size: 16px; font-weight: 900; color: #58a6ff; margin-top: 2px;">0</div>
+                        </div>
+                    </div>
                 </div>
-                <div style="background: rgba(248, 81, 73, 0.1); border: 1px solid rgba(248, 81, 73, 0.3); border-radius: 8px; padding: 8px 12px;">
-                    <div style="font-size: 10px; color: #8b949e; font-weight: 700;">TOTAL LOSSES</div>
-                    <div id="log-total-losses" style="font-size: 18px; font-weight: 900; color: #f85149; margin-top: 2px;">-0</div>
-                </div>
-                <div style="background: rgba(88, 166, 255, 0.1); border: 1px solid rgba(88, 166, 255, 0.3); border-radius: 8px; padding: 8px 12px;">
-                    <div style="font-size: 10px; color: #8b949e; font-weight: 700;">NET FOLLOWER DELTA</div>
-                    <div id="log-net-delta" style="font-size: 18px; font-weight: 900; color: #58a6ff; margin-top: 2px;">0</div>
-                </div>
-                <div style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 8px 12px;">
-                    <div style="font-size: 10px; color: #8b949e; font-weight: 700;">EVENTS LOGGED</div>
-                    <div id="log-total-events" style="font-size: 18px; font-weight: 900; color: #ffffff; margin-top: 2px;">0</div>
+
+                <!-- 👁️ Views Activity Box -->
+                <div style="background: rgba(0, 210, 255, 0.04); border: 1.5px solid rgba(0, 210, 255, 0.35); border-radius: 10px; padding: 10px 14px; box-shadow: inset 0 0 15px rgba(0, 210, 255, 0.05);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px solid rgba(0, 210, 255, 0.2); padding-bottom: 5px;">
+                        <div style="font-size: 11.5px; font-weight: 800; color: #00d2ff; display: flex; align-items: center; gap: 6px;">
+                            <span>👁️</span> VIEWS GAINS & LOSSES
+                        </div>
+                        <span style="font-size: 10px; color: #8b949e; font-weight: 600;">Content Impressions</span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
+                        <div style="background: rgba(0, 210, 255, 0.12); border: 1px solid rgba(0, 210, 255, 0.25); border-radius: 6px; padding: 6px 8px; text-align: center;">
+                            <div style="font-size: 9.5px; color: #8b949e; font-weight: 700;">GAINS (+)</div>
+                            <div id="log-views-gains" style="font-size: 16px; font-weight: 900; color: #00d2ff; margin-top: 2px;">+0</div>
+                        </div>
+                        <div style="background: rgba(248, 81, 73, 0.12); border: 1px solid rgba(248, 81, 73, 0.25); border-radius: 6px; padding: 6px 8px; text-align: center;">
+                            <div style="font-size: 9.5px; color: #8b949e; font-weight: 700;">LOSSES (-)</div>
+                            <div id="log-views-losses" style="font-size: 16px; font-weight: 900; color: #f85149; margin-top: 2px;">-0</div>
+                        </div>
+                        <div style="background: rgba(0, 210, 255, 0.12); border: 1px solid rgba(0, 210, 255, 0.25); border-radius: 6px; padding: 6px 8px; text-align: center;">
+                            <div style="font-size: 9.5px; color: #8b949e; font-weight: 700;">NET DELTA</div>
+                            <div id="log-views-net" style="font-size: 16px; font-weight: 900; color: #00d2ff; margin-top: 2px;">0</div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Filter Controls -->
+            <!-- Filter Controls & Event Count -->
             <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 8px 12px; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
-                <div style="display: flex; align-items: center; gap: 6px;">
-                    <button id="log-filter-all" onclick="setFollowerLogFilter('all')" style="background: #238636; color: #fff; border: 1px solid rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer;">All Events</button>
-                    <button id="log-filter-gain" onclick="setFollowerLogFilter('gain')" style="background: rgba(255,255,255,0.06); color: #8b949e; border: 1px solid rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer;">Gains Only (+)</button>
-                    <button id="log-filter-loss" onclick="setFollowerLogFilter('loss')" style="background: rgba(255,255,255,0.06); color: #8b949e; border: 1px solid rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer;">Losses Only (-)</button>
+                <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                    <button id="log-filter-all" onclick="setFollowerLogFilter('all')" style="background: #238636; color: #fff; border: 1px solid rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer;">All Activity</button>
+                    <button id="log-filter-followers" onclick="setFollowerLogFilter('followers')" style="background: rgba(255,255,255,0.06); color: #8b949e; border: 1px solid rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer;">👥 Followers Only</button>
+                    <button id="log-filter-views" onclick="setFollowerLogFilter('views')" style="background: rgba(255,255,255,0.06); color: #8b949e; border: 1px solid rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer;">👁️ Views Only</button>
+                    <button id="log-filter-gain" onclick="setFollowerLogFilter('gain')" style="background: rgba(255,255,255,0.06); color: #8b949e; border: 1px solid rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer;">▲ Gains (+)</button>
+                    <button id="log-filter-loss" onclick="setFollowerLogFilter('loss')" style="background: rgba(255,255,255,0.06); color: #8b949e; border: 1px solid rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer;">▼ Losses (-)</button>
                 </div>
-                <input type="text" id="log-search-input" onkeyup="filterFollowerLogTable()" placeholder="Search platform or change..." style="flex: 1; max-width: 240px; background: #161b22; border: 1px solid #30363d; color: #fff; padding: 5px 10px; border-radius: 6px; font-size: 11px; outline: none;">
+                <div style="display: flex; align-items: center; gap: 8px; flex: 1; justify-content: flex-end;">
+                    <div style="font-size: 11px; color: #8b949e; white-space: nowrap;">Total Events: <strong id="log-total-events" style="color: #ffffff;">0</strong></div>
+                    <input type="text" id="log-search-input" onkeyup="filterFollowerLogTable()" placeholder="Search platform or change..." style="width: 180px; max-width: 220px; background: #161b22; border: 1px solid #30363d; color: #fff; padding: 5px 10px; border-radius: 6px; font-size: 11px; outline: none;">
+                </div>
             </div>
 
             <!-- Activity Table -->
@@ -1233,14 +1275,26 @@
 
         let currentLogFilter = 'all';
 
+        function isViewItem(item) {
+            if (!item) return false;
+            if (item.isView === true || item.metricType === 'views') return true;
+            if (item.unit && (item.unit.toLowerCase().includes('view') || item.unit.toLowerCase().includes('chatter'))) return true;
+            if (item.platform && (item.platform.toLowerCase().includes('view') || item.platform.toLowerCase().includes('chatter'))) return true;
+            return false;
+        }
+
         function recordFollowerActivityEvent(metricKey, diff, oldVal, newVal, isView = false, customSource = null) {
+            if (!metricKey || (typeof metricKey === 'string' && metricKey.startsWith('task_'))) return;
+
             const meta = METRIC_PLATFORM_MAP[metricKey] || {
                 name: customSource || metricKey,
                 icon: isView ? '👁️' : '👥',
-                color: '#58a6ff',
+                color: isView ? '#00d2ff' : '#58a6ff',
                 type: isView ? 'views' : 'followers',
                 unit: isView ? 'Views' : 'Followers'
             };
+
+            const resolvedIsView = isView || meta.type === 'views' || (meta.unit && (meta.unit.toLowerCase().includes('view') || meta.unit.toLowerCase().includes('chatter')));
 
             const now = new Date();
             const eventEntry = {
@@ -1251,7 +1305,8 @@
                 platform: meta.name,
                 icon: meta.icon,
                 color: meta.color,
-                metricType: isView ? 'views' : meta.type,
+                metricType: resolvedIsView ? 'views' : (meta.type || 'followers'),
+                isView: resolvedIsView,
                 unit: meta.unit,
                 type: diff > 0 ? 'gain' : 'loss',
                 diff: diff,
@@ -1352,21 +1407,57 @@
         function setFollowerLogFilter(filter) {
             currentLogFilter = filter;
             const btnAll = document.getElementById('log-filter-all');
+            const btnFol = document.getElementById('log-filter-followers');
+            const btnViews = document.getElementById('log-filter-views');
             const btnGain = document.getElementById('log-filter-gain');
             const btnLoss = document.getElementById('log-filter-loss');
-            if (btnAll && btnGain && btnLoss) {
-                [btnAll, btnGain, btnLoss].forEach(b => {
-                    b.style.background = 'rgba(255,255,255,0.06)';
-                    b.style.color = '#8b949e';
-                    b.style.borderColor = 'rgba(255,255,255,0.1)';
-                    b.style.fontWeight = '600';
-                });
-                const active = filter === 'gain' ? btnGain : (filter === 'loss' ? btnLoss : btnAll);
-                active.style.background = filter === 'gain' ? 'rgba(63, 185, 80, 0.25)' : (filter === 'loss' ? 'rgba(248, 81, 73, 0.25)' : '#238636');
-                active.style.color = filter === 'gain' ? '#3fb950' : (filter === 'loss' ? '#f85149' : '#ffffff');
-                active.style.borderColor = filter === 'gain' ? '#3fb950' : (filter === 'loss' ? '#f85149' : 'rgba(255,255,255,0.2)');
-                active.style.fontWeight = '800';
+
+            const allBtns = [btnAll, btnFol, btnViews, btnGain, btnLoss].filter(Boolean);
+            allBtns.forEach(b => {
+                b.style.background = 'rgba(255,255,255,0.06)';
+                b.style.color = '#8b949e';
+                b.style.borderColor = 'rgba(255,255,255,0.1)';
+                b.style.fontWeight = '600';
+            });
+
+            let active = btnAll;
+            if (filter === 'followers') {
+                active = btnFol;
+                if (active) {
+                    active.style.background = 'rgba(63, 185, 80, 0.25)';
+                    active.style.color = '#3fb950';
+                    active.style.borderColor = '#3fb950';
+                }
+            } else if (filter === 'views') {
+                active = btnViews;
+                if (active) {
+                    active.style.background = 'rgba(0, 210, 255, 0.25)';
+                    active.style.color = '#00d2ff';
+                    active.style.borderColor = '#00d2ff';
+                }
+            } else if (filter === 'gain') {
+                active = btnGain;
+                if (active) {
+                    active.style.background = 'rgba(63, 185, 80, 0.25)';
+                    active.style.color = '#3fb950';
+                    active.style.borderColor = '#3fb950';
+                }
+            } else if (filter === 'loss') {
+                active = btnLoss;
+                if (active) {
+                    active.style.background = 'rgba(248, 81, 73, 0.25)';
+                    active.style.color = '#f85149';
+                    active.style.borderColor = '#f85149';
+                }
+            } else {
+                active = btnAll;
+                if (active) {
+                    active.style.background = '#238636';
+                    active.style.color = '#ffffff';
+                    active.style.borderColor = 'rgba(255,255,255,0.2)';
+                }
             }
+            if (active) active.style.fontWeight = '800';
             renderFollowerActivityLogTable();
         }
 
@@ -1375,7 +1466,7 @@
         }
 
         function clearFollowerActivityLog() {
-            if (confirm('Clear all recorded follower activity history?')) {
+            if (confirm('Clear all recorded follower & views activity history?')) {
                 followerActivityLog = [];
                 try { localStorage.removeItem('follower_activity_log'); } catch(e) {}
                 renderFollowerActivityLogTable();
@@ -1387,15 +1478,16 @@
                 alert('No follower activity entries to export.');
                 return;
             }
-            let csv = 'Timestamp,Date,Time,Platform,Metric,Type,Delta,OldCount,NewCount\n';
+            let csv = 'Timestamp,Date,Time,Category,Platform,Metric,Type,Delta,OldCount,NewCount\n';
             followerActivityLog.forEach(row => {
-                csv += `"${row.timestamp}","${row.dateStr}","${row.timeStr}","${row.platform}","${row.unit}","${row.type}","${row.diff}","${row.oldVal}","${row.newVal}"\n`;
+                const cat = isViewItem(row) ? 'Views' : 'Followers';
+                csv += `"${row.timestamp}","${row.dateStr}","${row.timeStr}","${cat}","${row.platform}","${row.unit}","${row.type}","${row.diff}","${row.oldVal}","${row.newVal}"\n`;
             });
             const blob = new Blob([csv], { type: 'text/csv' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `bdclive_follower_activity_log_${new Date().toISOString().slice(0, 10)}.csv`;
+            a.download = `bdclive_activity_history_${new Date().toISOString().slice(0, 10)}.csv`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
@@ -1410,12 +1502,13 @@
                 'Threads': 'threadsFol',
                 'Snapchat': 'snapFol',
                 'Facebook': 'fbPage',
+                'Facebook Page': 'fbPage',
                 'Bluesky': 'bskyFol',
                 'X': 'xFol'
             };
             const metricKey = keyMap[platform] || 'ytSub';
             const oldVal = _prevFollowerMetrics[metricKey] || 1000;
-            const newVal = oldVal + diff;
+            const newVal = Math.max(0, oldVal + diff);
             _prevFollowerMetrics[metricKey] = newVal;
             
             const elMap = {
@@ -1436,41 +1529,95 @@
             recordFollowerActivityEvent(metricKey, diff, oldVal, newVal, false, platform);
         }
 
+        function simulateTestViewsLog(platform = 'Threads', diff = 100) {
+            const keyMap = {
+                'Threads': 'threadsViews',
+                'Snapchat': 'snapViews',
+                'Facebook Page': 'fbViews',
+                'Facebook': 'fbViews',
+                'Instagram': 'igViews',
+                'Twitch': 'twitchViewers'
+            };
+            const metricKey = keyMap[platform] || 'threadsViews';
+            const oldVal = _prevFollowerMetrics[metricKey] || 5000;
+            const newVal = Math.max(0, oldVal + diff);
+            _prevFollowerMetrics[metricKey] = newVal;
+            
+            const elMap = {
+                'threadsViews': 'threads-views-num',
+                'snapViews': 'snap-views-num',
+                'fbViews': 'fb-views-num',
+                'igViews': 'ig-views-num',
+                'twitchViewers': 'twitch-view-num'
+            };
+            const elId = elMap[metricKey] || 'threads-views-num';
+            const badge = diff > 0 ? `+${diff} Just Now` : `${diff} Just Now`;
+            flashFollowerPulse(elId, diff > 0 ? 'gain' : 'loss', '#00d2ff', badge);
+            playFollowerSound(diff > 0 ? 'views_gain' : 'loss');
+            recordFollowerActivityEvent(metricKey, diff, oldVal, newVal, true, platform);
+        }
+
         function renderFollowerActivityLogTable() {
             const tbody = document.getElementById('follower-activity-log-table-body');
-            const totalGainsEl = document.getElementById('log-total-gains');
-            const totalLossesEl = document.getElementById('log-total-losses');
-            const netDeltaEl = document.getElementById('log-net-delta');
+            const folGainsEl = document.getElementById('log-fol-gains');
+            const folLossesEl = document.getElementById('log-fol-losses');
+            const folNetEl = document.getElementById('log-fol-net');
+
+            const viewsGainsEl = document.getElementById('log-views-gains');
+            const viewsLossesEl = document.getElementById('log-views-losses');
+            const viewsNetEl = document.getElementById('log-views-net');
+
             const totalEventsEl = document.getElementById('log-total-events');
             if (!tbody) return;
 
             const searchVal = ((document.getElementById('log-search-input')?.value) || '').toLowerCase().trim();
 
-            let totalGains = 0;
-            let totalLosses = 0;
+            let folGains = 0;
+            let folLosses = 0;
+            let viewsGains = 0;
+            let viewsLosses = 0;
 
             followerActivityLog.forEach(item => {
-                if (item.diff > 0) totalGains += item.diff;
-                else if (item.diff < 0) totalLosses += Math.abs(item.diff);
+                const isView = isViewItem(item);
+                const diff = item.diff || 0;
+                if (isView) {
+                    if (diff > 0) viewsGains += diff;
+                    else if (diff < 0) viewsLosses += Math.abs(diff);
+                } else {
+                    if (diff > 0) folGains += diff;
+                    else if (diff < 0) folLosses += Math.abs(diff);
+                }
             });
 
-            if (totalGainsEl) totalGainsEl.innerText = `+${fNum(totalGains)}`;
-            if (totalLossesEl) totalLossesEl.innerText = `-${fNum(totalLosses)}`;
-            if (netDeltaEl) {
-                const net = totalGains - totalLosses;
-                netDeltaEl.innerText = net > 0 ? `+${fNum(net)}` : (net < 0 ? `-${fNum(Math.abs(net))}` : '0');
-                netDeltaEl.style.color = net > 0 ? '#3fb950' : (net < 0 ? '#f85149' : '#58a6ff');
+            if (folGainsEl) folGainsEl.innerText = `+${fNum(folGains)}`;
+            if (folLossesEl) folLossesEl.innerText = `-${fNum(folLosses)}`;
+            if (folNetEl) {
+                const folNet = folGains - folLosses;
+                folNetEl.innerText = folNet > 0 ? `+${fNum(folNet)}` : (folNet < 0 ? `-${fNum(Math.abs(folNet))}` : '0');
+                folNetEl.style.color = folNet > 0 ? '#3fb950' : (folNet < 0 ? '#f85149' : '#58a6ff');
             }
+
+            if (viewsGainsEl) viewsGainsEl.innerText = `+${fNum(viewsGains)}`;
+            if (viewsLossesEl) viewsLossesEl.innerText = `-${fNum(viewsLosses)}`;
+            if (viewsNetEl) {
+                const viewsNet = viewsGains - viewsLosses;
+                viewsNetEl.innerText = viewsNet > 0 ? `+${fNum(viewsNet)}` : (viewsNet < 0 ? `-${fNum(Math.abs(viewsNet))}` : '0');
+                viewsNetEl.style.color = viewsNet > 0 ? '#00d2ff' : (viewsNet < 0 ? '#f85149' : '#00d2ff');
+            }
+
             if (totalEventsEl) totalEventsEl.innerText = fNum(followerActivityLog.length);
 
             let filtered = followerActivityLog.filter(item => {
+                const isView = isViewItem(item);
+                if (currentLogFilter === 'followers' && isView) return false;
+                if (currentLogFilter === 'views' && !isView) return false;
                 if (currentLogFilter === 'gain' && item.type !== 'gain') return false;
                 if (currentLogFilter === 'loss' && item.type !== 'loss') return false;
                 if (searchVal) {
-                    const match = item.platform.toLowerCase().includes(searchVal) ||
-                                  item.unit.toLowerCase().includes(searchVal) ||
-                                  item.timeStr.toLowerCase().includes(searchVal) ||
-                                  item.deltaStr.toLowerCase().includes(searchVal);
+                    const match = (item.platform || '').toLowerCase().includes(searchVal) ||
+                                  (item.unit || '').toLowerCase().includes(searchVal) ||
+                                  (item.timeStr || '').toLowerCase().includes(searchVal) ||
+                                  (item.deltaStr || '').toLowerCase().includes(searchVal);
                     if (!match) return false;
                 }
                 return true;
@@ -1481,8 +1628,8 @@
                     <tr>
                         <td colspan="5" style="text-align: center; padding: 30px; color: #8b949e;">
                             <i class="fa-solid fa-bell-slash" style="font-size: 24px; opacity: 0.5; margin-bottom: 8px; display: block;"></i>
-                            No follower changes recorded yet.<br>
-                            <span style="font-size: 10px; opacity: 0.7;">Click <strong>✨ Test Gain (+1)</strong> or <strong>🔻 Test Loss (-1)</strong> above to preview live activity logging!</span>
+                            No activity changes recorded matching this filter.<br>
+                            <span style="font-size: 10px; opacity: 0.7;">Click <strong>✨ Test Gain</strong>, <strong>🔻 Test Loss</strong>, or <strong>👁️ Test Views</strong> above to test live tracking!</span>
                         </td>
                     </tr>
                 `;
@@ -1490,12 +1637,13 @@
             }
 
             tbody.innerHTML = filtered.map(item => {
+                const isView = isViewItem(item);
                 const isGain = item.type === 'gain';
-                const badgeBg = isGain ? 'rgba(63, 185, 80, 0.18)' : 'rgba(248, 81, 73, 0.18)';
-                const badgeColor = isGain ? '#3fb950' : '#f85149';
-                const badgeBorder = isGain ? 'rgba(63, 185, 80, 0.4)' : 'rgba(248, 81, 73, 0.4)';
+                const badgeBg = isGain ? (isView ? 'rgba(0, 210, 255, 0.18)' : 'rgba(63, 185, 80, 0.18)') : 'rgba(248, 81, 73, 0.18)';
+                const badgeColor = isGain ? (isView ? '#00d2ff' : '#3fb950') : '#f85149';
+                const badgeBorder = isGain ? (isView ? 'rgba(0, 210, 255, 0.4)' : 'rgba(63, 185, 80, 0.4)') : 'rgba(248, 81, 73, 0.4)';
 
-                const timeAgoSecs = Math.floor((Date.now() - item.timestamp) / 1000);
+                const timeAgoSecs = Math.floor((Date.now() - (item.timestamp || Date.now())) / 1000);
                 let timeAgoStr = 'Just Now';
                 if (timeAgoSecs >= 60) {
                     const mins = Math.floor(timeAgoSecs / 60);
@@ -1505,6 +1653,14 @@
                         timeAgoStr = `${hrs}h ago`;
                     }
                 }
+
+                const categoryBadge = isView
+                    ? `<span style="background: rgba(0, 210, 255, 0.14); color: #00d2ff; border: 1px solid rgba(0, 210, 255, 0.35); padding: 1px 6px; border-radius: 4px; font-size: 9px; font-weight: 800; letter-spacing: 0.3px;">👁️ VIEWS</span>`
+                    : `<span style="background: rgba(63, 185, 80, 0.14); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.35); padding: 1px 6px; border-radius: 4px; font-size: 9px; font-weight: 800; letter-spacing: 0.3px;">👥 FOLLOWER</span>`;
+
+                const reTestFn = isView 
+                    ? `simulateTestViewsLog('${item.platform}', ${isGain ? 100 : -50})`
+                    : `simulateTestFollowerLog('${item.platform}', ${isGain ? 1 : -1})`;
 
                 return `
                     <tr style="border-bottom: 1px solid rgba(255,255,255,0.06); transition: background 0.2s ease;">
@@ -1516,7 +1672,10 @@
                             <div style="display: flex; align-items: center; gap: 8px;">
                                 <span style="font-size: 16px;">${item.icon}</span>
                                 <div>
-                                    <div style="font-weight: 800; color: #ffffff; font-size: 12px;">${item.platform}</div>
+                                    <div style="font-weight: 800; color: #ffffff; font-size: 12px; display: flex; align-items: center; gap: 6px;">
+                                        ${item.platform}
+                                        ${categoryBadge}
+                                    </div>
                                     <div style="color: #8b949e; font-size: 10px;">Metric: ${item.unit}</div>
                                 </div>
                             </div>
@@ -1532,7 +1691,7 @@
                             </div>
                         </td>
                         <td style="padding: 10px 12px; text-align: right;">
-                            <button onclick="simulateTestFollowerLog('${item.platform}', ${isGain ? 1 : -1})" style="background: rgba(255,255,255,0.06); color: #8b949e; border: 1px solid rgba(255,255,255,0.1); padding: 4px 8px; border-radius: 6px; font-size: 10px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 3px; transition: all 0.2s ease;">
+                            <button onclick="${reTestFn}" style="background: rgba(255,255,255,0.06); color: #8b949e; border: 1px solid rgba(255,255,255,0.1); padding: 4px 8px; border-radius: 6px; font-size: 10px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 3px; transition: all 0.2s ease;">
                                 Re-test <i class="fa-solid fa-rotate-right" style="font-size: 9px;"></i>
                             </button>
                         </td>
@@ -1603,6 +1762,12 @@
 
             const oldVal = _prevFollowerMetrics[metricKey];
             el.innerText = fNum(newVal);
+
+            // Suppress internal task counters from follower/view logging and alerts
+            if (metricKey && typeof metricKey === 'string' && metricKey.startsWith('task_')) {
+                _prevFollowerMetrics[metricKey] = newVal;
+                return;
+            }
 
             if (_isFollowersInitialLoadComplete && oldVal !== undefined && oldVal !== null && oldVal !== newVal) {
                 const diff = newVal - oldVal;
@@ -1885,7 +2050,7 @@
         sDb.ref('labData').on('value', (s) => {
             const d = s.val(); if (!d) return;
             recordCentralCommandHeartbeat(d.timestamp || d.lastTelemetryTimestamp || (d.gatekeeperCounters && d.gatekeeperCounters.timestamp));
-            updateMetricAndFlash('plex-count-num', 'plexCount', parseMetricNum(d.plexCount, 0));
+            updateMetricAndFlash('plex-count-num', 'plexCount', parseMetricNum(d.plexCount, 0), true);
             updateMetricAndFlash('threads-fol-num', 'threadsFol', parseMetricNum(d.threadsFol, 335));
             updateMetricAndFlash('threads-views-num', 'threadsViews', parseMetricNum(d.threadsViews, 6600), true);
             updateMetricAndFlash('snap-fol-num', 'snapFol', parseMetricNum(d.snapFol, 3303));
@@ -1895,8 +2060,8 @@
             updateMetricAndFlash('fb-page-num', 'fbPage', parseMetricNum(d.fbPage, 1011));
             updateMetricAndFlash('fb-views-num', 'fbViews', parseMetricNum(d.fbViews, 8051), true);
             updateMetricAndFlash('fb-personal-num', 'fbPersonal', parseMetricNum(d.fbPersonal, 5478));
-            updateMetricAndFlash('twitch-view-num', 'twitchViewers', parseMetricNum(d.twitchViewers, 0));
-            updateMetricAndFlash('twitch-chatter-num', 'twitchChatters', parseMetricNum(d.twitchChatters, 0));
+            updateMetricAndFlash('twitch-view-num', 'twitchViewers', parseMetricNum(d.twitchViewers, 0), true);
+            updateMetricAndFlash('twitch-chatter-num', 'twitchChatters', parseMetricNum(d.twitchChatters, 0), true);
             updateMetricAndFlash('ig-fol-num', 'igFol', parseMetricNum(d.igFol, 5860));
             updateMetricAndFlash('ig-views-num', 'igViews', parseMetricNum(d.igViews, 5342), true);
 
@@ -2822,7 +2987,7 @@
             }
         }
 
-        const CURRENT_APP_VERSION = 'v10.2.122';
+        const CURRENT_APP_VERSION = 'v10.2.123';
         let isDeployingLive = false;
         let pendingRemoteVersion = null;
         let autoRefreshTimer = null;

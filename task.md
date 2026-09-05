@@ -1,6 +1,25 @@
-# Task List: Eliminate Duplicate Gatekeeper Reports & Synchronize Tracking (v1.1.04)
+# Task List: Separate Follower and Views Activity Tracking (v10.2.123)
 
-## 📋 Active Tasks: Gatekeeper Deduplication & Auto-Sync (v1.1.04)
+## ✅ Completed: Separate Follower and Views Activity Tracking (v10.2.123)
+- [x] Create project backup archive (`backups/Follower_Views_Separation_v10.2.123_*.zip`) <!-- id: 0 -->
+- [x] Upgrade Follower Activity & Change History Log in `index.html`: <!-- id: 1 -->
+  - [x] Separate Follower gains/losses and Views gains/losses into dedicated tracking boxes <!-- id: 2 -->
+  - [x] Add `👁️ Views Gains & Losses` tracking box with gains, losses, and net views delta <!-- id: 3 -->
+  - [x] Add `👥 Followers Gains & Losses` tracking box with gains, losses, and net followers delta <!-- id: 4 -->
+  - [x] Add category filter buttons: `👥 Followers Only` and `👁️ Views Only` alongside `All Events`, `Gains`, and `Losses` <!-- id: 5 -->
+  - [x] Add test simulation buttons: `👁️ Test Views (+100)` and `📉 Test Views (-50)` <!-- id: 6 -->
+  - [x] Prevent non-social metrics (e.g. `task_*`) from polluting the activity log <!-- id: 7 -->
+  - [x] Differentiate table tags (`👥 FOLLOWER` vs `👁️ VIEWS`) with distinct cyber badges <!-- id: 8 -->
+- [x] Sync `index.html` to `New.html` and `web_dashboards/New.html` <!-- id: 9 -->
+- [x] Bump version numbers: <!-- id: 10 -->
+  - [x] `CURRENT_APP_VERSION = 'v10.2.123'` across HTML files <!-- id: 11 -->
+  - [x] Bump `sw.js` cache to `livecounters-cache-v10.2.123` <!-- id: 12 -->
+  - [x] Update `VERSION.json` (`bdclive_web_dashboard.version: 10.2.123`) <!-- id: 13 -->
+- [x] Update `CHANGELOG.md` with App Store style punchy release notes (<= 10 words per bullet) <!-- id: 14 -->
+- [x] Run Automated Pre-Delivery Verification Script <!-- id: 15 -->
+- [x] Commit and push to GitHub <!-- id: 16 -->
+
+## ✅ Completed: Gatekeeper Deduplication & Auto-Sync (v1.1.04)
 - [x] Identify root cause of duplicate Gatekeeper messages in `#wos-alerts`
 - [x] Delete duplicate Gatekeeper report message `1545600554984677438` from `#wos-alerts` (leaving 1 clean message `1545645336952045569`)
 - [x] Create project backup archive (`BDC_Central_Command_backup_20260904_211455.zip`)
