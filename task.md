@@ -1,6 +1,24 @@
-# Task List: BDC Central Command Version Bump to v1.1.01
+# Task List: Synchronize Brian's Theater Box & BDC Central Command (v10.2.122 & v1.1.02)
 
-## 📋 Active Tasks: Central Command Version Bump (v1.1.01)
+## 📋 Active Tasks: Synchronize Theater Up Next Between BDC CC & Dashboard (v10.2.122 & v1.1.02)
+- [x] Create project backup archive
+- [x] Update `index.html`, `New.html`, and `web_dashboards/New.html`:
+  - Prioritize `m.nextTitle` pushed by BDC Central Command over outdated static schedule entries
+  - Clean emoji prefixes (`🎬`, `🍿`) for crystal-clear title rendering
+  - Correctly synchronize `targetShowDate` from `m.nextTime`
+- [x] Upgrade BDC Central Command to `BDC_Central_Command_GUI_v1.1.02.pyw`:
+  - Build live, dynamic `schedule` array directly from Discord scheduled events
+  - Push complete synchronized payload (`nowPlaying`, `nextTitle`, `nextTime`, `rsvpCount`, `schedule`)
+  - Bump internal version strings from `v1.1.01` to `v1.1.02`
+  - Purge superseded `v1.1.01.pyw`
+- [x] Update Firebase `theaterSync.json` with synchronized Discord events payload
+- [x] Clean House Protocol across Central Command destinations (Desktop, Shortcuts, Transfer Zip)
+- [x] Update `VERSION.json` & bump `sw.js` cache name
+- [x] Update `CHANGELOG.md` with App Store style release notes (<= 10 words per bullet)
+- [x] Run Automated Pre-Delivery Verification Script
+- [ ] Commit and push to GitHub
+
+## ✅ Completed: Central Command Version Bump (v1.1.01)
 - [x] Create backup archive (`backups/BDC_Central_Command_v1.1.00_pre_v1.1.01_*.zip`)
 - [x] Bump Central Command script to `BDC_Central_Command_GUI_v1.1.01.pyw`:
   - Update internal version strings from `v1.1.00` to `v1.1.01` (window title, headers, logs, tray icon, runner metadata)

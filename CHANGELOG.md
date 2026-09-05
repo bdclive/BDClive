@@ -1,3 +1,13 @@
+## [10.2.122] - 2026-09-04
+- Synchronized Brian's Theater box with Discord and Central Command.
+- Prioritized live Central Command nextTitle over outdated static schedule.
+- Both dashboard and Central Command now show Neighbors upcoming.
+
+## [1.1.02] - 2026-09-04
+- Built dynamic multi-event schedule push in Central Command.
+- Upgraded Central Command desktop engine to version 1.1.02.
+- Cleaned and deployed shortcuts and transfer packages across systems.
+
 ## [1.1.01] - 2026-09-04
 - Separated Now Playing and Up Next cards in Central Command.
 - Displays live movie title alongside upcoming feature and RSVPs.

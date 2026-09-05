@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BDC LIVE v10.2.121</title>
+    <title>BDC LIVE v10.2.122</title>
     <!-- Open Graph & Social Preview Meta Tags -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="BDC LIVE v10.2.121">
+    <meta property="og:title" content="BDC LIVE v10.2.122">
     <meta property="og:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="og:image" content="./bdclive_banner.jpg">
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="BDC LIVE v10.2.121">
+    <meta property="twitter:title" content="BDC LIVE v10.2.122">
     <meta property="twitter:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="twitter:image" content="./bdclive_banner.jpg">
     <!-- PWA Manifest & Mobile Web App Meta Tags -->
@@ -2435,52 +2435,75 @@
                 }
             }
 
-            if (scheduleLive) {
-                THEATER_STATE.nowPlaying = scheduleLive.title;
-                THEATER_STATE.showEndTime = scheduleLive.endMs;
-                if (scheduleNext) {
-                    THEATER_STATE.nextTitle = scheduleNext.title;
-                    THEATER_STATE.targetShowDate = new Date(scheduleNext.startMs);
-                    THEATER_STATE.nextTime = scheduleNext.startMs;
-                } else if (m.nextTitle && !m.nextTitle.toLowerCase().includes(scheduleLive.title.toLowerCase())) {
-                    THEATER_STATE.nextTitle = m.nextTitle;
-                    THEATER_STATE.targetShowDate = m.nextStartMs ? new Date(m.nextStartMs) : (m.nextTime ? new Date(m.nextTime) : null);
-                } else {
-                    THEATER_STATE.nextTitle = "Upcoming Feature";
-                    THEATER_STATE.targetShowDate = null;
-                }
-            } else {
-                THEATER_STATE.nowPlaying = m.nowPlaying || "No Movie Playing";
-                THEATER_STATE.nextTitle = m.nextTitle || (scheduleNext ? scheduleNext.title : "No Movie Scheduled");
-                THEATER_STATE.showEndTime = m.showEndTime || m.endMs || null;
-                THEATER_STATE.nextTime = m.nextTime || (scheduleNext ? scheduleNext.startMs : null);
+            // Clean title utility (strip leading emojis like 🎬, 🍿, ▶ for clean typography)
+            const cleanTitle = (t) => (t && typeof t === 'string') ? t.replace(/^[🎬🍿▶\s]+/, '').trim() : (t || '');
 
-                let targetShow = null;
-                if (scheduleNext && scheduleNext.startMs) {
-                    targetShow = new Date(scheduleNext.startMs);
-                } else if (m.nextStartMs) {
-                    targetShow = new Date(m.nextStartMs);
-                } else if (m.nextTime && m.nextTime !== "TBD" && !m.nextTime.includes("None")) {
-                    targetShow = new Date(m.nextTime);
-                    if (isNaN(targetShow.getTime())) {
+            let liveMovie = "";
+            let liveEnd = null;
+            if (scheduleLive) {
+                liveMovie = cleanTitle(scheduleLive.title);
+                liveEnd = scheduleLive.endMs;
+            } else if (m.nowPlaying && !m.nowPlaying.toLowerCase().includes("no movie playing") && !m.nowPlaying.toLowerCase().includes("idle")) {
+                liveMovie = cleanTitle(m.nowPlaying);
+                liveEnd = m.showEndTime || m.endMs || null;
+            }
+
+            let nextMovie = "";
+            let nextShowDate = null;
+            const ccNext = cleanTitle(m.nextTitle);
+            const liveClean = cleanTitle(liveMovie);
+
+            // Prioritize authoritative nextTitle from BDC Central Command if different from live movie
+            if (ccNext && !ccNext.toLowerCase().includes("no movie scheduled") && ccNext.toLowerCase() !== liveClean.toLowerCase()) {
+                nextMovie = ccNext;
+                if (m.nextTime && m.nextTime !== "TBD" && !m.nextTime.includes("None")) {
+                    let d = new Date(m.nextTime);
+                    if (!isNaN(d.getTime())) nextShowDate = d;
+                }
+                if (!nextShowDate && m.nextStartMs) {
+                    nextShowDate = new Date(m.nextStartMs);
+                } else if (!nextShowDate && scheduleNext && scheduleNext.startMs) {
+                    nextShowDate = new Date(scheduleNext.startMs);
+                }
+            } else if (scheduleNext && cleanTitle(scheduleNext.title).toLowerCase() !== liveClean.toLowerCase()) {
+                nextMovie = cleanTitle(scheduleNext.title);
+                nextShowDate = scheduleNext.startMs ? new Date(scheduleNext.startMs) : null;
+            } else if (ccNext && !ccNext.toLowerCase().includes("no movie scheduled")) {
+                nextMovie = ccNext;
+            } else {
+                nextMovie = "No Movie Scheduled";
+            }
+
+            if (!nextShowDate || isNaN(nextShowDate.getTime())) {
+                if (m.nextTime && m.nextTime !== "TBD" && !m.nextTime.includes("None")) {
+                    let d = new Date(m.nextTime);
+                    if (!isNaN(d.getTime())) {
+                        nextShowDate = d;
+                    } else {
                         let relSecs = parseToSeconds(m.nextTime);
                         if (relSecs > 0) {
-                            targetShow = new Date(now.getTime() + (relSecs * 1000));
+                            nextShowDate = new Date(now.getTime() + (relSecs * 1000));
                         } else {
                             let clean = m.nextTime.includes("202") ? m.nextTime : m.nextTime + ", 2026";
-                            targetShow = new Date(clean);
+                            let parsed = new Date(clean);
+                            if (!isNaN(parsed.getTime())) nextShowDate = parsed;
                         }
                     }
                 }
-                
-                if (!targetShow || isNaN(targetShow.getTime())) {
-                    targetShow = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 19, 0, 0);
-                    if (now >= new Date(now.getFullYear(), now.getMonth(), now.getDate(), 20, 56, 0)) {
-                        targetShow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 19, 0, 0);
-                    }
-                }
-                THEATER_STATE.targetShowDate = targetShow;
             }
+
+            if (!nextShowDate || isNaN(nextShowDate.getTime())) {
+                nextShowDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 19, 0, 0);
+                if (now >= new Date(now.getFullYear(), now.getMonth(), now.getDate(), 20, 56, 0)) {
+                    nextShowDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 19, 0, 0);
+                }
+            }
+
+            THEATER_STATE.nowPlaying = liveMovie || "No Movie Playing";
+            THEATER_STATE.showEndTime = liveEnd;
+            THEATER_STATE.nextTitle = nextMovie;
+            THEATER_STATE.targetShowDate = nextShowDate;
+            THEATER_STATE.nextTime = m.nextTime || (nextShowDate ? nextShowDate.getTime() : null);
 
             renderTheaterHeartbeat();
         });
@@ -2799,7 +2822,7 @@
             }
         }
 
-        const CURRENT_APP_VERSION = 'v10.2.121';
+        const CURRENT_APP_VERSION = 'v10.2.122';
         let isDeployingLive = false;
         let pendingRemoteVersion = null;
         let autoRefreshTimer = null;
