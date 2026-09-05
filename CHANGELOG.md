@@ -1,3 +1,12 @@
+## [1.1.04] - 2026-09-04
+- Eliminated duplicate Gatekeeper report messages in Discord alerts channel.
+- Purged older duplicate message and restored single live report.
+- Added multi-tier cloud-first message ID resolution via Firebase.
+- Automated channel-wide duplicate message detection and instant cleanup sweep.
+- Added resilient 404 recovery before posting new messages.
+- Upgraded Central Command desktop application to version 1.1.04.
+- Cleaned and deployed shortcuts and transfer packages across systems.
+
 ## [1.1.03] - 2026-09-04
 - Added 1-tap Discord Event RSVP link to movie cards.
 - Dynamically links directly to active scheduled movie event.

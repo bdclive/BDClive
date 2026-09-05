@@ -1,22 +1,27 @@
-# Task List: Streamline Theater RSVP with Dynamic Event Deep Link & Reaction Sync (v1.1.03)
+# Task List: Eliminate Duplicate Gatekeeper Reports & Synchronize Tracking (v1.1.04)
 
-## 📋 Active Tasks: Theater RSVP Streamlining (v1.1.03)
-- [x] Create project backup archive (`BDC_Central_Command_backup_20260904_204914.zip`)
-- [x] Upgrade Central Command to `BDC_Central_Command_GUI_v1.1.03.pyw`:
-  - Dynamically generate official Discord Event deep link (`https://discord.com/events/{target_g_id}/{ev_id}`) for the active/upcoming movie
-  - Add prominent clickable 1-tap RSVP link in the embed description
-  - Add clear call-to-action tip for members (`Click link or react with 🎟️ below to RSVP`)
-  - Auto-react with `🎟️` on the posted card via Bot API
-  - Fetch users who reacted with `🎟️` or `👍` on the message in `#🎟️・rsvp-alerts`
-  - Merge and deduplicate event attendees and reaction attendees into `Confirmed Attendees` list
-  - Synchronize updated RSVP count to Firebase and Central Command GUI
-  - Bump internal version strings from `v1.1.02` to `v1.1.03`
-  - Purge superseded `v1.1.02.pyw`
-- [x] Update version registry `VERSION.json` (`bdc_central_command_desktop: 1.1.03`)
+## 📋 Active Tasks: Gatekeeper Deduplication & Auto-Sync (v1.1.04)
+- [x] Identify root cause of duplicate Gatekeeper messages in `#wos-alerts`
+- [x] Delete duplicate Gatekeeper report message `1545600554984677438` from `#wos-alerts` (leaving 1 clean message `1545645336952045569`)
+- [x] Create project backup archive (`BDC_Central_Command_backup_20260904_211455.zip`)
+- [x] Upgrade Central Command to `BDC_Central_Command_GUI_v1.1.04.pyw`:
+  - Overhaul `load_gatekeeper_report_msg_id` to prioritize Firebase RTDB as global source of truth
+  - Add channel message discovery via bot token/webhook to auto-detect any existing Gatekeeper report
+  - Add auto-cleanup routine in `send_or_update_gatekeeper_report` that automatically purges any ghost/duplicate messages in `#wos-alerts`
+  - Ensure 404 recovery checks cloud and channel before posting a new message
+  - Atomic synchronization to both local JSON and Firebase RTDB
+  - Bump internal version strings from `v1.1.03` to `v1.1.04`
+  - Purge superseded `v1.1.03.pyw`
+- [x] Update `bdc_api_service.js` with matching cloud-first Gatekeeper logic and duplicate prevention
+- [x] Update `discord_gatekeeper_report_id.json` locally and across network shares to `1545645336952045569`
+- [x] Add `DISCORD_BOT_TOKEN` into `discord_config.json` for channel inspection and auto-cleanup
+- [x] Update version registry `VERSION.json` (`bdc_central_command_desktop: 1.1.04`)
 - [x] Clean House Protocol across Central Command destinations (Desktop, Shortcuts, Transfer Zip)
 - [x] Update `CHANGELOG.md` with App Store style release notes (<= 10 words per bullet)
 - [x] Run Automated Pre-Delivery Verification Script
-- [x] Commit and push to GitHub (`v1.1.03 : Streamlined Theater RSVP with direct event deep link and emoji reaction sync`)
+- [x] Commit and push to GitHub (`v1.1.04 : Eliminated duplicate Gatekeeper reports and synchronized message tracking`)
+
+## ✅ Completed: Streamline Theater RSVP with Dynamic Event Deep Link & Reaction Sync (v1.1.03)
 
 ## ✅ Completed: Synchronize Theater Up Next Between BDC CC & Dashboard (v10.2.122 & v1.1.02)
 
