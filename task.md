@@ -1,4 +1,24 @@
-# Task List: Separate Follower and Views Activity Tracking (v10.2.123)
+# Task List: Separate Follower, Views, and Tasks Tracking (v10.2.124)
+
+## 📋 Active Tasks: Follower, Views & Tasks Complete Separation (v10.2.124)
+- [x] Create project backup archive (`backups/Tasks_Followers_Views_v10.2.124_*.zip`) <!-- id: 20 -->
+- [x] Upgrade Follower & Activity Change History Log in `index.html`: <!-- id: 21 -->
+  - [x] Add 3rd dedicated KPI tracking box: `📋 Tasks Added & Completed` (`#log-tasks-gains`, `#log-tasks-losses`, `#log-tasks-net`) <!-- id: 22 -->
+  - [x] Update `isTaskItem()` to detect all task metrics (including `task_*`, `movie_reviews`, `photos_needed`, `FunFacts`, `Bills`, etc.) <!-- id: 23 -->
+  - [x] Ensure `isViewItem()` strictly excludes tasks (including preventing `review` from matching `view`) <!-- id: 24 -->
+  - [x] Ensure `isFollowerItem()` strictly excludes tasks and views <!-- id: 25 -->
+  - [x] Add `📋 Tasks Only` filter button in the modal filter toolbar <!-- id: 26 -->
+  - [x] Add test simulation buttons: `📋 Test Task (+1)` and `✅ Complete Task (-1)` <!-- id: 27 -->
+  - [x] Add `📋 TASK` purple badge in activity table rows <!-- id: 28 -->
+  - [x] Connect live Google Tasks changes to log as Task events with full category isolation <!-- id: 29 -->
+- [x] Synchronize `index.html` to `New.html` and `web_dashboards/New.html` <!-- id: 30 -->
+- [x] Bump version numbers to `v10.2.124`: <!-- id: 31 -->
+  - [x] `CURRENT_APP_VERSION = 'v10.2.124'` across HTML files <!-- id: 32 -->
+  - [x] Bump `sw.js` cache to `livecounters-cache-v10.2.124` <!-- id: 33 -->
+  - [x] Update `VERSION.json` (`bdclive_web_dashboard.version: 10.2.124`) <!-- id: 34 -->
+- [x] Update `CHANGELOG.md` with App Store style punchy release notes (<= 10 words per bullet) <!-- id: 35 -->
+- [x] Run Automated Pre-Delivery Verification Script <!-- id: 36 -->
+- [/] Commit and push to GitHub <!-- id: 37 -->
 
 ## ✅ Completed: Separate Follower and Views Activity Tracking (v10.2.123)
 - [x] Create project backup archive (`backups/Follower_Views_Separation_v10.2.123_*.zip`) <!-- id: 0 -->

@@ -1,3 +1,12 @@
+## [10.2.124] - 2026-09-05
+- Separated followers, views, and tasks into dedicated tracking boxes.
+- Added dedicated tasks added, completed, and net delta tracking.
+- Fixed movie reviews being mistakenly classified as view metrics.
+- Prevented task counters from polluting follower and view statistics.
+- Added dedicated tasks filter button in activity log toolbar.
+- Added test buttons for simulating adding and completing tasks.
+- Added distinct purple badge styling for task activity items.
+
 ## [10.2.123] - 2026-09-05
 - Separated follower and views tracking into dedicated KPI boxes.
 - Added dedicated follower gains, losses, and net change tracking.
