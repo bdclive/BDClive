@@ -1,8 +1,8 @@
 {
   "name": "BDC Ecosystem Master Version Registry",
-  "lastUpdated": "2026-09-04T21:18:00-07:00",
+  "lastUpdated": "2026-09-05T21:22:00-07:00",
   "components": {
-    "bdc_central_command_desktop": "1.1.04",
+    "bdc_central_command_desktop": "1.1.05",
     "daemons": {
       "folder": "Daemons/",
       "counterChecker": "Daemons/counter_checker_daemon.py",
@@ -14,13 +14,21 @@
       "cliFile": "Threads_Bridge/threads_bridge_cli_v1.0.59_(terminal).py"
     },
     "bdclive_web_dashboard": {
-      "version": "10.2.125",
+      "version": "10.2.126",
       "repository": "https://github.com/bdclive/BDClive",
       "latestChanges": [
+        "v10.2.126: Future-proof GitHub Pipeline auto-discovery and BriansTheater integration",
         "v10.2.125: Added Twitch Studio chat toggle and hide capability with workspace auto-expansion",
         "v10.2.124: Separated Followers, Views, and Tasks tracking into dedicated KPI boxes",
         "v10.2.123: Separated Follower and Views Activity Tracking into dedicated KPI boxes",
         "v10.2.122: Synchronized Theater Up Next with Discord and Central Command"
+      ]
+    },
+    "brians_theater_web_app": {
+      "version": "4.9.31",
+      "repository": "https://github.com/BriansTheater/BriansTheater.github.io",
+      "latestChanges": [
+        "v4.9.31: New version popup toaster alert with App Store summary and refresh flow"
       ]
     },
     "wosbdc_alliance_dashboard": {
@@ -36,5 +44,5 @@
       "versionNumber": "@196"
     }
   },
-  "version": "1.0.71"
+  "version": "1.0.72"
 }
