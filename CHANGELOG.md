@@ -1,3 +1,18 @@
+## [10.2.126] - 2026-09-05
+- Added Brian's Theater to GitHub Pipeline auto-discovery system.
+- Added 1-click Launch button for web applications in pipeline.
+- Synchronized organization auto-discovery with live Firebase database listener.
+- Updated default repository catalog with Brian's Theater project.
+- Upgraded web dashboard to version 10.2.126.
+
+## [1.1.05] - 2026-09-05
+- Universal GitHub API integration auto-discovers all member repositories.
+- Added background auto-discovery sweep every 5 minutes.
+- Added manual GitHub auto-discovery sweep trigger to Central Command.
+- Bundled discovery daemon directly into Central Command distribution package.
+- Purged superseded version files across local and network drives.
+- Synchronized desktop shortcuts and transfer package for v1.1.05.
+
 ## [10.2.125] - 2026-09-05
 - Added toggle to hide and show Twitch studio chat.
 - Stream player automatically expands to full width when hidden.

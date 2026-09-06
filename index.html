@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BDC LIVE v10.2.125</title>
+    <title>BDC LIVE v10.2.126</title>
     <!-- Open Graph & Social Preview Meta Tags -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="BDC LIVE v10.2.125">
+    <meta property="og:title" content="BDC LIVE v10.2.126">
     <meta property="og:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="og:image" content="./bdclive_banner.jpg">
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="BDC LIVE v10.2.125">
+    <meta property="twitter:title" content="BDC LIVE v10.2.126">
     <meta property="twitter:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="twitter:image" content="./bdclive_banner.jpg">
     <!-- PWA Manifest & Mobile Web App Meta Tags -->
@@ -2880,7 +2880,7 @@
         renderTheaterHeartbeat();
 
         // ================= GITHUB STATUS MONITOR & ACTIONS PIPELINE =================
-        let GITHUB_ACCOUNTS = ['bdclive', 'wosbdc', 'DasherTracker', 'BDCvault', 'theBDCFcrew', 'BrianDivaCox'];
+        let GITHUB_ACCOUNTS = ['bdclive', 'BriansTheater', 'wosbdc', 'DasherTracker', 'BDCvault', 'theBDCFcrew', 'BrianDivaCox'];
         
         // Dynamic Future-Proof Organization Auto-Discovery Listener
         sDb.ref('labData/githubAccounts').on('value', (s) => {
@@ -2893,7 +2893,8 @@
         });
 
         const DEFAULT_GH_REPOS = [
-            { name: "BDClive", owner: "bdclive", fullName: "bdclive/BDClive", htmlUrl: "https://github.com/bdclive/BDClive", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "BDC Live Central Command Dashboard", latestCommit: "v10.2.121 : Synchronized Theater Heartbeat with live active movie detection" },
+            { name: "BDClive", owner: "bdclive", fullName: "bdclive/BDClive", htmlUrl: "https://github.com/bdclive/BDClive", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "BDC Live Central Command Dashboard", latestCommit: "v10.2.126 : Future-proof GitHub Pipeline auto-discovery and BriansTheater integration" },
+            { name: "BriansTheater.github.io", owner: "BriansTheater", fullName: "BriansTheater/BriansTheater.github.io", htmlUrl: "https://github.com/BriansTheater/BriansTheater.github.io", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "Brian's Theater Web Application", latestCommit: "v4.9.31 : New version popup toaster alert with App Store summary and refresh flow", actionStatus: "completed", actionConclusion: "success", actionName: "🎬 Brian's Theater Web App Deployment & Release" },
             { name: "BDCvault.github.io", owner: "BDCvault", fullName: "BDCvault/BDCvault.github.io", htmlUrl: "https://github.com/BDCvault/BDCvault.github.io", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "BDC Vault Web Application", latestCommit: "v4.8.0 : Added 1-click Automated Financial Engines and APR interest bot", actionStatus: "completed", actionConclusion: "success", actionName: "💎 BDC Vault Web App Deployment & Release" },
             { name: "wosBDC.github.io", owner: "wosbdc", fullName: "wosbdc/wosBDC.github.io", htmlUrl: "https://github.com/wosbdc/wosBDC.github.io", pushedAt: new Date(Date.now() - 3600000 * 1.5).toISOString(), defaultBranch: "main", description: "WOS BDC Web Application", latestCommit: "v2.9.86 : Dynamic real-time synchronization for all dropdown filter options and action button counters" },
             { name: "DasherTracker.github.io", owner: "DasherTracker", fullName: "DasherTracker/DasherTracker.github.io", htmlUrl: "https://github.com/DasherTracker/DasherTracker.github.io", pushedAt: new Date(Date.now() - 3600000 * 3.5).toISOString(), defaultBranch: "main", description: "Dasher Tracker Portal", latestCommit: "Production sync" },
@@ -3093,7 +3094,7 @@
             }
         }
 
-        const CURRENT_APP_VERSION = 'v10.2.125';
+        const CURRENT_APP_VERSION = 'v10.2.126';
         let isDeployingLive = false;
         let pendingRemoteVersion = null;
         let autoRefreshTimer = null;
@@ -3521,6 +3522,9 @@
 
         function getRepoShortName(repo) {
             if (!repo || !repo.name) return "";
+            if (repo.name.toLowerCase() === 'brianstheater.github.io' || (repo.owner && repo.owner.toLowerCase() === 'brianstheater')) {
+                return 'BriansTheater';
+            }
             if (repo.name.toLowerCase() === 'wosbdc.github.io' || (repo.owner && repo.owner.toLowerCase() === 'wosbdc')) {
                 return 'wosbdc';
             }
@@ -3534,6 +3538,20 @@
                 return repo.name.replace(/\.github\.io$/i, '');
             }
             return repo.name;
+        }
+
+        function getRepoWebUrl(repo) {
+            if (!repo) return null;
+            if (repo.homepage && repo.homepage.startsWith('http')) return repo.homepage;
+            const nameLower = (repo.name || '').toLowerCase();
+            const ownerLower = (repo.owner || '').toLowerCase();
+            if (nameLower === 'bdclive') return 'https://bdclive.github.io/BDClive/';
+            if (nameLower === 'brianstheater.github.io' || ownerLower === 'brianstheater') return 'https://brianstheater.github.io/';
+            if (nameLower === 'wosbdc.github.io' || ownerLower === 'wosbdc') return 'https://wosbdc.github.io/';
+            if (nameLower === 'dashertracker.github.io' || ownerLower === 'dashertracker') return 'https://dashertracker.github.io/';
+            if (nameLower === 'bdcvault.github.io' || ownerLower === 'bdcvault') return 'https://bdcvault.github.io/';
+            if (nameLower.endsWith('.github.io')) return `https://${ownerLower}.github.io/`;
+            return null;
         }
 
         function renderGithubTicker() {
@@ -5323,9 +5341,11 @@
                 
                 const ownerBadge = repo.owner !== 'BrianDivaCox' ? `<span style="font-size: 9px; background: rgba(163, 113, 247, 0.2); color: #a371f7; border: 1px solid rgba(163, 113, 247, 0.4); padding: 1px 5px; border-radius: 4px;">🏢 ${repo.owner}</span>` : '';
 
+                const webUrl = getRepoWebUrl(repo);
+
                 return `
                 <div style="background: #161b22; border: 1px solid ${actBadge && actBadge.priority <= 2 ? actBadge.border : '#30363d'}; border-radius: 8px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; transition: background 0.2s;" onmouseover="this.style.background='#1f242c'" onmouseout="this.style.background='#161b22'">
-                    <div style="display: flex; flex-direction: column; gap: 4px; max-width: 75%;">
+                    <div style="display: flex; flex-direction: column; gap: 4px; max-width: 70%;">
                         <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
                             <span style="font-size: 13px; font-weight: 700; color: #58a6ff;">${shortName}</span>
                             ${ownerBadge}
@@ -5340,9 +5360,12 @@
                             ${repo.actionName ? `<span style="color: #58a6ff;"><i class="fa-solid fa-bolt" style="font-size: 8px;"></i> ${repo.actionName}</span>` : ''}
                         </div>
                     </div>
-                    <a href="${repo.htmlUrl}" target="_blank" style="background: #21262d; border: 1px solid #30363d; color: #58a6ff; text-decoration: none; padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: 600; display: flex; align-items: center; gap: 5px; white-space: nowrap;">
-                        Open <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 9px;"></i>
-                    </a>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        ${webUrl ? `<a href="${webUrl}" target="_blank" style="background: rgba(46, 160, 67, 0.15); border: 1px solid rgba(46, 160, 67, 0.4); color: #3fb950; text-decoration: none; padding: 6px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 5px; white-space: nowrap; transition: 0.2s;" onmouseover="this.style.background='rgba(46, 160, 67, 0.3)'" onmouseout="this.style.background='rgba(46, 160, 67, 0.15)'"><i class="fa-solid fa-play" style="font-size: 8px;"></i> Launch</a>` : ''}
+                        <a href="${repo.htmlUrl}" target="_blank" style="background: #21262d; border: 1px solid #30363d; color: #58a6ff; text-decoration: none; padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: 600; display: flex; align-items: center; gap: 5px; white-space: nowrap;">
+                            Repo <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 9px;"></i>
+                        </a>
+                    </div>
                 </div>`;
             }).join('');
         }
