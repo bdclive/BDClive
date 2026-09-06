@@ -1,3 +1,9 @@
+## [10.2.128] - 2026-09-05
+- Added 3x triple and 4x quad pipeline ticker modes.
+- Upgraded density switcher to select between 1x, 2x, 3x, 4x.
+- Displays up to four active repositories simultaneously with zero overflow.
+- Automatically remembers chosen density preference across browser sessions.
+
 ## [10.2.127] - 2026-09-05
 - Restored strict 1-hour max active pipeline window.
 - Pipeline no longer shows repos pushed 2+ hours ago.
