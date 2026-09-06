@@ -21,7 +21,7 @@
   - [x] `VERSION.json` (`bdclive_web_dashboard.version: 10.2.125`) <!-- id: 55 -->
 - [x] Update `CHANGELOG.md` with App Store style punchy release notes (<= 10 words per bullet) <!-- id: 56 -->
 - [x] Run Automated Pre-Delivery Verification Script <!-- id: 57 -->
-- [/] Commit and push to GitHub (`v10.2.125 : Added toggle to hide and show Twitch studio chat`) <!-- id: 58 -->
+- [x] Commit and push to GitHub (`v10.2.125 : Added toggle to hide and show Twitch studio chat`) <!-- id: 58 -->
 
 ## ✅ Completed: Separate Follower, Views, and Tasks Tracking (v10.2.124)
 - [x] Create project backup archive (`backups/Tasks_Followers_Views_v10.2.124_*.zip`) <!-- id: 20 -->
