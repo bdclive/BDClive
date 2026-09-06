@@ -1,28 +1,17 @@
-# Task List: Future-Proof GitHub Pipeline & BriansTheater Integration (v10.2.126 / v1.1.05)
+# Task List: Restored Strict 1-Hour Pipeline Active Window (v10.2.127)
 
-## 📋 Active Tasks: GitHub Pipeline & BriansTheater Integration (v10.2.126 / v1.1.05)
-- [x] Create project backup archive (`backups/BriansTheater_GitHub_Pipeline_*.zip`) <!-- id: 59 -->
-- [x] Upgrade `Daemons/github_auto_discovery_daemon.py`: <!-- id: 60 -->
-  - [x] Use authenticated `/user/repos?per_page=100&affiliation=owner,collaborator,organization_member` for 100% universal discovery <!-- id: 61 -->
-  - [x] Scan `/user/orgs` to dynamically discover any newly created organizations (including `BriansTheater`) <!-- id: 62 -->
-  - [x] Publish all discovered accounts and repos with live commit and actions telemetry to Firebase RTDB <!-- id: 63 -->
-- [x] Upgrade Central Command to `v1.1.05` (`BDC_Central_Command_GUI_v1.1.05.pyw`): <!-- id: 64 -->
-  - [x] Add `run_github_discovery_sweep()` background thread running on startup and every 5 minutes <!-- id: 65 -->
-  - [x] Log discovery results directly in Central Command console with live repo counts <!-- id: 66 -->
-  - [x] Run Central Command Clean House Protocol (purge v1.1.04, update shortcuts, refresh transfer zip) <!-- id: 67 -->
-- [x] Upgrade Dashboard Frontend (`index.html`, `New.html`, `web_dashboards/New.html`): <!-- id: 68 -->
-  - [x] Add `BriansTheater` to default `GITHUB_ACCOUNTS` list <!-- id: 69 -->
-  - [x] Add `BriansTheater.github.io` to default `DEFAULT_GH_REPOS` array <!-- id: 70 -->
-  - [x] Add 1-click "Launch" direct site launcher in `githubModal` for GitHub Pages projects <!-- id: 71 -->
-  - [x] Format `BriansTheater` short name cleanly in ticker and cards <!-- id: 72 -->
-  - [x] Bump version constants and tags to `v10.2.126` <!-- id: 73 -->
-- [x] Update `sw.js` cache to `livecounters-cache-v10.2.126` <!-- id: 74 -->
-- [x] Update `VERSION.json`: <!-- id: 75 -->
-  - [x] `bdclive_web_dashboard`: `10.2.126` <!-- id: 76 -->
-  - [x] `bdc_central_command_desktop`: `1.1.05` <!-- id: 77 -->
-  - [x] Add `brians_theater_web_app` (`version: 4.9.31`) <!-- id: 78 -->
-- [x] Run Automated Pre-Delivery Verification Script <!-- id: 80 -->
-- [x] Commit and push to GitHub (`v10.2.126 : Future-proof GitHub Pipeline auto-discovery and BriansTheater integration`) <!-- id: 81 -->
+## 📋 Active Tasks
+- [x] All pipeline calibration, verification, and deployments complete (v10.2.127 / v1.1.05)
+
+## ✅ Completed: Restored Strict 1-Hour Pipeline Active Window (v10.2.127)
+- [x] Restored strict 1-hour cutoff (`MAX_AGE_MS = 60 * 60 * 1000`) in `getActiveRepositories()`
+- [x] Eliminated legacy 48-hour window and fallback to 8 repos
+- [x] Verified that inactive feeds cleanly show "All Pipelines Up to Date"
+- [x] Bumped version to `v10.2.127` across `index.html`, `New.html`, `web_dashboards/New.html`, and `sw.js`
+- [x] Updated `VERSION.json` (`bdclive_web_dashboard: 10.2.127`)
+- [x] Updated `CHANGELOG.md` with App Store style release notes (strict <= 10 words per bullet)
+- [x] Automated Pre-Delivery Verification Script passed (0 errors)
+- [x] Committed and pushed to GitHub (`v10.2.127 : Restored strict 1-hour max active pipeline visibility window`)
 
 ## ✅ Completed: GitHub Pipeline & BriansTheater Future-Proof Integration (v10.2.126 / v1.1.05)
 - [x] Project backup archive created (`backups/BriansTheater_GitHub_Pipeline_*.zip`)
