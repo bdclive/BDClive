@@ -1,6 +1,29 @@
-# Task List: Separate Follower, Views, and Tasks Tracking (v10.2.124)
+# Task List: Twitch Studio Chat Toggle & Hide Feature (v10.2.125)
 
-## 📋 Active Tasks: Follower, Views & Tasks Complete Separation (v10.2.124)
+## 📋 Active Tasks: Twitch Studio Chat Toggle (v10.2.125)
+- [x] Create project backup archive (`backups/Twitch_Studio_Chat_Toggle_v10.2.125_*.zip`) <!-- id: 38 -->
+- [x] Add Chat Toggle & Hide capability to Twitch Studio (`Live.html`, `Live_Java.html`, `Java.html`): <!-- id: 39 -->
+  - [x] Add "Hide Chat" / "Show Chat" action button in header actions toolbar <!-- id: 40 -->
+  - [x] Add quick collapse button (`Hide`) inside chat header <!-- id: 41 -->
+  - [x] Add expandable sleek vertical mini-tab when chat is collapsed on right edge <!-- id: 42 -->
+  - [x] Support keyboard shortcut (`C` or `Alt+C`) to toggle chat visibility <!-- id: 43 -->
+  - [x] Persist chat hidden preference across sessions in `localStorage` <!-- id: 44 -->
+  - [x] Make stream player automatically expand to fill 100% of workspace when chat is hidden <!-- id: 45 -->
+  - [x] Maintain dual stream layout responsiveness and player proportions when chat is hidden <!-- id: 46 -->
+- [x] Synchronize all Live studio files: <!-- id: 47 -->
+  - [x] `Live.html` & `web_dashboards/Live.html` <!-- id: 48 -->
+  - [x] `Live_Java.html` & `web_dashboards/Live_Java.html` <!-- id: 49 -->
+  - [x] `Java.html` & `web_dashboards/Java.html` <!-- id: 50 -->
+- [x] Bump version numbers to `v10.2.125`: <!-- id: 51 -->
+  - [x] `Live.html` version tag and internal strings <!-- id: 52 -->
+  - [x] `CURRENT_APP_VERSION = 'v10.2.125'` across `index.html`, `New.html`, and `web_dashboards/New.html` <!-- id: 53 -->
+  - [x] `sw.js` cache to `livecounters-cache-v10.2.125` <!-- id: 54 -->
+  - [x] `VERSION.json` (`bdclive_web_dashboard.version: 10.2.125`) <!-- id: 55 -->
+- [x] Update `CHANGELOG.md` with App Store style punchy release notes (<= 10 words per bullet) <!-- id: 56 -->
+- [x] Run Automated Pre-Delivery Verification Script <!-- id: 57 -->
+- [/] Commit and push to GitHub (`v10.2.125 : Added toggle to hide and show Twitch studio chat`) <!-- id: 58 -->
+
+## ✅ Completed: Separate Follower, Views, and Tasks Tracking (v10.2.124)
 - [x] Create project backup archive (`backups/Tasks_Followers_Views_v10.2.124_*.zip`) <!-- id: 20 -->
 - [x] Upgrade Follower & Activity Change History Log in `index.html`: <!-- id: 21 -->
   - [x] Add 3rd dedicated KPI tracking box: `📋 Tasks Added & Completed` (`#log-tasks-gains`, `#log-tasks-losses`, `#log-tasks-net`) <!-- id: 22 -->

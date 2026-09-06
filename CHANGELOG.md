@@ -1,3 +1,12 @@
+## [10.2.125] - 2026-09-05
+- Added toggle to hide and show Twitch studio chat.
+- Stream player automatically expands to full width when hidden.
+- Added quick collapse button inside stream chat header.
+- Added right-edge mini tab to restore chat with click.
+- Added keyboard shortcut C to toggle chat visibility.
+- Automatically remembers your chat visibility preference across visits.
+- Updated Twitch broadcast studio engine to version 10.2.125.
+
 ## [10.2.124] - 2026-09-05
 - Separated followers, views, and tasks into dedicated tracking boxes.
 - Added dedicated tasks added, completed, and net delta tracking.
