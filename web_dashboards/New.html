@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BDC LIVE v10.2.126</title>
+    <title>BDC LIVE v10.2.127</title>
     <!-- Open Graph & Social Preview Meta Tags -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="BDC LIVE v10.2.126">
+    <meta property="og:title" content="BDC LIVE v10.2.127">
     <meta property="og:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="og:image" content="./bdclive_banner.jpg">
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="BDC LIVE v10.2.126">
+    <meta property="twitter:title" content="BDC LIVE v10.2.127">
     <meta property="twitter:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="twitter:image" content="./bdclive_banner.jpg">
     <!-- PWA Manifest & Mobile Web App Meta Tags -->
@@ -3094,7 +3094,7 @@
             }
         }
 
-        const CURRENT_APP_VERSION = 'v10.2.126';
+        const CURRENT_APP_VERSION = 'v10.2.127';
         let isDeployingLive = false;
         let pendingRemoteVersion = null;
         let autoRefreshTimer = null;
@@ -3367,8 +3367,9 @@
         function getActiveRepositories() {
             if (!Array.isArray(allGithubRepos) || allGithubRepos.length === 0) return [];
             const now = new Date();
-            
-            // 1. First Priority: In-progress, queued, or failed workflow runs
+            const MAX_AGE_MS = 60 * 60 * 1000; // Strictly 1 hour max (original rule from v10.2.67)
+
+            // 1. First Priority: In-progress, queued, or failed workflow runs — shown regardless of age
             const buildingOrFailed = allGithubRepos.filter(repo => {
                 const actBadge = getActionBadge(repo);
                 return actBadge && actBadge.priority <= 2;
@@ -3377,18 +3378,15 @@
                 return buildingOrFailed;
             }
 
-            // 2. Second Priority: Repositories updated in the last 48 hours
-            const recent48h = allGithubRepos.filter(repo => {
+            // 2. Repos pushed within the last 1 hour
+            const recentlyPushed = allGithubRepos.filter(repo => {
                 if (!repo.pushedAt) return false;
                 const diffMs = now - new Date(repo.pushedAt);
-                return diffMs <= 48 * 60 * 60 * 1000;
+                return diffMs <= MAX_AGE_MS;
             });
-            if (recent48h.length > 0) {
-                return recent48h;
-            }
 
-            // 3. Fallback: Always return top tracked repositories so the pipeline NEVER appears empty
-            return allGithubRepos.slice(0, 8);
+            // 3. If nothing qualifies → return empty so the ticker shows "All Pipelines Up to Date"
+            return recentlyPushed;
         }
 
         function getTimeAgeTheme(diffMs) {
