@@ -62,15 +62,8 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 
     <script>
-        const _k = "QUl6YVN5QXZ4ZktnX3NwUE52RTJ3Y1QtdlRsOFlUUXU0TDN0Xzd3";
-        const _p = "bGl2ZWNvdW50ZXJzLThlYWE4";
-        
         const firebaseConfig = {
-            apiKey: atob(_k),
-            authDomain: "livecounters-8eaa8.firebaseapp.com",
-            projectId: "livecounters-8eaa8",
-            databaseURL: "https://livecounters-8eaa8-default-rtdb.firebaseio.com/",
-            appId: "1:386919719539:web:c60c0d185c3d7e97ecc006"
+            databaseURL: "https://brianstheater-default-rtdb.firebaseio.com/"
         };
 
         firebase.initializeApp(firebaseConfig);
@@ -131,7 +124,7 @@
 
             // --- UP NEXT ---
             document.getElementById('m-next').innerText = m.nextTitle || "None";
-            handleNextTimer(m.nextTime);
+            handleNextTimer(m.nextTime, m.nextStartMs);
 
             // --- STATS ---
             document.getElementById('stat-movies').innerHTML = `<i class="fa-solid fa-film"></i> ${m.moviesCount || 0}`;
@@ -139,21 +132,25 @@
             document.getElementById('stat-uptime').innerHTML = `<i class="fa-solid fa-clock"></i> ${m.daysOpen || "N/A"}`;
         });
 
-        function handleNextTimer(dateStr) {
+        function handleNextTimer(dateStr, targetMs) {
             clearInterval(nextInt);
             const el = document.getElementById('next-timer');
+            if (targetMs && targetMs > Date.now()) {
+                const updateTicker = () => {
+                    const diff = targetMs - Date.now();
+                    if (diff <= 0) { el.innerText = "Starting Now!"; clearInterval(nextInt); return; }
+                    const d = Math.floor(diff / 86400000);
+                    const h = Math.floor((diff % 86400000) / 3600000);
+                    const m = Math.floor((diff % 3600000) / 60000);
+                    const s = Math.floor((diff % 60000) / 1000);
+                    el.innerText = (d > 0 ? d + "d " : "") + `${h}h ${m}m ${s}s`;
+                };
+                updateTicker();
+                nextInt = setInterval(updateTicker, 1000);
+                return;
+            }
             if (!dateStr || dateStr.includes("N/A") || dateStr === "None") { el.innerText = "Scheduled Off"; return; }
-            let clean = dateStr.includes("202") ? dateStr : dateStr.replace(",", " 2026,");
-            const target = new Date(clean);
-            nextInt = setInterval(() => {
-                const diff = target - new Date();
-                if (diff <= 0) { el.innerText = "Starting Now!"; clearInterval(nextInt); return; }
-                const d = Math.floor(diff / 86400000);
-                const h = Math.floor((diff % 86400000) / 3600000);
-                const m = Math.floor((diff % 3600000) / 60000);
-                const s = Math.floor((diff % 60000) / 1000);
-                el.innerText = (d > 0 ? d + "d " : "") + `${h}h ${m}m ${s}s`;
-            }, 1000);
+            el.innerText = dateStr;
         }
     </script>
 </body>

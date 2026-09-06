@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BDC LIVE v10.2.128</title>
+    <title>BDC LIVE v10.2.129</title>
     <!-- Open Graph & Social Preview Meta Tags -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="BDC LIVE v10.2.128">
+    <meta property="og:title" content="BDC LIVE v10.2.129">
     <meta property="og:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="og:image" content="./bdclive_banner.jpg">
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="BDC LIVE v10.2.128">
+    <meta property="twitter:title" content="BDC LIVE v10.2.129">
     <meta property="twitter:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="twitter:image" content="./bdclive_banner.jpg">
     <!-- PWA Manifest & Mobile Web App Meta Tags -->
@@ -1161,19 +1161,22 @@
         const sConf = {apiKey: atob("QUl6YVN5QXZ4ZktnX3NwUE52RTJ3Y1QtdlRsOFlUUXU0TDN0Xzd3"), authDomain: "livecounters-8eaa8.firebaseapp.com", projectId: "livecounters-8eaa8", databaseURL: "https://livecounters-8eaa8-default-rtdb.firebaseio.com/", appId: "1:386919719539:web:c60c0d185c3d7e97ecc006" };
         const vConf = {apiKey: "AIzaSyCokXnEtboNuUIASBMz2ZzS0GuchemoJYI", authDomain: "lbbb-webcounter.firebaseapp.com", projectId: "lbbb-webcounter", databaseURL: "https://lbbb-webcounter-default-rtdb.firebaseio.com/", appId: "1:217634980859:web:49ef2b0aa7fe7d0bb1415e" };
         
-        // New RedBull & WOS App Connectors
+        // New RedBull, WOS & Brian's Theater App Connectors
         const rbConf = { databaseURL: "https://redbull-tracker-d99fc-default-rtdb.firebaseio.com/" };
         const wosConf = { databaseURL: "https://wos-dashboard-38d4c-default-rtdb.firebaseio.com/" };
+        const theaterConf = { databaseURL: "https://brianstheater-default-rtdb.firebaseio.com/" };
 
         const sApp = firebase.initializeApp(sConf, "sApp"); 
         const vApp = firebase.initializeApp(vConf, "vApp");
         const rbApp = firebase.initializeApp(rbConf, "rbApp");
         const wosApp = firebase.initializeApp(wosConf, "wosApp");
+        const theaterApp = firebase.initializeApp(theaterConf, "theaterApp");
 
         const sDb = sApp.database(); 
         const vDb = vApp.database();
         const rbDb = rbApp.database();
         const wosDb = wosApp.database();
+        const theaterDb = theaterApp.database();
         
         const fNum = (val) => { 
             if (val === null || val === undefined || val === "" || val === "---") return "0"; 
@@ -2670,20 +2673,31 @@
             targetShowDate: null
         };
 
-        sDb.ref('theaterSync').on('value', (snapshot) => {
-            const m = snapshot.val(); if (!m) return;
+        function processTheaterSync(m, source) {
+            if (!m) return;
             
-            THEATER_STATE.moviesCount = m.moviesCount || m.movieCount || 0;
-            THEATER_STATE.daysOpen = m.daysOpen || "0";
-            THEATER_STATE.tvCount = m.tvCount || m.showCount || 0;
+            // Dedicated theaterDb is authoritative for live movie/TV counts & days open
+            if (source === 'theaterDb' || THEATER_STATE.moviesCount === 0) {
+                if (m.moviesCount !== undefined || m.movieCount !== undefined) {
+                    THEATER_STATE.moviesCount = m.moviesCount || m.movieCount || 0;
+                }
+                if (m.daysOpen !== undefined && m.daysOpen !== null) {
+                    THEATER_STATE.daysOpen = m.daysOpen || "0";
+                }
+                if (m.tvCount !== undefined || m.showCount !== undefined) {
+                    THEATER_STATE.tvCount = m.tvCount || m.showCount || 0;
+                }
+                document.getElementById('m-count').innerText = fNum(THEATER_STATE.moviesCount);
+                document.getElementById('m-open').innerText = THEATER_STATE.daysOpen;
+                document.getElementById('tv-count').innerText = fNum(THEATER_STATE.tvCount);
+            }
+            
+            // RSVPs can arrive from Central Command via sDb or directly via theaterDb
             if (m.rsvpCount !== undefined) {
                 document.getElementById('m-rsvp').innerText = fNum(m.rsvpCount);
             } else if (m.discordRsvp !== undefined) {
                 document.getElementById('m-rsvp').innerText = fNum(m.discordRsvp);
             }
-            document.getElementById('m-count').innerText = fNum(THEATER_STATE.moviesCount);
-            document.getElementById('m-open').innerText = THEATER_STATE.daysOpen;
-            document.getElementById('tv-count').innerText = fNum(THEATER_STATE.tvCount);
 
             const now = new Date();
             const nowMs = now.getTime();
@@ -2779,6 +2793,19 @@
             THEATER_STATE.nextTime = m.nextTime || (nextShowDate ? nextShowDate.getTime() : null);
 
             renderTheaterHeartbeat();
+        }
+
+        // Live Real-Time Theater Listeners:
+        // 1. Primary: Dedicated Brian's Theater Database (moviesCount, tvCount, daysOpen, live theater schedule)
+        theaterDb.ref('theaterSync').on('value', (snapshot) => {
+            const m = snapshot.val();
+            if (m) processTheaterSync(m, 'theaterDb');
+        });
+
+        // 2. Auxiliary: Livecounters Database (Central Command Discord RSVPs and bridge events)
+        sDb.ref('theaterSync').on('value', (snapshot) => {
+            const m = snapshot.val();
+            if (m) processTheaterSync(m, 'sDb');
         });
 
         function renderTheaterHeartbeat() {
@@ -3096,7 +3123,7 @@
             }
         }
 
-        const CURRENT_APP_VERSION = 'v10.2.128';
+        const CURRENT_APP_VERSION = 'v10.2.129';
         let isDeployingLive = false;
         let pendingRemoteVersion = null;
         let autoRefreshTimer = null;

@@ -1,3 +1,13 @@
+## [10.2.129] - 2026-09-06
+- Connected Cinema Box to dedicated Brian's Theater database.
+- Live movie and TV counts now sync in real time.
+- Central Command dual-patches both databases with authenticated sync.
+- Repaired MoviesTracker to stream from dedicated theater database.
+
+## [1.1.06] - 2026-09-06
+- Added dual database patch for Brian's Theater and livecounters.
+- Cleaned house across local and remote desktop distribution folders.
+
 ## [10.2.128] - 2026-09-05
 - Added 3x triple and 4x quad pipeline ticker modes.
 - Upgraded density switcher to select between 1x, 2x, 3x, 4x.
