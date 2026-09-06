@@ -1,3 +1,8 @@
+## [10.2.127] - 2026-09-05
+- Restored strict 1-hour max active pipeline window.
+- Pipeline no longer shows repos pushed 2+ hours ago.
+- Old repos cleanly show "All Pipelines Up to Date."
+
 ## [10.2.126] - 2026-09-05
 - Added Brian's Theater to GitHub Pipeline auto-discovery system.
 - Added 1-click Launch button for web applications in pipeline.
