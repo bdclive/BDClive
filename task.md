@@ -1,7 +1,21 @@
-# Task List: GitHub Pipeline Density Modes (1x, 2x, 3x, 4x) (v10.2.128)
+# Task List: BriansTheater Dedicated Firebase Database Sync (v10.2.129 / v1.1.06)
 
 ## 📋 Active Tasks
-- [x] All pipeline density modes (1x, 2x, 3x, 4x) implemented, verified, and deployed (v10.2.128)
+- [x] All Brian's Theater dedicated database sync tasks implemented, verified, and deployed (v10.2.129 / v1.1.06)
+
+## ✅ Completed: BriansTheater Dedicated Firebase Database Sync (v10.2.129 / v1.1.06)
+- [x] Created project backup archive (`backups/BriansTheater_Dedicated_DB_Sync_*.zip`)
+- [x] Connected `theaterDb` to `https://brianstheater-default-rtdb.firebaseio.com/` in `index.html`
+- [x] Overhauled Cinema Box listener to read live `moviesCount` (404), `tvCount` (36), `daysOpen`, and schedule directly from `theaterDb.ref('theaterSync')` with `sDb` fallback
+- [x] Updated `MoviesTracker.html` to connect directly to `brianstheater-default-rtdb`
+- [x] Upgraded Central Command to `v1.1.06` (`BDC_Central_Command_GUI_v1.1.06.pyw`):
+  - [x] Updated `push_theater_sync` to dual-patch both `livecounters` and `brianstheater-default-rtdb` with secret key
+  - [x] Executed Central Command Clean House Protocol (purged v1.1.05, updated shortcuts, refreshed transfer zip)
+- [x] Mirrored changes across `New.html`, `web_dashboards/New.html`, and `web_dashboards/MoviesTracker.html`
+- [x] Bumped version numbers to `v10.2.129` across HTML, `sw.js` cache, and `VERSION.json` (`bdc_central_command_desktop: 1.1.06`)
+- [x] Updated `CHANGELOG.md` with App Store style release notes (strict <= 10 words per bullet)
+- [x] Automated Pre-Delivery Verification Script passed (0 errors)
+- [x] Committed and pushed to GitHub (`v10.2.129 : Connected Cinema Box to dedicated Brian's Theater Firebase database`)
 
 ## ✅ Completed: GitHub Pipeline Density Modes (1x, 2x, 3x, 4x) (v10.2.128)
 - [x] Created project backup archive (`backups/GitHub_Pipeline_Density_3x_4x_v10.2.128_*.zip`)
