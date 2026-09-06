@@ -1,7 +1,18 @@
-# Task List: Restored Strict 1-Hour Pipeline Active Window (v10.2.127)
+# Task List: GitHub Pipeline Density Modes (1x, 2x, 3x, 4x) (v10.2.128)
 
 ## 📋 Active Tasks
-- [x] All pipeline calibration, verification, and deployments complete (v10.2.127 / v1.1.05)
+- [x] All pipeline density modes (1x, 2x, 3x, 4x) implemented, verified, and deployed (v10.2.128)
+
+## ✅ Completed: GitHub Pipeline Density Modes (1x, 2x, 3x, 4x) (v10.2.128)
+- [x] Created project backup archive (`backups/GitHub_Pipeline_Density_3x_4x_v10.2.128_*.zip`)
+- [x] Upgraded `#gh-mode-toggle` in `index.html` with `1x | 2x | 3x | 4x` buttons
+- [x] Upgraded `toggleGithubTickerMode()` and `updateGithubDashboardUI()` to handle all 4 modes with sequential cycling
+- [x] Implemented 3x (Triple) and 4x (Quad Stream) renderers with zero vertical overflow
+- [x] Mirrored changes to `New.html` and `web_dashboards/New.html`
+- [x] Bumped versions to `v10.2.128` across HTML, `sw.js` cache, and `VERSION.json`
+- [x] Updated `CHANGELOG.md` with App Store style release notes (strict <= 10 words per bullet)
+- [x] Automated Pre-Delivery Verification Script passed (0 errors)
+- [x] Committed and pushed to GitHub (`v10.2.128 : Added 3x triple and 4x quad density modes to GitHub Pipeline ticker`)
 
 ## ✅ Completed: Restored Strict 1-Hour Pipeline Active Window (v10.2.127)
 - [x] Restored strict 1-hour cutoff (`MAX_AGE_MS = 60 * 60 * 1000`) in `getActiveRepositories()`

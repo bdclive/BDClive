@@ -1,6 +1,6 @@
 {
   "name": "BDC Ecosystem Master Version Registry",
-  "lastUpdated": "2026-09-05T21:43:00-07:00",
+  "lastUpdated": "2026-09-05T21:52:00-07:00",
   "components": {
     "bdc_central_command_desktop": "1.1.05",
     "daemons": {
@@ -14,14 +14,14 @@
       "cliFile": "Threads_Bridge/threads_bridge_cli_v1.0.59_(terminal).py"
     },
     "bdclive_web_dashboard": {
-      "version": "10.2.127",
+      "version": "10.2.128",
       "repository": "https://github.com/bdclive/BDClive",
       "latestChanges": [
+        "v10.2.128: Added 3x triple and 4x quad density modes to GitHub Pipeline ticker",
         "v10.2.127: Restored strict 1-hour max active pipeline window",
         "v10.2.126: Future-proof GitHub Pipeline auto-discovery and BriansTheater integration",
         "v10.2.125: Added Twitch Studio chat toggle and hide capability with workspace auto-expansion",
-        "v10.2.124: Separated Followers, Views, and Tasks tracking into dedicated KPI boxes",
-        "v10.2.123: Separated Follower and Views Activity Tracking into dedicated KPI boxes"
+        "v10.2.124: Separated Followers, Views, and Tasks tracking into dedicated KPI boxes"
       ]
     },
     "brians_theater_web_app": {
