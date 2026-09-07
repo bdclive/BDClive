@@ -1041,6 +1041,11 @@ async function updateDiscordGatekeeperReport() {
     const sSignups = savedCfg.customSignupsText || defaultSignups;
 
     const activeCodes = Object.values(history).filter(c => c && c.status === 'active');
+    activeCodes.sort((a, b) => {
+      const tA = a.lastDispatchedAt || a.createdAt || a.lastTestedAt || '';
+      const tB = b.lastDispatchedAt || b.createdAt || b.lastTestedAt || '';
+      return tB.localeCompare(tA);
+    });
     const latestCode = activeCodes.length ? activeCodes[0] : null;
     const codeStr = latestCode ? `\`${latestCode.code}\`` : '`WOS0815`';
     const claimsStr = latestCode && latestCode.stats ? `${latestCode.stats.success || totalMembers} / ${totalMembers} Alliance Accounts Claimed` : `${totalMembers} / ${totalMembers} Alliance Accounts Claimed`;
