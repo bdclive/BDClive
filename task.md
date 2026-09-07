@@ -2,20 +2,20 @@
 
 ## 📋 Active Tasks
 - [x] Create project backup archive (`BDC_Central_Command_backup_*.zip`) and verify 2-backup retention
-- [ ] Upgrade Central Command to `v1.1.09` (`BDC_Central_Command_GUI_v1.1.09.pyw`):
-  - [ ] Add `self.roster_data` fetching to `load_data()` in `GiftCodeManagerDialog`
-  - [ ] Implement `reload_chief_list()` method in `GiftCodeManagerDialog`
-  - [ ] Add prominent "🔄 Reload Chief List" button in header and bottom toolbar of `GiftCodeManagerDialog`
-  - [ ] Filter out banned and departed chiefs using `get_banned_and_excluded_identifiers` and `is_member_banned_or_left`
-  - [ ] Make delivery progress bar dynamic (`total_alliance_accs = len(all_targets)`) instead of hardcoded 21
-  - [ ] Add context menu to Treeview with "🚫 Mark Chief as Left / Banned", "📋 Copy Game ID", and "🔄 Reload Chief List"
-  - [ ] Add "🔄 Reload Chief Roster & Gatekeeper" command to Central Command main menu bar
-  - [ ] Bump version strings from `v1.1.08` to `v1.1.09`
-- [ ] Update `VERSION.json` (`bdc_central_command_desktop: 1.1.09`)
-- [ ] Central Command Clean House Protocol (sync to desktop, purge v1.1.08, clear __pycache__, refresh transfer zip)
-- [ ] Update `CHANGELOG.md` with App Store style release notes (strict $\le 10$ words per bullet)
-- [ ] Run Automated Pre-Delivery Verification Script (GUI chief reload + banned exclusion assertions)
-- [ ] Commit and push to GitHub (`v1.1.09 : Added live Chief list reload and banned member filter to Redemption Matrix`)
+- [x] Upgrade Central Command to `v1.1.09` (`BDC_Central_Command_GUI_v1.1.09.pyw`):
+  - [x] Add `self.roster_data` fetching to `load_data()` in `GiftCodeManagerDialog`
+  - [x] Implement `reload_chief_list()` method in `GiftCodeManagerDialog`
+  - [x] Add prominent "🔄 Reload Chief List" button in header and bottom toolbar of `GiftCodeManagerDialog`
+  - [x] Filter out banned and departed chiefs using `get_banned_and_excluded_identifiers` and `is_member_banned_or_left`
+  - [x] Make delivery progress bar dynamic (`total_alliance_accs = len(all_targets)`) instead of hardcoded 21
+  - [x] Add context menu to Treeview with "🚫 Mark Chief as Left / Banned", "📋 Copy Game ID", and "🔄 Reload Chief List"
+  - [x] Add "🔄 Reload Chief Roster & Gatekeeper" command to Central Command main menu bar
+  - [x] Bump version strings from `v1.1.08` to `v1.1.09`
+- [x] Update `VERSION.json` (`bdc_central_command_desktop: 1.1.09`)
+- [x] Central Command Clean House Protocol (sync to desktop, purge v1.1.08, clear __pycache__, refresh transfer zip)
+- [x] Update `CHANGELOG.md` with App Store style release notes (strict $\le 10$ words per bullet)
+- [x] Run Automated Pre-Delivery Verification Script (GUI chief reload + banned exclusion assertions)
+- [x] Commit and push to GitHub (`v1.1.09 : Added live Chief list reload and banned member filter to Redemption Matrix`)
 
 ## ✅ Completed: Gatekeeper Banned & Departed Member Filtering (v10.2.131)
 - [x] Create project backup archive (`archive_backups/BDCLive_backup_v10.2.131_pre_gatekeeper_banned_left_fix.zip`)

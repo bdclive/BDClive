@@ -1,3 +1,12 @@
+## [1.1.09] - 2026-09-07
+- Added instant Chief list reload to gift redemption matrix.
+- Filtered banned and departed accounts from redemption matrix table.
+- Delivery progress bar dynamically tracks active alliance chiefs.
+- Added right-click context menu to mark accounts left or banned.
+- Added live Chief roster reload to Central Command menu bar.
+- Upgraded Central Command desktop control center to version 1.1.09.
+- Cleaned house and synchronized shortcuts across desktop environments.
+
 ## [10.2.131] - 2026-09-07
 - Excluded banned and departed accounts from Gatekeeper chief counts.
 - Reconciled active roster to exactly thirty-six live chiefs.
