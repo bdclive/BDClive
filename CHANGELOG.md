@@ -1,3 +1,9 @@
+## [1.1.10] - 2026-09-07
+- Decoupled GitHub Pipeline discovery from Central Command engine.
+- Removed background auto-discovery daemon from desktop application.
+- Upgraded Central Command desktop control center to version 1.1.10.
+- Cleaned house and synchronized shortcuts across desktop environments.
+
 ## [1.1.09] - 2026-09-07
 - Added instant Chief list reload to gift redemption matrix.
 - Filtered banned and departed accounts from redemption matrix table.

@@ -1,7 +1,23 @@
-# Task List: Live Chief List Reload & Banned Member Filter in Redemption Matrix (v1.1.09)
+# Task List: Remove GitHub Pipeline Discovery from Central Command (v1.1.10)
 
 ## 📋 Active Tasks
-- [x] Create project backup archive (`BDC_Central_Command_backup_*.zip`) and verify 2-backup retention
+- [x] Create project backup archive (`BDC_Central_Command_backup_*.zip`) and verify strict 2-backup retention
+- [x] Upgrade Central Command to `v1.1.10` (`BDC_Central_Command_GUI_v1.1.10.pyw`):
+  - [x] Remove `GITHUB_DISCOVERY_INTERVAL = 300` constant
+  - [x] Remove `self.last_github_discovery_sweep = 0` variable
+  - [x] Remove `btn_trigger_github_discovery()` method
+  - [x] Remove `run_github_discovery_sweep()` method
+  - [x] Remove background `last_github_discovery_sweep` trigger from `engine_loop()`
+  - [x] Delete `BDC_Central_Command\Daemons\github_auto_discovery_daemon.py`
+  - [x] Bump version strings from `v1.1.09` to `v1.1.10`
+- [x] Update `VERSION.json` (`bdc_central_command_desktop: 1.1.10`)
+- [x] Central Command Clean House Protocol (sync to desktop, purge v1.1.09, clear __pycache__, refresh transfer zip)
+- [x] Update `CHANGELOG.md` with App Store style release notes (strict $\le 10$ words per bullet)
+- [x] Run Automated Pre-Delivery Verification Script (GUI compilation + zero GitHub discovery sweep verification)
+- [x] Commit and push to GitHub (`v1.1.10 : Removed GitHub Pipeline discovery from Central Command`)
+
+## ✅ Completed: Live Chief List Reload & Banned Member Filter in Redemption Matrix (v1.1.09)
+- [x] Create project backup archive (`BDC_Central_Command_backup_20260907_065500.zip`) and verify 2-backup retention
 - [x] Upgrade Central Command to `v1.1.09` (`BDC_Central_Command_GUI_v1.1.09.pyw`):
   - [x] Add `self.roster_data` fetching to `load_data()` in `GiftCodeManagerDialog`
   - [x] Implement `reload_chief_list()` method in `GiftCodeManagerDialog`
