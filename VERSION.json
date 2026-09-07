@@ -14,14 +14,14 @@
       "cliFile": "Threads_Bridge/threads_bridge_cli_v1.0.59_(terminal).py"
     },
     "bdclive_web_dashboard": {
-      "version": "10.2.129",
+      "version": "10.2.130",
       "repository": "https://github.com/bdclive/BDClive",
       "latestChanges": [
+        "v10.2.130: Added Bot Hub and Server status with offline alerts to Gatekeeper",
         "v10.2.129: Connected Cinema Box to dedicated Brian's Theater Firebase database",
         "v10.2.128: Added 3x triple and 4x quad density modes to GitHub Pipeline ticker",
         "v10.2.127: Restored strict 1-hour max active pipeline window",
-        "v10.2.126: Future-proof GitHub Pipeline auto-discovery and BriansTheater integration",
-        "v10.2.125: Added Twitch Studio chat toggle and hide capability with workspace auto-expansion"
+        "v10.2.126: Future-proof GitHub Pipeline auto-discovery and BriansTheater integration"
       ]
     },
     "brians_theater_web_app": {
