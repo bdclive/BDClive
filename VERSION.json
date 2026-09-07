@@ -14,9 +14,10 @@
       "cliFile": "Threads_Bridge/threads_bridge_cli_v1.0.59_(terminal).py"
     },
     "bdclive_web_dashboard": {
-      "version": "10.2.130",
+      "version": "10.2.131",
       "repository": "https://github.com/bdclive/BDClive",
       "latestChanges": [
+        "v10.2.131: Filtered banned and departed members from Gatekeeper chief counts",
         "v10.2.130: Added Bot Hub and Server status with offline alerts to Gatekeeper",
         "v10.2.129: Connected Cinema Box to dedicated Brian's Theater Firebase database",
         "v10.2.128: Added 3x triple and 4x quad density modes to GitHub Pipeline ticker",

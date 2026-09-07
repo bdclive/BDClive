@@ -1,3 +1,10 @@
+## [10.2.131] - 2026-09-07
+- Excluded banned and departed accounts from Gatekeeper chief counts.
+- Reconciled active roster to exactly thirty-six live chiefs.
+- Added dedicated Left and Banned modal filter tabs.
+- Prevented inactive accounts from skewing game sync counters.
+- Updated web dashboard engine to version 10.2.131.
+
 ## [1.1.08] - 2026-09-07
 - Added add dates to promo codes in Redemption Matrix.
 - Rendered formatted date badges beside codes in matrix catalog.
