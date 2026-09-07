@@ -1,3 +1,12 @@
+## [10.2.130] - 2026-09-07
+- Added live Bot Hub and Server status to Gatekeeper.
+- Instant visual alert triggers if Bot Server goes offline.
+- Instant visual alert triggers if Bot Hub goes offline.
+- Added full Bot Operations Radar panel inside Gatekeeper modal.
+- Live cooldown timer counts down during automation breaks.
+- Gatekeeper card border glows red during emergency bot halts.
+- Updated web dashboard engine to version 10.2.130.
+
 ## [10.2.129] - 2026-09-06
 - Connected Cinema Box to dedicated Brian's Theater database.
 - Live movie and TV counts now sync in real time.

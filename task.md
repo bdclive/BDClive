@@ -1,7 +1,18 @@
-# Task List: BriansTheater Dedicated Firebase Database Sync (v10.2.129 / v1.1.06)
+# Task List: Gatekeeper Bot Hub & Server Status with Offline Alerts (v10.2.130)
 
 ## 📋 Active Tasks
-- [x] All Brian's Theater dedicated database sync tasks implemented, verified, and deployed (v10.2.129 / v1.1.06)
+- [x] Create project backup archive (`archive_backups/BDCLive_backup_v10.2.130_pre_gatekeeper_hub_server.zip`)
+- [x] Add Hub and Server status pills and offline alert banner to Gatekeeper box (`#gatekeeper-box`) in `index.html`
+- [x] Add Bot Fleet & Server Telemetry panel to Gatekeeper modal (`#gatekeeperModal`) in `index.html`
+- [x] Wire live Firebase listeners for `bot_status` and `broadcastAlerts/bot_fleet_offline_alert` on `wosDb` with live countdown ticker
+- [x] Synchronize changes across `New.html` and `web_dashboards/New.html` (verify identical hashes)
+- [x] Bump version numbers to `v10.2.130`:
+  - [x] `index.html`, `New.html`, and `web_dashboards/New.html`
+  - [x] `sw.js` cache name to `livecounters-cache-v10.2.130`
+  - [x] `VERSION.json` (`bdclive_web_dashboard.version: 10.2.130`)
+- [x] Update `CHANGELOG.md` with App Store style release notes (strict $\le 10$ words per bullet)
+- [x] Run Automated Pre-Delivery Verification Script (`verify_gatekeeper_hub_server.py`)
+- [ ] Commit and push to GitHub (`v10.2.130 : Added Bot Hub and Server status with offline alerts to Gatekeeper`)
 
 ## ✅ Completed: BriansTheater Dedicated Firebase Database Sync (v10.2.129 / v1.1.06)
 - [x] Created project backup archive (`backups/BriansTheater_Dedicated_DB_Sync_*.zip`)
