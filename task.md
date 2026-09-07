@@ -1,7 +1,39 @@
-# Task List: Add Add Dates to Alliance Gift Code & Redemption Matrix (v1.1.08)
+# Task List: Live Chief List Reload & Banned Member Filter in Redemption Matrix (v1.1.09)
 
 ## 📋 Active Tasks
 - [x] Create project backup archive (`BDC_Central_Command_backup_*.zip`) and verify 2-backup retention
+- [ ] Upgrade Central Command to `v1.1.09` (`BDC_Central_Command_GUI_v1.1.09.pyw`):
+  - [ ] Add `self.roster_data` fetching to `load_data()` in `GiftCodeManagerDialog`
+  - [ ] Implement `reload_chief_list()` method in `GiftCodeManagerDialog`
+  - [ ] Add prominent "🔄 Reload Chief List" button in header and bottom toolbar of `GiftCodeManagerDialog`
+  - [ ] Filter out banned and departed chiefs using `get_banned_and_excluded_identifiers` and `is_member_banned_or_left`
+  - [ ] Make delivery progress bar dynamic (`total_alliance_accs = len(all_targets)`) instead of hardcoded 21
+  - [ ] Add context menu to Treeview with "🚫 Mark Chief as Left / Banned", "📋 Copy Game ID", and "🔄 Reload Chief List"
+  - [ ] Add "🔄 Reload Chief Roster & Gatekeeper" command to Central Command main menu bar
+  - [ ] Bump version strings from `v1.1.08` to `v1.1.09`
+- [ ] Update `VERSION.json` (`bdc_central_command_desktop: 1.1.09`)
+- [ ] Central Command Clean House Protocol (sync to desktop, purge v1.1.08, clear __pycache__, refresh transfer zip)
+- [ ] Update `CHANGELOG.md` with App Store style release notes (strict $\le 10$ words per bullet)
+- [ ] Run Automated Pre-Delivery Verification Script (GUI chief reload + banned exclusion assertions)
+- [ ] Commit and push to GitHub (`v1.1.09 : Added live Chief list reload and banned member filter to Redemption Matrix`)
+
+## ✅ Completed: Gatekeeper Banned & Departed Member Filtering (v10.2.131)
+- [x] Create project backup archive (`archive_backups/BDCLive_backup_v10.2.131_pre_gatekeeper_banned_left_fix.zip`)
+- [x] Implement `isMemberBannedOrLeft` and `getBannedAndExcludedIdentifiers` in `index.html`
+- [x] Update `computeAndRenderGatekeeper()` to filter out banned and departed members
+- [x] Update `renderGatekeeperRosterTable()` and modal filter tabs to support `All Active (36)`, `Claimed (18)`, `Unclaimed (18)`, `Synced (16)`, `Departed (2)`, and `Banned (4)`
+- [x] Synchronize changes across `New.html` and `web_dashboards/New.html` (verified identical SHA-256 hashes)
+- [x] Bump version numbers to `v10.2.131`:
+  - [x] `index.html`, `New.html`, and `web_dashboards/New.html`
+  - [x] `sw.js` cache name to `livecounters-cache-v10.2.131`
+  - [x] `VERSION.json` (`bdclive_web_dashboard.version: 10.2.131`)
+- [x] Update `CHANGELOG.md` with App Store style release notes (strict $\le 10$ words per bullet)
+- [x] Run Automated Pre-Delivery Verification Script (`verify_gatekeeper_banned_left_filtering.py`) - 100% (41/41 assertions passed)
+- [x] Verified Headless Chrome DOM rendering of Left and Banned filter elements
+- [x] Enforce strict 2-backup retention protocol across archive folders
+
+## ✅ Completed: Add Dates to Alliance Gift Code & Redemption Matrix (v1.1.08)
+- [x] Create project backup archive (`BDC_Central_Command_backup_20260907_064500.zip`) and verify 2-backup retention
 - [x] Create `BDC_Central_Command_GUI_v1.1.08.pyw` with gift code add dates:
   - [x] Add `({date_str})` next to code names in `GiftCodeManagerDialog` catalog cards
   - [x] Add `({date_str})` next to code name in `GiftCodeManagerDialog` right-pane header

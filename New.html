@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BDC LIVE v10.2.130</title>
+    <title>BDC LIVE v10.2.131</title>
     <!-- Open Graph & Social Preview Meta Tags -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="BDC LIVE v10.2.130">
+    <meta property="og:title" content="BDC LIVE v10.2.131">
     <meta property="og:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="og:image" content="./bdclive_banner.jpg">
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="BDC LIVE v10.2.130">
+    <meta property="twitter:title" content="BDC LIVE v10.2.131">
     <meta property="twitter:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="twitter:image" content="./bdclive_banner.jpg">
     <!-- PWA Manifest & Mobile Web App Meta Tags -->
@@ -683,6 +683,8 @@
                     <button id="gk-tab-unclaimed" onclick="filterGatekeeperRoster('unclaimed')" style="background: #21262d; color: #f1c40f; border: 1px solid #30363d; padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer;">Unclaimed (<span id="gk-tab-unclaimed-num">0</span>)</button>
                     <button id="gk-tab-claimed" onclick="filterGatekeeperRoster('claimed')" style="background: #21262d; color: #3fb950; border: 1px solid #30363d; padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer;">Claimed (<span id="gk-tab-claimed-num">0</span>)</button>
                     <button id="gk-tab-tokens" onclick="filterGatekeeperRoster('tokens')" style="background: #21262d; color: #a371f7; border: 1px solid #30363d; padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer;">Game Synced (<span id="gk-tab-tokens-num">0</span>)</button>
+                    <button id="gk-tab-departed" onclick="filterGatekeeperRoster('departed')" style="background: #21262d; color: #8b949e; border: 1px solid #30363d; padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer;" title="Chiefs who left the alliance">Left (<span id="gk-tab-departed-num">0</span>)</button>
+                    <button id="gk-tab-banned" onclick="filterGatekeeperRoster('banned')" style="background: #21262d; color: #f85149; border: 1px solid rgba(248, 81, 73, 0.3); padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer;" title="Banned accounts">Banned (<span id="gk-tab-banned-num">0</span>)</button>
                 </div>
                 <input type="text" id="gk-search-input" oninput="renderGatekeeperRosterTable()" placeholder="🔍 Search chief name or Game ID..." style="background: #161b22; border: 1px solid #30363d; color: #fff; padding: 5px 10px; border-radius: 6px; font-size: 11px; outline: none; width: 230px;">
             </div>
@@ -3211,7 +3213,7 @@
             }
         }
 
-        const CURRENT_APP_VERSION = 'v10.2.130';
+        const CURRENT_APP_VERSION = 'v10.2.131';
         let isDeployingLive = false;
         let pendingRemoteVersion = null;
         let autoRefreshTimer = null;
@@ -3985,12 +3987,69 @@
             return true;
         }
 
+        function isMemberBannedOrLeft(node) {
+            if (!node || typeof node !== 'object') return false;
+            const st = String(node.membershipStatus || node.status || '').trim().toLowerCase();
+            return ['banned', 'ban', 'left', 'kicked', 'inactive', 'former', 'removed', 'departed', 'left_alliance', 'left alliance'].includes(st);
+        }
+
+        function getBannedAndExcludedIdentifiers(roster, users) {
+            const bannedIds = new Set();
+            const bannedNames = new Set();
+            if (roster && typeof roster === 'object') {
+                Object.entries(roster).forEach(([k, v]) => {
+                    if (!v || typeof v !== 'object') return;
+                    if (isMemberBannedOrLeft(v)) {
+                        bannedIds.add(String(k).trim());
+                        const gid = String(v.gameId || '').trim();
+                        if (gid) bannedIds.add(gid);
+                        const name = String(v.name || k).trim().toLowerCase();
+                        if (name) bannedNames.add(name);
+                    }
+                });
+            }
+            if (users && typeof users === 'object') {
+                Object.entries(users).forEach(([uid, u]) => {
+                    if (!u || typeof u !== 'object') return;
+                    if (isMemberBannedOrLeft(u)) {
+                        const gid = String(u.gameId || '').trim();
+                        if (gid) bannedIds.add(gid);
+                        const name = String(u.name || u.chiefName || '').trim().toLowerCase();
+                        if (name) bannedNames.add(name);
+                    }
+                    if (u.altTokens && typeof u.altTokens === 'object') {
+                        Object.entries(u.altTokens).forEach(([aid, aval]) => {
+                            if (isMemberBannedOrLeft(aval)) {
+                                bannedIds.add(String(aid).trim());
+                                const aname = String(aval.nickname || aval.name || '').trim().toLowerCase();
+                                if (aname) bannedNames.add(aname);
+                            }
+                        });
+                    }
+                });
+            }
+            return { bannedIds, bannedNames };
+        }
+
         function computeAndRenderGatekeeper() {
             if (!rawWosRoster) return;
             
-            const rosterList = Object.values(rawWosRoster);
+            const rawRosterList = Object.values(rawWosRoster);
             const usersMap = rawWosUsers || {};
-            const totalMembers = rosterList.length;
+            const { bannedIds, bannedNames } = getBannedAndExcludedIdentifiers(rawWosRoster, usersMap);
+
+            // Filter active alliance members only (strictly excludes banned & departed members)
+            const activeRosterList = rawRosterList.filter(r => {
+                if (!r || typeof r !== 'object') return false;
+                const gid = String(r.gameId || '').trim();
+                const name = String(r.name || '').trim().toLowerCase();
+                if (isMemberBannedOrLeft(r) || (gid && bannedIds.has(gid)) || (name && bannedNames.has(name))) {
+                    return false;
+                }
+                return true;
+            });
+
+            const totalMembers = activeRosterList.length;
             
             const registeredGameIds = new Set();
             const verifiedGameIds = new Set();
@@ -4005,8 +4064,10 @@
             const sevenDaysAgo = now - (7 * 86400 * 1000);
             
             Object.entries(usersMap).forEach(([uid, u]) => {
+                if (!u || typeof u !== 'object' || isMemberBannedOrLeft(u)) return;
                 const gId = String(u.gameId || '').trim();
-                if (gId) {
+                const uName = String(u.name || u.chiefName || '').trim().toLowerCase();
+                if (gId && !bannedIds.has(gId) && !bannedNames.has(uName)) {
                     registeredGameIds.add(gId);
                     const isExp = Boolean(u.tokenExpired || (u.tokenStatus && u.tokenStatus.status === 'expired') || (u.wos_cg_token ? isJwtExpired(u.wos_cg_token) : true));
                     if (!isExp && u.wos_cg_token) {
@@ -4030,7 +4091,7 @@
                 if (Array.isArray(u.linkedGameIds)) {
                     u.linkedGameIds.forEach(altId => {
                         const sAlt = String(altId).trim();
-                        if (sAlt) {
+                        if (sAlt && !bannedIds.has(sAlt)) {
                             registeredGameIds.add(sAlt);
                             if (!gameIdToUser[sAlt]) gameIdToUser[sAlt] = { name: u.name || 'Anonymous Chief', email: u.email, isAlt: true, parentChief: u.name, joinedDate: u.joinedDate || u.dateStarted };
                         }
@@ -4039,7 +4100,7 @@
                 if (u.altTokens && typeof u.altTokens === 'object') {
                     Object.entries(u.altTokens).forEach(([altId, aInfo]) => {
                         const sAlt = String(altId).trim();
-                        if (sAlt && aInfo) {
+                        if (sAlt && aInfo && !isMemberBannedOrLeft(aInfo) && !bannedIds.has(sAlt)) {
                             registeredGameIds.add(sAlt);
                             const isAltExp = Boolean(aInfo.tokenExpired || (aInfo.tokenStatus && aInfo.tokenStatus.status === 'expired') || (aInfo.token ? isJwtExpired(aInfo.token) : true));
                             if (!isAltExp && aInfo.token) {
@@ -4072,7 +4133,7 @@
             });
             
             let unclaimedAccounts = 0;
-            rosterList.forEach(r => {
+            activeRosterList.forEach(r => {
                 const gId = String(r.gameId || '').trim();
                 if (!registeredGameIds.has(gId)) {
                     unclaimedAccounts++;
@@ -4373,16 +4434,16 @@
 
         function filterGatekeeperRoster(tab) {
             currentGkFilter = tab;
-            ['all', 'unclaimed', 'claimed', 'tokens'].forEach(t => {
+            ['all', 'unclaimed', 'claimed', 'tokens', 'departed', 'banned'].forEach(t => {
                 const btn = document.getElementById('gk-tab-' + t);
                 if (btn) {
                     if (t === tab) {
-                        btn.style.background = '#00d2ff';
+                        btn.style.background = t === 'banned' ? '#f85149' : (t === 'departed' ? '#8b949e' : '#00d2ff');
                         btn.style.color = '#000000';
                         btn.style.fontWeight = '700';
                     } else {
                         btn.style.background = '#21262d';
-                        btn.style.color = t === 'unclaimed' ? '#f1c40f' : (t === 'claimed' ? '#3fb950' : (t === 'tokens' ? '#a371f7' : '#8b949e'));
+                        btn.style.color = t === 'unclaimed' ? '#f1c40f' : (t === 'claimed' ? '#3fb950' : (t === 'tokens' ? '#a371f7' : (t === 'banned' ? '#f85149' : '#8b949e')));
                         btn.style.fontWeight = '600';
                     }
                 }
@@ -4392,30 +4453,43 @@
 
         function renderGatekeeperRosterTable() {
             if (!rawWosRoster) return;
-            const rosterList = Object.values(rawWosRoster);
+            const rawRosterList = Object.values(rawWosRoster);
             const usersMap = rawWosUsers || {};
-            
+            const { bannedIds, bannedNames } = getBannedAndExcludedIdentifiers(rawWosRoster, usersMap);
+
             const registeredGameIds = new Set();
             const verifiedGameIds = new Set();
             const gameIdToUser = {};
             let expiredTokens = 0;
             let validTokens = 0;
-            
+
             Object.entries(usersMap).forEach(([uid, u]) => {
+                if (!u || typeof u !== 'object' || isMemberBannedOrLeft(u)) return;
                 const gId = String(u.gameId || '').trim();
-                if (gId) {
+                const uName = String(u.name || u.chiefName || '').trim().toLowerCase();
+                if (gId && !bannedIds.has(gId) && !bannedNames.has(uName)) {
                     registeredGameIds.add(gId);
-                    gameIdToUser[gId] = { name: u.name || 'Anonymous Chief', email: u.email, isAlt: false, verified: !!u.centuryGamesVerified, token: u.wos_cg_token, joinedDate: u.joinedDate || u.dateStarted };
-                    if (u.centuryGamesVerified) verifiedGameIds.add(gId);
-                    if (u.wos_cg_token) {
-                        if (isJwtExpired(u.wos_cg_token)) expiredTokens++;
-                        else validTokens++;
+                    const isExp = Boolean(u.tokenExpired || (u.tokenStatus && u.tokenStatus.status === 'expired') || (u.wos_cg_token ? isJwtExpired(u.wos_cg_token) : true));
+                    if (!isExp && u.wos_cg_token) {
+                        validTokens++;
+                        verifiedGameIds.add(gId);
+                    } else if (u.wos_cg_token) {
+                        expiredTokens++;
                     }
+                    gameIdToUser[gId] = { 
+                        name: u.name || 'Anonymous Chief', 
+                        email: u.email, 
+                        isAlt: false, 
+                        verified: !isExp, 
+                        token: u.wos_cg_token, 
+                        tokenExpired: isExp,
+                        joinedDate: u.joinedDate || u.dateStarted 
+                    };
                 }
                 if (Array.isArray(u.linkedGameIds)) {
                     u.linkedGameIds.forEach(altId => {
                         const sAlt = String(altId).trim();
-                        if (sAlt) {
+                        if (sAlt && !bannedIds.has(sAlt)) {
                             registeredGameIds.add(sAlt);
                             if (!gameIdToUser[sAlt]) gameIdToUser[sAlt] = { name: u.name || 'Anonymous Chief', email: u.email, isAlt: true, parentChief: u.name, joinedDate: u.joinedDate || u.dateStarted };
                         }
@@ -4424,24 +4498,53 @@
                 if (u.altTokens && typeof u.altTokens === 'object') {
                     Object.entries(u.altTokens).forEach(([altId, aInfo]) => {
                         const sAlt = String(altId).trim();
-                        if (sAlt) {
+                        if (sAlt && aInfo && !isMemberBannedOrLeft(aInfo) && !bannedIds.has(sAlt)) {
                             registeredGameIds.add(sAlt);
-                            if (aInfo.centuryGamesVerified) verifiedGameIds.add(sAlt);
-                            if (aInfo.token) {
-                                if (isJwtExpired(aInfo.token)) expiredTokens++;
-                                else validTokens++;
+                            const isAltExp = Boolean(aInfo.tokenExpired || (aInfo.tokenStatus && aInfo.tokenStatus.status === 'expired') || (aInfo.token ? isJwtExpired(aInfo.token) : true));
+                            if (!isAltExp && aInfo.token) {
+                                validTokens++;
+                                verifiedGameIds.add(sAlt);
+                            } else if (aInfo.token) {
+                                expiredTokens++;
                             }
-                            gameIdToUser[sAlt] = { name: aInfo.nickname || u.name, isAlt: true, parentChief: u.name, verified: !!aInfo.centuryGamesVerified, token: aInfo.token, joinedDate: aInfo.joinedDate || aInfo.dateStarted };
+                            gameIdToUser[sAlt] = { 
+                                name: aInfo.nickname || aInfo.name || u.name, 
+                                isAlt: true, 
+                                parentChief: u.name, 
+                                verified: !isAltExp, 
+                                token: aInfo.token, 
+                                tokenExpired: isAltExp, 
+                                joinedDate: aInfo.joinedDate || aInfo.dateStarted 
+                            };
                         }
                     });
                 }
             });
-            
+
+            const activeRoster = [];
+            const departedRoster = [];
+            const bannedRoster = [];
+
+            rawRosterList.forEach(r => {
+                if (!r || typeof r !== 'object') return;
+                const gid = String(r.gameId || '').trim();
+                const name = String(r.name || '').trim().toLowerCase();
+                const st = String(r.membershipStatus || r.status || '').trim().toLowerCase();
+                
+                if (st === 'banned' || st === 'ban' || (gid && bannedIds.has(gid) && !st.includes('left')) || (name && bannedNames.has(name) && !st.includes('left'))) {
+                    bannedRoster.push(r);
+                } else if (isMemberBannedOrLeft(r) || (gid && bannedIds.has(gid)) || (name && bannedNames.has(name))) {
+                    departedRoster.push(r);
+                } else {
+                    activeRoster.push(r);
+                }
+            });
+
             let claimedCount = 0;
             let unclaimedCount = 0;
             let tokenLinkedCount = 0;
-            
-            rosterList.forEach(r => {
+
+            activeRoster.forEach(r => {
                 const gId = String(r.gameId || '').trim();
                 const isClaimed = registeredGameIds.has(gId);
                 const uInfo = gameIdToUser[gId];
@@ -4449,7 +4552,7 @@
                 else unclaimedCount++;
                 if (uInfo && (uInfo.token || uInfo.verified)) tokenLinkedCount++;
             });
-            
+
             // Update modal header counters
             const mTot = document.getElementById('gk-modal-total-cnt');
             const mCl = document.getElementById('gk-modal-claimed-cnt');
@@ -4460,21 +4563,29 @@
             const tUnNum = document.getElementById('gk-tab-unclaimed-num');
             const tClNum = document.getElementById('gk-tab-claimed-num');
             const tTokNum = document.getElementById('gk-tab-tokens-num');
-            
-            if (mTot) mTot.innerText = fNum(rosterList.length);
+            const tDepNum = document.getElementById('gk-tab-departed-num');
+            const tBanNum = document.getElementById('gk-tab-banned-num');
+
+            if (mTot) mTot.innerText = fNum(activeRoster.length);
             if (mCl) mCl.innerText = fNum(claimedCount);
             if (mUn) mUn.innerText = fNum(unclaimedCount);
             if (mVer) mVer.innerText = fNum(verifiedGameIds.size);
             if (mExp) mExp.innerText = fNum(expiredTokens);
-            if (tAllNum) tAllNum.innerText = rosterList.length;
+            if (tAllNum) tAllNum.innerText = activeRoster.length;
             if (tUnNum) tUnNum.innerText = unclaimedCount;
             if (tClNum) tClNum.innerText = claimedCount;
             if (tTokNum) tTokNum.innerText = tokenLinkedCount;
-            
+            if (tDepNum) tDepNum.innerText = departedRoster.length;
+            if (tBanNum) tBanNum.innerText = bannedRoster.length;
+
             // Search Query Filter
             const searchVal = (document.getElementById('gk-search-input')?.value || '').toLowerCase().trim();
-            
-            const filteredRoster = rosterList.filter(r => {
+
+            let baseList = activeRoster;
+            if (currentGkFilter === 'departed') baseList = departedRoster;
+            else if (currentGkFilter === 'banned') baseList = bannedRoster;
+
+            const filteredRoster = baseList.filter(r => {
                 const gId = String(r.gameId || '').trim();
                 const chiefName = (r.name || '').toLowerCase();
                 const fLevel = (r.furnaceLevel || r.stove_lv || '').toLowerCase();
@@ -4482,7 +4593,7 @@
                 const uInfo = gameIdToUser[gId];
                 const hasToken = uInfo && (uInfo.token || uInfo.verified);
                 
-                // Tab filter
+                // Tab filter (for active sub-filters)
                 if (currentGkFilter === 'unclaimed' && isClaimed) return false;
                 if (currentGkFilter === 'claimed' && !isClaimed) return false;
                 if (currentGkFilter === 'tokens' && !hasToken) return false;
@@ -4498,23 +4609,27 @@
                 
                 return true;
             });
-            
+
             const tbody = document.getElementById('gk-roster-table-body');
             if (!tbody) return;
-            
+
             if (filteredRoster.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 24px; color: #8b949e; font-size: 12px;">No alliance chiefs match your filter/search criteria.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 24px; color: #8b949e; font-size: 12px;">No chiefs match your filter/search criteria.</td></tr>`;
                 return;
             }
-            
+
             tbody.innerHTML = filteredRoster.map((r, idx) => {
                 const gId = String(r.gameId || '').trim();
+                const chiefName = r.name || 'Unknown Chief';
                 const isClaimed = registeredGameIds.has(gId);
                 const uInfo = gameIdToUser[gId];
                 const isVerified = uInfo && uInfo.verified;
                 const hasToken = uInfo && uInfo.token;
                 const tokenExpired = hasToken ? isJwtExpired(uInfo.token) : false;
-                
+                const st = String(r.membershipStatus || r.status || '').trim().toLowerCase();
+                const isBanned = st === 'banned' || st === 'ban' || (gId && bannedIds.has(gId) && !st.includes('left')) || (chiefName.toLowerCase() && bannedNames.has(chiefName.toLowerCase()) && !st.includes('left'));
+                const isDeparted = isMemberBannedOrLeft(r) || (gId && bannedIds.has(gId)) || (chiefName.toLowerCase() && bannedNames.has(chiefName.toLowerCase()));
+
                 // Formatting Furnace Level
                 let fLevelStr = r.furnaceLevel || r.stove_lv || '--';
                 if (!String(fLevelStr).startsWith('FC') && parseInt(fLevelStr, 10) > 30) {
@@ -4522,19 +4637,27 @@
                 } else if (!String(fLevelStr).startsWith('FC') && fLevelStr !== '--') {
                     fLevelStr = `Lv ${fLevelStr}`;
                 }
-                
+
                 // Portal status badge
                 let portalBadge = '';
-                if (isClaimed) {
+                if (isBanned) {
+                    portalBadge = `<span style="background: rgba(248, 81, 73, 0.15); color: #f85149; border: 1px solid rgba(248, 81, 73, 0.35); padding: 2px 6px; border-radius: 4px; font-weight: 800; font-size: 10px;">🚫 Banned</span>`;
+                } else if (isDeparted) {
+                    portalBadge = `<span style="background: rgba(139, 148, 158, 0.15); color: #8b949e; border: 1px solid rgba(139, 148, 158, 0.35); padding: 2px 6px; border-radius: 4px; font-weight: 700; font-size: 10px;">🚪 Left Alliance</span>`;
+                } else if (isClaimed) {
                     const altNote = uInfo?.isAlt ? ` <span style="color:#58a6ff; font-size:9px;">(Alt of ${uInfo.parentChief || 'Leader'})</span>` : '';
                     portalBadge = `<span style="background: rgba(63, 185, 80, 0.12); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.3); padding: 2px 6px; border-radius: 4px; font-weight: 700; font-size: 10px; display: inline-flex; align-items: center; gap: 4px;">✓ Claimed${altNote}</span>`;
                 } else {
                     portalBadge = `<span style="background: rgba(241, 196, 15, 0.12); color: #f1c40f; border: 1px solid rgba(241, 196, 15, 0.3); padding: 2px 6px; border-radius: 4px; font-weight: 700; font-size: 10px;">⚠ Unclaimed</span>`;
                 }
-                
+
                 // Game sync badge
                 let cgBadge = '';
-                if (hasToken) {
+                if (isBanned) {
+                    cgBadge = `<span style="color: #f85149; font-size: 10px; font-weight: 700;">Blocked</span>`;
+                } else if (isDeparted) {
+                    cgBadge = `<span style="color: #8b949e; font-size: 10px;">Departed</span>`;
+                } else if (hasToken) {
                     if (tokenExpired) {
                         cgBadge = `<span style="background: rgba(248, 81, 73, 0.12); color: #f85149; border: 1px solid rgba(248, 81, 73, 0.3); padding: 2px 6px; border-radius: 4px; font-weight: 700; font-size: 10px;" title="Token Expired: Requires Game Sync Re-verification">● Token Expired</span>`;
                     } else {
@@ -4545,15 +4668,15 @@
                 } else {
                     cgBadge = `<span style="color: #8b949e; font-size: 10px;">Unsynced</span>`;
                 }
-                
+
                 const joinDateStr = r.dateStarted || uInfo?.joinedDate || 'Active';
                 const bgRow = idx % 2 === 0 ? 'background: #0d1117;' : 'background: #161b22;';
-                
+
                 return `<tr style="${bgRow} border-bottom: 1px solid #21262d; transition: background 0.2s ease;">
                     <td style="padding: 9px 12px; font-weight: 700; color: #ffffff;">
                         <div style="display: flex; align-items: center; gap: 6px;">
-                            <i class="fa-solid fa-user-shield" style="color: #00d2ff; font-size: 11px;"></i>
-                            <span>${r.name || 'Unknown Chief'}</span>
+                            <i class="fa-solid fa-user-shield" style="color: ${isBanned ? '#f85149' : (isDeparted ? '#8b949e' : '#00d2ff')}; font-size: 11px;"></i>
+                            <span style="${isBanned || isDeparted ? 'text-decoration: line-through; opacity: 0.8;' : ''}">${chiefName}</span>
                         </div>
                     </td>
                     <td style="padding: 9px 8px; font-family: monospace; color: #58a6ff; font-size: 10.5px;">${gId || '--'}</td>
