@@ -1047,7 +1047,18 @@ async function updateDiscordGatekeeperReport() {
       return tB.localeCompare(tA);
     });
     const latestCode = activeCodes.length ? activeCodes[0] : null;
-    const codeStr = latestCode ? `\`${latestCode.code}\`` : '`WOS0815`';
+    let codeDateStr = '';
+    if (latestCode) {
+      const rawDt = latestCode.createdAt || latestCode.lastDispatchedAt || latestCode.lastTestedAt || '';
+      if (rawDt) {
+        try {
+          const d = new Date(rawDt);
+          const dStr = d.toUTCString().slice(8, 16).trim();
+          if (dStr) codeDateStr = ` *(${dStr})*`;
+        } catch (e) {}
+      }
+    }
+    const codeStr = latestCode ? `\`${latestCode.code}\`${codeDateStr}` : '`WOS0815`';
     const claimsStr = latestCode && latestCode.stats ? `${latestCode.stats.success || totalMembers} / ${totalMembers} Alliance Accounts Claimed` : `${totalMembers} / ${totalMembers} Alliance Accounts Claimed`;
 
     const defaultPerks = `🎁 **ACTIVE ALLIANCE PROMO PERKS**\n• 💎 **Active Code:** ${codeStr}\n• ✅ **Claim Delivery:** ${claimsStr}\n• 📬 **Notice:** Check your in-game mailbox to collect rewards!`;

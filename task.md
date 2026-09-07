@@ -1,6 +1,20 @@
-# Task List: Fix Promo Code Recency Sorting in Gatekeeper Report & Central Command (v1.1.07)
+# Task List: Add Add Dates to Alliance Gift Code & Redemption Matrix (v1.1.08)
 
 ## 📋 Active Tasks
+- [x] Create project backup archive (`BDC_Central_Command_backup_*.zip`) and verify 2-backup retention
+- [x] Create `BDC_Central_Command_GUI_v1.1.08.pyw` with gift code add dates:
+  - [x] Add `({date_str})` next to code names in `GiftCodeManagerDialog` catalog cards
+  - [x] Add `({date_str})` next to code name in `GiftCodeManagerDialog` right-pane header
+  - [x] Add `*({date_str})*` next to active code in `send_or_update_gatekeeper_report()`
+  - [x] Bump version strings from `v1.1.07` to `v1.1.08`
+- [x] Update `bdc_api_service.js` with `*({date_str})*` next to active code
+- [x] Update `VERSION.json` (`bdc_central_command_desktop: 1.1.08`)
+- [x] Central Command Clean House Protocol (sync to desktop, purge v1.1.07, clear __pycache__, refresh transfer zip)
+- [x] Update `CHANGELOG.md` with App Store style release notes (strict $\le 10$ words per bullet)
+- [x] Run Automated Pre-Delivery Verification Script (GUI cards test + live Discord embed test)
+- [x] Commit and push to GitHub (`v1.1.08 : Added add dates to Alliance Gift Code and Redemption Matrix`)
+
+## ✅ Completed: Fix Promo Code Recency Sorting in Gatekeeper Report (v1.1.07)
 - [x] Create project backup archive (`BDC_Central_Command_backup_20260907_063548.zip`)
 - [x] Fix Gatekeeper active code selection in `BDC_Central_Command_GUI_v1.1.07.pyw` to sort by recency (`lastDispatchedAt` / `createdAt` desc)
 - [x] Fix Gatekeeper active code selection in `bdc_api_service.js` to sort by recency
