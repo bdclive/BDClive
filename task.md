@@ -1,6 +1,21 @@
-# Task List: Gatekeeper Bot Hub & Server Status with Offline Alerts (v10.2.130)
+# Task List: Fix Promo Code Recency Sorting in Gatekeeper Report & Central Command (v1.1.07)
 
 ## 📋 Active Tasks
+- [x] Create project backup archive (`BDC_Central_Command_backup_20260907_063548.zip`)
+- [x] Fix Gatekeeper active code selection in `BDC_Central_Command_GUI_v1.1.07.pyw` to sort by recency (`lastDispatchedAt` / `createdAt` desc)
+- [x] Fix Gatekeeper active code selection in `bdc_api_service.js` to sort by recency
+- [x] Mark expired codes in Firebase (`K6ZbjAXK6`, etc.) as `expired`
+- [x] Upgrade Central Command to `v1.1.07`:
+  - [x] Bump version strings from `v1.1.06` to `v1.1.07`
+  - [x] Purge superseded `v1.1.06.pyw`
+- [x] Update `VERSION.json` (`bdc_central_command_desktop: 1.1.07`)
+- [x] Clean House Protocol across Central Command destinations (Desktop, Shortcuts, Transfer Zip)
+- [x] Update `CHANGELOG.md` with App Store style release notes (strict $\le 10$ words per bullet)
+- [x] Run Automated Pre-Delivery Verification Script
+- [x] Dispatch live update to Discord Gatekeeper Report to verify `4dp5ZGM4c` is posted
+- [x] Commit and push to GitHub (`v1.1.07 : Fixed promo code recency sorting in Gatekeeper report`)
+
+## ✅ Completed: Gatekeeper Bot Hub & Server Status with Offline Alerts (v10.2.130)
 - [x] Create project backup archive (`archive_backups/BDCLive_backup_v10.2.130_pre_gatekeeper_hub_server.zip`)
 - [x] Add Hub and Server status pills and offline alert banner to Gatekeeper box (`#gatekeeper-box`) in `index.html`
 - [x] Add Bot Fleet & Server Telemetry panel to Gatekeeper modal (`#gatekeeperModal`) in `index.html`

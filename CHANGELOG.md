@@ -1,3 +1,9 @@
+## [1.1.07] - 2026-09-07
+- Sorted active promo perks by recency in Gatekeeper report.
+- Newest active codes now display immediately with accurate claims.
+- Upgraded Central Command desktop control center to version 1.1.07.
+- Cleaned house and synchronized shortcuts across desktop environments.
+
 ## [10.2.130] - 2026-09-07
 - Added live Bot Hub and Server status to Gatekeeper.
 - Instant visual alert triggers if Bot Server goes offline.
