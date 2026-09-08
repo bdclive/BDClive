@@ -1,4 +1,25 @@
-# Task List: Fast PC Token Manager & Host Server Auto Hot-Reload (v1.1.11)
+# Task List: Automated Snapchat Business Portal Scraper (v1.1.12)
+
+## 📋 In Progress: Automated Snapchat Business Portal Scraper (v1.1.12)
+- [x] Create project backup archive (`BDC_Central_Command_backup_20260907_213113.zip`) and verify strict 2-backup retention
+- [x] Build Standalone Portal Scraper Tool (`BDC_Snapchat_Portal_Scraper.pyw` & `Start_Snapchat_Scraper.bat`):
+  - [x] Configure isolated Chrome profile in `BDC_Central_Command\data\snapchat_scraper_profile`
+  - [x] Implement Chrome launch with `--remote-debugging-port=9333` and `--remote-allow-origins=*`
+  - [x] Implement CDP WebSocket evaluator to extract "Total Subscribers"
+  - [x] Add interactive login prompt for one-time authentication
+  - [x] Save extracted count to `tokens_config.json` locally and across LAN to host server
+  - [x] Push updated follower counts to Firebase RTDB (`/labData.json`)
+- [x] Update `BDC_Token_Manager.pyw`:
+  - [x] Add `[ 👻 Auto-Fetch Subscribers from Snapchat Portal ]` button in Snapchat section
+  - [x] Connect button to asynchronous scraper runner with live progress feedback
+- [x] Upgrade Central Command to `v1.1.12` (`BDC_Central_Command_GUI_v1.1.12.pyw`):
+  - [x] Add menu item to trigger Snapchat portal scraper
+  - [x] Bump version strings from `v1.1.11` to `v1.1.12`
+- [x] Update `VERSION.json` (`bdc_central_command_desktop: 1.1.12`)
+- [x] Central Command Clean House Protocol (sync to desktop, purge v1.1.11, clear __pycache__, refresh transfer zip)
+- [x] Update `CHANGELOG.md` with App Store style release notes (strict $\le 10$ words per bullet)
+- [x] Run Automated Pre-Delivery Verification Script (CDP scraper, config sync, GUI assertions - 38/38 Passed)
+- [x] Commit and push to GitHub (`v1.1.12 : Added automated Snapchat Business portal scraper`)
 
 ## ✅ Completed: Fast PC Token Manager & Host Server Auto Hot-Reload (v1.1.11)
 - [x] Create project backup archive (`BDC_Central_Command_backup_*.zip`) and verify strict 2-backup retention
