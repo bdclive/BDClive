@@ -1,7 +1,26 @@
-# Task List: Remove GitHub Pipeline Discovery from Central Command (v1.1.10)
+# Task List: Fast PC Token Manager & Host Server Auto Hot-Reload (v1.1.11)
 
-## 📋 Active Tasks
+## ✅ Completed: Fast PC Token Manager & Host Server Auto Hot-Reload (v1.1.11)
 - [x] Create project backup archive (`BDC_Central_Command_backup_*.zip`) and verify strict 2-backup retention
+- [x] Upgrade Central Command to `v1.1.11` (`BDC_Central_Command_GUI_v1.1.11.pyw`):
+  - [x] Implement live file watcher for `tokens_config.json` in `engine_loop()`
+  - [x] Automatically hot-reload all API tokens and in-memory variables on file change
+  - [x] Trigger live token scan and counter audit on remote token update
+  - [x] Add "🔄 Reload Tokens from Disk" command in Central Command menu bar
+  - [x] Bump version strings from `v1.1.10` to `v1.1.11`
+- [x] Build Fast PC Standalone Token Manager (`BDC_Token_Manager.pyw` & `Start_Token_Manager.bat`):
+  - [x] Create high-performance dark-mode GUI with portal launch links for fast browser
+  - [x] Support dual-path atomic saving to both local PC and host server (`\\DESKTOP-1CC6J72`)
+  - [x] Add live host server connection status badge
+  - [x] Create desktop shortcut `BDC Token Manager.lnk` on Fast PC desktop
+- [x] Update `VERSION.json` (`bdc_central_command_desktop: 1.1.11`)
+- [x] Central Command Clean House Protocol (sync to desktop, purge v1.1.10, clear __pycache__, refresh transfer zip)
+- [x] Update `CHANGELOG.md` with App Store style release notes (strict $\le 10$ words per bullet)
+- [x] Run Automated Pre-Delivery Verification Script (Token Manager save & Host auto-reload assertions)
+- [x] Commit and push to GitHub (`v1.1.11 : Added Fast PC Token Manager and automatic host hot-reload`)
+
+## ✅ Completed: Remove GitHub Pipeline Discovery from Central Command (v1.1.10)
+- [x] Create project backup archive (`BDC_Central_Command_backup_20260907_084500.zip`) and verify strict 2-backup retention
 - [x] Upgrade Central Command to `v1.1.10` (`BDC_Central_Command_GUI_v1.1.10.pyw`):
   - [x] Remove `GITHUB_DISCOVERY_INTERVAL = 300` constant
   - [x] Remove `self.last_github_discovery_sweep = 0` variable
