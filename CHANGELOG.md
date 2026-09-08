@@ -1,3 +1,13 @@
+## [1.1.12] - 2026-09-07
+- Added automated Snapchat Business portal subscriber scraper.
+- Uses isolated browser profile for quiet background data extraction.
+- One-time login keeps session cookies active for sweeps.
+- Auto-syncs extracted follower metrics across LAN and Firebase.
+- Added 1-click scraper launcher button inside Token Manager.
+- Added Snapchat portal scraper commands across application menus.
+- Upgraded Central Command desktop control center to version 1.1.12.
+- Cleaned house and synchronized shortcuts across desktop environments.
+
 ## [1.1.11] - 2026-09-07
 - Added standalone Fast PC Token Manager desktop GUI tool.
 - Instant portal links open credential dashboards in fast browser.
