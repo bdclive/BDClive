@@ -1,3 +1,12 @@
+## [1.1.11] - 2026-09-07
+- Added standalone Fast PC Token Manager desktop GUI tool.
+- Instant portal links open credential dashboards in fast browser.
+- Host server automatically detects and hot-reloads updated credentials.
+- Triggered automatic token health audit upon credentials update.
+- Added manual token reload command to Settings menu.
+- Upgraded Central Command desktop control center to version 1.1.11.
+- Cleaned house and synchronized shortcuts across desktop environments.
+
 ## [1.1.10] - 2026-09-07
 - Decoupled GitHub Pipeline discovery from Central Command engine.
 - Removed background auto-discovery daemon from desktop application.
