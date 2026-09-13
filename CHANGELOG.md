@@ -1,3 +1,10 @@
+## [10.2.133] - 2026-09-13
+- Added live bot execution status directly to Gatekeeper card.
+- Live ticking countdown timer shows remaining cooldown rest seconds.
+- Shows active running bot name and routine task phase.
+- Displays standby and halted states across fleet radar components.
+- Updated web dashboard engine to version 10.2.133.
+
 ## [1.1.13] - 2026-09-13
 - Auto-starts sync engine on boot without manual button clicks.
 - Broadcasts real-time heartbeat telemetry to Firebase every fifteen seconds.
