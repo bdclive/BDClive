@@ -1,8 +1,8 @@
 {
   "name": "BDC Ecosystem Master Version Registry",
-  "lastUpdated": "2026-09-07T21:57:00-07:00",
+  "lastUpdated": "2026-09-13T08:30:00-07:00",
   "components": {
-    "bdc_central_command_desktop": "1.1.12",
+    "bdc_central_command_desktop": "1.1.13",
     "daemons": {
       "folder": "Daemons/",
       "counterChecker": "Daemons/counter_checker_daemon.py"
@@ -13,15 +13,15 @@
       "cliFile": "Threads_Bridge/threads_bridge_cli_v1.0.59_(terminal).py"
     },
     "bdclive_web_dashboard": {
-      "version": "10.2.131",
+      "version": "10.2.132",
       "repository": "https://github.com/bdclive/BDClive",
       "latestChanges": [
+        "v10.2.132: Added Central Command status pill and offline alert watchdog to Gatekeeper",
         "v10.2.131: Filtered banned and departed members from Gatekeeper chief counts",
         "v10.2.130: Added Bot Hub and Server status with offline alerts to Gatekeeper",
         "v10.2.129: Connected Cinema Box to dedicated Brian's Theater Firebase database",
         "v10.2.128: Added 3x triple and 4x quad density modes to GitHub Pipeline ticker",
-        "v10.2.127: Restored strict 1-hour max active pipeline window",
-        "v10.2.126: Future-proof GitHub Pipeline auto-discovery and BriansTheater integration"
+        "v10.2.127: Restored strict 1-hour max active pipeline window"
       ]
     },
     "brians_theater_web_app": {

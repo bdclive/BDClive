@@ -1,3 +1,18 @@
+## [1.1.13] - 2026-09-13
+- Auto-starts sync engine on boot without manual button clicks.
+- Broadcasts real-time heartbeat telemetry to Firebase every fifteen seconds.
+- Emits instant shutdown beacon when closing Central Command gracefully.
+- Added Windows Startup auto-launch shortcut for seamless reboot recovery.
+- Upgraded Central Command desktop control center to version 1.1.13.
+- Cleaned house and synchronized shortcuts across desktop environments.
+
+## [10.2.132] - 2026-09-13
+- Added Central Command status badge to Gatekeeper widget header.
+- Instant visual alert triggers if Central Command goes offline.
+- Added live Central Command status badge to Gatekeeper radar.
+- Combined multi-system alerts detect Hub, Server, and CC states.
+- Updated web dashboard engine to version 10.2.132.
+
 ## [1.1.12] - 2026-09-07
 - Added automated Snapchat Business portal subscriber scraper.
 - Uses isolated browser profile for quiet background data extraction.
