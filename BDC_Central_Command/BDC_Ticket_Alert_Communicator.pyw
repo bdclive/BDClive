@@ -35,7 +35,7 @@ if sys.platform == 'win32':
         pass
 
 # --- CONSTANTS & CONFIGURATION ---
-APP_VERSION = "v1.0.67"
+APP_VERSION = "v1.0.68"
 WOS_FIREBASE_URL = "https://wos-dashboard-38d4c-default-rtdb.firebaseio.com"
 WOS_FIREBASE_SECRET = "n5fTnxcK5J5ddNsT77AhZIoQGTogW3ROpk4k03Sv"
 PUBLIC_WEBSITE_URL = "https://wosbdc.github.io/#feedback"
@@ -680,8 +680,9 @@ class TicketAlertCommunicator:
         pills_box = tk.Frame(tmpl_row, bg=C_PANEL)
         pills_box.pack(fill="x", pady=(2, 0))
 
+        portal_ver = self.get_portal_version()
         for t_text, t_val in [
-            ("✅ Implemented in v2.9.65", "✅ Implemented in v2.9.65"),
+            (f"✅ Implemented in {portal_ver}", f"✅ Implemented in {portal_ver}"),
             ("🔍 In Review / Testing", "🔍 Under Review & Live Testing"),
             ("🛠️ Scheduled in Next Update", "🛠️ Fix Scheduled in Upcoming Patch"),
             ("ℹ️ Game Mechanic", "ℹ️ Works as Intended (Whiteout Survival Game Mechanic)")
@@ -711,6 +712,27 @@ class TicketAlertCommunicator:
 
         lbl_hint = tk.Label(btn_save_row, text="Changes push live to cloud immediately", fg=C_MUTED, bg=C_PANEL, font=("Segoe UI", 8))
         lbl_hint.pack(side="left", padx=10)
+
+    def get_portal_version(self):
+        """Dynamically discovers the current Whiteout Survival portal build version."""
+        try:
+            cand_paths = [
+                os.path.abspath(os.path.join(BASE_DIR, "..", "..", "wos-public-website", "package.json")),
+                os.path.abspath(os.path.join(BASE_DIR, "..", "VERSION.json"))
+            ]
+            for p in cand_paths:
+                if os.path.exists(p):
+                    with open(p, "r", encoding="utf-8") as fp:
+                        data = json.load(fp)
+                        if "version" in data and isinstance(data["version"], str):
+                            return f"v{data['version'].lstrip('v')}"
+                        if "components" in data and "bdclive_web_dashboard" in data["components"]:
+                            ver = data["components"]["bdclive_web_dashboard"]
+                            if isinstance(ver, dict) and "version" in ver:
+                                return f"v{str(ver['version']).lstrip('v')}"
+        except Exception:
+            pass
+        return "v3.3.47"
 
     def insert_template(self, tmpl):
         cur = self.txt_d_note.get("1.0", "end").strip()

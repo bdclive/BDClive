@@ -1,3 +1,8 @@
+## [1.0.68] - 2026-09-13
+- Discovers current portal build version dynamically for quick templates.
+- Quick template button automatically inserts up-to-date release tags.
+- Upgraded BDC Ticket Alert Communicator desktop app to v1.0.68.
+
 ## [10.2.133] - 2026-09-13
 - Added live bot execution status directly to Gatekeeper card.
 - Live ticking countdown timer shows remaining cooldown rest seconds.
