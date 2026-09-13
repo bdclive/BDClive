@@ -1,21 +1,38 @@
-# Task List: Central Command Auto-Start & Gatekeeper Live Watchdog Alert (CC v1.1.13 & BDClive v10.2.132)
+# Task List: Gatekeeper Live Bot Status & Cooldown Countdown Timer (BDClive v10.2.133)
 
-## 📋 Active Tasks: CC Auto-Start & Gatekeeper CC Alert
+## 📋 Active Tasks: Live Bot Status & Cooldown Countdown Timer
+- [x] Create project backup archive (`BDCLive_backup_v10.2.133_pre_bot_status_timer.zip`) and verify strict 2-backup retention
+- [x] Update BDClive Web Dashboard (`v10.2.133`):
+  - [x] Add `#gk-bot-live-bar` with live ticker to Gatekeeper Box (`#gatekeeper-box`)
+  - [x] Implement live 1-second countdown tick calculation in `updateGatekeeperBotTimerTick()`
+  - [x] Format and display active bot status:
+    - [x] `COOLDOWN`: Warm amber pill `#fbbf24` with bot name (`BabyAngryGerman`) and live countdown timer (`01:19:42`)
+    - [x] `ACTIVE`: Glowing cyan pill `#00d2ff` with bot name and active routine/task (`Running: Routine Execution`)
+    - [x] `STANDBY`: Emerald green pill `#3fb950` (`🟢 Fleet: Ready`)
+    - [x] `OFFLINE`: Crimson pill `#f85149` (`🔴 Automation Halted`)
+  - [x] Update Gatekeeper Modal Radar (`#gatekeeperModal`):
+    - [x] Sync `#gk-modal-bot-account` with active/cooldown bot name
+    - [x] Sync `#gk-modal-bot-stage` with active routine phase or reason
+    - [x] Sync `#gk-modal-bot-timer` with live ticking countdown
+  - [x] Bump version to `v10.2.133` in `<title>`, `<meta property="og:title">`, `<meta property="twitter:title">`, and `CURRENT_APP_VERSION`
+  - [x] Synchronize `index.html`, `New.html`, and `web_dashboards/New.html` (100% byte-identical SHA-256)
+  - [x] Bump `sw.js` cache to `livecounters-cache-v10.2.133`
+  - [x] Update `VERSION.json` (`bdclive_web_dashboard: 10.2.133`)
+- [x] Update `CHANGELOG.md` with App Store style release notes (strict $\le 10$ words per bullet)
+- [x] Run Automated Pre-Delivery Verification Script (`verify_bot_status_cooldown_timer.py`):
+  - [x] Verify HTML SHA-256 hash parity across all 3 files
+  - [x] Verify version alignment across HTML, sw.js, VERSION.json
+  - [x] Verify changelog strict $\le 10$ words per bullet
+  - [x] Verify DOM elements and headless Chrome execution with zero console errors
+  - [x] Verify live Firebase RTDB schema integration for `bot_status`
+- [ ] Commit and push to GitHub (`v10.2.133 : Added live bot status and cooldown countdown timer to Gatekeeper`)
+- [ ] Mandatory task closure and process cleanup protocol
+
+## ✅ Completed: Central Command Auto-Start & Gatekeeper Live Watchdog Alert (CC v1.1.13 & BDClive v10.2.132)
 - [x] Create project backup archive (`BDC_Central_Command_backup_*.zip` & `BDCLive_backup_*.zip`) and verify 2-backup retention
-- [x] Upgrade Central Command to `v1.1.13` (`BDC_Central_Command_GUI_v1.1.13.pyw`):
-  - [x] Add `self.root.after(500, self.toggle_engine)` to automatically start sync engine on boot
-  - [x] Include `centralCommandHeartbeat` and `centralCommandOnline` in `push_to_firebase()`
-  - [x] Send `centralCommandOnline: False` beacon on application shutdown
-  - [x] Bump internal version strings from `v1.1.12` to `v1.1.13`
-  - [x] Purge superseded `v1.1.12.pyw`
-- [x] Update BDClive Web Dashboard (`v10.2.132`):
-  - [x] Add `#gk-cc-pill` (`CC: On` / `CC: Off`) to Gatekeeper box header beside Hub & Srv pills
-  - [x] Wire real-time CC heartbeat watchdog to trigger `#gk-offline-alert` (`🚨 CENTRAL COMMAND OFFLINE`)
-  - [x] Add `#gk-modal-cc-tag` (`CC: Online` / `CC: Offline`) to Gatekeeper modal radar panel
-  - [x] Synchronize `index.html`, `New.html`, and `web_dashboards/New.html` (100% byte-identical)
-  - [x] Bump `sw.js` cache to `livecounters-cache-v10.2.132`
-- [x] Update `VERSION.json` (`bdc_central_command_desktop: 1.1.13`, `bdclive_web_dashboard: 10.2.132`)
-- [x] Add `BDC Central Command.lnk` to Windows Startup folder (`shell:startup`) for boot persistence
+- [x] Upgrade Central Command to `v1.1.13` (`BDC_Central_Command_GUI_v1.1.13.pyw`)
+- [x] Update BDClive Web Dashboard (`v10.2.132`) with `#gk-cc-pill` and CC watchdog
+- [x] Add `BDC Central Command.lnk` to Windows Startup folder (`shell:startup`)
 - [x] Central Command Clean House Protocol (sync to desktop, purge v1.1.12, clear __pycache__, refresh transfer zip)
 - [x] Update `CHANGELOG.md` with App Store style release notes (strict $\le 10$ words per bullet)
 - [x] Run Automated Pre-Delivery Verification Script (`verify_cc_autostart_and_gatekeeper_alert.py`)

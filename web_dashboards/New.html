@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BDC LIVE v10.2.132</title>
+    <title>BDC LIVE v10.2.133</title>
     <!-- Open Graph & Social Preview Meta Tags -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="BDC LIVE v10.2.132">
+    <meta property="og:title" content="BDC LIVE v10.2.133">
     <meta property="og:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="og:image" content="./bdclive_banner.jpg">
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="BDC LIVE v10.2.132">
+    <meta property="twitter:title" content="BDC LIVE v10.2.133">
     <meta property="twitter:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="twitter:image" content="./bdclive_banner.jpg">
     <!-- PWA Manifest & Mobile Web App Meta Tags -->
@@ -291,8 +291,20 @@
                 </div>
             </div>
 
+            <!-- Bot Fleet Live Bar -->
+            <div id="gk-bot-live-bar" style="margin-top: 3px; background: rgba(0, 0, 0, 0.22); border: 1px solid rgba(255,255,255,0.06); border-radius: 5px; padding: 2px 6px; display: flex; justify-content: space-between; align-items: center; font-size: 0.58rem;" title="Live Bot Execution & Cooldown Status">
+                <div style="display: flex; align-items: center; gap: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 65%;">
+                    <span id="gk-bot-icon" style="color: #fbbf24;"><i class="fa-solid fa-hourglass-half"></i></span>
+                    <span style="color: #8b949e; font-weight: 600;">Bot:</span>
+                    <span id="gk-bot-name" style="color: #ffffff; font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">BabyAngryGerman</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 3px; white-space: nowrap;">
+                    <span id="gk-bot-timer" style="color: #fbbf24; font-weight: 800; font-family: monospace; font-size: 0.60rem; background: rgba(251, 191, 36, 0.12); border: 1px solid rgba(251, 191, 36, 0.28); padding: 1px 5px; border-radius: 3px;">01:19:54</span>
+                </div>
+            </div>
+
             <!-- Footer Strip -->
-            <div class="mirror-row" style="margin-top: 2px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 4px; display: flex; justify-content: space-between; align-items: center;">
+            <div class="mirror-row" style="margin-top: 2px; border-top: 1px solid rgba(255,255,255,0.06); padding-top: 3px; display: flex; justify-content: space-between; align-items: center;">
                 <div style="display: flex; align-items: center; gap: 5px; overflow: hidden;">
                     <span id="gk-sync-pulse" style="font-size: 8px; color: #3fb950; display: inline-flex; align-items: center; gap: 3px;" title="Real-Time Database Sync"><i class="fa-solid fa-circle fa-beat" style="font-size: 6px; color: #3fb950; animation-duration: 2s;"></i> LIVE</span>
                     <span style="font-size: 0.60rem; color: #8b949e; white-space: nowrap;">• <span id="gk-claim-pct" style="color: #00d2ff; font-weight: 700;">58.5%</span> Claimed</span>
@@ -3272,7 +3284,7 @@
             }
         }
 
-        const CURRENT_APP_VERSION = 'v10.2.132';
+        const CURRENT_APP_VERSION = 'v10.2.133';
         let isDeployingLive = false;
         let pendingRemoteVersion = null;
         let autoRefreshTimer = null;
@@ -4507,36 +4519,148 @@
         function updateGatekeeperBotTimerTick() {
             const mTimer = document.getElementById('gk-modal-bot-timer');
             const mTimerLbl = document.getElementById('gk-modal-timer-lbl');
-            if (!mTimer) return;
+            const mAcc = document.getElementById('gk-modal-bot-account');
+            const mStage = document.getElementById('gk-modal-bot-stage');
+            const cardBotIcon = document.getElementById('gk-bot-icon');
+            const cardBotName = document.getElementById('gk-bot-name');
+            const cardBotTimer = document.getElementById('gk-bot-timer');
+            const stageChip = document.getElementById('gk-bot-stage-chip');
 
             const data = latestBotTelemetry || {};
             const status = String(data.status || 'STANDBY').toUpperCase();
-            const stage = String(data.stage || '').toLowerCase();
-            const isHubOffline = (data.bothubOnline === false) || stage.includes('bot hub pro offline');
-            const isServerOffline = (data.serverOnline === false) || (data.gnbotsOnline === false) || (status === 'OFFLINE') || stage.includes('bot server closed') || stage.includes('bot server terminated') || Boolean(data.broadcastOfflineAlert);
-            const isAnyOffline = isHubOffline || isServerOffline;
+            const stage = String(data.stage || '');
+            const stageLower = stage.toLowerCase();
+
+            // Central Command Status Detection
+            const now = Date.now();
+            const ageMs = Math.max(0, now - lastCentralCommandHeartbeat);
+            const ageMinutes = ageMs / 60000;
+            const isCcOffline = (!navigator.onLine || !isFirebaseConnected || !isCentralCommandExplicitOnline || (lastCentralCommandHeartbeat > 0 && ageMinutes > 1.5));
+            const isHubOffline = (data.bothubOnline === false) || stageLower.includes('bot hub pro offline');
+            const isServerOffline = (data.serverOnline === false) || (data.gnbotsOnline === false) || (status === 'OFFLINE') || stageLower.includes('bot server closed') || stageLower.includes('bot server terminated') || Boolean(data.broadcastOfflineAlert);
+            const isAnyOffline = isHubOffline || isServerOffline || isCcOffline;
 
             if (isAnyOffline) {
+                const offReason = isCcOffline ? 'CC Offline' : (isServerOffline ? 'Server Halted' : 'Hub Offline');
+                if (cardBotIcon) cardBotIcon.innerHTML = '<i class="fa-solid fa-triangle-exclamation" style="color: #f85149;"></i>';
+                if (cardBotName) {
+                    cardBotName.innerText = offReason;
+                    cardBotName.style.color = '#ff7b72';
+                }
+                if (cardBotTimer) {
+                    cardBotTimer.innerText = 'HALTED';
+                    cardBotTimer.style.color = '#f85149';
+                    cardBotTimer.style.background = 'rgba(248, 81, 73, 0.15)';
+                    cardBotTimer.style.borderColor = 'rgba(248, 81, 73, 0.35)';
+                }
+                if (stageChip) {
+                    stageChip.innerText = 'Halted';
+                    stageChip.style.color = '#f85149';
+                }
                 if (mTimerLbl) mTimerLbl.innerText = 'Status:';
-                mTimer.innerText = 'HALTED';
-                mTimer.style.color = '#f85149';
-            } else if (status === 'COOLDOWN' && data.secondsLeft > 0) {
-                if (mTimerLbl) mTimerLbl.innerText = 'Cooldown:';
-                const elapsedSecs = Math.floor((Date.now() - (data.receivedAt || Date.now())) / 1000);
-                const remaining = Math.max(0, data.secondsLeft - elapsedSecs);
+                if (mTimer) {
+                    mTimer.innerText = 'HALTED';
+                    mTimer.style.color = '#f85149';
+                }
+                if (mAcc) mAcc.innerText = data.account || 'Offline';
+                if (mStage) {
+                    mStage.innerText = 'Automation Halted';
+                    mStage.style.color = '#f85149';
+                }
+            } else if (status === 'COOLDOWN') {
+                const botName = data.cooldownAccount || data.account || 'Fleet Bot';
+                const initialSecs = Number(data.cooldownSecondsLeft ?? data.secondsLeft ?? 0);
+                const elapsedSecs = Math.max(0, Math.floor((Date.now() - (data.receivedAt || Date.now())) / 1000));
+                const remaining = Math.max(0, initialSecs - elapsedSecs);
+
                 const h = Math.floor(remaining / 3600).toString().padStart(2, '0');
                 const m = Math.floor((remaining % 3600) / 60).toString().padStart(2, '0');
                 const s = (remaining % 60).toString().padStart(2, '0');
-                mTimer.innerText = `${h}:${m}:${s}`;
-                mTimer.style.color = '#fbbf24';
+                const timerStr = (remaining > 0 || initialSecs > 0) ? `${h}:${m}:${s}` : (data.cooldownHoldText || 'Resting');
+
+                if (cardBotIcon) cardBotIcon.innerHTML = '<i class="fa-solid fa-hourglass-half" style="color: #fbbf24;"></i>';
+                if (cardBotName) {
+                    cardBotName.innerText = botName;
+                    cardBotName.style.color = '#ffffff';
+                }
+                if (cardBotTimer) {
+                    cardBotTimer.innerText = timerStr;
+                    cardBotTimer.style.color = '#fbbf24';
+                    cardBotTimer.style.background = 'rgba(251, 191, 36, 0.12)';
+                    cardBotTimer.style.borderColor = 'rgba(251, 191, 36, 0.35)';
+                }
+                if (stageChip) {
+                    stageChip.innerText = 'Cooldown';
+                    stageChip.style.color = '#fbbf24';
+                }
+                if (mTimerLbl) mTimerLbl.innerText = 'Cooldown:';
+                if (mTimer) {
+                    mTimer.innerText = timerStr;
+                    mTimer.style.color = '#fbbf24';
+                }
+                if (mAcc) mAcc.innerText = botName;
+                if (mStage) {
+                    mStage.innerText = data.cooldownReason || data.stage || 'Routine Rotation Rest';
+                    mStage.style.color = '#fbbf24';
+                }
             } else if (status === 'ACTIVE') {
+                const botName = data.activeAccount || data.account || 'Fleet Bot';
+                const routinePhase = data.activeStage || data.stage || 'Routine Execution';
+
+                if (cardBotIcon) cardBotIcon.innerHTML = '<i class="fa-solid fa-bolt" style="color: #00d2ff;"></i>';
+                if (cardBotName) {
+                    cardBotName.innerText = botName;
+                    cardBotName.style.color = '#ffffff';
+                }
+                if (cardBotTimer) {
+                    cardBotTimer.innerText = 'RUNNING';
+                    cardBotTimer.style.color = '#00d2ff';
+                    cardBotTimer.style.background = 'rgba(0, 210, 255, 0.12)';
+                    cardBotTimer.style.borderColor = 'rgba(0, 210, 255, 0.35)';
+                }
+                if (stageChip) {
+                    stageChip.innerText = 'Running';
+                    stageChip.style.color = '#00d2ff';
+                }
                 if (mTimerLbl) mTimerLbl.innerText = 'Routine:';
-                mTimer.innerText = 'RUNNING';
-                mTimer.style.color = '#00d2ff';
+                if (mTimer) {
+                    mTimer.innerText = 'RUNNING';
+                    mTimer.style.color = '#00d2ff';
+                }
+                if (mAcc) mAcc.innerText = botName;
+                if (mStage) {
+                    mStage.innerText = routinePhase;
+                    mStage.style.color = '#00d2ff';
+                }
             } else {
+                const botName = data.account || 'Fleet Standby';
+                const standbyStage = data.stage || 'Fleet Standby / Ready';
+
+                if (cardBotIcon) cardBotIcon.innerHTML = '<i class="fa-solid fa-circle-check" style="color: #3fb950;"></i>';
+                if (cardBotName) {
+                    cardBotName.innerText = botName;
+                    cardBotName.style.color = '#ffffff';
+                }
+                if (cardBotTimer) {
+                    cardBotTimer.innerText = 'READY';
+                    cardBotTimer.style.color = '#3fb950';
+                    cardBotTimer.style.background = 'rgba(63, 185, 80, 0.12)';
+                    cardBotTimer.style.borderColor = 'rgba(63, 185, 80, 0.3)';
+                }
+                if (stageChip) {
+                    stageChip.innerText = 'Standby';
+                    stageChip.style.color = '#8b949e';
+                }
                 if (mTimerLbl) mTimerLbl.innerText = 'Status:';
-                mTimer.innerText = 'READY';
-                mTimer.style.color = '#3fb950';
+                if (mTimer) {
+                    mTimer.innerText = 'READY';
+                    mTimer.style.color = '#3fb950';
+                }
+                if (mAcc) mAcc.innerText = botName;
+                if (mStage) {
+                    mStage.innerText = standbyStage;
+                    mStage.style.color = '#3fb950';
+                }
             }
         }
 
