@@ -1,6 +1,27 @@
-# Task List: Automated Snapchat Business Portal Scraper (v1.1.12)
+# Task List: Central Command Auto-Start & Gatekeeper Live Watchdog Alert (CC v1.1.13 & BDClive v10.2.132)
 
-## 📋 In Progress: Automated Snapchat Business Portal Scraper (v1.1.12)
+## 📋 Active Tasks: CC Auto-Start & Gatekeeper CC Alert
+- [x] Create project backup archive (`BDC_Central_Command_backup_*.zip` & `BDCLive_backup_*.zip`) and verify 2-backup retention
+- [x] Upgrade Central Command to `v1.1.13` (`BDC_Central_Command_GUI_v1.1.13.pyw`):
+  - [x] Add `self.root.after(500, self.toggle_engine)` to automatically start sync engine on boot
+  - [x] Include `centralCommandHeartbeat` and `centralCommandOnline` in `push_to_firebase()`
+  - [x] Send `centralCommandOnline: False` beacon on application shutdown
+  - [x] Bump internal version strings from `v1.1.12` to `v1.1.13`
+  - [x] Purge superseded `v1.1.12.pyw`
+- [x] Update BDClive Web Dashboard (`v10.2.132`):
+  - [x] Add `#gk-cc-pill` (`CC: On` / `CC: Off`) to Gatekeeper box header beside Hub & Srv pills
+  - [x] Wire real-time CC heartbeat watchdog to trigger `#gk-offline-alert` (`🚨 CENTRAL COMMAND OFFLINE`)
+  - [x] Add `#gk-modal-cc-tag` (`CC: Online` / `CC: Offline`) to Gatekeeper modal radar panel
+  - [x] Synchronize `index.html`, `New.html`, and `web_dashboards/New.html` (100% byte-identical)
+  - [x] Bump `sw.js` cache to `livecounters-cache-v10.2.132`
+- [x] Update `VERSION.json` (`bdc_central_command_desktop: 1.1.13`, `bdclive_web_dashboard: 10.2.132`)
+- [x] Add `BDC Central Command.lnk` to Windows Startup folder (`shell:startup`) for boot persistence
+- [x] Central Command Clean House Protocol (sync to desktop, purge v1.1.12, clear __pycache__, refresh transfer zip)
+- [x] Update `CHANGELOG.md` with App Store style release notes (strict $\le 10$ words per bullet)
+- [x] Run Automated Pre-Delivery Verification Script (`verify_cc_autostart_and_gatekeeper_alert.py`)
+- [x] Commit and push to GitHub (`v10.2.132 : Added Central Command auto-start and Gatekeeper CC watchdog alert`)
+
+## ✅ Completed: Automated Snapchat Business Portal Scraper (v1.1.12)
 - [x] Create project backup archive (`BDC_Central_Command_backup_20260907_213113.zip`) and verify strict 2-backup retention
 - [x] Build Standalone Portal Scraper Tool (`BDC_Snapchat_Portal_Scraper.pyw` & `Start_Snapchat_Scraper.bat`):
   - [x] Configure isolated Chrome profile in `BDC_Central_Command\data\snapchat_scraper_profile`

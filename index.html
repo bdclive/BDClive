@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BDC LIVE v10.2.131</title>
+    <title>BDC LIVE v10.2.132</title>
     <!-- Open Graph & Social Preview Meta Tags -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="BDC LIVE v10.2.131">
+    <meta property="og:title" content="BDC LIVE v10.2.132">
     <meta property="og:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="og:image" content="./bdclive_banner.jpg">
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="BDC LIVE v10.2.131">
+    <meta property="twitter:title" content="BDC LIVE v10.2.132">
     <meta property="twitter:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="twitter:image" content="./bdclive_banner.jpg">
     <!-- PWA Manifest & Mobile Web App Meta Tags -->
@@ -252,6 +252,7 @@
                     <i class="fa-solid fa-shield-halved" style="color: #00d2ff;"></i> GATEKEEPER
                 </p>
                 <div style="display: flex; align-items: center; gap: 4px;">
+                    <span id="gk-cc-pill" style="font-size: 0.54rem; font-weight: 800; padding: 1px 4px; border-radius: 4px; background: rgba(63, 185, 80, 0.15); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.3); white-space: nowrap; display: inline-flex; align-items: center; gap: 3px;" title="BDC Central Command Status"><i class="fa-solid fa-circle" style="font-size: 4px; color: #3fb950;"></i> CC: On</span>
                     <span id="gk-hub-pill" style="font-size: 0.54rem; font-weight: 800; padding: 1px 4px; border-radius: 4px; background: rgba(63, 185, 80, 0.15); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.3); white-space: nowrap; display: inline-flex; align-items: center; gap: 3px;" title="WOS Bot Hub Pro Status"><i class="fa-solid fa-circle" style="font-size: 4px;"></i> Hub: On</span>
                     <span id="gk-server-pill" style="font-size: 0.54rem; font-weight: 800; padding: 1px 4px; border-radius: 4px; background: rgba(63, 185, 80, 0.15); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.3); white-space: nowrap; display: inline-flex; align-items: center; gap: 3px;" title="Bot Server Automation Status"><i class="fa-solid fa-circle" style="font-size: 4px;"></i> Srv: On</span>
                     <span style="font-size: 0.58rem; color: #8b949e; font-weight: 600; letter-spacing: 0.5px; margin-left: 2px;">S2089</span>
@@ -620,6 +621,7 @@
                     </div>
                     <div style="display: flex; align-items: center; gap: 8px;">
                         <div id="gk-modal-dual-status" style="display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700;">
+                            <span id="gk-modal-cc-tag" style="color: #3fb950; background: rgba(63, 185, 80, 0.1); border: 1px solid rgba(63, 185, 80, 0.25); padding: 2px 8px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px;">🟢 CC: Online</span>
                             <span id="gk-modal-hub-tag" style="color: #3fb950; background: rgba(63, 185, 80, 0.1); border: 1px solid rgba(63, 185, 80, 0.25); padding: 2px 8px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px;">🟢 Hub: Online</span>
                             <span id="gk-modal-server-tag" style="color: #3fb950; background: rgba(63, 185, 80, 0.1); border: 1px solid rgba(63, 185, 80, 0.25); padding: 2px 8px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px;">🟢 Server: Online</span>
                         </div>
@@ -2174,27 +2176,94 @@
 
         // ================= CENTRAL COMMAND HEARTBEAT WATCHDOG =================
         let lastCentralCommandHeartbeat = 0;
+        let isCentralCommandExplicitOnline = true;
         let isFirebaseConnected = true;
 
-        function recordCentralCommandHeartbeat(ts) {
+        function recordCentralCommandHeartbeat(ts, isExplicitOnline = true) {
             const timeVal = typeof ts === 'number' && ts > 1000000000000 ? ts : Date.now();
             if (timeVal > lastCentralCommandHeartbeat) {
                 lastCentralCommandHeartbeat = timeVal;
             }
+            if (typeof isExplicitOnline === 'boolean') {
+                isCentralCommandExplicitOnline = isExplicitOnline;
+            }
             updateCentralCommandWatchdogUI();
+            if (typeof updateGatekeeperBotTelemetryUI === 'function') {
+                updateGatekeeperBotTelemetryUI();
+            }
         }
 
         sDb.ref('.info/connected').on('value', snap => {
             isFirebaseConnected = snap.val() === true;
             updateCentralCommandWatchdogUI();
+            if (typeof updateGatekeeperBotTelemetryUI === 'function') {
+                updateGatekeeperBotTelemetryUI();
+            }
         });
 
-        window.addEventListener('online', () => { isFirebaseConnected = true; updateCentralCommandWatchdogUI(); });
-        window.addEventListener('offline', () => { isFirebaseConnected = false; updateCentralCommandWatchdogUI(); });
+        window.addEventListener('online', () => { 
+            isFirebaseConnected = true; 
+            updateCentralCommandWatchdogUI(); 
+            if (typeof updateGatekeeperBotTelemetryUI === 'function') updateGatekeeperBotTelemetryUI();
+        });
+        window.addEventListener('offline', () => { 
+            isFirebaseConnected = false; 
+            updateCentralCommandWatchdogUI(); 
+            if (typeof updateGatekeeperBotTelemetryUI === 'function') updateGatekeeperBotTelemetryUI();
+        });
 
         function updateCentralCommandWatchdogUI() {
             const gkBeacon = document.getElementById('gk-sync-pulse');
             const ticketBeacon = document.getElementById('ticket-live-beacon');
+            const ccPill = document.getElementById('gk-cc-pill');
+            const modalCcTag = document.getElementById('gk-modal-cc-tag');
+
+            const now = Date.now();
+            const ageMs = Math.max(0, now - lastCentralCommandHeartbeat);
+            const ageMinutes = ageMs / 60000;
+            const ageSeconds = Math.floor(ageMs / 1000);
+
+            let timeAgoStr = `${ageSeconds}s ago`;
+            if (ageMinutes >= 1 && ageMinutes < 60) {
+                timeAgoStr = `${Math.floor(ageMinutes)}m ago`;
+            } else if (ageMinutes >= 60) {
+                timeAgoStr = `${Math.floor(ageMinutes / 60)}h ${Math.floor(ageMinutes % 60)}m ago`;
+            }
+
+            const isCcOffline = (!navigator.onLine || !isFirebaseConnected || !isCentralCommandExplicitOnline || (lastCentralCommandHeartbeat > 0 && ageMinutes > 1.5));
+
+            // --- Update Header CC Pill (#gk-cc-pill) ---
+            if (ccPill) {
+                if (isCcOffline) {
+                    ccPill.style.background = 'rgba(248, 81, 73, 0.2)';
+                    ccPill.style.color = '#f85149';
+                    ccPill.style.borderColor = 'rgba(248, 81, 73, 0.45)';
+                    ccPill.innerHTML = '<i class="fa-solid fa-circle" style="font-size: 4px; color: #f85149;"></i> CC: Off';
+                    ccPill.title = `BDC Central Command: OFFLINE (${timeAgoStr})`;
+                } else {
+                    ccPill.style.background = 'rgba(63, 185, 80, 0.15)';
+                    ccPill.style.color = '#3fb950';
+                    ccPill.style.borderColor = 'rgba(63, 185, 80, 0.3)';
+                    ccPill.innerHTML = '<i class="fa-solid fa-circle" style="font-size: 4px; color: #3fb950;"></i> CC: On';
+                    ccPill.title = `BDC Central Command: ONLINE & SYNCING (Updated ${timeAgoStr})`;
+                }
+            }
+
+            // --- Update Modal CC Tag (#gk-modal-cc-tag) ---
+            if (modalCcTag) {
+                if (isCcOffline) {
+                    modalCcTag.style.color = '#f85149';
+                    modalCcTag.style.background = 'rgba(248, 81, 73, 0.12)';
+                    modalCcTag.style.borderColor = 'rgba(248, 81, 73, 0.3)';
+                    modalCcTag.innerHTML = '🔴 CC: Offline';
+                } else {
+                    modalCcTag.style.color = '#3fb950';
+                    modalCcTag.style.background = 'rgba(63, 185, 80, 0.1)';
+                    modalCcTag.style.borderColor = 'rgba(63, 185, 80, 0.25)';
+                    modalCcTag.innerHTML = '🟢 CC: Online';
+                }
+            }
+
             if (!gkBeacon && !ticketBeacon) return;
 
             if (!navigator.onLine || !isFirebaseConnected) {
@@ -2211,18 +2280,6 @@
                 if (gkBeacon) { gkBeacon.style.color = '#3fb950'; gkBeacon.innerHTML = initHtml; gkBeacon.title = initTitle; }
                 if (ticketBeacon) { ticketBeacon.style.color = '#3fb950'; ticketBeacon.innerHTML = initHtml; ticketBeacon.title = initTitle; }
                 return;
-            }
-
-            const now = Date.now();
-            const ageMs = Math.max(0, now - lastCentralCommandHeartbeat);
-            const ageMinutes = ageMs / 60000;
-            const ageSeconds = Math.floor(ageMs / 1000);
-
-            let timeAgoStr = `${ageSeconds}s ago`;
-            if (ageMinutes >= 1 && ageMinutes < 60) {
-                timeAgoStr = `${Math.floor(ageMinutes)}m ago`;
-            } else if (ageMinutes >= 60) {
-                timeAgoStr = `${Math.floor(ageMinutes / 60)}h ${Math.floor(ageMinutes % 60)}m ago`;
             }
 
             if (ageMinutes <= 3.5) {
@@ -2246,11 +2303,13 @@
             }
         }
 
-        setInterval(updateCentralCommandWatchdogUI, 5000);
+        setInterval(updateCentralCommandWatchdogUI, 3000);
 
         sDb.ref('labData').on('value', (s) => {
             const d = s.val(); if (!d) return;
-            recordCentralCommandHeartbeat(d.timestamp || d.lastTelemetryTimestamp || (d.gatekeeperCounters && d.gatekeeperCounters.timestamp));
+            const ccHeartbeat = d.centralCommandHeartbeat || (d.lastSynced ? new Date(d.lastSynced).getTime() : 0) || d.timestamp || d.lastTelemetryTimestamp || (d.gatekeeperCounters && d.gatekeeperCounters.timestamp);
+            const isExplicitOnline = d.centralCommandOnline !== false;
+            recordCentralCommandHeartbeat(ccHeartbeat, isExplicitOnline);
             updateMetricAndFlash('plex-count-num', 'plexCount', parseMetricNum(d.plexCount, 0), true);
             updateMetricAndFlash('threads-fol-num', 'threadsFol', parseMetricNum(d.threadsFol, 335));
             updateMetricAndFlash('threads-views-num', 'threadsViews', parseMetricNum(d.threadsViews, 6600), true);
@@ -3213,7 +3272,7 @@
             }
         }
 
-        const CURRENT_APP_VERSION = 'v10.2.131';
+        const CURRENT_APP_VERSION = 'v10.2.132';
         let isDeployingLive = false;
         let pendingRemoteVersion = null;
         let autoRefreshTimer = null;
@@ -4219,23 +4278,55 @@
             const stage = String(data.stage || '');
             const stageLower = stage.toLowerCase();
 
+            // Central Command Status Detection
+            const now = Date.now();
+            const ageMs = Math.max(0, now - lastCentralCommandHeartbeat);
+            const ageMinutes = ageMs / 60000;
+            const isCcOffline = (!navigator.onLine || !isFirebaseConnected || !isCentralCommandExplicitOnline || (lastCentralCommandHeartbeat > 0 && ageMinutes > 1.5));
+
             // Hub Status Detection: explicit boolean or shutdown stage detection
             const isHubOffline = (data.bothubOnline === false) || stageLower.includes('bot hub pro offline');
             
             // Server Status Detection: explicit boolean, OFFLINE status, termination stage, or broadcast offline alert
             const isServerOffline = (data.serverOnline === false) || (data.gnbotsOnline === false) || (status === 'OFFLINE') || stageLower.includes('bot server closed') || stageLower.includes('bot server terminated') || Boolean(data.broadcastOfflineAlert);
 
-            const isAnyOffline = isHubOffline || isServerOffline;
+            const isAnyOffline = isHubOffline || isServerOffline || isCcOffline;
             const isActive = !isAnyOffline && status === 'ACTIVE';
             const isCooldown = !isAnyOffline && status === 'COOLDOWN';
 
             // --- Widget Card DOM (#gatekeeper-box) ---
+            const ccPill = document.getElementById('gk-cc-pill');
             const hubPill = document.getElementById('gk-hub-pill');
             const srvPill = document.getElementById('gk-server-pill');
             const alertBox = document.getElementById('gk-offline-alert');
             const alertText = document.getElementById('gk-offline-alert-text');
             const stageChip = document.getElementById('gk-bot-stage-chip');
             const gkBox = document.getElementById('gatekeeper-box');
+
+            if (alertBox && alertText) {
+                if (isAnyOffline) {
+                    alertBox.style.display = 'block';
+                    if (isCcOffline && isHubOffline && isServerOffline) {
+                        alertText.innerText = 'CC, HUB & SERVER OFFLINE';
+                    } else if (isCcOffline && isServerOffline) {
+                        alertText.innerText = 'CENTRAL COMMAND & SERVER OFFLINE';
+                    } else if (isCcOffline && isHubOffline) {
+                        alertText.innerText = 'CENTRAL COMMAND & HUB OFFLINE';
+                    } else if (isCcOffline) {
+                        alertText.innerText = 'BDC CENTRAL COMMAND OFFLINE';
+                    } else if (isHubOffline && isServerOffline) {
+                        alertText.innerText = 'HUB & SERVER OFFLINE';
+                    } else if (isServerOffline) {
+                        alertText.innerText = 'BOT SERVER OFFLINE';
+                    } else {
+                        alertText.innerText = 'BOT HUB PRO OFFLINE';
+                    }
+                    if (gkBox) gkBox.style.borderTopColor = '#f85149';
+                } else {
+                    alertBox.style.display = 'none';
+                    if (gkBox) gkBox.style.borderTopColor = '#00d2ff';
+                }
+            }
 
             if (hubPill) {
                 if (isHubOffline) {
@@ -4269,26 +4360,12 @@
                 }
             }
 
-            if (alertBox && alertText) {
-                if (isAnyOffline) {
-                    alertBox.style.display = 'block';
-                    if (isHubOffline && isServerOffline) {
-                        alertText.innerText = 'HUB & SERVER OFFLINE';
-                    } else if (isServerOffline) {
-                        alertText.innerText = 'BOT SERVER OFFLINE';
-                    } else {
-                        alertText.innerText = 'BOT HUB PRO OFFLINE';
-                    }
-                    if (gkBox) gkBox.style.borderTopColor = '#f85149';
-                } else {
-                    alertBox.style.display = 'none';
-                    if (gkBox) gkBox.style.borderTopColor = '#00d2ff';
-                }
-            }
-
             if (stageChip) {
                 if (isAnyOffline) {
-                    stageChip.innerText = isServerOffline ? 'Server Halted' : 'Hub Offline';
+                    if (isCcOffline && isServerOffline) stageChip.innerText = 'CC & Srv Off';
+                    else if (isCcOffline) stageChip.innerText = 'CC Offline';
+                    else if (isServerOffline) stageChip.innerText = 'Server Halted';
+                    else stageChip.innerText = 'Hub Offline';
                     stageChip.style.color = '#f85149';
                 } else if (isActive) {
                     stageChip.innerText = 'Running';
@@ -4305,6 +4382,7 @@
             // --- Modal Panel DOM (#gatekeeperModal) ---
             const mRadar = document.getElementById('gk-modal-bot-radar');
             const mBadge = document.getElementById('gk-modal-bot-badge');
+            const mCcTag = document.getElementById('gk-modal-cc-tag');
             const mHubTag = document.getElementById('gk-modal-hub-tag');
             const mSrvTag = document.getElementById('gk-modal-server-tag');
             const mOffWarn = document.getElementById('gk-modal-offline-warning');
@@ -4321,7 +4399,17 @@
                     mBadge.style.background = 'rgba(248, 81, 73, 0.2)';
                     mBadge.style.color = '#f85149';
                     mBadge.style.borderColor = 'rgba(248, 81, 73, 0.4)';
-                    mBadge.innerText = (isHubOffline && isServerOffline) ? '🔴 HUB & SERVER OFFLINE' : (isServerOffline ? '🔴 SERVER OFFLINE' : '🔴 HUB OFFLINE');
+                    if (isCcOffline && (isHubOffline || isServerOffline)) {
+                        mBadge.innerText = '🔴 MULTIPLE SYSTEMS OFFLINE';
+                    } else if (isCcOffline) {
+                        mBadge.innerText = '🔴 CENTRAL COMMAND OFFLINE';
+                    } else if (isHubOffline && isServerOffline) {
+                        mBadge.innerText = '🔴 HUB & SERVER OFFLINE';
+                    } else if (isServerOffline) {
+                        mBadge.innerText = '🔴 SERVER OFFLINE';
+                    } else {
+                        mBadge.innerText = '🔴 HUB OFFLINE';
+                    }
                 } else if (isActive) {
                     mBadge.style.background = 'rgba(0, 210, 255, 0.15)';
                     mBadge.style.color = '#00d2ff';
@@ -4337,6 +4425,20 @@
                     mBadge.style.color = '#3fb950';
                     mBadge.style.borderColor = 'rgba(63, 185, 80, 0.3)';
                     mBadge.innerText = '● STANDBY';
+                }
+            }
+
+            if (mCcTag) {
+                if (isCcOffline) {
+                    mCcTag.style.color = '#f85149';
+                    mCcTag.style.background = 'rgba(248, 81, 73, 0.12)';
+                    mCcTag.style.borderColor = 'rgba(248, 81, 73, 0.3)';
+                    mCcTag.innerHTML = '🔴 CC: Offline';
+                } else {
+                    mCcTag.style.color = '#3fb950';
+                    mCcTag.style.background = 'rgba(63, 185, 80, 0.1)';
+                    mCcTag.style.borderColor = 'rgba(63, 185, 80, 0.25)';
+                    mCcTag.innerHTML = '🟢 CC: Online';
                 }
             }
 
@@ -4373,6 +4475,14 @@
                     mOffWarn.style.display = 'flex';
                     if (data.broadcastOfflineAlert && data.broadcastOfflineAlert.body) {
                         mOffMsg.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> <strong>${data.broadcastOfflineAlert.title || 'Bot Offline'}</strong>: ${data.broadcastOfflineAlert.body}`;
+                    } else if (isCcOffline && isHubOffline && isServerOffline) {
+                        mOffMsg.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> <strong>Central Command, Bot Hub & Server are all offline</strong> on host machine.';
+                    } else if (isCcOffline && isServerOffline) {
+                        mOffMsg.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> <strong>Central Command & Bot Server are offline</strong> on host machine.';
+                    } else if (isCcOffline && isHubOffline) {
+                        mOffMsg.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> <strong>Central Command & Bot Hub are offline</strong> on host machine.';
+                    } else if (isCcOffline) {
+                        mOffMsg.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> <strong>BDC Central Command is offline or closed</strong> on host machine.';
                     } else if (isHubOffline && isServerOffline) {
                         mOffMsg.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> <strong>Both Bot Hub & Server are offline</strong> on host machine.';
                     } else if (isServerOffline) {
