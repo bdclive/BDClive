@@ -1,3 +1,18 @@
+## [1.1.16] - 2026-09-14
+- Automated live Google Tasks sync every sixty seconds in background.
+- Pushes fresh Google Tasks counts directly to Firebase database.
+- Added manual sync button to Central Command settings menu.
+- Upgraded Central Command desktop control center to version 1.1.16.
+- Cleaned house and synchronized shortcuts across desktop environments.
+
+## [10.2.135] - 2026-09-14
+- Added interactive one-click Google Tasks live sync button.
+- Calibrated total task counter to display true active total.
+- Added pinned task list sub-badge to task box.
+- Live task sync age badge shows real-time freshness.
+- Periodic auto-sync keeps tasks fresh during active dashboard sessions.
+- Updated web dashboard engine to version 10.2.135.
+
 ## [1.1.15] - 2026-09-14
 - Fixes stale cloud data locking Los Santos weekly manager.
 - Discovers active Discord webhook for the gta weekly room.

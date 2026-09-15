@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BDC LIVE v10.2.133</title>
+    <title>BDC LIVE v10.2.135</title>
     <!-- Open Graph & Social Preview Meta Tags -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="BDC LIVE v10.2.133">
+    <meta property="og:title" content="BDC LIVE v10.2.135">
     <meta property="og:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="og:image" content="./bdclive_banner.jpg">
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="BDC LIVE v10.2.133">
+    <meta property="twitter:title" content="BDC LIVE v10.2.135">
     <meta property="twitter:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="twitter:image" content="./bdclive_banner.jpg">
     <!-- PWA Manifest & Mobile Web App Meta Tags -->
@@ -493,14 +493,25 @@
         <!-- TASKS BOX WIDGET -->
         <div class="counter-item mirror-box" id="tasks-box" style="border-top: 3px solid var(--tasks-blue); padding: 10px 12px 5px 12px; grid-area: 3 / 2 / 4 / 4; height: 150px; position: relative;">
             <i class="fa-solid fa-list-check box-logo" style="color: var(--tasks-blue);"></i>
-            <button onclick="openTasksBreakdownModal()" style="position: absolute; top: 8px; right: 10px; background: rgba(66, 133, 244, 0.15); color: #58a6ff; border: 1px solid rgba(66, 133, 244, 0.35); border-radius: 6px; padding: 2px 7px; font-size: 8.5px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s ease; z-index: 2;" title="View All 13 Task List Categories & Live Counts">
-                <i class="fa-solid fa-layer-group"></i> Breakdown
-            </button>
+            <div style="position: absolute; top: 8px; right: 10px; display: flex; align-items: center; gap: 5px; z-index: 2;">
+                <button id="task-sync-btn" onclick="triggerGoogleTasksSync(event)" style="background: rgba(66, 133, 244, 0.15); color: #58a6ff; border: 1px solid rgba(66, 133, 244, 0.35); border-radius: 6px; padding: 2px 7px; font-size: 8.5px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s ease;" title="Sync Live Tasks with Google Tasks API">
+                    <i id="task-sync-icon" class="fa-solid fa-rotate"></i> <span id="task-sync-text">Sync</span>
+                </button>
+                <button onclick="openTasksBreakdownModal()" style="background: rgba(66, 133, 244, 0.15); color: #58a6ff; border: 1px solid rgba(66, 133, 244, 0.35); border-radius: 6px; padding: 2px 7px; font-size: 8.5px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s ease;" title="View All 13 Task List Categories & Live Counts">
+                    <i class="fa-solid fa-layer-group"></i> Breakdown
+                </button>
+            </div>
             <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px 6px; width: 100%; height: 100%; align-items: center; box-sizing: border-box;">
                 
-                <div class="task-click-node" onclick="openTasksBreakdownModal()" style="grid-column: span 6; margin-bottom: 2px;" title="Click for Full Google Tasks Category Breakdown & Inspector">
-                    <p class="mirror-label" style="color: var(--tasks-blue); font-size: 10px; white-space: nowrap;">📋 Total</p>
-                    <div id="task-k1" class="mirror-stat" style="font-size: 2rem; font-weight:800; line-height:1.1;">0</div>
+                <div class="task-click-node" onclick="openTasksBreakdownModal()" style="grid-column: span 6; margin-bottom: 2px; display: flex; flex-direction: column; align-items: center; justify-content: center;" title="Click for Full Google Tasks Category Breakdown & Inspector">
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                        <p class="mirror-label" style="color: var(--tasks-blue); font-size: 10px; white-space: nowrap; margin-bottom: 0;">📋 Total Tasks</p>
+                        <span id="task-sync-age" style="font-size: 8px; color: #8b949e; font-weight: 700; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); padding: 1px 4px; border-radius: 3px;">● Live</span>
+                    </div>
+                    <div style="display: flex; align-items: baseline; justify-content: center; gap: 6px;">
+                        <div id="task-k1" class="mirror-stat" style="font-size: 1.85rem; font-weight:800; line-height:1.1;">0</div>
+                        <span id="task-pinned-badge" style="font-size: 10px; font-weight: 700; color: #8b949e; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); padding: 1px 5px; border-radius: 4px; letter-spacing: 0.2px;" title="Tasks in the 6 pinned lists below">(16 pinned)</span>
+                    </div>
                 </div>
                 
                 <div class="task-click-node" onclick="openSpecificTaskList('BrianDivaCox')" style="grid-column: span 2;">
@@ -1020,6 +1031,9 @@
                     <h3 style="margin: 0; color: #ffffff; font-size: 16px; font-weight: 800; letter-spacing: 0.5px;">Google Tasks — Category Breakdown & Inspector</h3>
                 </div>
                 <div style="display: flex; align-items: center; gap: 8px;">
+                    <button id="modal-task-sync-btn" onclick="triggerGoogleTasksSync(event)" style="background: rgba(66, 133, 244, 0.18); color: #58a6ff; border: 1px solid rgba(66, 133, 244, 0.4); padding: 5px 12px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; transition: all 0.2s ease;" title="Fetch fresh task counts from Google Tasks API">
+                        <i id="modal-task-sync-icon" class="fa-solid fa-rotate"></i> Sync Live Tasks
+                    </button>
                     <button onclick="openSpecificTaskList('Task')" style="background: rgba(66, 133, 244, 0.18); color: #58a6ff; border: 1px solid rgba(66, 133, 244, 0.4); padding: 5px 12px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; transition: all 0.2s ease;">
                         <i class="fa-solid fa-arrow-up-right-from-square"></i> Open in Google Tasks
                     </button>
@@ -1032,7 +1046,7 @@
                 <div style="display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 700;">
                     <span style="background: rgba(66, 133, 244, 0.15); color: #58a6ff; border: 1px solid rgba(66, 133, 244, 0.3); padding: 3px 8px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px;">📋 <span id="tasks-modal-total-cnt">0</span> Total Open Tasks</span>
                     <span style="background: rgba(63, 185, 80, 0.15); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.3); padding: 3px 8px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px;">📁 <span id="tasks-modal-lists-cnt">0</span> Lists Tracked</span>
-                    <span style="background: rgba(227, 179, 65, 0.15); color: #e3b341; border: 1px solid rgba(227, 179, 65, 0.3); padding: 3px 8px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px;">⚡ Real-time Firebase Sync</span>
+                    <span id="modal-task-sync-age" style="background: rgba(227, 179, 65, 0.15); color: #e3b341; border: 1px solid rgba(227, 179, 65, 0.3); padding: 3px 8px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px;">⚡ Real-time Firebase Sync</span>
                 </div>
             </div>
 
@@ -2618,14 +2632,27 @@
 
             // Calculate sum of ONLY the categories displayed in this widget box
             const displayedCategoriesTotal = cDiva + cUpdate + cTheater + cMyTasks + cBDCF + cWOS;
+            // Calculate true grand total across all 13 Google Task lists
+            const grandTotalTasks = safeNum(t.Task_count) || Object.entries(t).filter(([k]) => k.endsWith('_count') && k !== 'Task_count').reduce((acc, [, v]) => acc + safeNum(v), 0) || displayedCategoriesTotal;
             
-            updateMetricAndFlash('task-k1', 'task_displayed_total', displayedCategoriesTotal, false, true);
+            updateMetricAndFlash('task-k1', 'task_total', grandTotalTasks, false, true);
             updateMetricAndFlash('task-k2', 'task_diva', cDiva, false, true);
             updateMetricAndFlash('task-k3', 'task_update', cUpdate, false, true);
             updateMetricAndFlash('task-k4', 'task_theater', cTheater, false, true);
             updateMetricAndFlash('task-k5', 'task_mytasks', cMyTasks, false, true);
             updateMetricAndFlash('task-k6', 'task_bdcf', cBDCF, false, true);
             updateMetricAndFlash('task-k7', 'task_wos', cWOS, false, true);
+
+            const pinnedBadge = document.getElementById('task-pinned-badge');
+            if (pinnedBadge) {
+                pinnedBadge.innerText = `(${fNum(displayedCategoriesTotal)} pinned)`;
+                pinnedBadge.title = `${fNum(displayedCategoriesTotal)} tasks across the 6 pinned lists below • ${fNum(grandTotalTasks)} across all lists`;
+            }
+
+            if (!lastTasksSyncTimestamp) {
+                lastTasksSyncTimestamp = Date.now();
+                updateTasksSyncAgeUI();
+            }
 
             const tModal = document.getElementById('tasksBreakdownModal');
             if (tModal && tModal.style.display === 'block') {
@@ -2684,6 +2711,82 @@
             const modal = document.getElementById('tasksBreakdownModal');
             if (modal) modal.style.display = 'none';
         }
+
+        let isTasksSyncing = false;
+        let lastTasksSyncTimestamp = 0;
+
+        async function triggerGoogleTasksSync(event) {
+            if (event && event.stopPropagation) event.stopPropagation();
+            if (isTasksSyncing) return;
+            isTasksSyncing = true;
+
+            const syncBtn = document.getElementById('task-sync-btn');
+            const syncIcon = document.getElementById('task-sync-icon');
+            const syncText = document.getElementById('task-sync-text');
+            const modalSyncIcon = document.getElementById('modal-task-sync-icon');
+            const syncAgeEl = document.getElementById('task-sync-age');
+            const modalSyncAgeEl = document.getElementById('modal-task-sync-age');
+
+            if (syncIcon) syncIcon.classList.add('fa-spin');
+            if (modalSyncIcon) modalSyncIcon.classList.add('fa-spin');
+            if (syncText) syncText.innerText = 'Syncing...';
+            if (syncAgeEl) syncAgeEl.innerText = '● Syncing...';
+            if (modalSyncAgeEl) modalSyncAgeEl.innerText = '● Syncing...';
+
+            try {
+                const gasUrl = 'https://script.google.com/macros/s/AKfycbxP6kknIBA95fnd5D81wrjcJ3wJ60FTgUodZkbB1GQD7yUaaXLo2R7THx6Gxy_3H-Qm/exec';
+                const resp = await fetch(gasUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ api: 'syncTasks' })
+                });
+                const resData = await resp.json();
+                if (resData && resData.success) {
+                    lastTasksSyncTimestamp = Date.now();
+                    updateTasksSyncAgeUI();
+                    flashFollowerPulse('task-k1', 'gain', '#38bdf8', 'Synced Just Now');
+                }
+            } catch (err) {
+                console.warn('Google Tasks live sync error:', err);
+                if (syncAgeEl) syncAgeEl.innerText = '● Sync Error';
+                if (modalSyncAgeEl) modalSyncAgeEl.innerText = '● Sync Error';
+            } finally {
+                setTimeout(() => {
+                    isTasksSyncing = false;
+                    if (syncIcon) syncIcon.classList.remove('fa-spin');
+                    if (modalSyncIcon) modalSyncIcon.classList.remove('fa-spin');
+                    if (syncText) syncText.innerText = 'Sync';
+                    updateTasksSyncAgeUI();
+                }, 800);
+            }
+        }
+
+        function updateTasksSyncAgeUI() {
+            const syncAgeEl = document.getElementById('task-sync-age');
+            const modalSyncAgeEl = document.getElementById('modal-task-sync-age');
+            if (!lastTasksSyncTimestamp) {
+                if (syncAgeEl) syncAgeEl.innerText = '● Live';
+                if (modalSyncAgeEl) modalSyncAgeEl.innerText = '⚡ Real-time Firebase Sync';
+                return;
+            }
+            const sec = Math.floor((Date.now() - lastTasksSyncTimestamp) / 1000);
+            let ageStr = '● Just now';
+            if (sec >= 60 && sec < 3600) {
+                ageStr = `● ${Math.floor(sec / 60)}m ago`;
+            } else if (sec >= 3600) {
+                ageStr = `● ${Math.floor(sec / 3600)}h ago`;
+            }
+            if (syncAgeEl) syncAgeEl.innerText = ageStr;
+            if (modalSyncAgeEl) modalSyncAgeEl.innerText = `⚡ Synced ${ageStr.replace('● ', '')}`;
+        }
+
+        setInterval(updateTasksSyncAgeUI, 30000);
+        // Periodic auto-sync every 2.5 minutes while tab is active
+        setInterval(() => {
+            if (document.visibilityState === 'visible' && !isTasksSyncing) {
+                triggerGoogleTasksSync();
+            }
+        }, 150000);
 
         function renderTasksBreakdownTable() {
             const tbody = document.getElementById('tasks-breakdown-table-body');
@@ -2774,6 +2877,7 @@
             }).join('');
         }
 
+        window.triggerGoogleTasksSync = triggerGoogleTasksSync;
         window.openTasksBreakdownModal = openTasksBreakdownModal;
         window.closeTasksBreakdownModal = closeTasksBreakdownModal;
         window.renderTasksBreakdownTable = renderTasksBreakdownTable;
@@ -2863,19 +2967,24 @@
             const now = new Date();
             const nowMs = now.getTime();
 
-            // 1. Check if schedule array exists in theaterSync
+            // 1. Authoritative Cinema Schedule Resolution (check officialSchedule first, then cinema, then schedule)
             let scheduleLive = null;
             let scheduleNext = null;
+            const schedList = (Array.isArray(m.officialSchedule) && m.officialSchedule.length > 0)
+                ? m.officialSchedule
+                : ((m.cinema && Array.isArray(m.cinema.schedule) && m.cinema.schedule.length > 0)
+                    ? m.cinema.schedule
+                    : (Array.isArray(m.schedule) ? m.schedule : []));
 
-            if (Array.isArray(m.schedule) && m.schedule.length > 0) {
-                for (let i = 0; i < m.schedule.length; i++) {
-                    const item = m.schedule[i];
+            if (schedList.length > 0) {
+                for (let i = 0; i < schedList.length; i++) {
+                    const item = schedList[i];
                     if (!item) continue;
                     const isLive = (item.status && item.status.includes('LIVE')) || 
                                    (item.startMs && item.endMs && nowMs >= item.startMs && nowMs <= item.endMs);
                     if (isLive && !scheduleLive) {
                         scheduleLive = item;
-                        scheduleNext = m.schedule[i + 1] || null;
+                        scheduleNext = schedList[i + 1] || null;
                         break;
                     } else if (item.startMs && item.startMs > nowMs && !scheduleNext) {
                         scheduleNext = item;
@@ -2901,43 +3010,57 @@
             const ccNext = cleanTitle(m.nextTitle);
             const liveClean = cleanTitle(liveMovie);
 
-            // Prioritize authoritative nextTitle from BDC Central Command if different from live movie
-            if (ccNext && !ccNext.toLowerCase().includes("no movie scheduled") && ccNext.toLowerCase() !== liveClean.toLowerCase()) {
-                nextMovie = ccNext;
-                if (m.nextTime && m.nextTime !== "TBD" && !m.nextTime.includes("None")) {
-                    let d = new Date(m.nextTime);
-                    if (!isNaN(d.getTime())) nextShowDate = d;
-                }
-                if (!nextShowDate && m.nextStartMs) {
-                    nextShowDate = new Date(m.nextStartMs);
-                } else if (!nextShowDate && scheduleNext && scheduleNext.startMs) {
-                    nextShowDate = new Date(scheduleNext.startMs);
-                }
-            } else if (scheduleNext && cleanTitle(scheduleNext.title).toLowerCase() !== liveClean.toLowerCase()) {
-                nextMovie = cleanTitle(scheduleNext.title);
-                nextShowDate = scheduleNext.startMs ? new Date(scheduleNext.startMs) : null;
-            } else if (ccNext && !ccNext.toLowerCase().includes("no movie scheduled")) {
-                nextMovie = ccNext;
-            } else {
-                nextMovie = "No Movie Scheduled";
-            }
-
-            if (!nextShowDate || isNaN(nextShowDate.getTime())) {
-                if (m.nextTime && m.nextTime !== "TBD" && !m.nextTime.includes("None")) {
+            // Candidate A: Central Command / Discord next candidate
+            let ccNextTitle = (ccNext && !ccNext.toLowerCase().includes("no movie scheduled") && ccNext.toLowerCase() !== liveClean.toLowerCase()) ? ccNext : "";
+            let ccNextDate = null;
+            if (ccNextTitle) {
+                if (m.nextStartMs && !isNaN(Number(m.nextStartMs)) && Number(m.nextStartMs) > nowMs) {
+                    ccNextDate = new Date(Number(m.nextStartMs));
+                } else if (m.nextTime && m.nextTime !== "TBD" && !m.nextTime.includes("None")) {
                     let d = new Date(m.nextTime);
                     if (!isNaN(d.getTime())) {
-                        nextShowDate = d;
+                        ccNextDate = d;
                     } else {
                         let relSecs = parseToSeconds(m.nextTime);
                         if (relSecs > 0) {
-                            nextShowDate = new Date(now.getTime() + (relSecs * 1000));
+                            ccNextDate = new Date(now.getTime() + (relSecs * 1000));
                         } else {
                             let clean = m.nextTime.includes("202") ? m.nextTime : m.nextTime + ", 2026";
                             let parsed = new Date(clean);
-                            if (!isNaN(parsed.getTime())) nextShowDate = parsed;
+                            if (!isNaN(parsed.getTime())) ccNextDate = parsed;
                         }
                     }
                 }
+            }
+
+            // Candidate B: Brian's Theater Official Schedule candidate
+            let schedNextTitle = (scheduleNext && scheduleNext.title && cleanTitle(scheduleNext.title).toLowerCase() !== liveClean.toLowerCase()) ? cleanTitle(scheduleNext.title) : "";
+            let schedNextDate = (scheduleNext && scheduleNext.startMs && scheduleNext.startMs > nowMs) ? new Date(scheduleNext.startMs) : null;
+
+            // Reconcile candidates by earliest valid start time to guarantee title & countdown synchronization
+            if (schedNextTitle && schedNextDate && ccNextTitle && ccNextDate) {
+                if (schedNextDate.getTime() < ccNextDate.getTime() - (60 * 60 * 1000)) {
+                    nextMovie = schedNextTitle;
+                    nextShowDate = schedNextDate;
+                } else {
+                    nextMovie = ccNextTitle;
+                    nextShowDate = ccNextDate;
+                }
+            } else if (schedNextTitle && schedNextDate) {
+                nextMovie = schedNextTitle;
+                nextShowDate = schedNextDate;
+            } else if (ccNextTitle && ccNextDate) {
+                nextMovie = ccNextTitle;
+                nextShowDate = ccNextDate;
+            } else if (schedNextTitle) {
+                nextMovie = schedNextTitle;
+                nextShowDate = schedNextDate;
+            } else if (ccNextTitle) {
+                nextMovie = ccNextTitle;
+                nextShowDate = ccNextDate;
+            } else {
+                nextMovie = "No Movie Scheduled";
+                nextShowDate = null;
             }
 
             if (!nextShowDate || isNaN(nextShowDate.getTime())) {
@@ -3083,7 +3206,7 @@
         });
 
         const DEFAULT_GH_REPOS = [
-            { name: "BDClive", owner: "bdclive", fullName: "bdclive/BDClive", htmlUrl: "https://github.com/bdclive/BDClive", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "BDC Live Central Command Dashboard", latestCommit: "v10.2.126 : Future-proof GitHub Pipeline auto-discovery and BriansTheater integration" },
+            { name: "BDClive", owner: "bdclive", fullName: "bdclive/BDClive", htmlUrl: "https://github.com/bdclive/BDClive", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "BDC Live Central Command Dashboard", latestCommit: "v10.2.135 : Added Google Tasks live sync engine and calibrated total counts" },
             { name: "BriansTheater.github.io", owner: "BriansTheater", fullName: "BriansTheater/BriansTheater.github.io", htmlUrl: "https://github.com/BriansTheater/BriansTheater.github.io", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "Brian's Theater Web Application", latestCommit: "v4.9.31 : New version popup toaster alert with App Store summary and refresh flow", actionStatus: "completed", actionConclusion: "success", actionName: "🎬 Brian's Theater Web App Deployment & Release" },
             { name: "BDCvault.github.io", owner: "BDCvault", fullName: "BDCvault/BDCvault.github.io", htmlUrl: "https://github.com/BDCvault/BDCvault.github.io", pushedAt: new Date().toISOString(), defaultBranch: "main", description: "BDC Vault Web Application", latestCommit: "v4.8.0 : Added 1-click Automated Financial Engines and APR interest bot", actionStatus: "completed", actionConclusion: "success", actionName: "💎 BDC Vault Web App Deployment & Release" },
             { name: "wosBDC.github.io", owner: "wosbdc", fullName: "wosbdc/wosBDC.github.io", htmlUrl: "https://github.com/wosbdc/wosBDC.github.io", pushedAt: new Date(Date.now() - 3600000 * 1.5).toISOString(), defaultBranch: "main", description: "WOS BDC Web Application", latestCommit: "v2.9.86 : Dynamic real-time synchronization for all dropdown filter options and action button counters" },
@@ -3284,7 +3407,7 @@
             }
         }
 
-        const CURRENT_APP_VERSION = 'v10.2.133';
+        const CURRENT_APP_VERSION = 'v10.2.135';
         let isDeployingLive = false;
         let pendingRemoteVersion = null;
         let autoRefreshTimer = null;
