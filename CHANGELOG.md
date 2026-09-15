@@ -1,3 +1,12 @@
+## [1.1.18] - 2026-09-15
+- Added live Hogwarts House standings widget to Central Command.
+- Added one-click button to sync houses directly to Discord.
+- Scans guild member roles across all four Hogwarts houses.
+- Patches pinned Great Hall Discord leaderboard embed in real time.
+- Integrated Hogwarts sync into Sweeps and Apps menu dropdowns.
+- Upgraded Central Command desktop control center to version 1.1.18.
+- Cleaned house and synchronized shortcuts across desktop environments.
+
 ## [1.1.17] - 2026-09-15
 - Filters banned and departed players from token health scans.
 - Excludes non-active members from email action required alerts.
