@@ -3,6 +3,10 @@
 - Live status badge with Start, Restart, and Stop controls.
 - Added one-click button to re-render 4K banquet card.
 - Puppeteer generates and posts 4K standings to Great Hall.
+- Broadcasts public ceremony sorting proclamations to Great Hall.
+- Mentions sorted students with color-coded house herald embeds.
+- Attaches official high-resolution 4K house crests to announcements.
+- Automatically refreshes pinned standings card after every sorting.
 - Configurable auto-start daemon toggle when Central Command boots up.
 - Dedicated Hogwarts Control Center modal dialog with house radar.
 - Background watchdog updates daemon status badge in real time.

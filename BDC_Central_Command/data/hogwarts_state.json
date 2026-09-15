@@ -1,27 +1,19 @@
 {
-  "pinned_message_id": "1549528376237101237",
-  "channel_id": "1340457788656058438",
-  "guild_id": "964526957721186354",
-  "last_synced": "2026-09-15T11:15:29.739940+00:00",
-  "house_counts": {
+  "messageId": "1549528376237101237",
+  "channelId": "1340457788656058438",
+  "lastUpdated": "2026-09-15T21:12:36.497Z",
+  "counts": {
     "slytherin": 3,
     "gryffindor": 2,
     "ravenclaw": 1,
     "hufflepuff": 0
   },
-  "house_members": {
-    "slytherin": [
-      "278498170995212288",
-      "986497736243314688",
-      "1107944581716250666"
-    ],
-    "gryffindor": [
-      "117862848796819457",
-      "1039704964068548618"
-    ],
-    "ravenclaw": [
-      "545645312790757396"
-    ],
-    "hufflepuff": []
+  "announced_students": {
+    "278498170995212288": { "house": "slytherin", "initial": true },
+    "986497736243314688": { "house": "slytherin", "initial": true },
+    "1107944581716250666": { "house": "slytherin", "initial": true },
+    "117862848796819457": { "house": "gryffindor", "initial": true },
+    "1039704964068548618": { "house": "gryffindor", "initial": true },
+    "545645312790757396": { "house": "ravenclaw", "initial": true }
   }
 }
