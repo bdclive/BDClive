@@ -1,3 +1,12 @@
+## [1.1.19] - 2026-09-15
+- Grouped Alliance token health report by Chief and attached fleet.
+- Compact two-column fleet grid displays alts side by side.
+- Summary banners highlight active and action-required accounts per Chief.
+- Action Required section prominently isolates broken tokens at top.
+- Email report height reduced by sixty percent for admins.
+- Upgraded Central Command desktop control center to version 1.1.19.
+- Cleaned house and synchronized shortcuts across desktop environments.
+
 ## [1.1.18] - 2026-09-15
 - Added live Hogwarts House standings widget to Central Command.
 - Added one-click button to sync houses directly to Discord.
