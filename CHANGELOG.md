@@ -1,3 +1,11 @@
+## [1.1.15] - 2026-09-14
+- Fixes stale cloud data locking Los Santos weekly manager.
+- Discovers active Discord webhook for the gta weekly room.
+- Automatically posts new weekly briefings upon Thursday resets.
+- Added one-click Fetch & Dispatch button in manager dialog.
+- Upgraded Central Command desktop control center to v1.1.15.
+- Cleaned house and synchronized shortcuts across desktop environments.
+
 ## [1.1.14] - 2026-09-14
 - Cross-references official theater schedule before picking upcoming screening.
 - Prevents missing Discord events from skipping scheduled movies.
