@@ -505,13 +505,10 @@
                 
                 <div class="task-click-node" onclick="openTasksBreakdownModal()" style="grid-column: span 6; margin-bottom: 2px; display: flex; flex-direction: column; align-items: center; justify-content: center;" title="Click for Full Google Tasks Category Breakdown & Inspector">
                     <div style="display: flex; align-items: center; gap: 6px;">
-                        <p class="mirror-label" style="color: var(--tasks-blue); font-size: 10px; white-space: nowrap; margin-bottom: 0;">📋 Total Tasks</p>
+                        <p class="mirror-label" style="color: var(--tasks-blue); font-size: 10px; white-space: nowrap; margin-bottom: 0;">📋 Total</p>
                         <span id="task-sync-age" style="font-size: 8px; color: #8b949e; font-weight: 700; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); padding: 1px 4px; border-radius: 3px;">● Live</span>
                     </div>
-                    <div style="display: flex; align-items: baseline; justify-content: center; gap: 6px;">
-                        <div id="task-k1" class="mirror-stat" style="font-size: 1.85rem; font-weight:800; line-height:1.1;">0</div>
-                        <span id="task-pinned-badge" style="font-size: 10px; font-weight: 700; color: #8b949e; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); padding: 1px 5px; border-radius: 4px; letter-spacing: 0.2px;" title="Tasks in the 6 pinned lists below">(16 pinned)</span>
-                    </div>
+                    <div id="task-k1" class="mirror-stat" style="font-size: 2rem; font-weight:800; line-height:1.1;">0</div>
                 </div>
                 
                 <div class="task-click-node" onclick="openSpecificTaskList('BrianDivaCox')" style="grid-column: span 2;">
@@ -1044,7 +1041,7 @@
             <!-- Summary Statistics Bar -->
             <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 8px 12px; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
                 <div style="display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 700;">
-                    <span style="background: rgba(66, 133, 244, 0.15); color: #58a6ff; border: 1px solid rgba(66, 133, 244, 0.3); padding: 3px 8px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px;">📋 <span id="tasks-modal-total-cnt">0</span> Total Open Tasks</span>
+                    <span style="background: rgba(66, 133, 244, 0.15); color: #58a6ff; border: 1px solid rgba(66, 133, 244, 0.3); padding: 3px 8px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px;">📋 <span id="tasks-modal-total-cnt">0</span> Total Tasks (On Screen)</span>
                     <span style="background: rgba(63, 185, 80, 0.15); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.3); padding: 3px 8px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px;">📁 <span id="tasks-modal-lists-cnt">0</span> Lists Tracked</span>
                     <span id="modal-task-sync-age" style="background: rgba(227, 179, 65, 0.15); color: #e3b341; border: 1px solid rgba(227, 179, 65, 0.3); padding: 3px 8px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px;">⚡ Real-time Firebase Sync</span>
                 </div>
@@ -2630,24 +2627,16 @@
             const cBDCF = safeNum(t.The_BDCF_Crew_count);
             const cWOS = safeNum(t.WOS_count);
 
-            // Calculate sum of ONLY the categories displayed in this widget box
+            // Calculate sum of ONLY the 6 categories displayed on the screen
             const displayedCategoriesTotal = cDiva + cUpdate + cTheater + cMyTasks + cBDCF + cWOS;
-            // Calculate true grand total across all 13 Google Task lists
-            const grandTotalTasks = safeNum(t.Task_count) || Object.entries(t).filter(([k]) => k.endsWith('_count') && k !== 'Task_count').reduce((acc, [, v]) => acc + safeNum(v), 0) || displayedCategoriesTotal;
             
-            updateMetricAndFlash('task-k1', 'task_total', grandTotalTasks, false, true);
+            updateMetricAndFlash('task-k1', 'task_total', displayedCategoriesTotal, false, true);
             updateMetricAndFlash('task-k2', 'task_diva', cDiva, false, true);
             updateMetricAndFlash('task-k3', 'task_update', cUpdate, false, true);
             updateMetricAndFlash('task-k4', 'task_theater', cTheater, false, true);
             updateMetricAndFlash('task-k5', 'task_mytasks', cMyTasks, false, true);
             updateMetricAndFlash('task-k6', 'task_bdcf', cBDCF, false, true);
             updateMetricAndFlash('task-k7', 'task_wos', cWOS, false, true);
-
-            const pinnedBadge = document.getElementById('task-pinned-badge');
-            if (pinnedBadge) {
-                pinnedBadge.innerText = `(${fNum(displayedCategoriesTotal)} pinned)`;
-                pinnedBadge.title = `${fNum(displayedCategoriesTotal)} tasks across the 6 pinned lists below • ${fNum(grandTotalTasks)} across all lists`;
-            }
 
             if (!lastTasksSyncTimestamp) {
                 lastTasksSyncTimestamp = Date.now();
@@ -2796,7 +2785,14 @@
 
             const t = currentTasksDatabaseSnapshot || {};
             const safeNum = (val) => { const n = parseInt(val, 10); return isNaN(n) ? 0 : n; };
-            const totalTasks = safeNum(t.Task_count) || Object.entries(t).filter(([k]) => k.endsWith('_count') && k !== 'Task_count').reduce((acc, [, v]) => acc + safeNum(v), 0);
+            const cDiva = safeNum(t.BrianDivaCox_count);
+            const cUpdate = safeNum(t.Update_count || t.Tweet_to_Facebook_count || t.Brian_Cox_s_list_count);
+            const cTheater = safeNum(t.BriansTheater_count || t.Brian_s_Theater_count || t.Brian_s_Theater_ToDo_list_count);
+            const cMyTasks = safeNum(t.My_Tasks_count);
+            const cBDCF = safeNum(t.The_BDCF_Crew_count);
+            const cWOS = safeNum(t.WOS_count);
+            const onScreenTotal = cDiva + cUpdate + cTheater + cMyTasks + cBDCF + cWOS;
+            const totalTasks = onScreenTotal;
 
             if (totalCntEl) totalCntEl.innerText = fNum(totalTasks);
 

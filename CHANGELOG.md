@@ -10,8 +10,8 @@
 
 ## [10.2.135] - 2026-09-14
 - Added interactive one-click Google Tasks live sync button.
-- Calibrated total task counter to display true active total.
-- Added pinned task list sub-badge to task box.
+- Calibrated total task counter to count on-screen categories.
+- Cleaned up task box layout for maximum visual clarity.
 - Live task sync age badge shows real-time freshness.
 - Periodic auto-sync keeps tasks fresh during active dashboard sessions.
 - Updated web dashboard engine to version 10.2.135.
