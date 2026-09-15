@@ -7,6 +7,9 @@
 - Mentions sorted students with color-coded house herald embeds.
 - Attaches official high-resolution 4K house crests to announcements.
 - Automatically refreshes pinned standings card after every sorting.
+- Linked Unsorted onboarding role to automated ceremony redirection.
+- Moved Sorting Hat channel directly into Hogwarts Castle category.
+- Deployed permanent Sorting Ceremony station card in Sorting Hat.
 - Configurable auto-start daemon toggle when Central Command boots up.
 - Dedicated Hogwarts Control Center modal dialog with house radar.
 - Background watchdog updates daemon status badge in real time.
