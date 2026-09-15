@@ -1,8 +1,8 @@
 {
   "name": "BDC Ecosystem Master Version Registry",
-  "lastUpdated": "2026-09-14T22:00:00-07:00",
+  "lastUpdated": "2026-09-14T22:07:00-07:00",
   "components": {
-    "bdc_central_command_desktop": "1.1.15",
+    "bdc_central_command_desktop": "1.1.16",
     "daemons": {
       "folder": "Daemons/",
       "counterChecker": "Daemons/counter_checker_daemon.py"
@@ -13,9 +13,10 @@
       "cliFile": "Threads_Bridge/threads_bridge_cli_v1.0.59_(terminal).py"
     },
     "bdclive_web_dashboard": {
-      "version": "10.2.134",
+      "version": "10.2.135",
       "repository": "https://github.com/bdclive/BDClive",
       "latestChanges": [
+        "v10.2.135: Added Google Tasks live sync engine and calibrated total counts",
         "v10.2.134: Synchronized movie title and countdown reconciliation in Theater sync",
         "v10.2.133: Added live bot status and cooldown countdown timer to Gatekeeper",
         "v10.2.132: Added Central Command status pill and offline alert watchdog to Gatekeeper",
