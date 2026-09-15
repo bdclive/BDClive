@@ -1,11 +1,11 @@
 {
-  "totalMembers": 36,
+  "totalMembers": 21,
   "newMembersToday": 0,
   "newMembers7Days": 0,
   "unclaimedAccounts": 18,
-  "unsyncedChiefs": 19,
+  "unsyncedChiefs": 4,
   "activeSync": 17,
-  "expiredTokens": 0,
+  "expiredTokens": 2,
   "lastResetDate": "2026-08-20",
   "customCounters": {}
 }

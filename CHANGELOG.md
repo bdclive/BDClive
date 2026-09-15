@@ -1,3 +1,11 @@
+## [1.1.17] - 2026-09-15
+- Filters banned and departed players from token health scans.
+- Excludes non-active members from email action required alerts.
+- Added dedicated badge and section for excluded departed accounts.
+- Ensures Gatekeeper expired counter only tracks active alliance members.
+- Upgraded Central Command desktop control center to version 1.1.17.
+- Cleaned house and synchronized shortcuts across desktop environments.
+
 ## [1.1.16] - 2026-09-14
 - Automatically deletes previous weekly briefings before posting new updates.
 - Keeps gta weekly channel clean with zero duplicate clutter.
