@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BDC LIVE v10.2.133</title>
+    <title>BDC LIVE v10.2.134</title>
     <!-- Open Graph & Social Preview Meta Tags -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="BDC LIVE v10.2.133">
+    <meta property="og:title" content="BDC LIVE v10.2.134">
     <meta property="og:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="og:image" content="./bdclive_banner.jpg">
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="BDC LIVE v10.2.133">
+    <meta property="twitter:title" content="BDC LIVE v10.2.134">
     <meta property="twitter:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="twitter:image" content="./bdclive_banner.jpg">
     <!-- PWA Manifest & Mobile Web App Meta Tags -->
@@ -2863,19 +2863,24 @@
             const now = new Date();
             const nowMs = now.getTime();
 
-            // 1. Check if schedule array exists in theaterSync
+            // 1. Authoritative Cinema Schedule Resolution (check officialSchedule first, then cinema, then schedule)
             let scheduleLive = null;
             let scheduleNext = null;
+            const schedList = (Array.isArray(m.officialSchedule) && m.officialSchedule.length > 0)
+                ? m.officialSchedule
+                : ((m.cinema && Array.isArray(m.cinema.schedule) && m.cinema.schedule.length > 0)
+                    ? m.cinema.schedule
+                    : (Array.isArray(m.schedule) ? m.schedule : []));
 
-            if (Array.isArray(m.schedule) && m.schedule.length > 0) {
-                for (let i = 0; i < m.schedule.length; i++) {
-                    const item = m.schedule[i];
+            if (schedList.length > 0) {
+                for (let i = 0; i < schedList.length; i++) {
+                    const item = schedList[i];
                     if (!item) continue;
                     const isLive = (item.status && item.status.includes('LIVE')) || 
                                    (item.startMs && item.endMs && nowMs >= item.startMs && nowMs <= item.endMs);
                     if (isLive && !scheduleLive) {
                         scheduleLive = item;
-                        scheduleNext = m.schedule[i + 1] || null;
+                        scheduleNext = schedList[i + 1] || null;
                         break;
                     } else if (item.startMs && item.startMs > nowMs && !scheduleNext) {
                         scheduleNext = item;
@@ -2901,43 +2906,57 @@
             const ccNext = cleanTitle(m.nextTitle);
             const liveClean = cleanTitle(liveMovie);
 
-            // Prioritize authoritative nextTitle from BDC Central Command if different from live movie
-            if (ccNext && !ccNext.toLowerCase().includes("no movie scheduled") && ccNext.toLowerCase() !== liveClean.toLowerCase()) {
-                nextMovie = ccNext;
-                if (m.nextTime && m.nextTime !== "TBD" && !m.nextTime.includes("None")) {
-                    let d = new Date(m.nextTime);
-                    if (!isNaN(d.getTime())) nextShowDate = d;
-                }
-                if (!nextShowDate && m.nextStartMs) {
-                    nextShowDate = new Date(m.nextStartMs);
-                } else if (!nextShowDate && scheduleNext && scheduleNext.startMs) {
-                    nextShowDate = new Date(scheduleNext.startMs);
-                }
-            } else if (scheduleNext && cleanTitle(scheduleNext.title).toLowerCase() !== liveClean.toLowerCase()) {
-                nextMovie = cleanTitle(scheduleNext.title);
-                nextShowDate = scheduleNext.startMs ? new Date(scheduleNext.startMs) : null;
-            } else if (ccNext && !ccNext.toLowerCase().includes("no movie scheduled")) {
-                nextMovie = ccNext;
-            } else {
-                nextMovie = "No Movie Scheduled";
-            }
-
-            if (!nextShowDate || isNaN(nextShowDate.getTime())) {
-                if (m.nextTime && m.nextTime !== "TBD" && !m.nextTime.includes("None")) {
+            // Candidate A: Central Command / Discord next candidate
+            let ccNextTitle = (ccNext && !ccNext.toLowerCase().includes("no movie scheduled") && ccNext.toLowerCase() !== liveClean.toLowerCase()) ? ccNext : "";
+            let ccNextDate = null;
+            if (ccNextTitle) {
+                if (m.nextStartMs && !isNaN(Number(m.nextStartMs)) && Number(m.nextStartMs) > nowMs) {
+                    ccNextDate = new Date(Number(m.nextStartMs));
+                } else if (m.nextTime && m.nextTime !== "TBD" && !m.nextTime.includes("None")) {
                     let d = new Date(m.nextTime);
                     if (!isNaN(d.getTime())) {
-                        nextShowDate = d;
+                        ccNextDate = d;
                     } else {
                         let relSecs = parseToSeconds(m.nextTime);
                         if (relSecs > 0) {
-                            nextShowDate = new Date(now.getTime() + (relSecs * 1000));
+                            ccNextDate = new Date(now.getTime() + (relSecs * 1000));
                         } else {
                             let clean = m.nextTime.includes("202") ? m.nextTime : m.nextTime + ", 2026";
                             let parsed = new Date(clean);
-                            if (!isNaN(parsed.getTime())) nextShowDate = parsed;
+                            if (!isNaN(parsed.getTime())) ccNextDate = parsed;
                         }
                     }
                 }
+            }
+
+            // Candidate B: Brian's Theater Official Schedule candidate
+            let schedNextTitle = (scheduleNext && scheduleNext.title && cleanTitle(scheduleNext.title).toLowerCase() !== liveClean.toLowerCase()) ? cleanTitle(scheduleNext.title) : "";
+            let schedNextDate = (scheduleNext && scheduleNext.startMs && scheduleNext.startMs > nowMs) ? new Date(scheduleNext.startMs) : null;
+
+            // Reconcile candidates by earliest valid start time to guarantee title & countdown synchronization
+            if (schedNextTitle && schedNextDate && ccNextTitle && ccNextDate) {
+                if (schedNextDate.getTime() < ccNextDate.getTime() - (60 * 60 * 1000)) {
+                    nextMovie = schedNextTitle;
+                    nextShowDate = schedNextDate;
+                } else {
+                    nextMovie = ccNextTitle;
+                    nextShowDate = ccNextDate;
+                }
+            } else if (schedNextTitle && schedNextDate) {
+                nextMovie = schedNextTitle;
+                nextShowDate = schedNextDate;
+            } else if (ccNextTitle && ccNextDate) {
+                nextMovie = ccNextTitle;
+                nextShowDate = ccNextDate;
+            } else if (schedNextTitle) {
+                nextMovie = schedNextTitle;
+                nextShowDate = schedNextDate;
+            } else if (ccNextTitle) {
+                nextMovie = ccNextTitle;
+                nextShowDate = ccNextDate;
+            } else {
+                nextMovie = "No Movie Scheduled";
+                nextShowDate = null;
             }
 
             if (!nextShowDate || isNaN(nextShowDate.getTime())) {
@@ -3284,7 +3303,7 @@
             }
         }
 
-        const CURRENT_APP_VERSION = 'v10.2.133';
+        const CURRENT_APP_VERSION = 'v10.2.134';
         let isDeployingLive = false;
         let pendingRemoteVersion = null;
         let autoRefreshTimer = null;

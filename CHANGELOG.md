@@ -1,3 +1,16 @@
+## [1.1.14] - 2026-09-14
+- Cross-references official theater schedule before picking upcoming screening.
+- Prevents missing Discord events from skipping scheduled movies.
+- Prioritizes verified screening start dates over distant events.
+- Upgraded Central Command desktop control center to v1.1.14.
+- Cleaned house and synchronized shortcuts across desktop environments.
+
+## [10.2.134] - 2026-09-14
+- Synchronized upcoming movie titles with accurate countdown timers.
+- Prioritizes official theater schedule over distant Discord calendar.
+- Fixed movie title and countdown decoupling on dashboard.
+- Updated web dashboard engine to version 10.2.134.
+
 ## [1.0.68] - 2026-09-13
 - Discovers current portal build version dynamically for quick templates.
 - Quick template button automatically inserts up-to-date release tags.
