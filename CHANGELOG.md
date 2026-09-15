@@ -1,4 +1,7 @@
 ## [1.1.16] - 2026-09-14
+- Automatically deletes previous weekly briefings before posting new updates.
+- Keeps gta weekly channel clean with zero duplicate clutter.
+- Captures and tracks message IDs for future release replacements.
 - Automated live Google Tasks sync every sixty seconds in background.
 - Pushes fresh Google Tasks counts directly to Firebase database.
 - Added manual sync button to Central Command settings menu.
