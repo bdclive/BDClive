@@ -1,3 +1,14 @@
+## [1.1.20] - 2026-09-15
+- Added Hogwarts Sorting Hat daemon supervisor to Central Command.
+- Live status badge with Start, Restart, and Stop controls.
+- Added one-click button to re-render 4K banquet card.
+- Puppeteer generates and posts 4K standings to Great Hall.
+- Configurable auto-start daemon toggle when Central Command boots up.
+- Dedicated Hogwarts Control Center modal dialog with house radar.
+- Background watchdog updates daemon status badge in real time.
+- Upgraded Central Command desktop control center to version 1.1.20.
+- Cleaned house and synchronized shortcuts across desktop environments.
+
 ## [1.1.19] - 2026-09-15
 - Grouped Alliance token health report by Chief and attached fleet.
 - Compact two-column fleet grid displays alts side by side.
