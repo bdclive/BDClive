@@ -1,3 +1,12 @@
+## [1.1.21] - 2026-09-15
+- Bundled full Hogwarts Sorting Hat suite inside Central Command.
+- Server runs 100% self-contained without needing remote PC.
+- Direct Node process spawning eliminates network path script errors.
+- Automatically writes real-time daemon logs to dedicated file.
+- Bundled complete 4K house crests and ceremony assets.
+- Upgraded Central Command desktop control center to version 1.1.21.
+- Cleaned house and synchronized shortcuts across desktop environments.
+
 ## [1.1.20] - 2026-09-15
 - Added Hogwarts Sorting Hat daemon supervisor to Central Command.
 - Live status badge with Start, Restart, and Stop controls.

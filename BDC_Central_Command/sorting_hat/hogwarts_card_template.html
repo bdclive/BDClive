@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@700&display=swap');
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      width: 1400px;
+      height: 960px;
+      position: relative;
+      overflow: hidden;
+      font-family: 'Outfit', sans-serif;
+      background: #09070f;
+    }
+
+    /* BACKGROUND GREAT HALL IMAGE */
+    .bg-banner {
+      position: absolute;
+      inset: 0;
+      background-image: url('great_hall_banner_1789460786856.jpg');
+      background-size: cover;
+      background-position: top center;
+      filter: brightness(0.92) saturate(1.1);
+    }
+
+    /* GRADIENT OVERLAY: Crystal clear on top for candles, smooth dark fade towards bottom for cards */
+    .vignette {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        180deg,
+        rgba(9, 7, 15, 0.05) 0%,
+        rgba(9, 7, 15, 0.15) 38%,
+        rgba(9, 7, 15, 0.78) 54%,
+        rgba(7, 5, 12, 0.95) 75%,
+        #050409 100%
+      );
+    }
+
+    /* CARD CONTAINER */
+    .card-layout {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 30px 48px 36px;
+      gap: 18px;
+    }
+
+    /* HEADER PARCHMENT BANNER */
+    .header-banner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      position: relative;
+    }
+
+    .parchment-pill {
+      background: linear-gradient(180deg, #f7e6b5 0%, #dfbe81 50%, #c49a56 100%);
+      padding: 10px 42px;
+      border-radius: 8px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7), 0 0 25px rgba(212, 175, 55, 0.4);
+      border: 2px solid #fff2cc;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .parchment-title {
+      font-family: 'Cinzel', serif;
+      font-size: 26px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      color: #2b1704;
+      text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
+    }
+
+    .sub-title {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      color: #e6d3a3;
+      margin-top: 8px;
+      text-transform: uppercase;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+    }
+
+    /* 4 HOUSE CARDS GRID */
+    .houses-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      margin: 6px 0;
+    }
+
+    .house-box {
+      background: rgba(18, 14, 26, 0.78);
+      backdrop-filter: blur(16px);
+      border-radius: 16px;
+      padding: 22px 18px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6);
+      transition: transform 0.2s;
+    }
+
+    /* CROWN FOR LEADER */
+    .leader-badge {
+      position: absolute;
+      top: -14px;
+      background: linear-gradient(135deg, #ffd700, #ffae00);
+      color: #3b2000;
+      font-family: 'Cinzel', serif;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      padding: 4px 14px;
+      border-radius: 20px;
+      box-shadow: 0 4px 15px rgba(255, 215, 0, 0.6);
+      border: 1px solid #fff;
+    }
+
+    /* HOUSE THEMES */
+    .house-box.slytherin {
+      border-color: rgba(46, 204, 113, 0.6);
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6), 0 0 25px rgba(46, 204, 113, 0.25);
+    }
+    .house-box.gryffindor {
+      border-color: rgba(231, 76, 60, 0.45);
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6), 0 0 20px rgba(231, 76, 60, 0.2);
+    }
+    .house-box.ravenclaw {
+      border-color: rgba(52, 152, 219, 0.45);
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6), 0 0 20px rgba(52, 152, 219, 0.2);
+    }
+    .house-box.hufflepuff {
+      border-color: rgba(241, 196, 15, 0.45);
+      box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6), 0 0 20px rgba(241, 196, 15, 0.2);
+    }
+
+    .crest-circle {
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      margin-bottom: 12px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
+    }
+
+    .slytherin .crest-circle {
+      background: radial-gradient(circle, #1f6b3e 0%, #0d381e 100%);
+      border: 2px solid #55e691;
+      box-shadow: 0 0 20px rgba(85, 230, 145, 0.4);
+    }
+    .gryffindor .crest-circle {
+      background: radial-gradient(circle, #9e1b1b 0%, #520909 100%);
+      border: 2px solid #ff6961;
+      box-shadow: 0 0 20px rgba(255, 105, 97, 0.4);
+    }
+    .ravenclaw .crest-circle {
+      background: radial-gradient(circle, #1a4d7a 0%, #0c2640 100%);
+      border: 2px solid #64b5f6;
+      box-shadow: 0 0 20px rgba(100, 181, 246, 0.4);
+    }
+    .hufflepuff .crest-circle {
+      background: radial-gradient(circle, #b8860b 0%, #5a4103 100%);
+      border: 2px solid #ffd54f;
+      box-shadow: 0 0 20px rgba(255, 213, 79, 0.4);
+    }
+
+    .house-title {
+      font-family: 'Cinzel', serif;
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .count-badge {
+      font-size: 13px;
+      font-weight: 700;
+      color: #dedede;
+      margin-bottom: 16px;
+    }
+
+    .count-badge strong {
+      font-size: 17px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .slytherin .count-badge strong { color: #55e691; }
+    .gryffindor .count-badge strong { color: #ff857d; }
+    .ravenclaw .count-badge strong { color: #82c4f8; }
+    .hufflepuff .count-badge strong { color: #ffe082; }
+
+    /* NEON PROGRESS BAR */
+    .bar-track {
+      width: 100%;
+      height: 12px;
+      background: rgba(0, 0, 0, 0.6);
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      position: relative;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 10px;
+    }
+
+    .slytherin .bar-fill {
+      width: 85%;
+      background: linear-gradient(90deg, #107c41, #2ecc71, #85e8a9);
+      box-shadow: 0 0 14px #2ecc71;
+    }
+    .gryffindor .bar-fill {
+      width: 60%;
+      background: linear-gradient(90deg, #a81c1c, #e74c3c, #ff9688);
+      box-shadow: 0 0 14px #e74c3c;
+    }
+    .ravenclaw .bar-fill {
+      width: 30%;
+      background: linear-gradient(90deg, #185a9d, #3498db, #8ed0ff);
+      box-shadow: 0 0 14px #3498db;
+    }
+    .hufflepuff .bar-fill {
+      width: 8%;
+      background: linear-gradient(90deg, #b8860b, #f1c40f, #fff099);
+      box-shadow: 0 0 14px #f1c40f;
+    }
+
+    /* FOOTER BAR */
+    .footer-bar {
+      background: rgba(12, 9, 18, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(212, 175, 55, 0.4);
+      border-radius: 10px;
+      padding: 10px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .footer-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #ffd700;
+    }
+
+    .footer-right {
+      font-size: 12.5px;
+      color: #aaa4b8;
+    }
+
+    .footer-right strong {
+      color: #e2d9f3;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-banner"></div>
+  <div class="vignette"></div>
+
+  <div class="card-layout">
+    <!-- HEADER -->
+    <div class="header-banner">
+      <div class="parchment-pill">
+        <span style="font-size: 24px;">🏰</span>
+        <span class="parchment-title">HOGWARTS HOUSE STANDINGS</span>
+        <span style="font-size: 24px;">🏰</span>
+      </div>
+      <div class="sub-title">Official Student House Cup Leaderboard • The Great Hall</div>
+    </div>
+
+    <!-- 4 HOUSE CARDS -->
+    <div class="houses-grid">
+      <!-- SLYTHERIN -->
+      <div class="house-box slytherin">
+        <div class="leader-badge">👑 1ST PLACE</div>
+        <div class="crest-circle">🐍</div>
+        <div class="house-title">Slytherin</div>
+        <div class="count-badge"><strong>3</strong> Witches & Wizards</div>
+        <div class="bar-track">
+          <div class="bar-fill"></div>
+        </div>
+      </div>
+
+      <!-- GRYFFINDOR -->
+      <div class="house-box gryffindor">
+        <div class="crest-circle">🦁</div>
+        <div class="house-title">Gryffindor</div>
+        <div class="count-badge"><strong>2</strong> Witches & Wizards</div>
+        <div class="bar-track">
+          <div class="bar-fill"></div>
+        </div>
+      </div>
+
+      <!-- RAVENCLAW -->
+      <div class="house-box ravenclaw">
+        <div class="crest-circle">🦅</div>
+        <div class="house-title">Ravenclaw</div>
+        <div class="count-badge"><strong>1</strong> Witch/Wizard</div>
+        <div class="bar-track">
+          <div class="bar-fill"></div>
+        </div>
+      </div>
+
+      <!-- HUFFLEPUFF -->
+      <div class="house-box hufflepuff">
+        <div class="crest-circle">🦡</div>
+        <div class="house-title">Hufflepuff</div>
+        <div class="count-badge"><strong>0</strong> Students</div>
+        <div class="bar-track">
+          <div class="bar-fill"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer-bar">
+      <div class="footer-left">
+        <span>🏆 Current Leader:</span>
+        <span style="color: #55e691;">🐍 Slytherin House holds the lead with 3 Members!</span>
+      </div>
+      <div class="footer-right">
+        🎩 Get sorted in <strong>#🧙・sorting-hat</strong> or server <strong>Onboarding</strong>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

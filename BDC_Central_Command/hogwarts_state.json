@@ -10,12 +10,31 @@
   },
   "stationMessageId": "1549533649865670747",
   "announced_students": {
-    "278498170995212288": { "house": "slytherin", "initial": true },
-    "986497736243314688": { "house": "slytherin", "initial": true },
-    "1107944581716250666": { "house": "slytherin", "initial": true },
-    "117862848796819457": { "house": "gryffindor", "initial": true },
-    "1039704964068548618": { "house": "gryffindor", "initial": true },
-    "545645312790757396": { "house": "ravenclaw", "initial": true }
+    "278498170995212288": {
+      "house": "slytherin",
+      "initial": true
+    },
+    "986497736243314688": {
+      "house": "slytherin",
+      "initial": true
+    },
+    "1107944581716250666": {
+      "house": "slytherin",
+      "initial": true
+    },
+    "117862848796819457": {
+      "house": "gryffindor",
+      "initial": true
+    },
+    "1039704964068548618": {
+      "house": "gryffindor",
+      "initial": true
+    },
+    "545645312790757396": {
+      "house": "ravenclaw",
+      "initial": true
+    }
   },
-  "welcomed_unsorted_students": {}
+  "welcomed_unsorted_students": {},
+  "pinned_message_id": "1549538288736403484"
 }

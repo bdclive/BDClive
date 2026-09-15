@@ -16,5 +16,8 @@ tokens_config.json
 */tokens_config.json
 snapchat_scraper_profile/
 */snapchat_scraper_profile/
+node_modules/
+*/node_modules/
+!BDC_Central_Command/sorting_hat/*.mjs
 
 
