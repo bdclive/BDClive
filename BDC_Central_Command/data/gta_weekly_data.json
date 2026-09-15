@@ -1,162 +1,170 @@
 {
   "week_title": "Sep 10 \u2013 17, 2026",
-  "event_name": "Business Rivalries: Executives Week",
-  "podium_vehicle": "Declasse Impaler SZ ($1,280,000)",
-  "prize_ride": "Karin Woodlander",
-  "prize_ride_challenge": "Place Top 2 in an LS Car Meet Series race",
-  "hsw_vehicle": "Penaud La Coureuse (Next-Gen)",
-  "free_property": "Arcadius Business Center Executive Office (100% Free)",
+  "event_name": "Business Rivalries: Bikers Week",
+  "podium_vehicle": "RUNE Zhaba ($2,400,000)",
+  "prize_ride": "Pfister Neon",
+  "prize_ride_challenge": "Place in the Top 4 in an LS Car Meet Series race one time",
+  "hsw_vehicle": "Coil Cyclone II (Next-Gen)",
+  "free_property": "Grapeseed Clubhouse (100% Free via Maze Bank Foreclosures)",
+  "new_vehicle": "Pegassi Horus (GTA+ Early Access)",
   "test_track": [
-    "Karin Sultan RS Classic",
-    "Vapid Hustler",
-    "Enus Stafford"
+    "Grotti Cheetah Classic",
+    "Vulcar Warrener HKR",
+    "Pfister Growler"
   ],
   "luxury_autos": [
-    "Declasse Impaler SZ",
-    "Karin Woodlander"
+    "Vapid FMJ MK V",
+    "Grotti GT750"
   ],
   "simeons_pdm": [
-    "Canis Kamacho",
-    "Ocelot Jugular",
-    "Pfister Astron",
-    "Dewbauchee Seven-70",
-    "Grotti Turismo Omaggio"
+    "Western Rampant Rocket",
+    "Dinka Vindicator",
+    "Nagasaki Shinobi",
+    "Shitzu Defiler",
+    "Pegassi Vortex"
   ],
   "salvage_yard_targets": [
     {
-      "car": "Canis Kamacho",
+      "car": "Dinka Blista Kanjo",
       "claimable": false,
       "robbery": "The Gangbanger Robbery"
     },
     {
-      "car": "Ocelot Jugular",
+      "car": "Benefactor Stirling GT",
       "claimable": false,
       "robbery": "The Cargo Ship Robbery"
     },
     {
-      "car": "Pfister Astron",
+      "car": "Enus Jubilee",
       "claimable": false,
-      "robbery": "The Duggan Robbery"
+      "robbery": "The McTony Robbery"
     }
   ],
-  "fib_priority_file": "Project Breakaway File",
+  "fib_priority_file": "The Black Box File (2x Payout)",
   "weekly_challenge": {
-    "reward": "Yeti x LS Customs Tracksuit + $1,000,000 GTA$",
-    "task": "Earn $1,000,000 from selling Special Cargo"
+    "reward": "Junk Tracksuit + $1,000,000 GTA$",
+    "task": "Earn $1,000,000 from selling MC Business or Acid Lab product"
   },
   "gun_van": {
-    "discount_item": "Combat MG (40% OFF)",
-    "location": "Murrieta Heights Oil Fields",
+    "discount_item": "Tactical SMG (40% OFF)",
+    "location": "Palmer-Taylor Power Station",
     "weapons": [
-      "Railgun",
-      "Heavy Sniper",
-      "Combat MG",
-      "Sticky Bombs",
+      "Tactical SMG",
+      "Heavy Rifle",
+      "Combat Shotgun",
+      "Pipe Bombs",
       "Body Armor (50% OFF)"
     ]
   },
   "bonuses": [
     {
-      "hourly": "~$1,800,000/hr",
-      "id": "special_vehicle_work",
-      "multiplier": "4x GTA$ & RP",
-      "name": "Special Vehicle Work",
-      "rate": "$140,000 \u2013 $220,000 / Mission",
-      "solo": false,
-      "tier": "S",
-      "tip": "Phantom Wedge and Ramp Buggy missions yield massive 4x payouts. Fast 10-minute completions with a CEO partner.",
-      "type": "Executive Missions"
-    },
-    {
       "hourly": "~$1,200,000/hr",
       "id": "community_series",
       "multiplier": "3x GTA$ & RP",
       "name": "Community Mission Series",
-      "rate": "$80,000 \u2013 $150,000 / Job",
+      "rate": "$80,000 \u2013 $160,000 / Job",
       "solo": false,
       "tier": "S",
       "tip": "High player lobby multipliers grant rapid level-ups and easy six-figure earnings.",
       "type": "PvP Series"
     },
     {
-      "hourly": "~$1,000,000/hr",
-      "id": "export_mixed_goods",
+      "hourly": "~$900,000/hr",
+      "id": "biker_contracts",
       "multiplier": "2x GTA$ & RP",
-      "name": "Export Mixed Goods & Madrazo Hits",
-      "rate": "$100,000 / Delivery",
+      "name": "Biker Clubhouse Contracts & MC Work",
+      "rate": "$70,000 \u2013 $130,000 / Contract",
       "solo": true,
-      "tier": "A",
-      "tip": "Speak with Assistant in Executive Office to launch Mixed Goods. Flat $100k for a 4-minute truck delivery to the Docks.",
-      "type": "Solo Free Roam"
+      "tier": "S",
+      "tip": "Launch contracts from noticeboard in your Clubhouse. Quick 5-minute solo completions with instant cash drops.",
+      "type": "Motorcycle Club"
     },
     {
-      "hourly": "Passive Cargo Accumulation",
-      "id": "special_cargo_staff",
-      "multiplier": "2x Faster Sourcing",
-      "name": "Special Cargo Staff Sourcing Speed",
-      "rate": "Sourced every 24 mins",
+      "hourly": "~$800,000/hr",
+      "id": "street_dealers_service",
+      "multiplier": "2x GTA$",
+      "name": "Street Dealer Sales & Bike Service",
+      "rate": "$80,000 \u2013 $150,000 / Run",
       "solo": true,
       "tier": "A",
-      "tip": "Visit Lupe in all your warehouses to trigger 2x speed sourcing for fast full warehouse sales.",
-      "type": "Passive Business"
+      "tip": "Visit 3 daily Street Dealers across the map and deliver customer bikes from Clubhouse custom shop.",
+      "type": "Daily Freeroam"
+    },
+    {
+      "hourly": "~$1,000,000/hr",
+      "id": "acid_lab_sales",
+      "multiplier": "Bonus High Demand",
+      "name": "Acid Lab Product Sales",
+      "rate": "$350,000 \u2013 $525,000 / Sale",
+      "solo": true,
+      "tier": "S",
+      "tip": "Call Mutt to boost production and sell full product in public lobbies for massive high-demand bonuses.",
+      "type": "Solo Business"
     },
     {
       "hourly": "~$750,000/hr",
-      "id": "diamond_adversary",
+      "id": "featured_series",
       "multiplier": "2x GTA$ & RP",
-      "name": "Diamond Adversary Series",
+      "name": "Featured Series: Hasta La Vista & Every Bullet Counts",
       "rate": "$60,000 \u2013 $110,000 / Match",
       "solo": false,
-      "tier": "B",
-      "tip": "Competitive close-quarters combat inside the Diamond Casino interior.",
-      "type": "Adversary"
+      "tier": "A",
+      "tip": "Classic high-tension adversary modes offering double rewards all week long.",
+      "type": "Adversary Modes"
     }
   ],
   "discounts": [
     {
       "category": "Properties",
       "discount": "50% OFF",
-      "item": "Executive Offices & Renovations"
+      "item": "Biker Clubhouses & Renovations"
     },
     {
       "category": "Properties",
       "discount": "40% OFF",
-      "item": "Special Cargo Warehouses"
+      "item": "Biker Businesses (Cocaine, Meth, Cash, Weed, Forgery)"
     },
     {
       "category": "Vehicles",
       "discount": "30% OFF",
-      "item": "Declasse Impaler SZ"
+      "item": "Western Rampant Rocket"
     },
     {
       "category": "Vehicles",
       "discount": "40% OFF",
-      "item": "Canis Kamacho"
+      "item": "Dinka Vindicator"
     },
     {
       "category": "Vehicles",
       "discount": "30% OFF",
-      "item": "Ocelot Jugular"
+      "item": "Nagasaki Shinobi"
     },
     {
       "category": "Vehicles",
       "discount": "30% OFF",
-      "item": "Pfister Astron"
+      "item": "Grotti Cheetah Classic"
     },
     {
       "category": "Vehicles",
       "discount": "30% OFF",
-      "item": "Grotti Turismo Omaggio"
+      "item": "Pfister Growler"
     }
   ],
   "crew_events": [
     {
       "host": "BDC Crew",
-      "location": "Arcadius Business Center Helipad",
+      "location": "Grapeseed Clubhouse & Alamo Sea",
       "time": "Friday 9:00 PM EST",
-      "title": "\ud83c\udf34 BDC Friday Night Supercar Meet & Executive Convoy"
+      "title": "\ud83c\udf34 BDC Friday Night Biker Convoy & MC Cruise"
     }
   ],
-  "last_updated": 1789446182,
-  "source": "Rockstar Official Newswire & Verified Sep 3 Intel"
+  "discord_settings": {
+    "avatar_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Grand_Theft_Auto_V_Logo.svg/512px-Grand_Theft_Auto_V_Logo.svg.png",
+    "bot_name": "\ud83c\udf34 Los Santos Weekly",
+    "channel_name": "#\ud83d\udcc5\u30fbgta-weekly",
+    "webhook_url": "https://discord.com/api/webhooks/1540148233173598289/8Y9b4eObNNLfhx8gYVXpfOxQAFXdLdTMWdXxXGKP_aLhDABCYbwYPSP_qp28qzzLNjr9"
+  },
+  "last_posted_week_title": "",
+  "last_updated": 1789448184,
+  "source": "Rockstar Official Newswire & Verified Sep 10 Intel"
 }
