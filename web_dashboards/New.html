@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BDC LIVE v10.2.135</title>
+    <title>BDC LIVE v10.2.136</title>
     <!-- Open Graph & Social Preview Meta Tags -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="BDC LIVE v10.2.135">
+    <meta property="og:title" content="BDC LIVE v10.2.136">
     <meta property="og:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="og:image" content="./bdclive_banner.jpg">
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="BDC LIVE v10.2.135">
+    <meta property="twitter:title" content="BDC LIVE v10.2.136">
     <meta property="twitter:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="twitter:image" content="./bdclive_banner.jpg">
     <!-- PWA Manifest & Mobile Web App Meta Tags -->
@@ -2770,12 +2770,29 @@
         }
 
         setInterval(updateTasksSyncAgeUI, 30000);
-        // Periodic auto-sync every 2.5 minutes while tab is active
+
+        // Instant auto-sync on load (short 1.5s delay for DOM readiness)
+        setTimeout(() => {
+            if (!isTasksSyncing) {
+                triggerGoogleTasksSync();
+            }
+        }, 1500);
+
+        // Auto-sync whenever returning to tab if older than 45s
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible' && !isTasksSyncing) {
+                if (Date.now() - lastTasksSyncTimestamp >= 45000) {
+                    triggerGoogleTasksSync();
+                }
+            }
+        });
+
+        // Periodic auto-sync every 60 seconds while tab is active
         setInterval(() => {
             if (document.visibilityState === 'visible' && !isTasksSyncing) {
                 triggerGoogleTasksSync();
             }
-        }, 150000);
+        }, 60000);
 
         function renderTasksBreakdownTable() {
             const tbody = document.getElementById('tasks-breakdown-table-body');

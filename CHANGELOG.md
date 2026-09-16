@@ -1,3 +1,10 @@
+## [10.2.136] - 2026-09-15
+- Instant live task sync triggers immediately upon dashboard load.
+- Automatically syncs tasks whenever returning to the dashboard tab.
+- Shortened foreground task auto-sync interval to sixty seconds.
+- Live Google Tasks counts refresh dynamically without manual intervention.
+- Updated web dashboard engine to version 10.2.136.
+
 ## [1.1.21] - 2026-09-15
 - Bundled full Hogwarts Sorting Hat suite inside Central Command.
 - Server runs 100% self-contained without needing remote PC.
