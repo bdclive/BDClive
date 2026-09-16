@@ -36,14 +36,11 @@ function doGet(e) {
   }
 
   if (api === "syncTasks") {
-    try {
-      const result = syncGoogleTasksToFirebase();
-      return ContentService.createTextOutput(JSON.stringify({ success: true, message: "Tasks synced to Firebase", data: result }))
-        .setMimeType(ContentService.MimeType.JSON);
-    } catch (syncErr) {
-      return ContentService.createTextOutput(JSON.stringify({ success: false, error: syncErr.toString() }))
-        .setMimeType(ContentService.MimeType.JSON);
-    }
+    return ContentService.createTextOutput(JSON.stringify({ 
+      success: false, 
+      decommissioned: true, 
+      message: "Google Tasks sync in Apps Script has been decommissioned. Python background daemon now manages tasks directly." 
+    })).setMimeType(ContentService.MimeType.JSON);
   }
 
   return ContentService.createTextOutput(JSON.stringify({ status: "OK", service: "BDC Central Command Email & Task Bridge" }))
@@ -208,14 +205,11 @@ function doPost(e) {
     }
     
     if (api === "syncTasks") {
-      try {
-        const result = syncGoogleTasksToFirebase();
-        return ContentService.createTextOutput(JSON.stringify({ success: true, message: "Tasks synced to Firebase", data: result }))
-          .setMimeType(ContentService.MimeType.JSON);
-      } catch (syncErr) {
-        return ContentService.createTextOutput(JSON.stringify({ success: false, error: syncErr.toString() }))
-          .setMimeType(ContentService.MimeType.JSON);
-      }
+      return ContentService.createTextOutput(JSON.stringify({ 
+        success: false, 
+        decommissioned: true, 
+        message: "Google Tasks sync in Apps Script has been decommissioned. Python background daemon now manages tasks directly." 
+      })).setMimeType(ContentService.MimeType.JSON);
     }
 
     if (api === "debugTasks") {
@@ -237,74 +231,28 @@ function doPost(e) {
 }
 
 function syncGoogleTasksToFirebase() {
-  const cache = CacheService.getScriptCache();
-  const cached = cache.get("tasks_sync_cache");
-  if (cached) {
-    Logger.log("Returning cached task sync to preserve UrlFetch quota");
-    return JSON.parse(cached);
-  }
-
-  const token = ScriptApp.getOAuthToken();
-  const googleApiOptions = {
-    method: "get",
-    headers: { 
-      "Authorization": "Bearer " + token,
-      "Accept": "application/json"
-    },
-    muteHttpExceptions: true
-  };
-
-  const listUrl = "https://tasks.googleapis.com/tasks/v1/users/@me/lists";
-  const listResponse = UrlFetchApp.fetch(listUrl, googleApiOptions);
-  
-  if (listResponse.getResponseCode() !== 200) {
-    throw new Error("Failed to fetch task lists from Google: " + listResponse.getContentText());
-  }
-
-  const listData = JSON.parse(listResponse.getContentText());
-  const taskLists = listData.items;
-  
-  if (!taskLists || taskLists.length === 0) {
-    throw new Error("No task lists found.");
-  }
-
-    let totalTaskCount = 0;
-    let listCounts = {};
-
-    taskLists.forEach(list => {
-      let firebaseKey = list.title.replace(/[^a-zA-Z0-9_]/g, "_") + "_count";
-      const taskUrl = `https://tasks.googleapis.com/tasks/v1/lists/${list.id}/tasks?status=needsAction&showHidden=false&showDeleted=false&showCompleted=false`;
-      const taskResponse = UrlFetchApp.fetch(taskUrl, googleApiOptions);
-      
-      if (taskResponse.getResponseCode() === 200) {
-        const taskData = JSON.parse(taskResponse.getContentText());
-        let count = 0;
-        if (taskData.items && Array.isArray(taskData.items)) {
-          count = taskData.items.filter(item => {
-            return !item.deleted && !item.hidden && item.status === "needsAction" && item.title && item.title.trim().length > 0;
-          }).length;
-        }
-        listCounts[firebaseKey] = count;
-        totalTaskCount += count;
-      } else {
-        listCounts[firebaseKey] = 0;
+  Logger.log("[DECOMMISSIONED] syncGoogleTasksToFirebase called. Removing all time-based triggers to permanently stop quota errors...");
+  try {
+    const triggers = ScriptApp.getProjectTriggers();
+    let deletedCount = 0;
+    triggers.forEach(t => {
+      const handler = t.getHandlerFunction();
+      if (handler === "syncGoogleTasksToFirebase") {
+        ScriptApp.deleteTrigger(t);
+        deletedCount++;
+        Logger.log("Deleted trigger ID: " + t.getUniqueId());
       }
     });
+    Logger.log("Successfully decommissioned. Purged " + deletedCount + " triggers.");
+    return { success: true, decommissioned: true, deletedTriggers: deletedCount };
+  } catch (e) {
+    Logger.log("Error removing triggers: " + e.toString());
+    return { success: false, error: e.toString() };
+  }
+}
 
-    listCounts["Task_count"] = totalTaskCount;
-
-    const firebaseOptions = {
-      method: "put",
-      contentType: "application/json",
-      payload: JSON.stringify(listCounts)
-    };
-
-    UrlFetchApp.fetch(FIREBASE_DB_URL + "tasks.json", firebaseOptions);
-    Logger.log("Successfully synchronized task counts to Firebase!");
-    try {
-      cache.put("tasks_sync_cache", JSON.stringify(listCounts), 120);
-    } catch(e) {}
-    return listCounts;
+function removeAllTaskSyncTriggers() {
+  return syncGoogleTasksToFirebase();
 }
 
 function getTasksDebugDetails() {
