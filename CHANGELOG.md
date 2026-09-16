@@ -1,3 +1,11 @@
+## [10.2.137] - 2026-09-15
+- Built direct Google Tasks API sync daemon with zero quotas.
+- Fixed Google Apps Script quota exhaustion with smart response caching.
+- Real Google Tasks numbers now synchronize directly to Firebase.
+- Eliminated frozen counts by correcting hidden task query filtering.
+- Calibrated My Tasks count to live authentic Google total.
+- Upgraded web dashboard engine to version 10.2.137.
+
 ## [10.2.136] - 2026-09-15
 - Instant live task sync triggers immediately upon dashboard load.
 - Automatically syncs tasks whenever returning to the dashboard tab.

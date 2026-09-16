@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BDC LIVE v10.2.136</title>
+    <title>BDC LIVE v10.2.137</title>
     <!-- Open Graph & Social Preview Meta Tags -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="BDC LIVE v10.2.136">
+    <meta property="og:title" content="BDC LIVE v10.2.137">
     <meta property="og:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="og:image" content="./bdclive_banner.jpg">
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="BDC LIVE v10.2.136">
+    <meta property="twitter:title" content="BDC LIVE v10.2.137">
     <meta property="twitter:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="twitter:image" content="./bdclive_banner.jpg">
     <!-- PWA Manifest & Mobile Web App Meta Tags -->
@@ -2723,7 +2723,7 @@
             if (modalSyncAgeEl) modalSyncAgeEl.innerText = '● Syncing...';
 
             try {
-                const gasUrl = 'https://script.google.com/macros/s/AKfycbxP6kknIBA95fnd5D81wrjcJ3wJ60FTgUodZkbB1GQD7yUaaXLo2R7THx6Gxy_3H-Qm/exec';
+                const gasUrl = 'https://script.google.com/macros/s/AKfycbzJDBrgKJcHx9E0Ckf9_AUuhHsgUldoIm0HkJl_XsTjE7eZqlMVLOS2uOKr3QLSTrz2/exec';
                 const resp = await fetch(gasUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -2778,21 +2778,21 @@
             }
         }, 1500);
 
-        // Auto-sync whenever returning to tab if older than 45s
+        // Auto-sync whenever returning to tab if older than 90s
         document.addEventListener('visibilitychange', () => {
             if (document.visibilityState === 'visible' && !isTasksSyncing) {
-                if (Date.now() - lastTasksSyncTimestamp >= 45000) {
+                if (Date.now() - lastTasksSyncTimestamp >= 90000) {
                     triggerGoogleTasksSync();
                 }
             }
         });
 
-        // Periodic auto-sync every 60 seconds while tab is active
+        // Periodic auto-sync every 180 seconds while tab is active
         setInterval(() => {
             if (document.visibilityState === 'visible' && !isTasksSyncing) {
                 triggerGoogleTasksSync();
             }
-        }, 60000);
+        }, 180000);
 
         function renderTasksBreakdownTable() {
             const tbody = document.getElementById('tasks-breakdown-table-body');
@@ -3420,7 +3420,7 @@
             }
         }
 
-        const CURRENT_APP_VERSION = 'v10.2.136';
+        const CURRENT_APP_VERSION = 'v10.2.137';
         let isDeployingLive = false;
         let pendingRemoteVersion = null;
         let autoRefreshTimer = null;
