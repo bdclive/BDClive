@@ -3420,7 +3420,7 @@
             }
         }
 
-        const CURRENT_APP_VERSION = 'v10.2.135';
+        const CURRENT_APP_VERSION = 'v10.2.136';
         let isDeployingLive = false;
         let pendingRemoteVersion = null;
         let autoRefreshTimer = null;
@@ -3530,6 +3530,19 @@
                 autoRefreshTimer = null;
             }
             const normVer = normalizeVer(remoteVer || pendingRemoteVersion || CURRENT_APP_VERSION);
+
+            const lastAutoReload = parseInt(sessionStorage.getItem('last_auto_reload_for_' + normVer) || '0', 10);
+            if (Date.now() - lastAutoReload < 60000) {
+                // Prevent infinite auto-refresh loops if page reloads without cache update
+                if (badgeEl) {
+                    badgeEl.style.display = 'inline-block';
+                    badgeEl.style.background = 'rgba(227, 179, 65, 0.15)';
+                    badgeEl.style.color = '#e3b341';
+                    badgeEl.style.borderColor = 'rgba(227, 179, 65, 0.35)';
+                    badgeEl.innerText = `Click Reload to apply`;
+                }
+                return;
+            }
             
             autoRefreshCountdown = 5;
             const badgeEl = document.getElementById('update-countdown-badge');
