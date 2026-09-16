@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BDC LIVE v10.2.137</title>
+    <title>BDC LIVE v10.2.138</title>
     <!-- Open Graph & Social Preview Meta Tags -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="BDC LIVE v10.2.137">
+    <meta property="og:title" content="BDC LIVE v10.2.138">
     <meta property="og:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="og:image" content="./bdclive_banner.jpg">
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="BDC LIVE v10.2.137">
+    <meta property="twitter:title" content="BDC LIVE v10.2.138">
     <meta property="twitter:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="twitter:image" content="./bdclive_banner.jpg">
     <!-- PWA Manifest & Mobile Web App Meta Tags -->
@@ -2723,17 +2723,43 @@
             if (modalSyncAgeEl) modalSyncAgeEl.innerText = '● Syncing...';
 
             try {
-                const gasUrl = 'https://script.google.com/macros/s/AKfycbzJDBrgKJcHx9E0Ckf9_AUuhHsgUldoIm0HkJl_XsTjE7eZqlMVLOS2uOKr3QLSTrz2/exec';
-                const resp = await fetch(gasUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({ api: 'syncTasks' })
-                });
-                const resData = await resp.json();
-                if (resData && resData.success) {
-                    lastTasksSyncTimestamp = Date.now();
-                    updateTasksSyncAgeUI();
-                    flashFollowerPulse('task-k1', 'gain', '#38bdf8', 'Synced Just Now');
+                let synced = false;
+                // 1. Ultra-fast, quota-free local background daemon first (timeout 1.2s)
+                try {
+                    const localCtrl = new AbortController();
+                    const localTimeout = setTimeout(() => localCtrl.abort(), 1200);
+                    const localResp = await fetch('http://127.0.0.1:8765/syncTasks', {
+                        method: 'GET',
+                        signal: localCtrl.signal
+                    });
+                    clearTimeout(localTimeout);
+                    if (localResp.ok) {
+                        const localData = await localResp.json();
+                        if (localData && localData.success) {
+                            synced = true;
+                            lastTasksSyncTimestamp = Date.now();
+                            updateTasksSyncAgeUI();
+                            flashFollowerPulse('task-k1', 'gain', '#38bdf8', 'Synced Just Now');
+                        }
+                    }
+                } catch (localErr) {
+                    // Local daemon not reachable (e.g. mobile/remote), proceed to cloud fallback
+                }
+
+                // 2. Cloud Fallback to Google Apps Script if local daemon wasn't active
+                if (!synced) {
+                    const gasUrl = 'https://script.google.com/macros/s/AKfycbzJDBrgKJcHx9E0Ckf9_AUuhHsgUldoIm0HkJl_XsTjE7eZqlMVLOS2uOKr3QLSTrz2/exec';
+                    const resp = await fetch(gasUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                        body: JSON.stringify({ api: 'syncTasks' })
+                    });
+                    const resData = await resp.json();
+                    if (resData && resData.success) {
+                        lastTasksSyncTimestamp = Date.now();
+                        updateTasksSyncAgeUI();
+                        flashFollowerPulse('task-k1', 'gain', '#38bdf8', 'Synced Just Now');
+                    }
                 }
             } catch (err) {
                 console.warn('Google Tasks live sync error:', err);
@@ -3420,7 +3446,7 @@
             }
         }
 
-        const CURRENT_APP_VERSION = 'v10.2.137';
+        const CURRENT_APP_VERSION = 'v10.2.138';
         let isDeployingLive = false;
         let pendingRemoteVersion = null;
         let autoRefreshTimer = null;
