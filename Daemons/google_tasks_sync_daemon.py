@@ -17,6 +17,7 @@ import json
 import time
 import argparse
 import urllib.request
+import urllib.parse
 import re
 import threading
 from http.server import HTTPServer, BaseHTTPRequestHandler
@@ -63,15 +64,75 @@ else:
     sys.stdout = TeeLogger(LOG_FILE, sys.stdout)
     sys.stderr = TeeLogger(LOG_FILE, sys.stderr)
 
-# Add google_tasks directory to path
-TASKS_DIR = r"C:\Users\Brian\google_tasks"
-if os.path.exists(TASKS_DIR) and TASKS_DIR not in sys.path:
-    sys.path.insert(0, TASKS_DIR)
+# Zero-dependency Pure Python Google Tasks OAuth & REST Client
+def find_token_path():
+    candidates = [
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), "token.json"),
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "token.json"),
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "data", "token.json"),
+        r"C:\Users\Brian\google_tasks\token.json",
+        r"\\DESKTOP-1CC6J72\Users\Brian\google_tasks\token.json"
+    ]
+    for p in candidates:
+        if os.path.exists(p):
+            return p
+    raise FileNotFoundError(f"token.json not found in candidate paths: {candidates}")
 
-try:
-    import google_tasks_cli
-except ImportError:
-    google_tasks_cli = None
+def get_auth_data():
+    token_path = find_token_path()
+    with open(token_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    return (
+        data.get("token"),
+        data.get("refresh_token"),
+        data.get("client_id"),
+        data.get("client_secret"),
+        token_path
+    )
+
+def refresh_oauth_token(refresh_tok, c_id, c_secret, token_path):
+    url = "https://oauth2.googleapis.com/token"
+    payload = urllib.parse.urlencode({
+        "client_id": c_id,
+        "client_secret": c_secret,
+        "refresh_token": refresh_tok,
+        "grant_type": "refresh_token"
+    }).encode("utf-8")
+    req = urllib.request.Request(url, data=payload)
+    with urllib.request.urlopen(req, timeout=15) as resp:
+        res_data = json.loads(resp.read().decode("utf-8"))
+        new_token = res_data.get("access_token")
+        if new_token:
+            try:
+                with open(token_path, "r", encoding="utf-8") as tf:
+                    existing = json.load(tf)
+                existing["token"] = new_token
+                with open(token_path, "w", encoding="utf-8") as tf:
+                    json.dump(existing, tf)
+            except Exception as save_err:
+                print(f"[Google-Tasks-Sync] Warning: Could not save refreshed token: {save_err}")
+            return new_token
+    raise RuntimeError("Failed to refresh OAuth token")
+
+def google_api_request(url, access_token, refresh_tok, c_id, c_secret, token_path):
+    req = urllib.request.Request(url, headers={
+        "Authorization": f"Bearer {access_token}",
+        "Accept": "application/json"
+    })
+    try:
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            return json.loads(resp.read().decode("utf-8")), access_token
+    except urllib.error.HTTPError as e:
+        if e.code == 401 and refresh_tok and c_id and c_secret:
+            print("[Google-Tasks-Sync] Access token expired (401), refreshing token...")
+            new_token = refresh_oauth_token(refresh_tok, c_id, c_secret, token_path)
+            req2 = urllib.request.Request(url, headers={
+                "Authorization": f"Bearer {new_token}",
+                "Accept": "application/json"
+            })
+            with urllib.request.urlopen(req2, timeout=15) as resp2:
+                return json.loads(resp2.read().decode("utf-8")), new_token
+        raise
 
 FIREBASE_URL = "https://livecounters-8eaa8-default-rtdb.firebaseio.com/tasks.json"
 LOCAL_SERVER_PORT = 8765
@@ -96,11 +157,10 @@ def sanitize_key(title: str) -> str:
 def perform_sync(verbose: bool = True) -> dict:
     global last_sync_time, last_sync_counts
     with sync_lock:
-        if not google_tasks_cli:
-            raise RuntimeError(f"Cannot import google_tasks_cli from {TASKS_DIR}")
+        access_tok, refresh_tok, c_id, c_secret, token_path = get_auth_data()
 
-        service = google_tasks_cli.get_service()
-        tasklists_resp = service.tasklists().list(maxResults=100).execute()
+        lists_url = "https://tasks.googleapis.com/tasks/v1/users/@me/lists?maxResults=100"
+        tasklists_resp, access_tok = google_api_request(lists_url, access_tok, refresh_tok, c_id, c_secret, token_path)
         tasklists = tasklists_resp.get('items', [])
 
         list_counts = {}
@@ -111,19 +171,17 @@ def perform_sync(verbose: bool = True) -> dict:
             print(f"[Google-Tasks-Sync] Found {len(tasklists)} task lists. Querying active items...")
 
         for tl in tasklists:
-            lid = tl['id']
+            lid = urllib.parse.quote(tl['id'], safe='')
             title = tl['title']
             key = sanitize_key(title)
 
-            tasks_res = service.tasks().list(
-                tasklist=lid,
-                showCompleted=False,
-                showHidden=False,
-                showDeleted=False,
-                maxResults=100
-            ).execute()
+            tasks_url = f"https://tasks.googleapis.com/tasks/v1/lists/{lid}/tasks?showCompleted=false&showHidden=false&showDeleted=false&maxResults=100"
+            try:
+                tasks_res, access_tok = google_api_request(tasks_url, access_tok, refresh_tok, c_id, c_secret, token_path)
+                items = tasks_res.get('items', [])
+            except Exception as t_err:
+                items = []
 
-            items = tasks_res.get('items', [])
             active_items = [
                 t for t in items
                 if t.get('status') == 'needsAction'
@@ -140,7 +198,8 @@ def perform_sync(verbose: bool = True) -> dict:
                 dashboard_active_sum += count
 
             if verbose:
-                print(f"  - {title:<25} -> {count} active")
+                safe_title = title.encode('ascii', errors='replace').decode('ascii')
+                print(f"  - {safe_title:<25} -> {count} active")
 
         list_counts["Task_count"] = total_active_all_lists
         list_counts["lastUpdated"] = int(time.time() * 1000)
@@ -152,7 +211,7 @@ def perform_sync(verbose: bool = True) -> dict:
             headers={'Content-Type': 'application/json'},
             method='PUT'
         )
-        with urllib.request.urlopen(req) as resp:
+        with urllib.request.urlopen(req, timeout=10) as resp:
             resp.read()
 
         last_sync_time = time.time()
