@@ -3,6 +3,8 @@
 - Automatically syncs tasks whenever returning to the dashboard tab.
 - Shortened foreground task auto-sync interval to sixty seconds.
 - Live Google Tasks counts refresh dynamically without manual intervention.
+- Resolved update alert loop by syncing internal version constant.
+- Added automatic loop guard preventing repeated refresh cycles.
 - Updated web dashboard engine to version 10.2.136.
 
 ## [1.1.21] - 2026-09-15
