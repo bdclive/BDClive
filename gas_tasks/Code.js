@@ -29,6 +29,12 @@ function doGet(e) {
     }
   }
 
+  if (api === "debugTasks") {
+    const details = getTasksDebugDetails();
+    return ContentService.createTextOutput(JSON.stringify(details))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+
   return ContentService.createTextOutput(JSON.stringify({ status: "OK", service: "BDC Central Command Email & Task Bridge" }))
     .setMimeType(ContentService.MimeType.JSON);
 }
@@ -195,6 +201,12 @@ function doPost(e) {
       return ContentService.createTextOutput(JSON.stringify({ success: true, message: "Tasks synced to Firebase" }))
         .setMimeType(ContentService.MimeType.JSON);
     }
+
+    if (api === "debugTasks") {
+      const details = getTasksDebugDetails();
+      return ContentService.createTextOutput(JSON.stringify(details))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
     
     return ContentService.createTextOutput(JSON.stringify({ 
       status: "OK", 
@@ -241,12 +253,17 @@ function syncGoogleTasksToFirebase() {
 
     taskLists.forEach(list => {
       let firebaseKey = list.title.replace(/[^a-zA-Z0-9_]/g, "_") + "_count";
-      const taskUrl = `https://tasks.googleapis.com/tasks/v1/lists/${list.id}/tasks?status=needsAction`;
+      const taskUrl = `https://tasks.googleapis.com/tasks/v1/lists/${list.id}/tasks?status=needsAction&showHidden=false&showDeleted=false&showCompleted=false`;
       const taskResponse = UrlFetchApp.fetch(taskUrl, googleApiOptions);
       
       if (taskResponse.getResponseCode() === 200) {
         const taskData = JSON.parse(taskResponse.getContentText());
-        let count = (taskData.items) ? taskData.items.length : 0;
+        let count = 0;
+        if (taskData.items && Array.isArray(taskData.items)) {
+          count = taskData.items.filter(item => {
+            return !item.deleted && !item.hidden && item.status === "needsAction" && item.title && item.title.trim().length > 0;
+          }).length;
+        }
         listCounts[firebaseKey] = count;
         totalTaskCount += count;
       } else {
@@ -267,5 +284,56 @@ function syncGoogleTasksToFirebase() {
 
   } catch (error) {
     Logger.log("Error syncing tasks: " + error.toString());
+  }
+}
+
+function getTasksDebugDetails() {
+  try {
+    const token = ScriptApp.getOAuthToken();
+    const googleApiOptions = {
+      method: "get",
+      headers: { 
+        "Authorization": "Bearer " + token,
+        "Accept": "application/json"
+      },
+      muteHttpExceptions: true
+    };
+
+    const listUrl = "https://tasks.googleapis.com/tasks/v1/users/@me/lists";
+    const listResponse = UrlFetchApp.fetch(listUrl, googleApiOptions);
+    if (listResponse.getResponseCode() !== 200) {
+      return { error: listResponse.getContentText() };
+    }
+
+    const listData = JSON.parse(listResponse.getContentText());
+    const taskLists = listData.items || [];
+    let debug = [];
+
+    taskLists.forEach(list => {
+      const taskUrl = `https://tasks.googleapis.com/tasks/v1/lists/${list.id}/tasks?showCompleted=true&showHidden=true&showDeleted=true`;
+      const taskResponse = UrlFetchApp.fetch(taskUrl, googleApiOptions);
+      let items = [];
+      if (taskResponse.getResponseCode() === 200) {
+        const tData = JSON.parse(taskResponse.getContentText());
+        items = (tData.items || []).map(t => ({
+          id: t.id,
+          title: t.title || "(NO TITLE)",
+          status: t.status,
+          hidden: t.hidden || false,
+          deleted: t.deleted || false,
+          updated: t.updated
+        }));
+      }
+      debug.push({
+        id: list.id,
+        title: list.title,
+        totalRawItems: items.length,
+        items: items
+      });
+    });
+
+    return { lists: debug };
+  } catch(e) {
+    return { error: e.toString() };
   }
 }
