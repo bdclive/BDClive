@@ -1,3 +1,11 @@
+## [10.2.138] - 2026-09-16
+- Built embedded local HTTP server for zero-latency manual sync.
+- Continuous thirty second background polling keeps tasks real-time.
+- Instant dual-engine sync queries local daemon before cloud fallback.
+- Bypassed quota exhausted Google Apps Script for reliable updates.
+- Integrated background task daemon auto-start into Central Command launcher.
+- Upgraded web dashboard engine to version 10.2.138.
+
 ## [10.2.137] - 2026-09-15
 - Built direct Google Tasks API sync daemon with zero quotas.
 - Fixed Google Apps Script quota exhaustion with smart response caching.
