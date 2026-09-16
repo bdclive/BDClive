@@ -1,3 +1,11 @@
+## [10.2.139] - 2026-09-16
+- Completely disconnected Google Tasks sync from Google Apps Script.
+- Eliminated cloud UrlFetch quota limits and periodic script errors.
+- Background Python daemon pushes directly to Firebase database.
+- Manual sync button queries local daemon with zero quota.
+- Automated trigger self-deletion permanently stops failing cloud executions.
+- Upgraded web dashboard engine to version 10.2.139.
+
 ## [10.2.138] - 2026-09-16
 - Built embedded local HTTP server for zero-latency manual sync.
 - Continuous thirty second background polling keeps tasks real-time.
