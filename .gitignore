@@ -19,5 +19,7 @@ snapchat_scraper_profile/
 node_modules/
 */node_modules/
 !BDC_Central_Command/sorting_hat/*.mjs
+!Daemons/google_tasks_sync_daemon.py
+!BDC_Central_Command/Daemons/google_tasks_sync_daemon.py
 
 

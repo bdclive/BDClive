@@ -35,6 +35,17 @@ function doGet(e) {
       .setMimeType(ContentService.MimeType.JSON);
   }
 
+  if (api === "syncTasks") {
+    try {
+      const result = syncGoogleTasksToFirebase();
+      return ContentService.createTextOutput(JSON.stringify({ success: true, message: "Tasks synced to Firebase", data: result }))
+        .setMimeType(ContentService.MimeType.JSON);
+    } catch (syncErr) {
+      return ContentService.createTextOutput(JSON.stringify({ success: false, error: syncErr.toString() }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+  }
+
   return ContentService.createTextOutput(JSON.stringify({ status: "OK", service: "BDC Central Command Email & Task Bridge" }))
     .setMimeType(ContentService.MimeType.JSON);
 }
@@ -197,9 +208,14 @@ function doPost(e) {
     }
     
     if (api === "syncTasks") {
-      syncGoogleTasksToFirebase();
-      return ContentService.createTextOutput(JSON.stringify({ success: true, message: "Tasks synced to Firebase" }))
-        .setMimeType(ContentService.MimeType.JSON);
+      try {
+        const result = syncGoogleTasksToFirebase();
+        return ContentService.createTextOutput(JSON.stringify({ success: true, message: "Tasks synced to Firebase", data: result }))
+          .setMimeType(ContentService.MimeType.JSON);
+      } catch (syncErr) {
+        return ContentService.createTextOutput(JSON.stringify({ success: false, error: syncErr.toString() }))
+          .setMimeType(ContentService.MimeType.JSON);
+      }
     }
 
     if (api === "debugTasks") {
@@ -221,32 +237,36 @@ function doPost(e) {
 }
 
 function syncGoogleTasksToFirebase() {
-  try {
-    const token = ScriptApp.getOAuthToken();
-    const googleApiOptions = {
-      method: "get",
-      headers: { 
-        "Authorization": "Bearer " + token,
-        "Accept": "application/json"
-      },
-      muteHttpExceptions: true
-    };
+  const cache = CacheService.getScriptCache();
+  const cached = cache.get("tasks_sync_cache");
+  if (cached) {
+    Logger.log("Returning cached task sync to preserve UrlFetch quota");
+    return JSON.parse(cached);
+  }
 
-    const listUrl = "https://tasks.googleapis.com/tasks/v1/users/@me/lists";
-    const listResponse = UrlFetchApp.fetch(listUrl, googleApiOptions);
-    
-    if (listResponse.getResponseCode() !== 200) {
-      Logger.log("Failed to fetch task lists from Google: " + listResponse.getContentText());
-      return;
-    }
+  const token = ScriptApp.getOAuthToken();
+  const googleApiOptions = {
+    method: "get",
+    headers: { 
+      "Authorization": "Bearer " + token,
+      "Accept": "application/json"
+    },
+    muteHttpExceptions: true
+  };
 
-    const listData = JSON.parse(listResponse.getContentText());
-    const taskLists = listData.items;
-    
-    if (!taskLists || taskLists.length === 0) {
-      Logger.log("No task lists found.");
-      return;
-    }
+  const listUrl = "https://tasks.googleapis.com/tasks/v1/users/@me/lists";
+  const listResponse = UrlFetchApp.fetch(listUrl, googleApiOptions);
+  
+  if (listResponse.getResponseCode() !== 200) {
+    throw new Error("Failed to fetch task lists from Google: " + listResponse.getContentText());
+  }
+
+  const listData = JSON.parse(listResponse.getContentText());
+  const taskLists = listData.items;
+  
+  if (!taskLists || taskLists.length === 0) {
+    throw new Error("No task lists found.");
+  }
 
     let totalTaskCount = 0;
     let listCounts = {};
@@ -281,10 +301,10 @@ function syncGoogleTasksToFirebase() {
 
     UrlFetchApp.fetch(FIREBASE_DB_URL + "tasks.json", firebaseOptions);
     Logger.log("Successfully synchronized task counts to Firebase!");
-
-  } catch (error) {
-    Logger.log("Error syncing tasks: " + error.toString());
-  }
+    try {
+      cache.put("tasks_sync_cache", JSON.stringify(listCounts), 120);
+    } catch(e) {}
+    return listCounts;
 }
 
 function getTasksDebugDetails() {
