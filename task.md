@@ -1,20 +1,25 @@
-# Task List: Google Tasks Live Sync & Dashboard Total Calibration
+# Task List: Google Tasks Instant Load & Tab Focus Live Sync (BDClive v10.2.136)
 
-## Live Tasks Sync Engine & On-Screen Total Calibration
-- [x] Project backup with strict 2-backup retention (`BDClive_frontend_backup_*.zip` & `BDC_Central_Command_backup_*.zip`)
-- [x] Central Command Engine Upgrade (`v1.1.16`):
-  - [x] Integrated automated 60-second Google Tasks background sync loop (`TASKS_SYNC_INTERVAL = 60`)
-  - [x] Added `[📋 Sync Google Tasks with Firebase Now]` to `⚙️ Settings ▾` menu
-  - [x] Executed Central Command Clean House protocol (desktop shortcuts, batch launchers, transfer package)
-- [x] BDClive Web Dashboard Upgrade (`v10.2.135`):
-  - [x] Added interactive one-click `[🔄 Sync]` button with spin animation to `#tasks-box` and modal
-  - [x] Calibrated hero counter `#task-k1` to strictly sum the 6 categories on screen (DivaCox, Update, BriansTheater, My Tasks, BDCF Crew, WOS)
-  - [x] Added real-time relative sync age badge (`● Live`, `● Just now`, `● 2m ago`)
-  - [x] Added 2.5-minute automatic tab refresh interval in frontend
-  - [x] Synchronized 100% byte-identical SHA-256 parity across `index.html`, `New.html`, and `web_dashboards/New.html`
-  - [x] Bumped `sw.js` cache to `livecounters-cache-v10.2.135`
-  - [x] Updated `VERSION.json` (`web: 10.2.135`, `cc: 1.1.16`)
-- [x] Updated `CHANGELOG.md` with App Store style release notes (strict $\le 10$ words per bullet)
-- [x] Ran automated pre-delivery verification suite (`verify_tasks_live_sync.js` - 100% passed across all checks)
-- [x] Commit and push to GitHub (`origin main`)
-- [x] Mandatory task closure and process cleanup protocol
+- [x] Phase 1: Planning & Pre-Modification Backup
+  - [x] Clean house and purge older backup (strictly retain current + last)
+  - [x] Create project backup `BDClive_frontend_backup_*.zip`
+- [x] Phase 2: Frontend Implementation (v10.2.136)
+  - [x] Implement initial auto-sync on dashboard load (1.5s delay)
+  - [x] Implement tab focus auto-sync on `visibilitychange` (45s throttle)
+  - [x] Shorten periodic foreground auto-sync interval from 150s to 60s
+  - [x] Synchronize 100% byte-identical SHA-256 parity across `index.html`, `New.html`, and `web_dashboards/New.html`
+  - [x] Bump `sw.js` cache name to `livecounters-cache-v10.2.136`
+  - [x] Bump `VERSION.json` to `10.2.136`
+  - [x] Update `CHANGELOG.md` with App Store style bullet points (strict $\le 10$ words)
+- [x] Phase 3: Automated Verification & Testing
+  - [x] Run automated Headless Chrome verification suite (`verify_tasks_instant_sync.js` - 100% passed)
+  - [x] Assert static SHA-256 parity across all 3 dashboard files
+  - [x] Assert initial auto-sync triggers on load and updates DOM
+  - [x] Assert tab focus triggers sync
+  - [x] Assert `#task-k1` matches on-screen sum dynamically
+  - [x] Assert 0 fatal console errors and 0 unhandled promise rejections
+  - [x] Assert zero horizontal overflow across mobile, tablet, and desktop
+- [ ] Phase 4: Commit, Deployment & Cleanup
+  - [ ] Git commit with version number title and multi-line mini summary
+  - [ ] Git push to `origin main`
+  - [ ] Mandatory task closure and process cleanup protocol

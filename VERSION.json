@@ -13,9 +13,10 @@
       "cliFile": "Threads_Bridge/threads_bridge_cli_v1.0.59_(terminal).py"
     },
     "bdclive_web_dashboard": {
-      "version": "10.2.135",
+      "version": "10.2.136",
       "repository": "https://github.com/bdclive/BDClive",
       "latestChanges": [
+        "v10.2.136: Instant load and tab focus live sync for Google Tasks",
         "v10.2.135: Added Google Tasks live sync engine and calibrated total counts",
         "v10.2.134: Synchronized movie title and countdown reconciliation in Theater sync",
         "v10.2.133: Added live bot status and cooldown countdown timer to Gatekeeper",
