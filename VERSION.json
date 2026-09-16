@@ -14,9 +14,11 @@
       "cliFile": "Threads_Bridge/threads_bridge_cli_v1.0.59_(terminal).py"
     },
     "bdclive_web_dashboard": {
-      "version": "10.2.139",
+      "version": "10.2.141",
       "repository": "https://github.com/bdclive/BDClive",
       "latestChanges": [
+        "v10.2.141: Permanent resolution for auto-refresh update loop and version sync",
+        "v10.2.140: Pure Python zero-dependency Google Tasks sync daemon deployed",
         "v10.2.139: Completely disconnected Google Tasks sync from Google Apps Script",
         "v10.2.138: Embedded local HTTP daemon sync and continuous background polling",
         "v10.2.137: Direct Google Tasks sync daemon and quota-optimized backend",

@@ -1,3 +1,10 @@
+## [10.2.141] - 2026-09-16
+- Hard-blocked infinite auto-refresh loops with permanent reload flags.
+- Removed commit message regex parsing from update detector.
+- Update banners now check official version registry exclusively.
+- Prevented background commit titles from triggering reload countdowns.
+- Upgraded web dashboard engine to version 10.2.141.
+
 ## [10.2.139] - 2026-09-16
 - Completely disconnected Google Tasks sync from Google Apps Script.
 - Eliminated cloud UrlFetch quota limits and periodic script errors.

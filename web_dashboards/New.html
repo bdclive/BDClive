@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BDC LIVE v10.2.139</title>
+    <title>BDC LIVE v10.2.141</title>
     <!-- Open Graph & Social Preview Meta Tags -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="BDC LIVE v10.2.139">
+    <meta property="og:title" content="BDC LIVE v10.2.141">
     <meta property="og:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="og:image" content="./bdclive_banner.jpg">
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="BDC LIVE v10.2.139">
+    <meta property="twitter:title" content="BDC LIVE v10.2.141">
     <meta property="twitter:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="twitter:image" content="./bdclive_banner.jpg">
     <!-- PWA Manifest & Mobile Web App Meta Tags -->
@@ -3443,7 +3443,7 @@
             }
         }
 
-        const CURRENT_APP_VERSION = 'v10.2.139';
+        const CURRENT_APP_VERSION = 'v10.2.141';
         let isDeployingLive = false;
         let pendingRemoteVersion = null;
         let autoRefreshTimer = null;
@@ -3493,6 +3493,8 @@
             const verToRecord = normalizeVer(targetVer || pendingRemoteVersion || CURRENT_APP_VERSION);
             try {
                 sessionStorage.setItem('last_auto_reload_for_' + verToRecord, String(Date.now()));
+                sessionStorage.setItem('auto_reloaded_' + verToRecord, 'true');
+                localStorage.setItem('auto_reloaded_' + verToRecord, 'true');
             } catch(e) {}
 
             // Save active modal to seamlessly restore after reload
@@ -3553,10 +3555,12 @@
                 autoRefreshTimer = null;
             }
             const normVer = normalizeVer(remoteVer || pendingRemoteVersion || CURRENT_APP_VERSION);
+            const badgeEl = document.getElementById('update-countdown-badge');
 
-            const lastAutoReload = parseInt(sessionStorage.getItem('last_auto_reload_for_' + normVer) || '0', 10);
-            if (Date.now() - lastAutoReload < 60000) {
-                // Prevent infinite auto-refresh loops if page reloads without cache update
+            // PERMANENT LOOP GUARD: If we already auto-reloaded for this version, NEVER auto-reload again!
+            const alreadyReloaded = sessionStorage.getItem('auto_reloaded_' + normVer) || 
+                                    localStorage.getItem('auto_reloaded_' + normVer);
+            if (alreadyReloaded) {
                 if (badgeEl) {
                     badgeEl.style.display = 'inline-block';
                     badgeEl.style.background = 'rgba(227, 179, 65, 0.15)';
@@ -3568,7 +3572,6 @@
             }
             
             autoRefreshCountdown = 5;
-            const badgeEl = document.getElementById('update-countdown-badge');
             if (badgeEl) {
                 badgeEl.style.display = 'inline-block';
                 badgeEl.style.background = 'rgba(63, 185, 80, 0.15)';
@@ -3601,6 +3604,10 @@
                 } else {
                     clearInterval(autoRefreshTimer);
                     autoRefreshTimer = null;
+                    try {
+                        sessionStorage.setItem('auto_reloaded_' + normVer, 'true');
+                        localStorage.setItem('auto_reloaded_' + normVer, 'true');
+                    } catch(e) {}
                     performHardRefreshAndPurgeCache(normVer);
                 }
             }, 1000);
@@ -3707,20 +3714,10 @@
                 return;
             }
 
-            if (lcRepo.latestCommit) {
-                const versionMatch = lcRepo.latestCommit.match(/v\d+\.\d+\.\d+/i);
-                if (versionMatch) {
-                    const remoteVer = normalizeVer(versionMatch[0]);
-                    if (isNewerVersion(remoteVer, CURRENT_APP_VERSION)) {
-                        pendingRemoteVersion = remoteVer;
-                        if (!isVersionDismissed(remoteVer)) {
-                            showUpdateAlert(`⚡ Update Available (${remoteVer})`, lcRepo.latestCommit, false, remoteVer);
-                        }
-                    } else {
-                        const banner = document.getElementById('updateAlertBanner');
-                        if (banner && !isDeployingLive) banner.style.display = 'none';
-                    }
-                }
+            // When no workflow is building and VERSION.json reports up to date, keep banner hidden
+            const banner = document.getElementById('updateAlertBanner');
+            if (banner && !isDeployingLive) {
+                banner.style.display = 'none';
             }
         }
 
