@@ -1,3 +1,15 @@
+## [1.1.23] - 2026-09-18
+- Added 3-layer Watchdog alerting for Los Santos Weekly Manager.
+- Desktop floating toast alerts on sync or dispatch failures.
+- Dedicated GTA Weekly category added to persistent Alert Center.
+- Color-coded status pills display real-time live health badges.
+- Dialog header shows last check timestamp and diagnostics.
+- Automated Discord holding notice deploys when intel is pending.
+- Holding notices automatically purge upon verified briefing delivery.
+- Published live telemetry schema for BDClive portal toaster alerts.
+- Upgraded Central Command desktop control center to version 1.1.23.
+- Cleaned house and synchronized shortcuts across desktop environments.
+
 ## [1.1.22] - 2026-09-18
 - Upgraded Los Santos Weekly Manager with Stale Prevention Gate.
 - Fixed data ingestion loop and cloud synchronization failures.
