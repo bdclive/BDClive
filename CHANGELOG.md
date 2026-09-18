@@ -6,7 +6,7 @@
 - Upgraded web dashboard engine to version 10.2.142.
 
 ## [1.1.24] - 2026-09-18
-- Separated The Sorting Hat onto dedicated bot application ID.
+- Separated The Sorting Hat onto its own dedicated bot.
 - Reserved HouseKeeper bot exclusively for server caretaker operations.
 - Self-contained Sorting Hat engine bundled directly into Central Command.
 - Full offline server resiliency when main workstation is powered off.
