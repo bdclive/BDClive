@@ -5,6 +5,16 @@
 - Automatically dismisses toaster alert once weekly intel is synced.
 - Upgraded web dashboard engine to version 10.2.142.
 
+## [1.1.24] - 2026-09-18
+- Separated The Sorting Hat onto dedicated bot application ID.
+- Reserved HouseKeeper bot exclusively for server caretaker operations.
+- Self-contained Sorting Hat engine bundled directly into Central Command.
+- Full offline server resiliency when main workstation is powered off.
+- Synchronized latest ceremony quiz, house dialogue, and 4K assets.
+- Automatic daemon process supervision with zero broken pipe crashes.
+- Updated Central Command desktop control center to version 1.1.24.
+- Cleaned house and synchronized shortcuts across desktop environments.
+
 ## [1.1.23] - 2026-09-18
 - Added 3-layer Watchdog alerting for Los Santos Weekly Manager.
 - Desktop floating toast alerts on sync or dispatch failures.
