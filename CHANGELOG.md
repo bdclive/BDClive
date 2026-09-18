@@ -1,3 +1,10 @@
+## [10.2.142] - 2026-09-18
+- Connected real-time GTA Weekly Status telemetry from Firebase database.
+- Added subtle toaster alert for pending weekly event intel.
+- Added warning toaster banner for event intel ingestion errors.
+- Automatically dismisses toaster alert once weekly intel is synced.
+- Upgraded web dashboard engine to version 10.2.142.
+
 ## [1.1.23] - 2026-09-18
 - Added 3-layer Watchdog alerting for Los Santos Weekly Manager.
 - Desktop floating toast alerts on sync or dispatch failures.
