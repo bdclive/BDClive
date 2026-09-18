@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BDC LIVE v10.2.141</title>
+    <title>BDC LIVE v10.2.142</title>
     <!-- Open Graph & Social Preview Meta Tags -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="BDC LIVE v10.2.141">
+    <meta property="og:title" content="BDC LIVE v10.2.142">
     <meta property="og:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="og:image" content="./bdclive_banner.jpg">
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="BDC LIVE v10.2.141">
+    <meta property="twitter:title" content="BDC LIVE v10.2.142">
     <meta property="twitter:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="twitter:image" content="./bdclive_banner.jpg">
     <!-- PWA Manifest & Mobile Web App Meta Tags -->
@@ -72,6 +72,13 @@
 
         @media (max-width: 768px) {
             .master-command-deck { padding: 10px; border-radius: 14px; }
+            #gtaWeeklyStatusBanner {
+                bottom: 16px !important;
+                left: 12px !important;
+                right: 12px !important;
+                max-width: calc(100vw - 24px) !important;
+                width: auto !important;
+            }
         }
 
         .main-number { font-family: 'Outfit', sans-serif; font-size: 3.1rem; font-weight: 800; color: #ffffff; margin: 0; white-space: nowrap; letter-spacing: -1.5px; line-height: 1.1; }
@@ -1231,6 +1238,25 @@
                 <i class="fa-solid fa-rotate-right"></i> Reload Now
             </button>
             <button onclick="dismissUpdateAlert()" style="background: rgba(255,255,255,0.06); color: #8b949e; border: 1px solid rgba(255,255,255,0.1); padding: 6px 10px; border-radius: 6px; font-size: 11px; cursor: pointer;" title="Dismiss & Stay on current version">
+                ✕
+            </button>
+        </div>
+    </div>
+
+    <!-- GTA WEEKLY STATUS TOASTER / BANNER -->
+    <div id="gtaWeeklyStatusBanner" style="display: none; position: fixed; bottom: 24px; left: 24px; z-index: 10000; background: #161b22; border: 1.5px solid #d29922; border-radius: 12px; padding: 12px 18px; color: #ffffff; box-shadow: 0 10px 30px rgba(0,0,0,0.85), 0 0 18px rgba(210, 153, 34, 0.25); font-size: 12px; align-items: center; gap: 14px; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); max-width: 420px; width: auto; pointer-events: auto;">
+        <div style="display: flex; align-items: center; gap: 10px; min-width: 0;">
+            <span id="gta-status-icon" style="font-size: 20px; flex-shrink: 0;">⏳</span>
+            <div style="display: flex; flex-direction: column; gap: 2px; min-width: 0;">
+                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                    <span id="gta-status-title" style="font-weight: 700; color: #d29922; font-size: 12.5px;">GTA Online Intel Pending</span>
+                    <span id="gta-status-badge" style="background: rgba(210, 153, 34, 0.15); color: #d29922; border: 1px solid rgba(210, 153, 34, 0.35); padding: 1px 6px; border-radius: 6px; font-size: 9.5px; font-weight: 700;">Pending</span>
+                </div>
+                <span id="gta-status-desc" style="color: #8b949e; font-size: 11px; white-space: normal; line-height: 1.3;">Weekly event intel ingestion in progress...</span>
+            </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 6px; margin-left: auto; flex-shrink: 0;">
+            <button onclick="dismissGtaStatusAlert()" style="background: rgba(255,255,255,0.06); color: #8b949e; border: 1px solid rgba(255,255,255,0.12); padding: 5px 9px; border-radius: 6px; font-size: 11px; cursor: pointer; transition: all 0.2s ease;" title="Dismiss notification" onmouseover="this.style.color='#fff'; this.style.borderColor='rgba(255,255,255,0.3)';" onmouseout="this.style.color='#8b949e'; this.style.borderColor='rgba(255,255,255,0.12)';">
                 ✕
             </button>
         </div>
@@ -2690,6 +2716,105 @@
             }
         });
 
+        // Live GTA Weekly Status Telemetry & Admin Alert Controller
+        let currentGtaWeeklyStatus = null;
+
+        function handleGtaWeeklyStatusUpdate(gtaData) {
+            currentGtaWeeklyStatus = gtaData;
+            const banner = document.getElementById('gtaWeeklyStatusBanner');
+            const iconEl = document.getElementById('gta-status-icon');
+            const titleEl = document.getElementById('gta-status-title');
+            const badgeEl = document.getElementById('gta-status-badge');
+            const descEl = document.getElementById('gta-status-desc');
+
+            if (!banner) return;
+            if (!gtaData) {
+                banner.style.display = 'none';
+                return;
+            }
+
+            const status = (gtaData.status || '').toLowerCase().trim();
+            const weekTitle = gtaData.weekTitle || 'GTA Online';
+            const lastCheck = gtaData.lastCheckFormatted ? ` • ${gtaData.lastCheckFormatted}` : '';
+
+            // Check session dismissal for this specific status and week
+            const dismissKey = `dismissed_gta_alert_${status}_${weekTitle}`;
+            try {
+                if (sessionStorage.getItem(dismissKey) === 'true') {
+                    banner.style.display = 'none';
+                    return;
+                }
+            } catch (e) {}
+
+            if (status === 'pending') {
+                // Amber Warning Theme
+                banner.style.border = '1.5px solid #d29922';
+                banner.style.boxShadow = '0 10px 30px rgba(0,0,0,0.85), 0 0 18px rgba(210, 153, 34, 0.25)';
+                if (iconEl) iconEl.innerHTML = '<i class="fa-solid fa-hourglass-half fa-spin" style="color: #d29922;"></i>';
+                if (titleEl) {
+                    titleEl.innerText = 'GTA Online Intel Pending';
+                    titleEl.style.color = '#d29922';
+                }
+                if (badgeEl) {
+                    badgeEl.innerText = gtaData.statusText || 'Intel Pending';
+                    badgeEl.style.background = 'rgba(210, 153, 34, 0.15)';
+                    badgeEl.style.color = '#d29922';
+                    badgeEl.style.borderColor = 'rgba(210, 153, 34, 0.35)';
+                }
+                if (descEl) {
+                    const details = gtaData.podiumVehicle ? ` • Podium: ${gtaData.podiumVehicle}` : '';
+                    descEl.innerText = `${weekTitle}: Weekly event intel ingestion is pending${details}${lastCheck}`;
+                }
+                banner.style.display = 'flex';
+            } else if (status === 'error') {
+                // Red Ingestion Warning Theme
+                banner.style.border = '1.5px solid #f85149';
+                banner.style.boxShadow = '0 10px 30px rgba(0,0,0,0.85), 0 0 18px rgba(248, 81, 73, 0.25)';
+                if (iconEl) iconEl.innerHTML = '<i class="fa-solid fa-triangle-exclamation" style="color: #f85149;"></i>';
+                if (titleEl) {
+                    titleEl.innerText = 'GTA Weekly Ingestion Warning';
+                    titleEl.style.color = '#f85149';
+                }
+                if (badgeEl) {
+                    badgeEl.innerText = gtaData.statusText || 'Ingestion Warning';
+                    badgeEl.style.background = 'rgba(248, 81, 73, 0.15)';
+                    badgeEl.style.color = '#f85149';
+                    badgeEl.style.borderColor = 'rgba(248, 81, 73, 0.35)';
+                }
+                if (descEl) {
+                    const errText = gtaData.error || 'Ingestion warning encountered';
+                    descEl.innerText = `${weekTitle}: ${errText}${lastCheck}`;
+                }
+                banner.style.display = 'flex';
+            } else if (status === 'synced') {
+                // Synced: Hide banner gracefully
+                banner.style.display = 'none';
+            } else {
+                banner.style.display = 'none';
+            }
+        }
+
+        function dismissGtaStatusAlert() {
+            const banner = document.getElementById('gtaWeeklyStatusBanner');
+            if (banner) banner.style.display = 'none';
+            if (currentGtaWeeklyStatus) {
+                const status = (currentGtaWeeklyStatus.status || '').toLowerCase().trim();
+                const weekTitle = currentGtaWeeklyStatus.weekTitle || 'GTA Online';
+                try {
+                    sessionStorage.setItem(`dismissed_gta_alert_${status}_${weekTitle}`, 'true');
+                } catch (e) {}
+            }
+        }
+
+        window.handleGtaWeeklyStatusUpdate = handleGtaWeeklyStatusUpdate;
+        window.dismissGtaStatusAlert = dismissGtaStatusAlert;
+
+        // Connect to new GTA Weekly Status telemetry in Firebase Realtime Database
+        sDb.ref('labData/gtaWeeklyStatus').on('value', (s) => {
+            const gtaData = s.val();
+            handleGtaWeeklyStatusUpdate(gtaData);
+        });
+
         function openTasksBreakdownModal() {
             renderTasksBreakdownTable();
             const modal = document.getElementById('tasksBreakdownModal');
@@ -3443,7 +3568,7 @@
             }
         }
 
-        const CURRENT_APP_VERSION = 'v10.2.141';
+        const CURRENT_APP_VERSION = 'v10.2.142';
         let isDeployingLive = false;
         let pendingRemoteVersion = null;
         let autoRefreshTimer = null;

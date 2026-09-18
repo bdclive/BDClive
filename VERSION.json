@@ -14,9 +14,10 @@
       "cliFile": "Threads_Bridge/threads_bridge_cli_v1.0.59_(terminal).py"
     },
     "bdclive_web_dashboard": {
-      "version": "10.2.141",
+      "version": "10.2.142",
       "repository": "https://github.com/bdclive/BDClive",
       "latestChanges": [
+        "v10.2.142: Connected GTA Weekly Status telemetry and admin alert toaster",
         "v10.2.141: Permanent resolution for auto-refresh update loop and version sync",
         "v10.2.140: Pure Python zero-dependency Google Tasks sync daemon deployed",
         "v10.2.139: Completely disconnected Google Tasks sync from Google Apps Script",
