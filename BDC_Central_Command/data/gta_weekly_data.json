@@ -1,62 +1,95 @@
 {
-  "week_title": "Sep 10 \u2013 17, 2026",
-  "event_name": "Business Rivalries: Bikers Week",
-  "podium_vehicle": "RUNE Zhaba ($2,400,000)",
-  "prize_ride": "Pfister Neon",
-  "prize_ride_challenge": "Place in the Top 4 in an LS Car Meet Series race one time",
-  "hsw_vehicle": "Coil Cyclone II (Next-Gen)",
-  "free_property": "Grapeseed Clubhouse (100% Free via Maze Bank Foreclosures)",
-  "new_vehicle": "Pegassi Horus (GTA+ Early Access)",
+  "week_title": "Sep 17 \u2013 24, 2026",
+  "event_name": "Business Rivalries: Gunrunners Week",
+  "podium_vehicle": "Vapid Dominator ASP ($1,775,000)",
+  "prize_ride": "Dinka Jester RR",
+  "prize_ride_challenge": "Place in the Top 3 in an LS Car Meet Series race for 4 days in a row",
+  "hsw_vehicle": "Bravado Banshee GTS (Next-Gen)",
+  "free_property": "Grapeseed Bunker (100% Free via Maze Bank Foreclosures \u2014 Save $1,750,000)",
+  "new_vehicle": "Pegassi Horus ($2,810,000 at Legendary Motorsport)",
   "test_track": [
-    "Grotti Cheetah Classic",
-    "Vulcar Warrener HKR",
-    "Pfister Growler"
+    "Lampadati Viseris",
+    "Schyster Deviant",
+    "Grotti Bestia GTS"
   ],
   "luxury_autos": [
-    "Vapid FMJ MK V",
-    "Grotti GT750"
+    "Pegassi Horus",
+    "Progen Luiva"
   ],
   "simeons_pdm": [
-    "Western Rampant Rocket",
-    "Dinka Vindicator",
-    "Nagasaki Shinobi",
-    "Shitzu Defiler",
-    "Pegassi Vortex"
+    "Ocelot XA-21",
+    "Bravado Half-track",
+    "Imponte Nightshade",
+    "Enus Cognoscenti",
+    "Vysser Neo"
   ],
   "salvage_yard_targets": [
     {
-      "car": "Dinka Blista Kanjo",
+      "car": "Karin Previon",
       "claimable": false,
-      "robbery": "The Gangbanger Robbery"
+      "robbery": "The Duggan Robbery"
     },
     {
-      "car": "Benefactor Stirling GT",
+      "car": "Dinka Sugoi",
       "claimable": false,
-      "robbery": "The Cargo Ship Robbery"
+      "robbery": "The Podium Robbery"
     },
     {
-      "car": "Enus Jubilee",
+      "car": "Declasse Mamba",
       "claimable": false,
       "robbery": "The McTony Robbery"
     }
   ],
-  "fib_priority_file": "The Black Box File (2x Payout)",
+  "fib_priority_file": "Project Breakaway File (2x Payout)",
   "weekly_challenge": {
-    "reward": "Junk Tracksuit + $1,000,000 GTA$",
-    "task": "Earn $1,000,000 from selling MC Business or Acid Lab product"
+    "reward": "Camo Ammu-Nation Sweatsuit + $1,000,000 GTA$",
+    "task": "Complete 3 Bunker Research Missions"
   },
   "gun_van": {
-    "discount_item": "Tactical SMG (40% OFF)",
-    "location": "Palmer-Taylor Power Station",
+    "discount_item": "Heavy Sniper (40% OFF)",
+    "location": "Sandy Shores",
     "weapons": [
       "Tactical SMG",
-      "Heavy Rifle",
+      "Heavy Sniper",
       "Combat Shotgun",
       "Pipe Bombs",
       "Body Armor (50% OFF)"
     ]
   },
   "bonuses": [
+    {
+      "hourly": "~$1,500,000/hr",
+      "id": "bunker_sell",
+      "multiplier": "2x GTA$ & RP",
+      "name": "Bunker Gunrunning Stock Sell Missions",
+      "rate": "$700,000 \u2013 $2,100,000 / Sale",
+      "solo": true,
+      "tier": "S",
+      "tip": "Sell full stock in populated public lobbies for massive high-demand bonuses. Ghost Organization recommended for Phantom Wedge or single-drop Insurgent deliveries.",
+      "type": "Gunrunning Business"
+    },
+    {
+      "hourly": "~$900,000/hr",
+      "id": "bunker_research",
+      "multiplier": "2x GTA$, RP & 2x Research Speed",
+      "name": "Bunker Research Missions & Speed",
+      "rate": "$60,000 / Mission + Fast Unlocks",
+      "solo": true,
+      "tier": "S",
+      "tip": "Call Agent 14 to request research missions. Unlocks explosive rounds and heavy weapon modifications at double speed.",
+      "type": "Bunker Operation"
+    },
+    {
+      "hourly": "~$1,000,000/hr",
+      "id": "excess_weapons",
+      "multiplier": "2x GTA$ & RP",
+      "name": "Ammu-Nation Excess Weapon Deliveries",
+      "rate": "$100,000 / Delivery",
+      "solo": true,
+      "tier": "S",
+      "tip": "Pick up the flatbed truck inside your Bunker custom workshop and deliver weapons to Ammu-Nation for quick solo cash.",
+      "type": "Solo Freeroam"
+    },
     {
       "hourly": "~$1,200,000/hr",
       "id": "community_series",
@@ -69,93 +102,60 @@
       "type": "PvP Series"
     },
     {
-      "hourly": "~$900,000/hr",
-      "id": "biker_contracts",
-      "multiplier": "2x GTA$ & RP",
-      "name": "Biker Clubhouse Contracts & MC Work",
-      "rate": "$70,000 \u2013 $130,000 / Contract",
-      "solo": true,
-      "tier": "S",
-      "tip": "Launch contracts from noticeboard in your Clubhouse. Quick 5-minute solo completions with instant cash drops.",
-      "type": "Motorcycle Club"
-    },
-    {
       "hourly": "~$800,000/hr",
-      "id": "street_dealers_service",
-      "multiplier": "2x GTA$",
-      "name": "Street Dealer Sales & Bike Service",
-      "rate": "$80,000 \u2013 $150,000 / Run",
-      "solo": true,
-      "tier": "A",
-      "tip": "Visit 3 daily Street Dealers across the map and deliver customer bikes from Clubhouse custom shop.",
-      "type": "Daily Freeroam"
-    },
-    {
-      "hourly": "~$1,000,000/hr",
-      "id": "acid_lab_sales",
-      "multiplier": "Bonus High Demand",
-      "name": "Acid Lab Product Sales",
-      "rate": "$350,000 \u2013 $525,000 / Sale",
-      "solo": true,
-      "tier": "S",
-      "tip": "Call Mutt to boost production and sell full product in public lobbies for massive high-demand bonuses.",
-      "type": "Solo Business"
-    },
-    {
-      "hourly": "~$750,000/hr",
-      "id": "featured_series",
+      "id": "safeguard_deliveries",
       "multiplier": "2x GTA$ & RP",
-      "name": "Featured Series: Hasta La Vista & Every Bullet Counts",
-      "rate": "$60,000 \u2013 $110,000 / Match",
+      "name": "Safeguard Deliveries & VIP Work",
+      "rate": "$50,000 \u2013 $90,000 / Run",
       "solo": false,
       "tier": "A",
-      "tip": "Classic high-tension adversary modes offering double rewards all week long.",
-      "type": "Adversary Modes"
+      "tip": "Escort high-value assets and VIP convoys across Blaine County.",
+      "type": "Freemode Protection"
     }
   ],
   "discounts": [
     {
       "category": "Properties",
       "discount": "50% OFF",
-      "item": "Biker Clubhouses & Renovations"
+      "item": "Bunkers & Renovations"
     },
     {
       "category": "Properties",
       "discount": "40% OFF",
-      "item": "Biker Businesses (Cocaine, Meth, Cash, Weed, Forgery)"
-    },
-    {
-      "category": "Vehicles",
-      "discount": "30% OFF",
-      "item": "Western Rampant Rocket"
+      "item": "Bunker Equipment & Staff Upgrades"
     },
     {
       "category": "Vehicles",
       "discount": "40% OFF",
-      "item": "Dinka Vindicator"
+      "item": "Bravado Half-track"
+    },
+    {
+      "category": "Vehicles",
+      "discount": "40% OFF",
+      "item": "Ocelot XA-21"
     },
     {
       "category": "Vehicles",
       "discount": "30% OFF",
-      "item": "Nagasaki Shinobi"
+      "item": "Imponte Nightshade"
     },
     {
       "category": "Vehicles",
       "discount": "30% OFF",
-      "item": "Grotti Cheetah Classic"
+      "item": "Lampadati Viseris"
     },
     {
-      "category": "Vehicles",
-      "discount": "30% OFF",
-      "item": "Pfister Growler"
+      "category": "HSW Vehicles",
+      "discount": "70% OFF",
+      "item": "Pfister Astron Custom"
     }
   ],
   "crew_events": [
     {
       "host": "BDC Crew",
-      "location": "Grapeseed Clubhouse & Alamo Sea",
+      "location": "Grapeseed Bunker & Alamo Sea Airfield",
       "time": "Friday 9:00 PM EST",
-      "title": "\ud83c\udf34 BDC Friday Night Biker Convoy & MC Cruise"
+      "title": "\ud83c\udf34 BDC Friday Night Gunrunning Convoy & Heavy Weapon Meet"
     }
   ],
   "discord_settings": {
@@ -164,10 +164,11 @@
     "channel_name": "#\ud83d\udcc5\u30fbgta-weekly",
     "webhook_url": "https://discord.com/api/webhooks/1540148233173598289/8Y9b4eObNNLfhx8gYVXpfOxQAFXdLdTMWdXxXGKP_aLhDABCYbwYPSP_qp28qzzLNjr9"
   },
-  "last_posted_week_title": "Sep 10 \u2013 17, 2026",
-  "last_updated": 1789513226,
-  "source": "Rockstar Official Newswire & Verified Sep 10 Intel",
+  "last_posted_week_title": "",
+  "last_updated": 1789761027,
+  "source": "Rockstar Official Newswire & Verified Sep 17 Gunrunners Intel",
   "last_dispatched_msg_ids": [
-    "1549288533100068885"
+    "1550595748033470475",
+    "1550595751464407092"
   ]
 }
