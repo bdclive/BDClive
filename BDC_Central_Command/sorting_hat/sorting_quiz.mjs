@@ -1,11 +1,47 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { HOUSE_ROLES, buildSortingHatReply } from './house_dialogue.mjs';
 
-const envContent = fs.readFileSync('.env', 'utf8');
-const token = envContent.match(/DISCORD_BOT_TOKEN\s*=\s*["']?([^"'\r\n]+)["']?/)[1].trim();
+function resolveTokenAndGuild() {
+  let t = '';
+  let g = '964526957721186354';
+  const scriptDir = typeof import.meta.dirname === 'string' ? import.meta.dirname : path.dirname(fileURLToPath(import.meta.url));
+  const envCandidates = [
+    path.join(scriptDir, '.env'),
+    path.resolve('.env')
+  ];
+  for (const ep of envCandidates) {
+    if (fs.existsSync(ep)) {
+      try {
+        const c = fs.readFileSync(ep, 'utf8');
+        const mSort = c.match(/SORTING_HAT_BOT_TOKEN\s*=\s*["']?([^"'\r\n]+)["']?/);
+        if (mSort) { t = mSort[1].trim(); break; }
+        const mDisc = c.match(/DISCORD_BOT_TOKEN\s*=\s*["']?([^"'\r\n]+)["']?/);
+        if (mDisc) { t = mDisc[1].trim(); }
+      } catch {}
+    }
+  }
+  const configCandidates = [
+    path.join(scriptDir, '../discord_config.json'),
+    path.join(scriptDir, 'discord_config.json'),
+    path.resolve('discord_config.json')
+  ];
+  for (const cp of configCandidates) {
+    if (!t && fs.existsSync(cp)) {
+      try {
+        const dConf = JSON.parse(fs.readFileSync(cp, 'utf8'));
+        if (dConf.SORTING_HAT_BOT_TOKEN) t = dConf.SORTING_HAT_BOT_TOKEN.trim();
+        else if (dConf.DISCORD_BOT_TOKEN) t = dConf.DISCORD_BOT_TOKEN.trim();
+        if (dConf.DISCORD_GUILD_ID) g = dConf.DISCORD_GUILD_ID.trim();
+      } catch {}
+    }
+  }
+  return { token: t, guildId: g };
+}
+
+const { token, guildId: GUILD_ID } = resolveTokenAndGuild();
 const headers = { Authorization: `Bot ${token}`, 'Content-Type': 'application/json' };
-const GUILD_ID = '964526957721186354';
 
 export const QUIZ_QUESTIONS = [
   {

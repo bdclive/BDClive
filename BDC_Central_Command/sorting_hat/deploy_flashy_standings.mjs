@@ -2,36 +2,13 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { renderHogwartsCard } from './render_card.mjs';
 
-function resolveTokenAndGuild() {
-  let t = '';
-  let g = '964526957721186354';
-  const envPath = path.resolve('.env');
-  if (fs.existsSync(envPath)) {
-    try {
-      const c = fs.readFileSync(envPath, 'utf8');
-      const m = c.match(/DISCORD_BOT_TOKEN\s*=\s*["']?([^"'\r\n]+)["']?/);
-      if (m) t = m[1].trim();
-    } catch {}
-  }
-  const configPaths = [
-    path.resolve('../discord_config.json'),
-    path.resolve('discord_config.json'),
-    'C:/Users/Brian/Documents/antigravity/magical-pasteur/BDC_Central_Command/discord_config.json'
-  ];
-  for (const cp of configPaths) {
-    if (!t && fs.existsSync(cp)) {
-      try {
-        const dConf = JSON.parse(fs.readFileSync(cp, 'utf8'));
-        if (dConf.DISCORD_BOT_TOKEN) t = dConf.DISCORD_BOT_TOKEN.trim();
-        if (dConf.DISCORD_GUILD_ID) g = dConf.DISCORD_GUILD_ID.trim();
-      } catch {}
-    }
-  }
-  return { token: t, guildId: g };
-}
-
-const { token, guildId: GUILD_ID } = resolveTokenAndGuild();
+const envPath = path.join(import.meta.dirname, '.env');
+const envContent = fs.readFileSync(envPath, 'utf8');
+const sortingHatToken = envContent.match(/SORTING_HAT_BOT_TOKEN\s*=\s*["']?([^"'\r\n]+)["']?/)?.[1]?.trim();
+const housekeeperToken = envContent.match(/DISCORD_BOT_TOKEN\s*=\s*["']?([^"'\r\n]+)["']?/)?.[1]?.trim();
+const token = sortingHatToken || housekeeperToken;
 const headers = { Authorization: `Bot ${token}` };
+const GUILD_ID = '964526957721186354';
 const GREAT_HALL_ID = '1340457788656058438';
 const SORTING_HAT_ID = '1362685213762785363';
 
@@ -45,9 +22,16 @@ const houseConfig = {
 async function deploySpaciousStandings() {
   console.log('🏰 Fetching live server members from Discord API...');
 
-  const membersRes = await fetch(`https://discord.com/api/v10/guilds/${GUILD_ID}/members?limit=1000`, {
+  let membersRes = await fetch(`https://discord.com/api/v10/guilds/${GUILD_ID}/members?limit=1000`, {
     headers: { ...headers, 'Content-Type': 'application/json' }
   });
+
+  if (!membersRes.ok && housekeeperToken) {
+    console.log('ℹ️ Using privileged housekeeper token to audit guild members...');
+    membersRes = await fetch(`https://discord.com/api/v10/guilds/${GUILD_ID}/members?limit=1000`, {
+      headers: { Authorization: `Bot ${housekeeperToken}`, 'Content-Type': 'application/json' }
+    });
+  }
 
   if (!membersRes.ok) {
     throw new Error(`Failed to fetch members: ${await membersRes.text()}`);
@@ -87,21 +71,38 @@ async function deploySpaciousStandings() {
   console.log('🎨 Generating 2K Flashy Hogwarts Graphic Card...');
   const imagePath = await renderHogwartsCard(counts);
 
-  // 2. Delete old message if exists
-  let oldMessageId = null;
+  // 2. Check if existing pinned message is still present in channel
+  let targetMessageId = null;
   if (fs.existsSync('hogwarts_state.json')) {
     try {
       const state = JSON.parse(fs.readFileSync('hogwarts_state.json', 'utf8'));
-      oldMessageId = state.messageId;
+      targetMessageId = state.messageId || state.pinned_message_id;
     } catch (e) {}
   }
 
-  if (oldMessageId) {
-    console.log(`🗑️ Removing previous message ${oldMessageId}...`);
-    await fetch(`https://discord.com/api/v10/channels/${GREAT_HALL_ID}/messages/${oldMessageId}`, {
-      method: 'DELETE',
-      headers
-    });
+  let messageExists = false;
+  if (targetMessageId) {
+    try {
+      const checkRes = await fetch(`https://discord.com/api/v10/channels/${GREAT_HALL_ID}/messages/${targetMessageId}`, { headers });
+      if (checkRes.ok) {
+        const msg = await checkRes.json();
+        const meRes = await fetch('https://discord.com/api/v10/users/@me', { headers });
+        const meUser = await meRes.json();
+        if (msg.author?.id === meUser.id) {
+          messageExists = true;
+          console.log(`📌 Found existing Standings Card (${targetMessageId}) authored by ${meUser.username}! Updating in place...`);
+        } else {
+          console.log(`⚠️ Standings Card (${targetMessageId}) was authored by ${msg.author?.username} (${msg.author?.id}), not ${meUser.username}. Deleting old message so it can be re-posted as ${meUser.username}...`);
+          await fetch(`https://discord.com/api/v10/channels/${GREAT_HALL_ID}/messages/${targetMessageId}`, {
+            method: 'DELETE',
+            headers
+          });
+          messageExists = false;
+        }
+      }
+    } catch (e) {
+      console.error('Error verifying existing message author:', e);
+    }
   }
 
   // 3. Build Single Elegant Embed (Directly beneath the 4K top image)
@@ -148,8 +149,7 @@ async function deploySpaciousStandings() {
     timestamp: new Date().toISOString()
   };
 
-  // 4. Multipart Form Data Post
-  console.log('📤 Uploading rendered graphic card and posting clean unified embed to Discord...');
+  // 4. Multipart Form Data Post or Patch
   const imageBuffer = fs.readFileSync(imagePath);
   const boundary = '----WebKitFormBoundary' + Math.random().toString(36).substring(2);
 
@@ -166,52 +166,73 @@ async function deploySpaciousStandings() {
   const postBuffer = Buffer.from(`\r\n--${boundary}--\r\n`, 'utf8');
   const fullBody = Buffer.concat([preBuffer, imageBuffer, postBuffer]);
 
-  const postRes = await fetch(`https://discord.com/api/v10/channels/${GREAT_HALL_ID}/messages`, {
-    method: 'POST',
-    headers: {
-      ...headers,
-      'Content-Type': `multipart/form-data; boundary=${boundary}`
-    },
-    body: fullBody
-  });
+  let finalMessageId = targetMessageId;
 
-  if (!postRes.ok) {
-    throw new Error(`Failed to post message: ${await postRes.text()}`);
-  }
+  if (messageExists) {
+    console.log(`🔄 Updating existing Standings Card (${targetMessageId}) in place with latest rosters...`);
+    const patchRes = await fetch(`https://discord.com/api/v10/channels/${GREAT_HALL_ID}/messages/${targetMessageId}`, {
+      method: 'PATCH',
+      headers: {
+        ...headers,
+        'Content-Type': `multipart/form-data; boundary=${boundary}`
+      },
+      body: fullBody
+    });
 
-  const createdMsg = await postRes.json();
-  console.log(`✅ Posted Spacious House Standings Card! Message ID: ${createdMsg.id}`);
+    if (!patchRes.ok) {
+      throw new Error(`Failed to update message: ${await patchRes.text()}`);
+    }
+    console.log(`✅ Standings Card (${targetMessageId}) updated in place! (Message remains anchored at top)`);
+  } else {
+    console.log('📤 Posting fresh Standings Card as Message #1 at the top of #🍻・the-great-hall...');
+    const postRes = await fetch(`https://discord.com/api/v10/channels/${GREAT_HALL_ID}/messages`, {
+      method: 'POST',
+      headers: {
+        ...headers,
+        'Content-Type': `multipart/form-data; boundary=${boundary}`
+      },
+      body: fullBody
+    });
 
-  // 5. Pin message
-  console.log('📌 Pinning in #🍻・the-great-hall...');
-  const pinRes = await fetch(`https://discord.com/api/v10/channels/${GREAT_HALL_ID}/pins/${createdMsg.id}`, {
-    method: 'PUT',
-    headers
-  });
+    if (!postRes.ok) {
+      throw new Error(`Failed to post message: ${await postRes.text()}`);
+    }
 
-  if (pinRes.ok) {
-    console.log('✅ Successfully pinned the Standings Card!');
-  }
+    const createdMsg = await postRes.json();
+    finalMessageId = createdMsg.id;
+    console.log(`✅ Posted Standings Card as Message #1! Message ID: ${finalMessageId}`);
 
-  // 6. Clean pin system notification
-  await new Promise(r => setTimeout(r, 1200));
-  const recentRes = await fetch(`https://discord.com/api/v10/channels/${GREAT_HALL_ID}/messages?limit=5`, { headers });
-  if (recentRes.ok) {
-    const recents = await recentRes.json();
-    for (const msg of recents) {
-      if (msg.type === 6) { // 6 = CHANNEL_PINNED_MESSAGE
-        await fetch(`https://discord.com/api/v10/channels/${GREAT_HALL_ID}/messages/${msg.id}`, {
-          method: 'DELETE',
-          headers
-        });
-        console.log('🧹 Cleaned system pin notification message.');
+    // Pin message
+    console.log('📌 Pinning in #🍻・the-great-hall...');
+    const pinRes = await fetch(`https://discord.com/api/v10/channels/${GREAT_HALL_ID}/pins/${finalMessageId}`, {
+      method: 'PUT',
+      headers
+    });
+
+    if (pinRes.ok) {
+      console.log('✅ Successfully pinned the Standings Card!');
+    }
+
+    // Clean pin system notification
+    await new Promise(r => setTimeout(r, 1200));
+    const recentRes = await fetch(`https://discord.com/api/v10/channels/${GREAT_HALL_ID}/messages?limit=5`, { headers });
+    if (recentRes.ok) {
+      const recents = await recentRes.json();
+      for (const msg of recents) {
+        if (msg.type === 6) { // 6 = CHANNEL_PINNED_MESSAGE
+          await fetch(`https://discord.com/api/v10/channels/${GREAT_HALL_ID}/messages/${msg.id}`, {
+            method: 'DELETE',
+            headers
+          });
+          console.log('🧹 Cleaned system pin notification message.');
+        }
       }
     }
   }
 
   // 7. Save State
   const newState = {
-    messageId: createdMsg.id,
+    messageId: finalMessageId,
     channelId: GREAT_HALL_ID,
     lastUpdated: new Date().toISOString(),
     counts
@@ -221,13 +242,17 @@ async function deploySpaciousStandings() {
 
   const ccStatePaths = [
     'C:\\Users\\Brian\\Documents\\antigravity\\magical-pasteur\\BDC_Central_Command\\hogwarts_state.json',
-    'C:\\Users\\Brian\\Documents\\antigravity\\magical-pasteur\\BDC_Central_Command\\data\\hogwarts_state.json'
+    'C:\\Users\\Brian\\Documents\\antigravity\\magical-pasteur\\BDC_Central_Command\\data\\hogwarts_state.json',
+    'C:\\Users\\Brian\\Documents\\antigravity\\magical-pasteur\\BDC_Central_Command\\sorting_hat\\hogwarts_state.json',
+    '\\\\DESKTOP-1CC6J72\\Users\\Brian\\OneDrive\\Desktop\\BDC Central Command\\hogwarts_state.json',
+    '\\\\DESKTOP-1CC6J72\\Users\\Brian\\OneDrive\\Desktop\\BDC Central Command\\data\\hogwarts_state.json',
+    '\\\\DESKTOP-1CC6J72\\Users\\Brian\\OneDrive\\Desktop\\BDC Central Command\\sorting_hat\\hogwarts_state.json'
   ];
   for (const ccPath of ccStatePaths) {
     if (fs.existsSync(ccPath)) {
       try {
         const ccData = JSON.parse(fs.readFileSync(ccPath, 'utf8'));
-        ccData.pinned_message_id = createdMsg.id;
+        ccData.pinned_message_id = finalMessageId;
         fs.writeFileSync(ccPath, JSON.stringify(ccData, null, 2));
         console.log(`💾 Synced new pinned message ID to Central Command: ${ccPath}`);
       } catch (e) {}
@@ -236,14 +261,14 @@ async function deploySpaciousStandings() {
 
   // 8. Update Channel Topics with Live Scores
   try {
-    const ghTopic = `Main wizarding gathering hall! 🐍 Slytherin: ${counts.slytherin} | 🦁 Gryffindor: ${counts.gryffindor} | 🦅 Ravenclaw: ${counts.ravenclaw} | 🦡 Hufflepuff: ${counts.hufflepuff} • Pinned 4K Standings Below`;
+    const ghTopic = `Main wizarding gathering hall!\n\n🐍 Slytherin: ${counts.slytherin} | 🦁 Gryffindor: ${counts.gryffindor} | 🦅 Ravenclaw: ${counts.ravenclaw} | 🦡 Hufflepuff: ${counts.hufflepuff}`;
     await fetch(`https://discord.com/api/v10/channels/${GREAT_HALL_ID}`, {
       method: 'PATCH',
       headers: { ...headers, 'Content-Type': 'application/json' },
       body: JSON.stringify({ topic: ghTopic })
     });
 
-    const shTopic = `Step up to be sorted! 🐍 Slytherin: ${counts.slytherin} | 🦁 Gryffindor: ${counts.gryffindor} | 🦅 Ravenclaw: ${counts.ravenclaw} | 🦡 Hufflepuff: ${counts.hufflepuff} • Use /myhouse or /sortme`;
+    const shTopic = `Step up to be sorted!\n\n🐍 Slytherin: ${counts.slytherin} | 🦁 Gryffindor: ${counts.gryffindor} | 🦅 Ravenclaw: ${counts.ravenclaw} | 🦡 Hufflepuff: ${counts.hufflepuff}`;
     await fetch(`https://discord.com/api/v10/channels/${SORTING_HAT_ID}`, {
       method: 'PATCH',
       headers: { ...headers, 'Content-Type': 'application/json' },

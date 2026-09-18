@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { fork } from 'node:child_process';
 import { buildSortingHatReply, buildGreatHallProclamation, detectUserHouse, HOUSE_ROLES } from './house_dialogue.mjs';
 import { startQuiz, handleQuizAnswer } from './sorting_quiz.mjs';
@@ -7,24 +8,33 @@ import { startQuiz, handleQuizAnswer } from './sorting_quiz.mjs';
 function resolveTokenAndGuild() {
   let t = '';
   let g = '964526957721186354';
-  const envPath = path.resolve('.env');
-  if (fs.existsSync(envPath)) {
-    try {
-      const c = fs.readFileSync(envPath, 'utf8');
-      const m = c.match(/DISCORD_BOT_TOKEN\s*=\s*["']?([^"'\r\n]+)["']?/);
-      if (m) t = m[1].trim();
-    } catch {}
-  }
-  const configPaths = [
-    path.resolve('../discord_config.json'),
-    path.resolve('discord_config.json'),
-    'C:/Users/Brian/Documents/antigravity/magical-pasteur/BDC_Central_Command/discord_config.json'
+  const scriptDir = typeof import.meta.dirname === 'string' ? import.meta.dirname : path.dirname(fileURLToPath(import.meta.url));
+  const envCandidates = [
+    path.join(scriptDir, '.env'),
+    path.resolve('.env')
   ];
-  for (const cp of configPaths) {
+  for (const ep of envCandidates) {
+    if (fs.existsSync(ep)) {
+      try {
+        const c = fs.readFileSync(ep, 'utf8');
+        const mSort = c.match(/SORTING_HAT_BOT_TOKEN\s*=\s*["']?([^"'\r\n]+)["']?/);
+        if (mSort) { t = mSort[1].trim(); break; }
+        const mDisc = c.match(/DISCORD_BOT_TOKEN\s*=\s*["']?([^"'\r\n]+)["']?/);
+        if (mDisc) { t = mDisc[1].trim(); }
+      } catch {}
+    }
+  }
+  const configCandidates = [
+    path.join(scriptDir, '../discord_config.json'),
+    path.join(scriptDir, 'discord_config.json'),
+    path.resolve('discord_config.json')
+  ];
+  for (const cp of configCandidates) {
     if (!t && fs.existsSync(cp)) {
       try {
         const dConf = JSON.parse(fs.readFileSync(cp, 'utf8'));
-        if (dConf.DISCORD_BOT_TOKEN) t = dConf.DISCORD_BOT_TOKEN.trim();
+        if (dConf.SORTING_HAT_BOT_TOKEN) t = dConf.SORTING_HAT_BOT_TOKEN.trim();
+        else if (dConf.DISCORD_BOT_TOKEN) t = dConf.DISCORD_BOT_TOKEN.trim();
         if (dConf.DISCORD_GUILD_ID) g = dConf.DISCORD_GUILD_ID.trim();
       } catch {}
     }
@@ -32,13 +42,32 @@ function resolveTokenAndGuild() {
   return { token: t, guildId: g };
 }
 
+const scriptDir = typeof import.meta.dirname === 'string' ? import.meta.dirname : path.dirname(fileURLToPath(import.meta.url));
+const logPath = path.join(scriptDir, 'sorting_hat_daemon.log');
+function logToFile(str) {
+  try {
+    fs.appendFileSync(logPath, str + '\n', 'utf8');
+  } catch {}
+}
+const origLog = console.log;
+const origErr = console.error;
+console.log = (...args) => {
+  try { origLog(...args); } catch {}
+  logToFile(args.map(a => typeof a === 'object' ? JSON.stringify(a) : String(a)).join(' '));
+};
+console.error = (...args) => {
+  try { origErr(...args); } catch {}
+  logToFile('[ERROR] ' + args.map(a => typeof a === 'object' ? JSON.stringify(a) : String(a)).join(' '));
+};
+
 const { token, guildId: GUILD_ID } = resolveTokenAndGuild();
 const headers = { Authorization: `Bot ${token}` };
-const APP_ID = '1539623982356111360';
+let APP_ID = '1550624832188842095';
 const SORTING_HAT_CHANNEL = '1362685213762785363';
 const GREAT_HALL_CHANNEL = '1340457788656058438';
 const UNSORTED_ROLE_ID = '1549533277642166394';
 
+console.log(`\n--- Starting Sorting Hat Oracle Daemon: ${new Date().toISOString()} ---`);
 console.log('🧙 Starting Sorting Hat Interactive Oracle & 7-Question Quiz Daemon...');
 
 let ws = null;
@@ -554,13 +583,13 @@ function connectGateway() {
           }
         }, d.heartbeat_interval);
 
-        // Identify with GUILDS (1) + GUILD_MEMBERS (2) + GUILD_MESSAGES (512)
+        // Identify with GUILDS (1) + GUILD_MESSAGES (512)
         ws.send(JSON.stringify({
           op: 2,
           d: {
             token,
-            intents: 1 | 2 | 512,
-            properties: { os: 'windows', browser: 'BDC_HouseKeeper', device: 'BDC_HouseKeeper' }
+            intents: 1 | 512,
+            properties: { os: 'windows', browser: 'The Sorting Hat', device: 'The Sorting Hat' }
           }
         }));
       } else if (op === 1) {
@@ -569,10 +598,11 @@ function connectGateway() {
         console.log(`⚠️ Received Gateway op ${op}. Reconnecting...`);
         ws.close();
       } else if (t === 'READY') {
+        APP_ID = d.user.id;
         console.log(`\n═══════════════════════════════════════════════════════`);
         console.log(`🧙 SORTING HAT ORACLE & 7-QUESTION QUIZ IS LIVE!`);
         console.log(`Bot: ${d.user.username} (ID: ${d.user.id})`);
-        console.log(`Commands: /myhouse • /sortme • /quiz • @mentions • Buttons`);
+        console.log(`Commands: /myhouse • /sortme • /quiz • /standings • Buttons`);
         console.log(`═══════════════════════════════════════════════════════\n`);
       } else if (t === 'INTERACTION_CREATE') {
         if (d.type === 2) { // Slash Command
