@@ -1,3 +1,14 @@
+## [1.1.22] - 2026-09-18
+- Upgraded Los Santos Weekly Manager with Stale Prevention Gate.
+- Fixed data ingestion loop and cloud synchronization failures.
+- Verified active Gunrunners Week bonuses, discounts, and showroom cars.
+- Added free Grapeseed Bunker and Dominator ASP podium vehicle.
+- Multi-source community scraper prevents rate limit blocks.
+- Added one-click Fetch and Dispatch button to manager dialog.
+- Automatically purges previous briefings before posting active updates.
+- Upgraded Central Command desktop control center to version 1.1.22.
+- Cleaned house and synchronized shortcuts across desktop environments.
+
 ## [10.2.141] - 2026-09-16
 - Hard-blocked infinite auto-refresh loops with permanent reload flags.
 - Removed commit message regex parsing from update detector.
