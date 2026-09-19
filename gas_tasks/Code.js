@@ -43,6 +43,12 @@ function doGet(e) {
     })).setMimeType(ContentService.MimeType.JSON);
   }
 
+  if (api === "purgeTriggers" || api === "removeAllTriggers" || api === "deleteTriggers") {
+    const res = syncGoogleTasksToFirebase();
+    return ContentService.createTextOutput(JSON.stringify(res))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+
   return ContentService.createTextOutput(JSON.stringify({ status: "OK", service: "BDC Central Command Email & Task Bridge" }))
     .setMimeType(ContentService.MimeType.JSON);
 }
@@ -231,28 +237,12 @@ function doPost(e) {
 }
 
 function syncGoogleTasksToFirebase() {
-  Logger.log("[DECOMMISSIONED] syncGoogleTasksToFirebase called. Removing all time-based triggers to permanently stop quota errors...");
-  try {
-    const triggers = ScriptApp.getProjectTriggers();
-    let deletedCount = 0;
-    triggers.forEach(t => {
-      const handler = t.getHandlerFunction();
-      if (handler === "syncGoogleTasksToFirebase") {
-        ScriptApp.deleteTrigger(t);
-        deletedCount++;
-        Logger.log("Deleted trigger ID: " + t.getUniqueId());
-      }
-    });
-    Logger.log("Successfully decommissioned. Purged " + deletedCount + " triggers.");
-    return { success: true, decommissioned: true, deletedTriggers: deletedCount };
-  } catch (e) {
-    Logger.log("Error removing triggers: " + e.toString());
-    return { success: false, error: e.toString() };
-  }
+  Logger.log("[PERMANENTLY DECOMMISSIONED] Google Tasks sync via Google Apps Script is disabled. Python background daemon manages tasks directly.");
+  return { success: true, decommissioned: true };
 }
 
 function removeAllTaskSyncTriggers() {
-  return syncGoogleTasksToFirebase();
+  return { success: true, decommissioned: true };
 }
 
 function getTasksDebugDetails() {
