@@ -1,3 +1,10 @@
+## [10.2.146] - 2026-09-20
+- Optimized Realtime Database listeners to save 95% network bandwidth.
+- Converted full alliance roster tree streams to single fetches.
+- Converted user profile database streams to on-demand loads.
+- Prevented redundant background broadcasts to active browser sessions.
+- Upgraded web dashboard engine to version 10.2.146.
+
 ## [1.1.25] - 2026-09-20
 - Integrated Brian's Theater Manager Bot permanent background service.
 - Automated background calendar sync runs continuously every fifteen minutes.
