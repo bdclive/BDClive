@@ -3,14 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BDC LIVE v10.2.142</title>
+    <title>BDC LIVE v10.2.144</title>
+    <meta name="description" content="Centralized real-time telemetry, operational statistics, and live streaming dashboard for Brian Diva Cox.">
     <!-- Open Graph & Social Preview Meta Tags -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="BDC LIVE v10.2.142">
-    <meta property="og:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
+    <meta property="og:title" content="BDC LIVE v10.2.144">
+    <meta property="og:description" content="Real-time statistics, streaming telemetry, theater sync, and central command control plane.">
     <meta property="og:image" content="./bdclive_banner.jpg">
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="BDC LIVE v10.2.142">
+    <meta property="twitter:title" content="BDC LIVE v10.2.144">
     <meta property="twitter:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="twitter:image" content="./bdclive_banner.jpg">
     <!-- PWA Manifest & Mobile Web App Meta Tags -->
@@ -1221,23 +1222,19 @@
         </div>
     </div>
 
-    <!-- UPDATE ALERT BANNER (Centered) -->
-    <div id="updateAlertBanner" style="display: none; position: fixed; top: 24px; left: 50%; transform: translateX(-50%); background: #161b22; border: 1px solid #3fb950; border-radius: 12px; padding: 12px 20px; color: #ffffff; z-index: 10000; box-shadow: 0 12px 36px rgba(0,0,0,0.8), 0 0 20px rgba(63, 185, 80, 0.35); font-size: 12px; align-items: center; gap: 16px; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); min-width: 340px; max-width: 90vw;">
-        <div style="display: flex; align-items: center; gap: 10px;">
-            <span id="update-alert-icon" style="font-size: 20px;">⚡</span>
-            <div style="display: flex; flex-direction: column; gap: 2px;">
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <span id="update-alert-title" style="font-weight: 700; color: #3fb950; font-size: 13px;">New Update Available</span>
-                    <span id="update-countdown-badge" style="background: rgba(63, 185, 80, 0.15); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.35); padding: 1px 6px; border-radius: 6px; font-size: 9.5px; font-weight: 700;">Auto-refreshing in 5s...</span>
-                </div>
-                <span id="update-alert-desc" style="color: #8b949e; font-size: 11px;">A new version has been deployed.</span>
-            </div>
+    <!-- PASSIVE UPDATE PILL (Option A: Discrete, non-intrusive, zero forced reloads) -->
+    <div id="updateAlertBanner" style="display: none; position: fixed; bottom: 16px; right: 16px; background: rgba(22, 27, 34, 0.95); backdrop-filter: blur(8px); border: 1px solid rgba(63, 185, 80, 0.4); border-radius: 20px; padding: 6px 14px; color: #ffffff; z-index: 9999; box-shadow: 0 4px 16px rgba(0,0,0,0.6); font-size: 11px; align-items: center; gap: 10px; transition: all 0.3s ease; pointer-events: auto;">
+        <div style="display: flex; align-items: center; gap: 6px;">
+            <span id="update-alert-icon" style="font-size: 11px;">🟢</span>
+            <span id="update-alert-title" style="font-weight: 600; color: #e6edf3; font-size: 11px;">v10.2.144 live</span>
+            <span id="update-countdown-badge" style="display: none;"></span>
+            <span id="update-alert-desc" style="display: none;"></span>
         </div>
-        <div style="display: flex; align-items: center; gap: 8px;">
-            <button onclick="performHardRefreshAndPurgeCache()" style="background: #238636; color: #ffffff; border: 1px solid rgba(255,255,255,0.2); padding: 6px 14px; border-radius: 6px; font-weight: 700; font-size: 11px; cursor: pointer; display: flex; align-items: center; gap: 5px; box-shadow: 0 2px 8px rgba(35, 134, 54, 0.4); white-space: nowrap;">
-                <i class="fa-solid fa-rotate-right"></i> Reload Now
+        <div style="display: flex; align-items: center; gap: 6px;">
+            <button onclick="performHardRefreshAndPurgeCache()" style="background: rgba(35, 134, 54, 0.3); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.4); padding: 3px 8px; border-radius: 12px; font-weight: 600; font-size: 10px; cursor: pointer; display: flex; align-items: center; gap: 4px;" title="Optional: Refresh when convenient">
+                <i class="fa-solid fa-rotate-right"></i> Refresh
             </button>
-            <button onclick="dismissUpdateAlert()" style="background: rgba(255,255,255,0.06); color: #8b949e; border: 1px solid rgba(255,255,255,0.1); padding: 6px 10px; border-radius: 6px; font-size: 11px; cursor: pointer;" title="Dismiss & Stay on current version">
+            <button onclick="dismissUpdateAlert()" style="background: transparent; color: #8b949e; border: none; padding: 2px 5px; font-size: 11px; cursor: pointer;" title="Dismiss">
                 ✕
             </button>
         </div>
@@ -3568,10 +3565,12 @@
             }
         }
 
-        const CURRENT_APP_VERSION = 'v10.2.142';
+        const CURRENT_APP_VERSION = 'v10.2.144';
+        window.CURRENT_APP_VERSION = CURRENT_APP_VERSION;
         let isDeployingLive = false;
         let pendingRemoteVersion = null;
         let autoRefreshTimer = null;
+        window.autoRefreshTimer = null;
         let autoRefreshCountdown = 5;
 
         function normalizeVer(v) {
@@ -3629,13 +3628,9 @@
             }
 
             const titleEl = document.getElementById('update-alert-title');
-            const descEl = document.getElementById('update-alert-desc');
-            const badgeEl = document.getElementById('update-countdown-badge');
             const iconEl = document.getElementById('update-alert-icon');
             if (iconEl) iconEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="color: #3fb950;"></i>';
-            if (titleEl) { titleEl.innerText = "⚡ Purging Caches & Reloading..."; titleEl.style.color = '#3fb950'; }
-            if (descEl) descEl.innerText = "Applying latest version...";
-            if (badgeEl) { badgeEl.innerText = "Reloading..."; badgeEl.style.display = 'inline-block'; }
+            if (titleEl) { titleEl.innerText = "Applying update..."; titleEl.style.color = '#3fb950'; }
 
             try {
                 if ('serviceWorker' in navigator) {
@@ -3675,75 +3670,17 @@
         }
 
         function startAutoRefreshCountdown(remoteVer) {
+            // Option A: Strictly disabled - zero forced automatic reloads to preserve fullscreen & streaming
             if (autoRefreshTimer) {
                 clearInterval(autoRefreshTimer);
                 autoRefreshTimer = null;
             }
-            const normVer = normalizeVer(remoteVer || pendingRemoteVersion || CURRENT_APP_VERSION);
-            const badgeEl = document.getElementById('update-countdown-badge');
-
-            // PERMANENT LOOP GUARD: If we already auto-reloaded for this version, NEVER auto-reload again!
-            const alreadyReloaded = sessionStorage.getItem('auto_reloaded_' + normVer) || 
-                                    localStorage.getItem('auto_reloaded_' + normVer);
-            if (alreadyReloaded) {
-                if (badgeEl) {
-                    badgeEl.style.display = 'inline-block';
-                    badgeEl.style.background = 'rgba(227, 179, 65, 0.15)';
-                    badgeEl.style.color = '#e3b341';
-                    badgeEl.style.borderColor = 'rgba(227, 179, 65, 0.35)';
-                    badgeEl.innerText = `Click Reload to apply`;
-                }
-                return;
-            }
-            
-            autoRefreshCountdown = 5;
-            if (badgeEl) {
-                badgeEl.style.display = 'inline-block';
-                badgeEl.style.background = 'rgba(63, 185, 80, 0.15)';
-                badgeEl.style.color = '#3fb950';
-                badgeEl.style.borderColor = 'rgba(63, 185, 80, 0.35)';
-                badgeEl.innerText = `Auto-refreshing in ${autoRefreshCountdown}s...`;
-            }
-
-            autoRefreshTimer = setInterval(() => {
-                // If user is actively typing in an input/textarea inside a modal or form, pause countdown!
-                const activeTag = document.activeElement ? (document.activeElement.tagName || '').toUpperCase() : '';
-                if (activeTag === 'INPUT' || activeTag === 'TEXTAREA') {
-                    if (badgeEl) {
-                        badgeEl.style.background = 'rgba(227, 179, 65, 0.15)';
-                        badgeEl.style.color = '#e3b341';
-                        badgeEl.style.borderColor = 'rgba(227, 179, 65, 0.35)';
-                        badgeEl.innerText = `Paused while typing...`;
-                    }
-                    return;
-                }
-
-                autoRefreshCountdown--;
-                if (autoRefreshCountdown > 0) {
-                    if (badgeEl) {
-                        badgeEl.style.background = 'rgba(63, 185, 80, 0.15)';
-                        badgeEl.style.color = '#3fb950';
-                        badgeEl.style.borderColor = 'rgba(63, 185, 80, 0.35)';
-                        badgeEl.innerText = `Auto-refreshing in ${autoRefreshCountdown}s...`;
-                    }
-                } else {
-                    clearInterval(autoRefreshTimer);
-                    autoRefreshTimer = null;
-                    try {
-                        sessionStorage.setItem('auto_reloaded_' + normVer, 'true');
-                        localStorage.setItem('auto_reloaded_' + normVer, 'true');
-                    } catch(e) {}
-                    performHardRefreshAndPurgeCache(normVer);
-                }
-            }, 1000);
         }
 
         function showUpdateAlert(title, desc, isBuilding = false, remoteVer = null) {
             const banner = document.getElementById('updateAlertBanner');
             const titleEl = document.getElementById('update-alert-title');
-            const descEl = document.getElementById('update-alert-desc');
             const iconEl = document.getElementById('update-alert-icon');
-            const badgeEl = document.getElementById('update-countdown-badge');
             if (!banner) return;
 
             const normVer = normalizeVer(remoteVer || pendingRemoteVersion);
@@ -3753,26 +3690,14 @@
             }
 
             if (isBuilding) {
-                if (autoRefreshTimer) { clearInterval(autoRefreshTimer); autoRefreshTimer = null; }
-                banner.style.borderColor = '#d29922';
-                banner.style.boxShadow = '0 12px 36px rgba(0,0,0,0.8), 0 0 20px rgba(210, 153, 34, 0.35)';
-                if (iconEl) iconEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="color: #d29922;"></i>';
-                if (titleEl) { titleEl.innerText = title; titleEl.style.color = '#d29922'; }
-                if (badgeEl) {
-                    badgeEl.style.display = 'inline-block';
-                    badgeEl.style.background = 'rgba(210, 153, 34, 0.15)';
-                    badgeEl.style.color = '#d29922';
-                    badgeEl.style.borderColor = 'rgba(210, 153, 34, 0.35)';
-                    badgeEl.innerText = 'Building in Cloud...';
-                }
+                if (iconEl) iconEl.innerHTML = '🟡';
+                if (titleEl) { titleEl.innerText = `${normVer || 'Update'} building...`; titleEl.style.color = '#d29922'; }
+                banner.style.borderColor = 'rgba(210, 153, 34, 0.4)';
             } else {
-                banner.style.borderColor = '#3fb950';
-                banner.style.boxShadow = '0 12px 36px rgba(0,0,0,0.8), 0 0 20px rgba(63, 185, 80, 0.35)';
-                if (iconEl) iconEl.innerHTML = '⚡';
-                if (titleEl) { titleEl.innerText = title; titleEl.style.color = '#3fb950'; }
-                startAutoRefreshCountdown(normVer);
+                if (iconEl) iconEl.innerHTML = '🟢';
+                if (titleEl) { titleEl.innerText = `${normVer || 'Update'} live`; titleEl.style.color = '#3fb950'; }
+                banner.style.borderColor = 'rgba(63, 185, 80, 0.4)';
             }
-            if (descEl) descEl.innerText = desc;
             banner.style.display = 'flex';
         }
 
@@ -3790,13 +3715,14 @@
 
         async function checkDirectVersionUpdate() {
             try {
-                const repoPath = 'bdclive/BDClive';
-                const versionUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-                    ? `VERSION.json?t=${Date.now()}` 
-                    : `https://raw.githubusercontent.com/${repoPath}/main/VERSION.json?t=${Date.now()}`;
-                
-                const res = await fetch(versionUrl, { cache: 'no-cache' });
-                if (res.ok) {
+                // Future-proof: Check same-origin VERSION.json first so we only detect versions that actually finished deploying!
+                const versionUrl = `VERSION.json?t=${Date.now()}`;
+                let res = await fetch(versionUrl, { cache: 'no-cache' }).catch(() => null);
+                if (!res || !res.ok) {
+                    const repoPath = 'bdclive/BDClive';
+                    res = await fetch(`https://raw.githubusercontent.com/${repoPath}/main/VERSION.json?t=${Date.now()}`, { cache: 'no-cache' }).catch(() => null);
+                }
+                if (res && res.ok) {
                     const data = await res.json();
                     const webComp = data?.components?.bdclive_web_dashboard;
                     const remoteVer = webComp?.version;
@@ -3804,8 +3730,7 @@
                         if (isNewerVersion(remoteVer, CURRENT_APP_VERSION)) {
                             pendingRemoteVersion = normalizeVer(remoteVer);
                             if (!isVersionDismissed(pendingRemoteVersion)) {
-                                const note = (webComp.latestChanges && webComp.latestChanges[0]) ? webComp.latestChanges[0] : `New version ${pendingRemoteVersion} deployed`;
-                                showUpdateAlert(`⚡ New Update Available (${pendingRemoteVersion})`, note, false, pendingRemoteVersion);
+                                showUpdateAlert(`Update Available (${pendingRemoteVersion})`, '', false, pendingRemoteVersion);
                                 return true;
                             }
                         } else {
@@ -3829,13 +3754,13 @@
 
             if (lcRepo.actionStatus === 'in_progress' || lcRepo.actionStatus === 'queued') {
                 isDeployingLive = true;
-                showUpdateAlert('🚀 Deployment In Progress', 'Uploading and deploying new update...', true);
+                showUpdateAlert('Deployment In Progress', '', true);
                 return;
             }
 
             if (isDeployingLive && lcRepo.actionConclusion === 'success') {
                 isDeployingLive = false;
-                showUpdateAlert('🟢 Update Deployed!', 'New update is live! Click reload to apply.', false, pendingRemoteVersion);
+                showUpdateAlert('Update Deployed', '', false, pendingRemoteVersion);
                 return;
             }
 

@@ -1,3 +1,11 @@
+## [10.2.144] - 2026-09-20
+- Disabled forced page reloads for seamless background updates.
+- Preserves fullscreen display and uninterrupted stream playback.
+- Replaced intrusive update banner with discrete corner status pill.
+- Prevents infinite reload loops and keyboard click lockouts.
+- Built automated version sync validator for future proofing.
+- Synchronized all web and cache versions to 10.2.144.
+
 ## [10.2.143] - 2026-09-20
 - Purged internal tools and daemons from public repo.
 - Removed legacy test scripts and duplicate web dashboards.
