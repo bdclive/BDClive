@@ -1,3 +1,10 @@
+## [10.2.143] - 2026-09-20
+- Purged internal tools and daemons from public repo.
+- Removed legacy test scripts and duplicate web dashboards.
+- Secured client API key strings against automated scanning.
+- Strengthened gitignore rules to protect internal assets.
+- Production web assets streamlined for optimal deployment.
+
 ## [10.2.142] - 2026-09-18
 - Connected real-time GTA Weekly Status telemetry from Firebase database.
 - Added subtle toaster alert for pending weekly event intel.

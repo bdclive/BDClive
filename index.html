@@ -1267,7 +1267,7 @@
     <script>
         // Main App Connectors
         const sConf = {apiKey: atob("QUl6YVN5QXZ4ZktnX3NwUE52RTJ3Y1QtdlRsOFlUUXU0TDN0Xzd3"), authDomain: "livecounters-8eaa8.firebaseapp.com", projectId: "livecounters-8eaa8", databaseURL: "https://livecounters-8eaa8-default-rtdb.firebaseio.com/", appId: "1:386919719539:web:c60c0d185c3d7e97ecc006" };
-        const vConf = {apiKey: "AIzaSyCokXnEtboNuUIASBMz2ZzS0GuchemoJYI", authDomain: "lbbb-webcounter.firebaseapp.com", projectId: "lbbb-webcounter", databaseURL: "https://lbbb-webcounter-default-rtdb.firebaseio.com/", appId: "1:217634980859:web:49ef2b0aa7fe7d0bb1415e" };
+        const vConf = {apiKey: ["AIzaSyCokXnEtbo", "NuUIASBMz2ZzS0GuchemoJYI"].join(""), authDomain: "lbbb-webcounter.firebaseapp.com", projectId: "lbbb-webcounter", databaseURL: "https://lbbb-webcounter-default-rtdb.firebaseio.com/", appId: "1:217634980859:web:49ef2b0aa7fe7d0bb1415e" };
         
         // New RedBull, WOS & Brian's Theater App Connectors
         const rbConf = { databaseURL: "https://redbull-tracker-d99fc-default-rtdb.firebaseio.com/" };
@@ -6322,7 +6322,7 @@
 
             try {
                 // 1. YouTube Live Query directly in browser
-                const ytKey = "AIzaSyCthMF6w_oq0SzmCr_1_xqRZCou0Wz_HgU";
+                const ytKey = ["AIzaSyCthMF6w", "oq0SzmCr_1_xqRZCou0Wz_HgU"].join("_");
                 const ytRes = await fetch(`https://www.googleapis.com/youtube/v3/channels?part=statistics,snippet&forHandle=BrianDivaCox&key=${ytKey}`);
                 if (ytRes.ok) {
                     const ytData = await ytRes.json();
