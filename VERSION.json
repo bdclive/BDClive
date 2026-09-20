@@ -1,6 +1,6 @@
 {
   "name": "BDC Ecosystem Master Version Registry",
-  "lastUpdated": "2026-09-20T08:46:00-07:00",
+  "lastUpdated": "2026-09-20T09:50:00-07:00",
   "components": {
     "bdc_central_command_desktop": "1.1.25",
     "daemons": {
@@ -14,9 +14,10 @@
       "cliFile": "Threads_Bridge/threads_bridge_cli_v1.0.59_(terminal).py"
     },
     "bdclive_web_dashboard": {
-      "version": "10.2.146",
+      "version": "10.2.147",
       "repository": "https://github.com/bdclive/BDClive",
       "latestChanges": [
+        "v10.2.147: Ironclad auto-reload loop breaker and session cooldown guard",
         "v10.2.146: Realtime Database bandwidth optimization, shallow reads, zero redundant streams",
         "v10.2.145: Autonomous hands-free self-updating engine, zero mouse or keyboard needed",
         "v10.2.144: Option A passive updates, zero auto-reloads, future-proofed version sync",
