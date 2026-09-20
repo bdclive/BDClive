@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BDC LIVE v10.2.145</title>
+    <title>BDC LIVE v10.2.147</title>
     <!-- Open Graph & Social Preview Meta Tags -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="BDC LIVE v10.2.145">
+    <meta property="og:title" content="BDC LIVE v10.2.147">
     <meta property="og:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="og:image" content="./bdclive_banner.jpg">
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="BDC LIVE v10.2.145">
+    <meta property="twitter:title" content="BDC LIVE v10.2.147">
     <meta property="twitter:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="twitter:image" content="./bdclive_banner.jpg">
     <!-- PWA Manifest & Mobile Web App Meta Tags -->
@@ -3568,7 +3568,7 @@
             }
         }
 
-        const CURRENT_APP_VERSION = 'v10.2.145';
+        const CURRENT_APP_VERSION = 'v10.2.147';
         window.CURRENT_APP_VERSION = CURRENT_APP_VERSION;
         let isDeployingLive = false;
         let pendingRemoteVersion = null;
@@ -3579,6 +3579,38 @@
         function normalizeVer(v) {
             if (!v) return '';
             return 'v' + String(v).replace(/^v/i, '').trim();
+        }
+
+        function isLocalEnvironment() {
+            try {
+                const proto = window.location.protocol;
+                const host = (window.location.hostname || '').toLowerCase();
+                if (proto === 'file:') return true;
+                if (!host || host === 'localhost' || host === '127.0.0.1' || host === '::1') return true;
+                if (host.endsWith('.local')) return true;
+                if (host.includes('desktop-')) return true;
+                if (/^(192\.168\.|10\.|172\.(1[6-9]|2[0-9]|3[0-1])\.)/.test(host)) return true;
+                if (!host.includes('.')) return true;
+            } catch(e) {}
+            return false;
+        }
+
+        function isAutoReloadSuppressed(ver) {
+            if (!ver) return false;
+            const norm = normalizeVer(ver);
+            try {
+                // 1. Single auto-reload per version guard (if attempted once, never loop)
+                if (sessionStorage.getItem('auto_reloaded_' + norm) === 'true' ||
+                    localStorage.getItem('auto_reloaded_' + norm) === 'true') {
+                    return true;
+                }
+                // 2. Global cooldown: minimum 15 minutes (900,000 ms) between any auto reloads
+                const lastTime = parseInt(sessionStorage.getItem('last_auto_reload_time') || localStorage.getItem('last_auto_reload_time') || '0', 10);
+                if (lastTime > 0 && (Date.now() - lastTime) < 900000) {
+                    return true;
+                }
+            } catch(e) {}
+            return false;
         }
 
         function isVersionDismissed(ver) {
@@ -3623,6 +3655,8 @@
                 sessionStorage.setItem('last_auto_reload_for_' + verToRecord, String(Date.now()));
                 sessionStorage.setItem('auto_reloaded_' + verToRecord, 'true');
                 localStorage.setItem('auto_reloaded_' + verToRecord, 'true');
+                sessionStorage.setItem('last_auto_reload_time', String(Date.now()));
+                localStorage.setItem('last_auto_reload_time', String(Date.now()));
             } catch(e) {}
 
             // Save active modal to seamlessly restore after reload
@@ -3684,6 +3718,19 @@
             }
             const normVer = normalizeVer(remoteVer || pendingRemoteVersion || CURRENT_APP_VERSION);
             const badgeEl = document.getElementById('update-countdown-badge');
+
+            // Ironclad reload suppression:
+            if (isAutoReloadSuppressed(normVer)) {
+                console.log(`[Auto-Update] Auto-reload loop suppressed for ${normVer}.`);
+                if (badgeEl) {
+                    badgeEl.style.display = 'inline-block';
+                    badgeEl.style.background = 'rgba(110, 118, 129, 0.2)';
+                    badgeEl.style.color = '#8b949e';
+                    badgeEl.style.borderColor = 'rgba(110, 118, 129, 0.4)';
+                    badgeEl.innerText = 'Update pending refresh';
+                }
+                return;
+            }
 
             autoRefreshCountdown = 5;
             if (badgeEl) {
@@ -3756,6 +3803,19 @@
                 banner.style.borderColor = '#3fb950';
                 if (iconEl) iconEl.innerHTML = '⚡';
                 if (titleEl) { titleEl.innerText = `New ${normVer || 'Update'} Live`; titleEl.style.color = '#3fb950'; }
+                if (isAutoReloadSuppressed(normVer)) {
+                    if (autoRefreshTimer) { clearInterval(autoRefreshTimer); autoRefreshTimer = null; window.autoRefreshTimer = null; }
+                    if (descEl) descEl.innerText = 'Update ready (reload suppressed to protect session)';
+                    if (badgeEl) {
+                        badgeEl.style.display = 'inline-block';
+                        badgeEl.style.background = 'rgba(110, 118, 129, 0.2)';
+                        badgeEl.style.color = '#8b949e';
+                        badgeEl.style.borderColor = 'rgba(110, 118, 129, 0.4)';
+                        badgeEl.innerText = 'Update pending refresh';
+                    }
+                    banner.style.display = 'flex';
+                    return;
+                }
                 if (descEl) descEl.innerText = 'Refreshing automatically hands-free';
                 startAutoRefreshCountdown(normVer);
             }
@@ -3776,28 +3836,47 @@
 
         async function checkDirectVersionUpdate() {
             try {
-                // Future-proof: Check same-origin VERSION.json first so we only detect versions that actually finished deploying!
-                const versionUrl = `VERSION.json?t=${Date.now()}`;
-                let res = await fetch(versionUrl, { cache: 'no-cache' }).catch(() => null);
-                if (!res || !res.ok) {
+                const isLocal = isLocalEnvironment();
+
+                // 1. Always fetch same-origin VERSION.json first
+                let sameOriginData = null;
+                try {
+                    const versionUrl = `VERSION.json?t=${Date.now()}`;
+                    const res = await fetch(versionUrl, { cache: 'no-cache' }).catch(() => null);
+                    if (res && res.ok) {
+                        sameOriginData = await res.json().catch(() => null);
+                    }
+                } catch(e) {}
+
+                let detectedVer = sameOriginData?.components?.bdclive_web_dashboard?.version || sameOriginData?.version;
+
+                // 2. On local/offline/network shares, NEVER query raw GitHub for auto-reloading!
+                // Local reloads cannot pull git commits to disk, which would cause an infinite reload loop!
+                if (!isLocal && !detectedVer) {
                     const repoPath = 'bdclive/BDClive';
-                    res = await fetch(`https://raw.githubusercontent.com/${repoPath}/main/VERSION.json?t=${Date.now()}`, { cache: 'no-cache' }).catch(() => null);
+                    const res = await fetch(`https://raw.githubusercontent.com/${repoPath}/main/VERSION.json?t=${Date.now()}`, { cache: 'no-cache' }).catch(() => null);
+                    if (res && res.ok) {
+                        const data = await res.json().catch(() => null);
+                        detectedVer = data?.components?.bdclive_web_dashboard?.version || data?.version;
+                    }
                 }
-                if (res && res.ok) {
-                    const data = await res.json();
-                    const webComp = data?.components?.bdclive_web_dashboard;
-                    const remoteVer = webComp?.version;
-                    if (remoteVer) {
-                        if (isNewerVersion(remoteVer, CURRENT_APP_VERSION)) {
-                            pendingRemoteVersion = normalizeVer(remoteVer);
-                            if (!isVersionDismissed(pendingRemoteVersion)) {
-                                showUpdateAlert(`Update Available (${pendingRemoteVersion})`, '', false, pendingRemoteVersion);
-                                return true;
+
+                if (detectedVer) {
+                    if (isNewerVersion(detectedVer, CURRENT_APP_VERSION)) {
+                        pendingRemoteVersion = normalizeVer(detectedVer);
+                        if (!isVersionDismissed(pendingRemoteVersion)) {
+                            // If reload was already attempted for this version or in cooldown, suppress loop!
+                            if (isAutoReloadSuppressed(pendingRemoteVersion)) {
+                                const banner = document.getElementById('updateAlertBanner');
+                                if (banner && !isDeployingLive) banner.style.display = 'none';
+                                return false;
                             }
-                        } else {
-                            const banner = document.getElementById('updateAlertBanner');
-                            if (banner && !isDeployingLive) banner.style.display = 'none';
+                            showUpdateAlert(`Update Available (${pendingRemoteVersion})`, '', false, pendingRemoteVersion);
+                            return true;
                         }
+                    } else {
+                        const banner = document.getElementById('updateAlertBanner');
+                        if (banner && !isDeployingLive) banner.style.display = 'none';
                     }
                 }
             } catch (e) {

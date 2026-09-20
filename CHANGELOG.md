@@ -1,3 +1,11 @@
+## [10.2.147] - 2026-09-20
+- Permanently eliminated infinite auto-reload loops across dashboard.
+- Enforced strict single-reload guard for each version release.
+- Added fifteen-minute cooldown protection between automatic reloads.
+- Shielded local environments from remote git version mismatches.
+- Upgraded web dashboard engine to version 10.2.147.
+- Synchronized all web assets and service workers to 10.2.147.
+
 ## [10.2.146] - 2026-09-20
 - Optimized Realtime Database listeners to save 95% network bandwidth.
 - Converted full alliance roster tree streams to single fetches.
