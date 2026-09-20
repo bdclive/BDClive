@@ -5,6 +5,13 @@
 - Added theater bot restart control to settings menu.
 - Graceful background daemon process termination on application shutdown.
 - Centralized daemon execution logging to dedicated theater service log.
+- Resolved Discord interactive button timeout for Brian's Theater Bot.
+- Multi-source token resolution hardened across environment variables and configs.
+- Replaced stale Gatekeeper webhook with active Alliance Gatekeeper channel.
+- Restored general notification webhooks with active moderator channel webhook.
+- Synchronized headless browser rendering libraries across all host environments.
+- Reconciled full Sorting Hat oracle suite across all deployment folders.
+- Verified all bots and webhooks with automated end-to-end audit.
 - Updated Central Command desktop control center to version 1.1.25.
 - Cleaned house and synchronized shortcuts across desktop environments.
 
