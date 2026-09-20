@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BDC LIVE v10.2.144</title>
+    <title>BDC LIVE v10.2.145</title>
     <!-- Open Graph & Social Preview Meta Tags -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="BDC LIVE v10.2.144">
+    <meta property="og:title" content="BDC LIVE v10.2.145">
     <meta property="og:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="og:image" content="./bdclive_banner.jpg">
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="BDC LIVE v10.2.144">
+    <meta property="twitter:title" content="BDC LIVE v10.2.145">
     <meta property="twitter:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="twitter:image" content="./bdclive_banner.jpg">
     <!-- PWA Manifest & Mobile Web App Meta Tags -->
@@ -1221,19 +1221,23 @@
         </div>
     </div>
 
-    <!-- PASSIVE UPDATE PILL (Option A: Discrete, non-intrusive, zero forced reloads) -->
-    <div id="updateAlertBanner" style="display: none; position: fixed; bottom: 16px; right: 16px; background: rgba(22, 27, 34, 0.95); backdrop-filter: blur(8px); border: 1px solid rgba(63, 185, 80, 0.4); border-radius: 20px; padding: 6px 14px; color: #ffffff; z-index: 9999; box-shadow: 0 4px 16px rgba(0,0,0,0.6); font-size: 11px; align-items: center; gap: 10px; transition: all 0.3s ease; pointer-events: auto;">
-        <div style="display: flex; align-items: center; gap: 6px;">
-            <span id="update-alert-icon" style="font-size: 11px;">🟢</span>
-            <span id="update-alert-title" style="font-weight: 600; color: #e6edf3; font-size: 11px;">v10.2.144 live</span>
-            <span id="update-countdown-badge" style="display: none;"></span>
-            <span id="update-alert-desc" style="display: none;"></span>
+    <!-- AUTONOMOUS SELF-UPDATE NOTIFICATION (Zero-touch hands-free auto-reload) -->
+    <div id="updateAlertBanner" style="display: none; position: fixed; bottom: 20px; right: 20px; background: rgba(22, 27, 34, 0.96); backdrop-filter: blur(10px); border: 1.5px solid #3fb950; border-radius: 14px; padding: 10px 16px; color: #ffffff; z-index: 10000; box-shadow: 0 8px 30px rgba(0,0,0,0.8), 0 0 20px rgba(63, 185, 80, 0.35); font-size: 11.5px; align-items: center; gap: 12px; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); pointer-events: auto; max-width: 380px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <span id="update-alert-icon" style="font-size: 16px;">⚡</span>
+            <div style="display: flex; flex-direction: column; gap: 2px;">
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <span id="update-alert-title" style="font-weight: 700; color: #3fb950; font-size: 12px;">Update Detected</span>
+                    <span id="update-countdown-badge" style="background: rgba(63, 185, 80, 0.15); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.35); padding: 1px 6px; border-radius: 6px; font-size: 9.5px; font-weight: 700;">Updating in 5s...</span>
+                </div>
+                <span id="update-alert-desc" style="color: #8b949e; font-size: 10px;">Refreshing automatically hands-free</span>
+            </div>
         </div>
         <div style="display: flex; align-items: center; gap: 6px;">
-            <button onclick="performHardRefreshAndPurgeCache()" style="background: rgba(35, 134, 54, 0.3); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.4); padding: 3px 8px; border-radius: 12px; font-weight: 600; font-size: 10px; cursor: pointer; display: flex; align-items: center; gap: 4px;" title="Optional: Refresh when convenient">
-                <i class="fa-solid fa-rotate-right"></i> Refresh
+            <button onclick="performHardRefreshAndPurgeCache()" style="background: #238636; color: #ffffff; border: 1px solid rgba(255,255,255,0.2); padding: 4px 10px; border-radius: 8px; font-weight: 700; font-size: 10px; cursor: pointer; display: flex; align-items: center; gap: 4px; box-shadow: 0 2px 6px rgba(35, 134, 54, 0.3);" title="Update immediately">
+                <i class="fa-solid fa-rotate-right"></i> Now
             </button>
-            <button onclick="dismissUpdateAlert()" style="background: transparent; color: #8b949e; border: none; padding: 2px 5px; font-size: 11px; cursor: pointer;" title="Dismiss">
+            <button onclick="dismissUpdateAlert()" style="background: rgba(255,255,255,0.06); color: #8b949e; border: 1px solid rgba(255,255,255,0.1); padding: 4px 8px; border-radius: 8px; font-size: 10px; cursor: pointer;" title="Postpone">
                 ✕
             </button>
         </div>
@@ -3564,7 +3568,7 @@
             }
         }
 
-        const CURRENT_APP_VERSION = 'v10.2.144';
+        const CURRENT_APP_VERSION = 'v10.2.145';
         window.CURRENT_APP_VERSION = CURRENT_APP_VERSION;
         let isDeployingLive = false;
         let pendingRemoteVersion = null;
@@ -3612,6 +3616,7 @@
             if (autoRefreshTimer) {
                 clearInterval(autoRefreshTimer);
                 autoRefreshTimer = null;
+                window.autoRefreshTimer = null;
             }
             const verToRecord = normalizeVer(targetVer || pendingRemoteVersion || CURRENT_APP_VERSION);
             try {
@@ -3627,9 +3632,13 @@
             }
 
             const titleEl = document.getElementById('update-alert-title');
+            const descEl = document.getElementById('update-alert-desc');
+            const badgeEl = document.getElementById('update-countdown-badge');
             const iconEl = document.getElementById('update-alert-icon');
             if (iconEl) iconEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="color: #3fb950;"></i>';
             if (titleEl) { titleEl.innerText = "Applying update..."; titleEl.style.color = '#3fb950'; }
+            if (descEl) descEl.innerText = "Refreshing hands-free...";
+            if (badgeEl) { badgeEl.innerText = "Reloading..."; badgeEl.style.display = 'inline-block'; }
 
             try {
                 if ('serviceWorker' in navigator) {
@@ -3669,17 +3678,59 @@
         }
 
         function startAutoRefreshCountdown(remoteVer) {
-            // Option A: Strictly disabled - zero forced automatic reloads to preserve fullscreen & streaming
             if (autoRefreshTimer) {
                 clearInterval(autoRefreshTimer);
                 autoRefreshTimer = null;
             }
+            const normVer = normalizeVer(remoteVer || pendingRemoteVersion || CURRENT_APP_VERSION);
+            const badgeEl = document.getElementById('update-countdown-badge');
+
+            autoRefreshCountdown = 5;
+            if (badgeEl) {
+                badgeEl.style.display = 'inline-block';
+                badgeEl.style.background = 'rgba(63, 185, 80, 0.15)';
+                badgeEl.style.color = '#3fb950';
+                badgeEl.style.borderColor = 'rgba(63, 185, 80, 0.35)';
+                badgeEl.innerText = `Updating in ${autoRefreshCountdown}s...`;
+            }
+
+            autoRefreshTimer = setInterval(() => {
+                // If user is actively typing in an input/textarea inside a modal or form, pause countdown!
+                const activeTag = document.activeElement ? (document.activeElement.tagName || '').toUpperCase() : '';
+                if (activeTag === 'INPUT' || activeTag === 'TEXTAREA') {
+                    if (badgeEl) {
+                        badgeEl.style.background = 'rgba(227, 179, 65, 0.15)';
+                        badgeEl.style.color = '#e3b341';
+                        badgeEl.style.borderColor = 'rgba(227, 179, 65, 0.35)';
+                        badgeEl.innerText = `Paused while typing...`;
+                    }
+                    return;
+                }
+
+                autoRefreshCountdown--;
+                if (autoRefreshCountdown > 0) {
+                    if (badgeEl) {
+                        badgeEl.style.background = 'rgba(63, 185, 80, 0.15)';
+                        badgeEl.style.color = '#3fb950';
+                        badgeEl.style.borderColor = 'rgba(63, 185, 80, 0.35)';
+                        badgeEl.innerText = `Updating in ${autoRefreshCountdown}s...`;
+                    }
+                } else {
+                    clearInterval(autoRefreshTimer);
+                    autoRefreshTimer = null;
+                    window.autoRefreshTimer = null;
+                    performHardRefreshAndPurgeCache(normVer);
+                }
+            }, 1000);
+            window.autoRefreshTimer = autoRefreshTimer;
         }
 
         function showUpdateAlert(title, desc, isBuilding = false, remoteVer = null) {
             const banner = document.getElementById('updateAlertBanner');
             const titleEl = document.getElementById('update-alert-title');
+            const descEl = document.getElementById('update-alert-desc');
             const iconEl = document.getElementById('update-alert-icon');
+            const badgeEl = document.getElementById('update-countdown-badge');
             if (!banner) return;
 
             const normVer = normalizeVer(remoteVer || pendingRemoteVersion);
@@ -3689,13 +3740,24 @@
             }
 
             if (isBuilding) {
-                if (iconEl) iconEl.innerHTML = '🟡';
-                if (titleEl) { titleEl.innerText = `${normVer || 'Update'} building...`; titleEl.style.color = '#d29922'; }
+                if (autoRefreshTimer) { clearInterval(autoRefreshTimer); autoRefreshTimer = null; window.autoRefreshTimer = null; }
                 banner.style.borderColor = 'rgba(210, 153, 34, 0.4)';
+                if (iconEl) iconEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="color: #d29922;"></i>';
+                if (titleEl) { titleEl.innerText = `${normVer || 'Update'} deploying...`; titleEl.style.color = '#d29922'; }
+                if (badgeEl) {
+                    badgeEl.style.display = 'inline-block';
+                    badgeEl.style.background = 'rgba(210, 153, 34, 0.15)';
+                    badgeEl.style.color = '#d29922';
+                    badgeEl.style.borderColor = 'rgba(210, 153, 34, 0.35)';
+                    badgeEl.innerText = 'Building...';
+                }
+                if (descEl) descEl.innerText = 'Preparing update in cloud';
             } else {
-                if (iconEl) iconEl.innerHTML = '🟢';
-                if (titleEl) { titleEl.innerText = `${normVer || 'Update'} live`; titleEl.style.color = '#3fb950'; }
-                banner.style.borderColor = 'rgba(63, 185, 80, 0.4)';
+                banner.style.borderColor = '#3fb950';
+                if (iconEl) iconEl.innerHTML = '⚡';
+                if (titleEl) { titleEl.innerText = `New ${normVer || 'Update'} Live`; titleEl.style.color = '#3fb950'; }
+                if (descEl) descEl.innerText = 'Refreshing automatically hands-free';
+                startAutoRefreshCountdown(normVer);
             }
             banner.style.display = 'flex';
         }
