@@ -1,3 +1,13 @@
+## [1.1.25] - 2026-09-20
+- Integrated Brian's Theater Manager Bot permanent background service.
+- Automated background calendar sync runs continuously every fifteen minutes.
+- Added one-click theater sync command to apps menu.
+- Added theater bot restart control to settings menu.
+- Graceful background daemon process termination on application shutdown.
+- Centralized daemon execution logging to dedicated theater service log.
+- Updated Central Command desktop control center to version 1.1.25.
+- Cleaned house and synchronized shortcuts across desktop environments.
+
 ## [10.2.145] - 2026-09-20
 - Autonomous self-updating engine updates smoothly hands-free.
 - Zero mouse or keyboard interaction required for updates.
