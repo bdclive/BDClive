@@ -2174,13 +2174,13 @@
             document.getElementById("wos-online-num").innerText = fNum(val !== null ? (typeof val === 'object' ? s.numChildren() : val) : 0);
         });
 
-        // WOS Alliance Gatekeeper Live Database Listeners
-        wosDb.ref("roster_live").on("value", s => {
+        // WOS Alliance Gatekeeper Live Database Listeners (Optimized shallow load)
+        wosDb.ref("roster_live").once("value", s => {
             rawWosRoster = s.val();
             computeAndRenderGatekeeper();
         });
 
-        wosDb.ref("users").on("value", s => {
+        wosDb.ref("users").once("value", s => {
             rawWosUsers = s.val();
             computeAndRenderGatekeeper();
         });
