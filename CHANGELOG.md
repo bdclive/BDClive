@@ -14,6 +14,10 @@
 - Upgraded web dashboard engine to version 10.2.146.
 
 ## [1.1.25] - 2026-09-20
+- Built dedicated 24/7 background gateway daemon for HouseKeeper.
+- Added auto-reconnect with exponential backoff and heartbeat recovery.
+- Automated HouseKeeper daemon auto-launch inside Central Command startup.
+- Added Restart HouseKeeper Bot command to settings menu.
 - Integrated Brian's Theater Manager Bot permanent background service.
 - Automated background calendar sync runs continuously every fifteen minutes.
 - Added one-click theater sync command to apps menu.
@@ -29,6 +33,11 @@
 - Verified all bots and webhooks with automated end-to-end audit.
 - Updated Central Command desktop control center to version 1.1.25.
 - Cleaned house and synchronized shortcuts across desktop environments.
+- Added chronological version sorting to guarantee newest version launch.
+- Created silent launcher eliminating command prompt popups on boot.
+- Automated Task Scheduler installer with twenty-second network readiness delay.
+- Added clean task uninstaller script for hassle-free removal.
+- Synchronized all auto-start launcher scripts across local and remote.
 
 ## [10.2.145] - 2026-09-20
 - Autonomous self-updating engine updates smoothly hands-free.
