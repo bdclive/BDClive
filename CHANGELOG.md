@@ -36,6 +36,8 @@
 - Added chronological version sorting to guarantee newest version launch.
 - Created silent launcher eliminating command prompt popups on boot.
 - Automated Task Scheduler installer with twenty-second network readiness delay.
+- Switched task scheduler setup from legacy XML to native PowerShell.
+- Added interactive terminal pause so setup results remain visible.
 - Added clean task uninstaller script for hassle-free removal.
 - Synchronized all auto-start launcher scripts across local and remote.
 
