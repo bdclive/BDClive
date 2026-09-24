@@ -1,3 +1,14 @@
+## [1.1.27] - 2026-09-24
+- Upgraded Los Santos Weekly live scraper with flair queries.
+- Added resilient proxy fallbacks for instant live intel updates.
+- Updated podium vehicle to verified Ocelot Penetrator.
+- Updated prize ride vehicle to Pegassi Zorrusso.
+- Displaying free Elysian Island Nightclub and double rewards.
+- Full bonus and discount parsing across weekly briefing feeds.
+- Synchronized web portal and desktop datasets to active week.
+- Upgraded Central Command desktop control center to version 1.1.27.
+- Synchronized latest release files and shortcuts across all machines.
+
 ## [1.1.26] - 2026-09-24
 - Redesigned Los Santos Weekly to rewrite messages in-place.
 - Keeping channel spotless with strictly one active briefing message.
