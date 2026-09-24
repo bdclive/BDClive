@@ -1,3 +1,13 @@
+## [1.1.26] - 2026-09-24
+- Redesigned Los Santos Weekly to rewrite messages in-place.
+- Keeping channel spotless with strictly one active briefing message.
+- Added in-place message rewriting for weekly reset holding notices.
+- Ingested verified September twenty-fourth Nightclubs Week event intel.
+- Displaying free Elysian Island Nightclub and double rewards.
+- Removed obsolete date filters preventing fresh Thursday data ingestion.
+- Upgraded Central Command desktop control center to version 1.1.26.
+- Synchronized latest release files and shortcuts across all machines.
+
 ## [10.2.147] - 2026-09-20
 - Permanently eliminated infinite auto-reload loops across dashboard.
 - Enforced strict single-reload guard for each version release.
