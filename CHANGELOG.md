@@ -1,3 +1,13 @@
+## [1.65.0] - 2026-09-30
+- Added dynamic Season Intermission mode when schedule concludes.
+- Rendered high resolution gold Season Intermission graphic marquee.
+- Display upcoming month lineup announcement on Discord marquee.
+- Updated auditorium closed spotlight announcement in alerts channel.
+- Added interactive portal and title suggestion action buttons.
+- Gracefully removed empty reservation menus during intermission periods.
+- Synchronized Season Intermission state across all machines.
+- Enforced clean house and strict two-backup retention.
+
 ## [1.1.27] - 2026-09-24
 - Upgraded Los Santos Weekly live scraper with flair queries.
 - Added resilient proxy fallbacks for instant live intel updates.
