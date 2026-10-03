@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BDC LIVE v10.2.147</title>
+    <title>BDC LIVE v10.2.148</title>
     <!-- Open Graph & Social Preview Meta Tags -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="BDC LIVE v10.2.147">
+    <meta property="og:title" content="BDC LIVE v10.2.148">
     <meta property="og:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="og:image" content="./bdclive_banner.jpg">
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="BDC LIVE v10.2.147">
+    <meta property="twitter:title" content="BDC LIVE v10.2.148">
     <meta property="twitter:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="twitter:image" content="./bdclive_banner.jpg">
     <!-- PWA Manifest & Mobile Web App Meta Tags -->
@@ -300,10 +300,11 @@
 
             <!-- Bot Fleet Live Bar -->
             <div id="gk-bot-live-bar" style="margin-top: 3px; background: rgba(0, 0, 0, 0.22); border: 1px solid rgba(255,255,255,0.06); border-radius: 5px; padding: 2px 6px; display: flex; justify-content: space-between; align-items: center; font-size: 0.58rem;" title="Live Bot Execution & Cooldown Status">
-                <div style="display: flex; align-items: center; gap: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 65%;">
+                <div style="display: flex; align-items: center; gap: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 68%;">
                     <span id="gk-bot-icon" style="color: #fbbf24;"><i class="fa-solid fa-hourglass-half"></i></span>
                     <span style="color: #8b949e; font-weight: 600;">Bot:</span>
                     <span id="gk-bot-name" style="color: #ffffff; font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">BabyAngryGerman</span>
+                    <span id="gk-bot-count" style="color: #00d2ff; font-weight: 800; font-size: 0.54rem; background: rgba(0, 210, 255, 0.12); border: 1px solid rgba(0, 210, 255, 0.25); padding: 0 4px; border-radius: 3px; margin-left: 2px; display: none; white-space: nowrap;">11/17</span>
                 </div>
                 <div style="display: flex; align-items: center; gap: 3px; white-space: nowrap;">
                     <span id="gk-bot-timer" style="color: #fbbf24; font-weight: 800; font-family: monospace; font-size: 0.60rem; background: rgba(251, 191, 36, 0.12); border: 1px solid rgba(251, 191, 36, 0.28); padding: 1px 5px; border-radius: 3px;">01:19:54</span>
@@ -668,7 +669,10 @@
                 <div style="display: grid; grid-template-columns: 1.2fr 1.2fr 1fr; gap: 8px; font-size: 11px; background: rgba(255,255,255,0.02); padding: 8px 12px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05);">
                     <div>
                         <span style="color: #8b949e; font-size: 10px; text-transform: uppercase; font-weight: 700;">Monitored Account:</span>
-                        <div id="gk-modal-bot-account" style="color: #ffffff; font-weight: 700; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Standby / Idle</div>
+                        <div style="display: flex; align-items: center; gap: 5px; margin-top: 2px;">
+                            <div id="gk-modal-bot-account" style="color: #ffffff; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Standby / Idle</div>
+                            <span id="gk-modal-bot-count" style="color: #00d2ff; font-weight: 800; font-size: 10px; background: rgba(0, 210, 255, 0.12); border: 1px solid rgba(0, 210, 255, 0.25); padding: 0 5px; border-radius: 4px; display: none; white-space: nowrap;">11/17</span>
+                        </div>
                     </div>
                     <div>
                         <span style="color: #8b949e; font-size: 10px; text-transform: uppercase; font-weight: 700;">Current Phase:</span>
@@ -2205,11 +2209,13 @@
             receivedAt: Date.now(),
             broadcastOfflineAlert: null
         };
+        window.latestBotTelemetry = latestBotTelemetry;
 
         wosDb.ref('bot_status').on('value', (snap) => {
             if (snap.exists()) {
                 const val = snap.val();
                 latestBotTelemetry = { ...latestBotTelemetry, ...val, receivedAt: Date.now() };
+                window.latestBotTelemetry = latestBotTelemetry;
                 if (typeof updateGatekeeperBotTelemetryUI === 'function') {
                     updateGatekeeperBotTelemetryUI();
                 }
@@ -2218,6 +2224,7 @@
 
         wosDb.ref('broadcastAlerts/bot_fleet_offline_alert').on('value', (snap) => {
             latestBotTelemetry.broadcastOfflineAlert = snap.exists() ? snap.val() : null;
+            window.latestBotTelemetry = latestBotTelemetry;
             if (typeof updateGatekeeperBotTelemetryUI === 'function') {
                 updateGatekeeperBotTelemetryUI();
             }
@@ -2235,12 +2242,15 @@
             }
             if (typeof isExplicitOnline === 'boolean') {
                 isCentralCommandExplicitOnline = isExplicitOnline;
+                if (isExplicitOnline) isFirebaseConnected = true;
             }
             updateCentralCommandWatchdogUI();
             if (typeof updateGatekeeperBotTelemetryUI === 'function') {
                 updateGatekeeperBotTelemetryUI();
             }
         }
+
+        window.recordCentralCommandHeartbeat = recordCentralCommandHeartbeat;
 
         sDb.ref('.info/connected').on('value', snap => {
             isFirebaseConnected = snap.val() === true;
@@ -3568,7 +3578,7 @@
             }
         }
 
-        const CURRENT_APP_VERSION = 'v10.2.147';
+        const CURRENT_APP_VERSION = 'v10.2.148';
         window.CURRENT_APP_VERSION = CURRENT_APP_VERSION;
         let isDeployingLive = false;
         let pendingRemoteVersion = null;
@@ -4644,7 +4654,7 @@
 
         // ================= GATEKEEPER BOT HUB & SERVER TELEMETRY & ALERT ENGINE =================
         function updateGatekeeperBotTelemetryUI() {
-            const data = latestBotTelemetry || {};
+            const data = (typeof window !== 'undefined' && window.latestBotTelemetry) ? window.latestBotTelemetry : (latestBotTelemetry || {});
             const status = String(data.status || 'STANDBY').toUpperCase();
             const stage = String(data.stage || '');
             const stageLower = stage.toLowerCase();
@@ -4875,17 +4885,44 @@
             updateGatekeeperBotTimerTick();
         }
 
+        function getBotFleetCountInfo(data, botName) {
+            if (!data) return { current: 0, total: 0, str: '' };
+            const fleet = Array.isArray(data.fleet) ? data.fleet : [];
+            const total = fleet.length || Number(data.totalBots || 0) || 0;
+            let current = 0;
+            if (fleet.length > 0 && botName) {
+                const cleanName = String(botName).trim().toLowerCase();
+                const foundIdx = fleet.findIndex(f => f && f.name && f.name.trim().toLowerCase() === cleanName);
+                if (foundIdx !== -1) {
+                    const fItem = fleet[foundIdx];
+                    current = (fItem.instance !== undefined && fItem.instance !== null && !isNaN(Number(fItem.instance)))
+                        ? (Number(fItem.instance) + 1)
+                        : (foundIdx + 1);
+                }
+            }
+            if (!current && data.currentInstance !== undefined && data.currentInstance !== null && !isNaN(Number(data.currentInstance))) {
+                current = Number(data.currentInstance) + 1;
+            } else if (!current && data.accountIndex !== undefined && data.accountIndex !== null && !isNaN(Number(data.accountIndex))) {
+                current = Number(data.accountIndex) + 1;
+            }
+            if (total > 0 && current > 0) return { current, total, str: `${current}/${total}` };
+            if (total > 0) return { current: 0, total, str: `0/${total}` };
+            return { current: 0, total: 0, str: '' };
+        }
+
         function updateGatekeeperBotTimerTick() {
             const mTimer = document.getElementById('gk-modal-bot-timer');
             const mTimerLbl = document.getElementById('gk-modal-timer-lbl');
             const mAcc = document.getElementById('gk-modal-bot-account');
             const mStage = document.getElementById('gk-modal-bot-stage');
+            const mCount = document.getElementById('gk-modal-bot-count');
             const cardBotIcon = document.getElementById('gk-bot-icon');
             const cardBotName = document.getElementById('gk-bot-name');
             const cardBotTimer = document.getElementById('gk-bot-timer');
+            const cardBotCount = document.getElementById('gk-bot-count');
             const stageChip = document.getElementById('gk-bot-stage-chip');
 
-            const data = latestBotTelemetry || {};
+            const data = (typeof window !== 'undefined' && window.latestBotTelemetry) ? window.latestBotTelemetry : (latestBotTelemetry || {});
             const status = String(data.status || 'STANDBY').toUpperCase();
             const stage = String(data.stage || '');
             const stageLower = stage.toLowerCase();
@@ -4906,6 +4943,7 @@
                     cardBotName.innerText = offReason;
                     cardBotName.style.color = '#ff7b72';
                 }
+                if (cardBotCount) cardBotCount.style.display = 'none';
                 if (cardBotTimer) {
                     cardBotTimer.innerText = 'HALTED';
                     cardBotTimer.style.color = '#f85149';
@@ -4922,6 +4960,7 @@
                     mTimer.style.color = '#f85149';
                 }
                 if (mAcc) mAcc.innerText = data.account || 'Offline';
+                if (mCount) mCount.style.display = 'none';
                 if (mStage) {
                     mStage.innerText = 'Automation Halted';
                     mStage.style.color = '#f85149';
@@ -4937,10 +4976,23 @@
                 const s = (remaining % 60).toString().padStart(2, '0');
                 const timerStr = (remaining > 0 || initialSecs > 0) ? `${h}:${m}:${s}` : (data.cooldownHoldText || 'Resting');
 
+                const countInfo = getBotFleetCountInfo(data, botName);
+
                 if (cardBotIcon) cardBotIcon.innerHTML = '<i class="fa-solid fa-hourglass-half" style="color: #fbbf24;"></i>';
                 if (cardBotName) {
                     cardBotName.innerText = botName;
                     cardBotName.style.color = '#ffffff';
+                }
+                if (cardBotCount) {
+                    if (countInfo.str) {
+                        cardBotCount.innerText = countInfo.str;
+                        cardBotCount.style.display = 'inline-block';
+                        cardBotCount.style.color = '#fbbf24';
+                        cardBotCount.style.background = 'rgba(251, 191, 36, 0.12)';
+                        cardBotCount.style.borderColor = 'rgba(251, 191, 36, 0.28)';
+                    } else {
+                        cardBotCount.style.display = 'none';
+                    }
                 }
                 if (cardBotTimer) {
                     cardBotTimer.innerText = timerStr;
@@ -4958,6 +5010,17 @@
                     mTimer.style.color = '#fbbf24';
                 }
                 if (mAcc) mAcc.innerText = botName;
+                if (mCount) {
+                    if (countInfo.str) {
+                        mCount.innerText = countInfo.str;
+                        mCount.style.display = 'inline-block';
+                        mCount.style.color = '#fbbf24';
+                        mCount.style.background = 'rgba(251, 191, 36, 0.12)';
+                        mCount.style.borderColor = 'rgba(251, 191, 36, 0.28)';
+                    } else {
+                        mCount.style.display = 'none';
+                    }
+                }
                 if (mStage) {
                     mStage.innerText = data.cooldownReason || data.stage || 'Routine Rotation Rest';
                     mStage.style.color = '#fbbf24';
@@ -4965,11 +5028,23 @@
             } else if (status === 'ACTIVE') {
                 const botName = data.activeAccount || data.account || 'Fleet Bot';
                 const routinePhase = data.activeStage || data.stage || 'Routine Execution';
+                const countInfo = getBotFleetCountInfo(data, botName);
 
                 if (cardBotIcon) cardBotIcon.innerHTML = '<i class="fa-solid fa-bolt" style="color: #00d2ff;"></i>';
                 if (cardBotName) {
                     cardBotName.innerText = botName;
                     cardBotName.style.color = '#ffffff';
+                }
+                if (cardBotCount) {
+                    if (countInfo.str) {
+                        cardBotCount.innerText = countInfo.str;
+                        cardBotCount.style.display = 'inline-block';
+                        cardBotCount.style.color = '#00d2ff';
+                        cardBotCount.style.background = 'rgba(0, 210, 255, 0.12)';
+                        cardBotCount.style.borderColor = 'rgba(0, 210, 255, 0.25)';
+                    } else {
+                        cardBotCount.style.display = 'none';
+                    }
                 }
                 if (cardBotTimer) {
                     cardBotTimer.innerText = 'RUNNING';
@@ -4987,6 +5062,17 @@
                     mTimer.style.color = '#00d2ff';
                 }
                 if (mAcc) mAcc.innerText = botName;
+                if (mCount) {
+                    if (countInfo.str) {
+                        mCount.innerText = countInfo.str;
+                        mCount.style.display = 'inline-block';
+                        mCount.style.color = '#00d2ff';
+                        mCount.style.background = 'rgba(0, 210, 255, 0.12)';
+                        mCount.style.borderColor = 'rgba(0, 210, 255, 0.25)';
+                    } else {
+                        mCount.style.display = 'none';
+                    }
+                }
                 if (mStage) {
                     mStage.innerText = routinePhase;
                     mStage.style.color = '#00d2ff';
@@ -4994,11 +5080,23 @@
             } else {
                 const botName = data.account || 'Fleet Standby';
                 const standbyStage = data.stage || 'Fleet Standby / Ready';
+                const countInfo = getBotFleetCountInfo(data, botName);
 
                 if (cardBotIcon) cardBotIcon.innerHTML = '<i class="fa-solid fa-circle-check" style="color: #3fb950;"></i>';
                 if (cardBotName) {
                     cardBotName.innerText = botName;
                     cardBotName.style.color = '#ffffff';
+                }
+                if (cardBotCount) {
+                    if (countInfo.str && countInfo.current > 0) {
+                        cardBotCount.innerText = countInfo.str;
+                        cardBotCount.style.display = 'inline-block';
+                        cardBotCount.style.color = '#3fb950';
+                        cardBotCount.style.background = 'rgba(63, 185, 80, 0.12)';
+                        cardBotCount.style.borderColor = 'rgba(63, 185, 80, 0.3)';
+                    } else {
+                        cardBotCount.style.display = 'none';
+                    }
                 }
                 if (cardBotTimer) {
                     cardBotTimer.innerText = 'READY';
@@ -5016,6 +5114,17 @@
                     mTimer.style.color = '#3fb950';
                 }
                 if (mAcc) mAcc.innerText = botName;
+                if (mCount) {
+                    if (countInfo.total > 0) {
+                        mCount.innerText = `${countInfo.total} Total`;
+                        mCount.style.display = 'inline-block';
+                        mCount.style.color = '#3fb950';
+                        mCount.style.background = 'rgba(63, 185, 80, 0.12)';
+                        mCount.style.borderColor = 'rgba(63, 185, 80, 0.3)';
+                    } else {
+                        mCount.style.display = 'none';
+                    }
+                }
                 if (mStage) {
                     mStage.innerText = standbyStage;
                     mStage.style.color = '#3fb950';
@@ -5024,6 +5133,9 @@
         }
 
         setInterval(updateGatekeeperBotTimerTick, 1000);
+        window.updateGatekeeperBotTimerTick = updateGatekeeperBotTimerTick;
+        window.updateGatekeeperBotTelemetryUI = updateGatekeeperBotTelemetryUI;
+        window.getBotFleetCountInfo = getBotFleetCountInfo;
 
         function filterGatekeeperRoster(tab) {
             currentGkFilter = tab;
