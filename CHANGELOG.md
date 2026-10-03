@@ -1,3 +1,23 @@
+## [10.2.148] - 2026-10-02
+- Added bot fleet progress counter badge to Gatekeeper card.
+- Displaying active account index over total roster count.
+- Added dynamic fleet progress badge in Gatekeeper telemetry modal.
+- Synchronized badge styling across active and cooldown bot states.
+- Upgraded web dashboard engine to version 10.2.148.
+- Synchronized all web assets and service workers to 10.2.148.
+- Passed all automated browser and DOM test suites.
+
+## [1.1.28] - 2026-10-01
+- Added headless Chrome bridge for reliable Reddit intel scraping.
+- Bypassed datacenter access blocks on community weekly updates.
+- Updated Halloween event week intel for October first.
+- Podium vehicle updated to verified Lampadati Cinquemila.
+- Prize ride updated to verified Vapid Dominator GTT.
+- Added triple rewards for Halloween Survivals and Slasher.
+- In-place briefing rewrite updated in Discord weekly channel.
+- Upgraded Central Command desktop engine to version 1.1.28.
+- Enforced clean house protocol across all project paths.
+
 ## [1.65.0] - 2026-09-30
 - Added dynamic Season Intermission mode when schedule concludes.
 - Rendered high resolution gold Season Intermission graphic marquee.
