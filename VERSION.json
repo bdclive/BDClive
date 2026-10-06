@@ -58,7 +58,15 @@
     "google_apps_script_backend": {
       "deploymentId": "AKfycbzXjvqOcr9w3CZuwNxDhesndWeSwFLDeo7RS_REykgenkqf73lq4FAfZ7bTitTmVEA",
       "versionNumber": "@196"
+    },
+    "cloud_admin_portal": {
+      "version": "3.9.6",
+      "file": "admin.html",
+      "authProvider": "GoogleAuthProvider",
+      "latestChanges": [
+        "v3.9.6: Integrated Google Sign-In and removed traditional email password authentication"
+      ]
     }
   },
-  "version": "1.0.78"
+  "version": "1.0.79"
 }

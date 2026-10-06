@@ -11,6 +11,24 @@
     "tasks": {
       ".read": true,
       ".write": true
-    }
+    },
+    "Counters": {
+      ".read": true,
+      ".write": false
+    },
+    "accountQuota": {
+      ".read": false,
+      ".write": false
+    },
+    "pastMovies": {
+      ".read": true,
+      ".write": false
+    },
+    "system": {
+      ".read": true,
+      ".write": false
+    },
+    ".read": false,
+    ".write": false
   }
 }

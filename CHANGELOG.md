@@ -1,3 +1,11 @@
+## [3.9.6] - 2026-10-06
+- Added Google Sign-In with official branded authentication button.
+- Removed traditional email and password login form fields.
+- Added automatic popup with seamless redirect fallback support.
+- Enforced authorized administrator email account verification gatekeeper.
+- Added session header bar with clean user sign-out.
+- Bumping Cloud Admin portal engine to version 3.9.6.
+
 ## [10.2.148] - 2026-10-02
 - Added bot fleet progress counter badge to Gatekeeper card.
 - Displaying active account index over total roster count.
