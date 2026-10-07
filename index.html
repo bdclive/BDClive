@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BDC LIVE v10.2.149</title>
+    <title>BDC LIVE v10.2.150</title>
     <meta name="description" content="Centralized real-time telemetry, operational statistics, and live streaming dashboard for Brian Diva Cox.">
     <!-- Open Graph & Social Preview Meta Tags -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="BDC LIVE v10.2.149">
+    <meta property="og:title" content="BDC LIVE v10.2.150">
     <meta property="og:description" content="Real-time statistics, streaming telemetry, theater sync, and central command control plane.">
     <meta property="og:image" content="./bdclive_banner.jpg">
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="BDC LIVE v10.2.149">
+    <meta property="twitter:title" content="BDC LIVE v10.2.150">
     <meta property="twitter:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="twitter:image" content="./bdclive_banner.jpg">
     <!-- PWA Manifest & Mobile Web App Meta Tags -->
@@ -2211,9 +2211,31 @@
             document.getElementById("wos-online-num").innerText = fNum(val !== null ? (typeof val === 'object' ? s.numChildren() : val) : 0);
         });
 
-        // WOS Alliance Gatekeeper Live Database Listeners (Optimized shallow load)
-        wosDb.ref("roster_live").once("value", s => {
+        // ================= ALLIANCE GATEKEEPER REAL-TIME ENGINE STATE =================
+        let rawWosRoster = null;
+        let rawWosUsers = null;
+        let rawWosGiftcode = null;
+        let rawWosAlts = null;
+        let rawCcGatekeeperCounters = null;
+        let currentGkFilter = 'all';
+
+        // WOS Alliance Gatekeeper Live Database Listeners (Continuous real-time synchronization)
+        wosDb.ref("roster_live").on("value", s => {
             rawWosRoster = s.val();
+            window.rawWosRoster = rawWosRoster;
+            computeAndRenderGatekeeper();
+        });
+
+        // WOS Public Claimed Chiefs & Linked Alts Real-Time Listeners
+        wosDb.ref("giftcode_bot").on("value", s => {
+            rawWosGiftcode = s.val() || {};
+            window.rawWosGiftcode = rawWosGiftcode;
+            computeAndRenderGatekeeper();
+        });
+
+        wosDb.ref("users_alts").on("value", s => {
+            rawWosAlts = s.val() || {};
+            window.rawWosAlts = rawWosAlts;
             computeAndRenderGatekeeper();
         });
 
@@ -2222,6 +2244,7 @@
             computeAndRenderGatekeeper();
         }).catch(err => {
             rawWosUsers = null;
+            computeAndRenderGatekeeper();
         });
 
         // WOS Alliance & Community Ticket Alerts Real-Time Listeners
@@ -2586,41 +2609,10 @@
             
             if(d.discordRsvp !== undefined) document.getElementById('m-rsvp').innerText = fNum(d.discordRsvp);
             
-            // Alliance Gatekeeper Live Sync (Fallback / Secondary Sync)
-            if (d.gatekeeperCounters && !rawWosRoster) {
-                const gk = d.gatekeeperCounters;
-                const totMem = gk.totalMembers !== undefined ? gk.totalMembers : 41;
-                const new7d = gk.newMembers7Days !== undefined ? gk.newMembers7Days : 0;
-                const newToday = gk.newMembersToday !== undefined ? gk.newMembersToday : 0;
-                const unclaimed = gk.unclaimedAccounts !== undefined ? gk.unclaimedAccounts : 17;
-                const expTokens = gk.expiredTokens !== undefined ? gk.expiredTokens : 0;
-                const unsynced = gk.unsyncedChiefs !== undefined ? gk.unsyncedChiefs : 27;
-                const validTokens = gk.activeSync !== undefined ? gk.activeSync : 14;
-                const claimed = totMem - unclaimed;
-                const claimPct = ((claimed / (totMem || 1)) * 100).toFixed(1);
-
-                const totEl = document.getElementById('gk-total-members');
-                const clEl = document.getElementById('gk-claimed');
-                const uncEl = document.getElementById('gk-unclaimed');
-                const valTokEl = document.getElementById('gk-valid-tokens');
-                const expEl = document.getElementById('gk-expired-tokens');
-                const unsyncEl = document.getElementById('gk-unsynced');
-                const pctEl = document.getElementById('gk-claim-pct');
-                const n7El = document.getElementById('gk-new-7d');
-                const nTodayEl = document.getElementById('gk-new-today');
-
-                if (totEl) totEl.innerText = fNum(totMem);
-                if (clEl) clEl.innerText = fNum(claimed);
-                if (uncEl) uncEl.innerText = fNum(unclaimed);
-                if (valTokEl) valTokEl.innerText = fNum(validTokens);
-                if (pctEl) pctEl.innerText = `${claimPct}%`;
-                if (n7El) n7El.innerText = (new7d > 0 ? `+${fNum(new7d)}` : `+${new7d}`);
-                if (nTodayEl) nTodayEl.innerText = (newToday > 0 ? `+${fNum(newToday)}` : `+${newToday}`);
-                if (expEl) {
-                    expEl.innerText = fNum(expTokens);
-                    expEl.style.color = expTokens > 0 ? '#f85149' : '#3fb950';
-                }
-                if (unsyncEl) unsyncEl.innerText = fNum(unsynced);
+            // Alliance Gatekeeper Live Sync (Central Command / Primary Ecosystem Data)
+            if (d.gatekeeperCounters) {
+                rawCcGatekeeperCounters = d.gatekeeperCounters;
+                computeAndRenderGatekeeper();
             }
 
             // Windows Host Server & Central Command App Uptime
@@ -2650,39 +2642,8 @@
         sDb.ref('labData/gatekeeperCounters').on('value', (s) => {
             const gk = s.val(); if (!gk) return;
             if (gk.timestamp) recordCentralCommandHeartbeat(gk.timestamp);
-            if (rawWosRoster) return; // Prioritize real-time WOS Database
-            const totMem = gk.totalMembers !== undefined ? gk.totalMembers : 41;
-            const new7d = gk.newMembers7Days !== undefined ? gk.newMembers7Days : 0;
-            const newToday = gk.newMembersToday !== undefined ? gk.newMembersToday : 0;
-            const unclaimed = gk.unclaimedAccounts !== undefined ? gk.unclaimedAccounts : 17;
-            const expTokens = gk.expiredTokens !== undefined ? gk.expiredTokens : 0;
-            const unsynced = gk.unsyncedChiefs !== undefined ? gk.unsyncedChiefs : 27;
-            const validTokens = gk.activeSync !== undefined ? gk.activeSync : 14;
-            const claimed = totMem - unclaimed;
-            const claimPct = ((claimed / (totMem || 1)) * 100).toFixed(1);
-
-            const totEl = document.getElementById('gk-total-members');
-            const clEl = document.getElementById('gk-claimed');
-            const uncEl = document.getElementById('gk-unclaimed');
-            const valTokEl = document.getElementById('gk-valid-tokens');
-            const expEl = document.getElementById('gk-expired-tokens');
-            const unsyncEl = document.getElementById('gk-unsynced');
-            const pctEl = document.getElementById('gk-claim-pct');
-            const n7El = document.getElementById('gk-new-7d');
-            const nTodayEl = document.getElementById('gk-new-today');
-
-            if (totEl) totEl.innerText = fNum(totMem);
-            if (clEl) clEl.innerText = fNum(claimed);
-            if (uncEl) uncEl.innerText = fNum(unclaimed);
-            if (valTokEl) valTokEl.innerText = fNum(validTokens);
-            if (pctEl) pctEl.innerText = `${claimPct}%`;
-            if (n7El) n7El.innerText = (new7d > 0 ? `+${fNum(new7d)}` : `+${new7d}`);
-            if (nTodayEl) nTodayEl.innerText = (newToday > 0 ? `+${fNum(newToday)}` : `+${newToday}`);
-            if (expEl) {
-                expEl.innerText = fNum(expTokens);
-                expEl.style.color = expTokens > 0 ? '#f85149' : '#3fb950';
-            }
-            if (unsyncEl) unsyncEl.innerText = fNum(unsynced);
+            rawCcGatekeeperCounters = gk;
+            computeAndRenderGatekeeper();
         });
 
         let currentTasksDatabaseSnapshot = null;
@@ -3614,7 +3575,7 @@
             }
         }
 
-        const CURRENT_APP_VERSION = 'v10.2.149';
+        const CURRENT_APP_VERSION = 'v10.2.150';
         window.CURRENT_APP_VERSION = CURRENT_APP_VERSION;
         let isDeployingLive = false;
         let pendingRemoteVersion = null;
@@ -4348,10 +4309,6 @@
         }
 
         // ================= ALLIANCE GATEKEEPER REAL-TIME ENGINE =================
-        let rawWosRoster = null;
-        let rawWosUsers = null;
-        let currentGkFilter = 'all';
-
         // Game Sync Audio Chime Suite
         let gkSoundEnabled = localStorage.getItem('gk_sound_enabled') !== 'false';
         let gkSoundVolume = parseFloat(localStorage.getItem('gk_sound_volume') || '0.6');
@@ -4507,58 +4464,71 @@
             return { bannedIds, bannedNames };
         }
 
-        function computeAndRenderGatekeeper() {
-            if (!rawWosRoster) return;
-            
-            const rawRosterList = Object.values(rawWosRoster);
-            const usersMap = rawWosUsers || {};
-            const { bannedIds, bannedNames } = getBannedAndExcludedIdentifiers(rawWosRoster, usersMap);
+        function getGatekeeperComputedState() {
+            const liveRoster = window.rawWosRoster || rawWosRoster;
+            if (!liveRoster && !rawCcGatekeeperCounters) return null;
 
-            // Filter active alliance members only (strictly excludes banned & departed members)
-            const activeRosterList = rawRosterList.filter(r => {
-                if (!r || typeof r !== 'object') return false;
+            const rawRosterList = liveRoster ? Object.values(liveRoster) : [];
+            const usersMap = rawWosUsers || {};
+            const giftcodeMap = window.rawWosGiftcode || rawWosGiftcode || {};
+            const altsMap = window.rawWosAlts || rawWosAlts || {};
+            const { bannedIds, bannedNames } = getBannedAndExcludedIdentifiers(liveRoster, usersMap);
+
+            const activeRoster = [];
+            const departedRoster = [];
+            const bannedRoster = [];
+
+            rawRosterList.forEach(r => {
+                if (!r || typeof r !== 'object') return;
                 const gid = String(r.gameId || '').trim();
                 const name = String(r.name || '').trim().toLowerCase();
-                if (isMemberBannedOrLeft(r) || (gid && bannedIds.has(gid)) || (name && bannedNames.has(name))) {
-                    return false;
+                const st = String(r.membershipStatus || r.status || '').trim().toLowerCase();
+
+                if (st === 'banned' || st === 'ban' || (gid && bannedIds.has(gid) && !st.includes('left')) || (name && bannedNames.has(name) && !st.includes('left'))) {
+                    bannedRoster.push(r);
+                } else if (isMemberBannedOrLeft(r) || (gid && bannedIds.has(gid)) || (name && bannedNames.has(name))) {
+                    departedRoster.push(r);
+                } else {
+                    activeRoster.push(r);
                 }
-                return true;
             });
 
-            const totalMembers = activeRosterList.length;
-            
             const registeredGameIds = new Set();
+            const registeredNames = new Set();
             const verifiedGameIds = new Set();
+            const validTokenGameIds = new Set();
+            const expiredTokenGameIds = new Set();
             const gameIdToUser = {};
-            let expiredTokens = 0;
-            let validTokens = 0;
             let newToday = 0;
             let new7d = 0;
-            
+
             const now = Date.now();
             const todayStart = new Date().setHours(0, 0, 0, 0);
             const sevenDaysAgo = now - (7 * 86400 * 1000);
-            
+
+            // 1. Process authenticated usersMap (if available)
             Object.entries(usersMap).forEach(([uid, u]) => {
                 if (!u || typeof u !== 'object' || isMemberBannedOrLeft(u)) return;
                 const gId = String(u.gameId || '').trim();
                 const uName = String(u.name || u.chiefName || '').trim().toLowerCase();
-                if (gId && !bannedIds.has(gId) && !bannedNames.has(uName)) {
-                    registeredGameIds.add(gId);
+                if ((gId && !bannedIds.has(gId)) || (uName && !bannedNames.has(uName))) {
+                    if (gId) registeredGameIds.add(gId);
+                    if (uName) registeredNames.add(uName);
                     const isExp = Boolean(u.tokenExpired || (u.tokenStatus && u.tokenStatus.status === 'expired') || (u.wos_cg_token ? isJwtExpired(u.wos_cg_token) : true));
                     if (!isExp && u.wos_cg_token) {
-                        validTokens++;
-                        verifiedGameIds.add(gId);
+                        if (gId) validTokenGameIds.add(gId);
+                        if (gId) verifiedGameIds.add(gId);
                     } else if (u.wos_cg_token) {
-                        expiredTokens++;
+                        if (gId) expiredTokenGameIds.add(gId);
                     }
-                    gameIdToUser[gId] = { 
+                    const key = gId || uName;
+                    gameIdToUser[key] = { 
                         name: u.name || 'Anonymous Chief', 
                         email: u.email, 
                         isAlt: false, 
                         verified: !isExp, 
                         token: u.wos_cg_token, 
-                        tokenExpired: isExp,
+                        tokenExpired: isExp, 
                         joinedDate: u.joinedDate || u.dateStarted 
                     };
                 }
@@ -4576,29 +4546,31 @@
                 if (u.altTokens && typeof u.altTokens === 'object') {
                     Object.entries(u.altTokens).forEach(([altId, aInfo]) => {
                         const sAlt = String(altId).trim();
-                        if (sAlt && aInfo && !isMemberBannedOrLeft(aInfo) && !bannedIds.has(sAlt)) {
-                            registeredGameIds.add(sAlt);
+                        const aName = String(aInfo?.nickname || aInfo?.name || '').trim().toLowerCase();
+                        if ((sAlt && !bannedIds.has(sAlt)) || (aName && !bannedNames.has(aName))) {
+                            if (sAlt) registeredGameIds.add(sAlt);
+                            if (aName) registeredNames.add(aName);
                             const isAltExp = Boolean(aInfo.tokenExpired || (aInfo.tokenStatus && aInfo.tokenStatus.status === 'expired') || (aInfo.token ? isJwtExpired(aInfo.token) : true));
                             if (!isAltExp && aInfo.token) {
-                                validTokens++;
-                                verifiedGameIds.add(sAlt);
+                                if (sAlt) validTokenGameIds.add(sAlt);
+                                if (sAlt) verifiedGameIds.add(sAlt);
                             } else if (aInfo.token) {
-                                expiredTokens++;
+                                if (sAlt) expiredTokenGameIds.add(sAlt);
                             }
-                            gameIdToUser[sAlt] = { 
+                            const key = sAlt || aName;
+                            gameIdToUser[key] = { 
                                 name: aInfo.nickname || aInfo.name || u.name, 
                                 isAlt: true, 
                                 parentChief: u.name, 
                                 verified: !isAltExp, 
                                 token: aInfo.token, 
-                                tokenExpired: isAltExp,
+                                tokenExpired: isAltExp, 
                                 joinedDate: aInfo.joinedDate || aInfo.dateStarted 
                             };
                         }
                     });
                 }
                 
-                // Join / Signup timestamps
                 if (u.createdAt) {
                     try {
                         const t = new Date(u.createdAt).getTime();
@@ -4607,19 +4579,177 @@
                     } catch(e) {}
                 }
             });
-            
+
+            // 2. Process giftcode_bot (public claimed accounts)
+            Object.entries(giftcodeMap).forEach(([k, v]) => {
+                if (!v || typeof v !== 'object') return;
+                const gid = String(v.gameId || k).trim();
+                const gName = String(v.name || '').trim().toLowerCase();
+                if ((gid && !bannedIds.has(gid)) || (gName && !bannedNames.has(gName))) {
+                    if (gid) registeredGameIds.add(gid);
+                    if (gName) registeredNames.add(gName);
+                    const key = gid || gName;
+                    if (!gameIdToUser[key]) {
+                        gameIdToUser[key] = {
+                            name: v.name || 'Alliance Chief',
+                            isAlt: Boolean(v.isAlt),
+                            verified: true,
+                            joinedDate: v.timestamp ? new Date(v.timestamp).toLocaleDateString() : 'Active'
+                        };
+                    }
+                }
+            });
+
+            // 3. Process users_alts (public verified alts)
+            Object.entries(altsMap).forEach(([k, v]) => {
+                if (!v || typeof v !== 'object') return;
+                const gid = String(v.gameId || k).trim();
+                const gName = String(v.name || '').trim().toLowerCase();
+                if ((gid && !bannedIds.has(gid)) || (gName && !bannedNames.has(gName))) {
+                    if (gid) registeredGameIds.add(gid);
+                    if (gName) registeredNames.add(gName);
+                    if (gid && v.centuryGamesVerified) verifiedGameIds.add(gid);
+                    const key = gid || gName;
+                    if (!gameIdToUser[key]) {
+                        gameIdToUser[key] = {
+                            name: v.name || 'Alliance Alt',
+                            isAlt: true,
+                            verified: Boolean(v.centuryGamesVerified),
+                            joinedDate: v.lastSyncedAt ? v.lastSyncedAt.split('T')[0] : 'Active'
+                        };
+                    }
+                }
+            });
+
+            // 4. Process activeRoster entries (tokenStatus and properties on chief)
+            activeRoster.forEach(r => {
+                const gid = String(r.gameId || (r.tokenStatus && r.tokenStatus.gameId) || '').trim();
+                const rName = String(r.name || r.chiefName || '').trim().toLowerCase();
+                const hasClaimSignals = Boolean(r.giftCodes || r.claimed || r.userId || r.ownerUid || r.tokenStatus);
+
+                if (hasClaimSignals) {
+                    if (gid) registeredGameIds.add(gid);
+                    if (rName) registeredNames.add(rName);
+                    const key = gid || rName;
+                    if (key && !gameIdToUser[key]) {
+                        gameIdToUser[key] = {
+                            name: r.name || r.chiefName || 'Alliance Chief',
+                            isAlt: Boolean(r.isAlt),
+                            verified: Boolean(r.centuryGamesVerified || r.tokenStatus),
+                            joinedDate: r.dateStarted || r.joinedDate || 'Active'
+                        };
+                    }
+                }
+
+                if (r.tokenStatus && typeof r.tokenStatus === 'object') {
+                    const tStat = String(r.tokenStatus.status || '').toLowerCase();
+                    const tokGid = gid || rName;
+                    if (tStat === 'active' || tStat === 'expiring_soon') {
+                        if (tokGid) {
+                            validTokenGameIds.add(tokGid);
+                            expiredTokenGameIds.delete(tokGid);
+                            verifiedGameIds.add(tokGid);
+                        }
+                        const key = gid || rName;
+                        if (gameIdToUser[key]) {
+                            gameIdToUser[key].tokenStatus = r.tokenStatus;
+                            gameIdToUser[key].verified = true;
+                            gameIdToUser[key].tokenExpired = false;
+                        }
+                    } else if (tStat === 'expired') {
+                        if (tokGid && !validTokenGameIds.has(tokGid)) {
+                            expiredTokenGameIds.add(tokGid);
+                        }
+                        const key = gid || rName;
+                        if (gameIdToUser[key]) {
+                            gameIdToUser[key].tokenStatus = r.tokenStatus;
+                            gameIdToUser[key].tokenExpired = true;
+                        }
+                    }
+                }
+
+                if (r.addedAt || r.dateStarted) {
+                    try {
+                        const t = r.addedAt ? Number(r.addedAt) : new Date(r.dateStarted).getTime();
+                        if (t >= todayStart) newToday++;
+                        if (t >= sevenDaysAgo) new7d++;
+                    } catch(e) {}
+                }
+            });
+
+            let totalMembers = activeRoster.length;
+            if (totalMembers === 0 && rawCcGatekeeperCounters && rawCcGatekeeperCounters.totalMembers) {
+                totalMembers = rawCcGatekeeperCounters.totalMembers;
+            }
+
             let unclaimedAccounts = 0;
-            activeRosterList.forEach(r => {
-                const gId = String(r.gameId || '').trim();
-                if (!registeredGameIds.has(gId)) {
+            activeRoster.forEach(r => {
+                const gId = String(r.gameId || (r.tokenStatus && r.tokenStatus.gameId) || '').trim();
+                const rName = String(r.name || r.chiefName || '').trim().toLowerCase();
+                const isClaimed = (gId && registeredGameIds.has(gId)) || (rName && registeredNames.has(rName)) || Boolean(r.giftCodes || r.claimed || r.userId || r.ownerUid || r.tokenStatus);
+                if (!isClaimed) {
                     unclaimedAccounts++;
                 }
             });
-            
-            const claimedAccounts = totalMembers - unclaimedAccounts;
-            const unsyncedChiefs = totalMembers - verifiedGameIds.size;
+
+            let validTokens = validTokenGameIds.size;
+            let expiredTokens = expiredTokenGameIds.size;
+
+            if (rawCcGatekeeperCounters) {
+                if (rawCcGatekeeperCounters.activeSync !== undefined) {
+                    validTokens = Math.max(validTokens, rawCcGatekeeperCounters.activeSync);
+                }
+                if (rawCcGatekeeperCounters.expiredTokens !== undefined && expiredTokens === 0) {
+                    expiredTokens = rawCcGatekeeperCounters.expiredTokens;
+                }
+                if (rawCcGatekeeperCounters.unclaimedAccounts !== undefined && Object.keys(usersMap).length === 0) {
+                    unclaimedAccounts = rawCcGatekeeperCounters.unclaimedAccounts;
+                }
+                if (rawCcGatekeeperCounters.newMembers7Days !== undefined && new7d === 0) {
+                    new7d = rawCcGatekeeperCounters.newMembers7Days;
+                }
+                if (rawCcGatekeeperCounters.newMembersToday !== undefined && newToday === 0) {
+                    newToday = rawCcGatekeeperCounters.newMembersToday;
+                }
+            }
+
+            const claimedAccounts = Math.max(0, totalMembers - unclaimedAccounts);
+            const unsyncedChiefs = Math.max(0, totalMembers - validTokens);
             const claimPct = ((claimedAccounts / (totalMembers || 1)) * 100).toFixed(1);
-            
+
+            return {
+                activeRoster,
+                departedRoster,
+                bannedRoster,
+                registeredGameIds,
+                registeredNames,
+                verifiedGameIds,
+                validTokenGameIds,
+                expiredTokenGameIds,
+                gameIdToUser,
+                totalMembers,
+                claimedAccounts,
+                unclaimedAccounts,
+                validTokens,
+                expiredTokens,
+                unsyncedChiefs,
+                claimPct,
+                newToday,
+                new7d,
+                bannedIds,
+                bannedNames
+            };
+        }
+
+        function computeAndRenderGatekeeper() {
+            const state = getGatekeeperComputedState();
+            if (!state) return;
+
+            const {
+                totalMembers, claimedAccounts, unclaimedAccounts, validTokens,
+                expiredTokens, unsyncedChiefs, claimPct, newToday, new7d
+            } = state;
+
             // Update Card DOM Elements
             const totEl = document.getElementById('gk-total-members');
             const clEl = document.getElementById('gk-claimed');
@@ -4630,7 +4760,7 @@
             const pctEl = document.getElementById('gk-claim-pct');
             const n7El = document.getElementById('gk-new-7d');
             const nTodayEl = document.getElementById('gk-new-today');
-            
+
             if (totEl) totEl.innerText = fNum(totalMembers);
             if (clEl) clEl.innerText = fNum(claimedAccounts);
             if (uncEl) uncEl.innerText = fNum(unclaimedAccounts);
@@ -4643,7 +4773,7 @@
                 expEl.style.color = expiredTokens > 0 ? '#f85149' : '#3fb950';
             }
             if (unsyncEl) unsyncEl.innerText = fNum(unsyncedChiefs > 0 ? unsyncedChiefs : 0);
-            
+
             // Audio Chime Trigger on Game Sync Count Delta
             if (!isGkInitialLoadComplete) {
                 previousGkValidTokens = validTokens;
@@ -4651,36 +4781,18 @@
                 isGkInitialLoadComplete = true;
             } else {
                 if (previousGkValidTokens !== null && validTokens > previousGkValidTokens) {
-                    // New Chief Game Session Synced!
                     playGameSyncSound('sync_up');
                     flashGameSyncPulse();
                 } else if (previousGkExpiredTokens !== null && expiredTokens > previousGkExpiredTokens) {
-                    // Chief Token Expired
                     playGameSyncSound('token_expired');
                 }
                 previousGkValidTokens = validTokens;
                 previousGkExpiredTokens = expiredTokens;
             }
-            
-            // Sync to labData/gatekeeperCounters on primary database for ecosystem health
-            try {
-                if (typeof sDb !== 'undefined' && sDb) {
-                    sDb.ref('labData/gatekeeperCounters').update({
-                        totalMembers,
-                        unclaimedAccounts,
-                        newMembers7Days: new7d,
-                        newMembersToday: newToday,
-                        expiredTokens,
-                        unsyncedChiefs: unsyncedChiefs > 0 ? unsyncedChiefs : 0,
-                        activeSync: validTokens,
-                        timestamp: Date.now()
-                    }).catch(() => {});
-                }
-            } catch(e) {}
-            
+
             // If modal is open, refresh table
             if (document.getElementById('gatekeeperModal') && document.getElementById('gatekeeperModal').style.display === 'block') {
-                renderGatekeeperRosterTable();
+                renderGatekeeperRosterTable(state);
             }
 
             if (typeof updateGatekeeperBotTelemetryUI === 'function') {
@@ -5192,106 +5304,30 @@
             renderGatekeeperRosterTable();
         }
 
-        function renderGatekeeperRosterTable() {
-            if (!rawWosRoster) return;
-            const rawRosterList = Object.values(rawWosRoster);
-            const usersMap = rawWosUsers || {};
-            const { bannedIds, bannedNames } = getBannedAndExcludedIdentifiers(rawWosRoster, usersMap);
+        function renderGatekeeperRosterTable(precomputedState) {
+            const state = precomputedState || getGatekeeperComputedState();
+            if (!state) return;
 
-            const registeredGameIds = new Set();
-            const verifiedGameIds = new Set();
-            const gameIdToUser = {};
-            let expiredTokens = 0;
-            let validTokens = 0;
-
-            Object.entries(usersMap).forEach(([uid, u]) => {
-                if (!u || typeof u !== 'object' || isMemberBannedOrLeft(u)) return;
-                const gId = String(u.gameId || '').trim();
-                const uName = String(u.name || u.chiefName || '').trim().toLowerCase();
-                if (gId && !bannedIds.has(gId) && !bannedNames.has(uName)) {
-                    registeredGameIds.add(gId);
-                    const isExp = Boolean(u.tokenExpired || (u.tokenStatus && u.tokenStatus.status === 'expired') || (u.wos_cg_token ? isJwtExpired(u.wos_cg_token) : true));
-                    if (!isExp && u.wos_cg_token) {
-                        validTokens++;
-                        verifiedGameIds.add(gId);
-                    } else if (u.wos_cg_token) {
-                        expiredTokens++;
-                    }
-                    gameIdToUser[gId] = { 
-                        name: u.name || 'Anonymous Chief', 
-                        email: u.email, 
-                        isAlt: false, 
-                        verified: !isExp, 
-                        token: u.wos_cg_token, 
-                        tokenExpired: isExp,
-                        joinedDate: u.joinedDate || u.dateStarted 
-                    };
-                }
-                if (Array.isArray(u.linkedGameIds)) {
-                    u.linkedGameIds.forEach(altId => {
-                        const sAlt = String(altId).trim();
-                        if (sAlt && !bannedIds.has(sAlt)) {
-                            registeredGameIds.add(sAlt);
-                            if (!gameIdToUser[sAlt]) gameIdToUser[sAlt] = { name: u.name || 'Anonymous Chief', email: u.email, isAlt: true, parentChief: u.name, joinedDate: u.joinedDate || u.dateStarted };
-                        }
-                    });
-                }
-                if (u.altTokens && typeof u.altTokens === 'object') {
-                    Object.entries(u.altTokens).forEach(([altId, aInfo]) => {
-                        const sAlt = String(altId).trim();
-                        if (sAlt && aInfo && !isMemberBannedOrLeft(aInfo) && !bannedIds.has(sAlt)) {
-                            registeredGameIds.add(sAlt);
-                            const isAltExp = Boolean(aInfo.tokenExpired || (aInfo.tokenStatus && aInfo.tokenStatus.status === 'expired') || (aInfo.token ? isJwtExpired(aInfo.token) : true));
-                            if (!isAltExp && aInfo.token) {
-                                validTokens++;
-                                verifiedGameIds.add(sAlt);
-                            } else if (aInfo.token) {
-                                expiredTokens++;
-                            }
-                            gameIdToUser[sAlt] = { 
-                                name: aInfo.nickname || aInfo.name || u.name, 
-                                isAlt: true, 
-                                parentChief: u.name, 
-                                verified: !isAltExp, 
-                                token: aInfo.token, 
-                                tokenExpired: isAltExp, 
-                                joinedDate: aInfo.joinedDate || aInfo.dateStarted 
-                            };
-                        }
-                    });
-                }
-            });
-
-            const activeRoster = [];
-            const departedRoster = [];
-            const bannedRoster = [];
-
-            rawRosterList.forEach(r => {
-                if (!r || typeof r !== 'object') return;
-                const gid = String(r.gameId || '').trim();
-                const name = String(r.name || '').trim().toLowerCase();
-                const st = String(r.membershipStatus || r.status || '').trim().toLowerCase();
-                
-                if (st === 'banned' || st === 'ban' || (gid && bannedIds.has(gid) && !st.includes('left')) || (name && bannedNames.has(name) && !st.includes('left'))) {
-                    bannedRoster.push(r);
-                } else if (isMemberBannedOrLeft(r) || (gid && bannedIds.has(gid)) || (name && bannedNames.has(name))) {
-                    departedRoster.push(r);
-                } else {
-                    activeRoster.push(r);
-                }
-            });
+            const {
+                activeRoster, departedRoster, bannedRoster,
+                registeredGameIds, registeredNames, validTokenGameIds, expiredTokenGameIds,
+                gameIdToUser, bannedIds, bannedNames
+            } = state;
 
             let claimedCount = 0;
             let unclaimedCount = 0;
             let tokenLinkedCount = 0;
 
             activeRoster.forEach(r => {
-                const gId = String(r.gameId || '').trim();
-                const isClaimed = registeredGameIds.has(gId);
-                const uInfo = gameIdToUser[gId];
+                const gId = String(r.gameId || (r.tokenStatus && r.tokenStatus.gameId) || '').trim();
+                const rName = String(r.name || r.chiefName || '').trim().toLowerCase();
+                const isClaimed = (gId && registeredGameIds.has(gId)) || (rName && registeredNames?.has(rName)) || Boolean(r.giftCodes || r.claimed || r.userId || r.ownerUid || r.tokenStatus);
+                const uInfo = gameIdToUser[gId] || (rName && gameIdToUser[rName]);
+                const tokenStatus = r.tokenStatus || uInfo?.tokenStatus;
+                const hasToken = Boolean(tokenStatus || (uInfo && uInfo.token));
                 if (isClaimed) claimedCount++;
                 else unclaimedCount++;
-                if (uInfo && (uInfo.token || uInfo.verified)) tokenLinkedCount++;
+                if (hasToken) tokenLinkedCount++;
             });
 
             // Update modal header counters
@@ -5310,8 +5346,8 @@
             if (mTot) mTot.innerText = fNum(activeRoster.length);
             if (mCl) mCl.innerText = fNum(claimedCount);
             if (mUn) mUn.innerText = fNum(unclaimedCount);
-            if (mVer) mVer.innerText = fNum(verifiedGameIds.size);
-            if (mExp) mExp.innerText = fNum(expiredTokens);
+            if (mVer) mVer.innerText = fNum(state.validTokens || validTokenGameIds.size);
+            if (mExp) mExp.innerText = fNum(state.expiredTokens || expiredTokenGameIds.size);
             if (tAllNum) tAllNum.innerText = activeRoster.length;
             if (tUnNum) tUnNum.innerText = unclaimedCount;
             if (tClNum) tClNum.innerText = claimedCount;
@@ -5327,12 +5363,13 @@
             else if (currentGkFilter === 'banned') baseList = bannedRoster;
 
             const filteredRoster = baseList.filter(r => {
-                const gId = String(r.gameId || '').trim();
-                const chiefName = (r.name || '').toLowerCase();
+                const gId = String(r.gameId || (r.tokenStatus && r.tokenStatus.gameId) || '').trim();
+                const chiefName = (r.name || r.chiefName || '').toLowerCase();
                 const fLevel = (r.furnaceLevel || r.stove_lv || '').toLowerCase();
-                const isClaimed = registeredGameIds.has(gId);
-                const uInfo = gameIdToUser[gId];
-                const hasToken = uInfo && (uInfo.token || uInfo.verified);
+                const isClaimed = (gId && registeredGameIds.has(gId)) || (chiefName && registeredNames?.has(chiefName)) || Boolean(r.giftCodes || r.claimed || r.userId || r.ownerUid || r.tokenStatus);
+                const uInfo = gameIdToUser[gId] || (chiefName && gameIdToUser[chiefName]);
+                const tokenStatus = r.tokenStatus || uInfo?.tokenStatus;
+                const hasToken = Boolean(tokenStatus || (uInfo && uInfo.token));
                 
                 // Tab filter (for active sub-filters)
                 if (currentGkFilter === 'unclaimed' && isClaimed) return false;
@@ -5360,13 +5397,17 @@
             }
 
             tbody.innerHTML = filteredRoster.map((r, idx) => {
-                const gId = String(r.gameId || '').trim();
-                const chiefName = r.name || 'Unknown Chief';
-                const isClaimed = registeredGameIds.has(gId);
-                const uInfo = gameIdToUser[gId];
-                const isVerified = uInfo && uInfo.verified;
-                const hasToken = uInfo && uInfo.token;
-                const tokenExpired = hasToken ? isJwtExpired(uInfo.token) : false;
+                const gId = String(r.gameId || (r.tokenStatus && r.tokenStatus.gameId) || '').trim();
+                const chiefName = r.name || r.chiefName || 'Unknown Chief';
+                const rName = chiefName.toLowerCase();
+                const isClaimed = (gId && registeredGameIds.has(gId)) || (rName && registeredNames?.has(rName)) || Boolean(r.giftCodes || r.claimed || r.userId || r.ownerUid || r.tokenStatus);
+                const uInfo = gameIdToUser[gId] || (rName && gameIdToUser[rName]);
+                const tokenStatus = r.tokenStatus || uInfo?.tokenStatus;
+                const hasToken = Boolean(tokenStatus || (uInfo && uInfo.token));
+                const tokenExpired = tokenStatus ? (tokenStatus.status === 'expired') : (uInfo?.token ? isJwtExpired(uInfo.token) : false);
+                const isTokenExpiringSoon = tokenStatus ? (tokenStatus.status === 'expiring_soon') : false;
+                const daysLeft = tokenStatus?.daysLeft;
+                const isVerified = (uInfo && uInfo.verified) || Boolean(r.centuryGamesVerified || r.giftCodes || tokenStatus);
                 const st = String(r.membershipStatus || r.status || '').trim().toLowerCase();
                 const isBanned = st === 'banned' || st === 'ban' || (gId && bannedIds.has(gId) && !st.includes('left')) || (chiefName.toLowerCase() && bannedNames.has(chiefName.toLowerCase()) && !st.includes('left'));
                 const isDeparted = isMemberBannedOrLeft(r) || (gId && bannedIds.has(gId)) || (chiefName.toLowerCase() && bannedNames.has(chiefName.toLowerCase()));
@@ -5401,8 +5442,10 @@
                 } else if (hasToken) {
                     if (tokenExpired) {
                         cgBadge = `<span style="background: rgba(248, 81, 73, 0.12); color: #f85149; border: 1px solid rgba(248, 81, 73, 0.3); padding: 2px 6px; border-radius: 4px; font-weight: 700; font-size: 10px;" title="Token Expired: Requires Game Sync Re-verification">● Token Expired</span>`;
+                    } else if (isTokenExpiringSoon) {
+                        cgBadge = `<span style="background: rgba(241, 196, 15, 0.12); color: #f1c40f; border: 1px solid rgba(241, 196, 15, 0.3); padding: 2px 6px; border-radius: 4px; font-weight: 700; font-size: 10px;" title="${daysLeft !== undefined ? daysLeft + ' days remaining' : 'Expiring Soon'}">● Expiring Soon (${daysLeft ?? 1}d)</span>`;
                     } else {
-                        cgBadge = `<span style="background: rgba(63, 185, 80, 0.12); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.3); padding: 2px 6px; border-radius: 4px; font-weight: 700; font-size: 10px;" title="Active Live Token Valid">● Active Token</span>`;
+                        cgBadge = `<span style="background: rgba(63, 185, 80, 0.12); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.3); padding: 2px 6px; border-radius: 4px; font-weight: 700; font-size: 10px;" title="${daysLeft !== undefined ? daysLeft + ' days remaining' : 'Active Live Token Valid'}">● Active Token</span>`;
                     }
                 } else if (isVerified) {
                     cgBadge = `<span style="background: rgba(163, 113, 247, 0.12); color: #a371f7; border: 1px solid rgba(163, 113, 247, 0.3); padding: 2px 6px; border-radius: 4px; font-weight: 700; font-size: 10px;">Verified (Manual)</span>`;
@@ -5410,7 +5453,7 @@
                     cgBadge = `<span style="color: #8b949e; font-size: 10px;">Unsynced</span>`;
                 }
 
-                const joinDateStr = r.dateStarted || uInfo?.joinedDate || 'Active';
+                const joinDateStr = r.dateStarted || r.joinedDate || uInfo?.joinedDate || 'Active';
                 const bgRow = idx % 2 === 0 ? 'background: #0d1117;' : 'background: #161b22;';
 
                 return `<tr style="${bgRow} border-bottom: 1px solid #21262d; transition: background 0.2s ease;">
@@ -6730,6 +6773,7 @@
             if (brM) brM.style.display = "none";
             document.getElementById('gatekeeperModal').style.display = "block";
             updateGkSoundBtnUI();
+            computeAndRenderGatekeeper();
             renderGatekeeperRosterTable();
             if (typeof updateGatekeeperBotTelemetryUI === 'function') {
                 updateGatekeeperBotTelemetryUI();
@@ -6754,6 +6798,15 @@
             const brM = document.getElementById('botRadarModal');
             if (brM) brM.style.display = "none";
         }
+
+        window.addEventListener('focus', () => {
+            if (rawWosRoster || rawCcGatekeeperCounters) {
+                computeAndRenderGatekeeper();
+                if (document.getElementById('gatekeeperModal')?.style.display === 'block') {
+                    renderGatekeeperRosterTable();
+                }
+            }
+        });
         window.openGatekeeperModal = openGatekeeperModal;
         window.closeGatekeeperModal = closeGatekeeperModal;
         window.openBotRadarModal = openBotRadarModal;
