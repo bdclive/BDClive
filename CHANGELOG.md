@@ -1,3 +1,12 @@
+## [10.2.149] - 2026-10-07
+- Added dedicated Bot Radar popup modal for fleet operations.
+- Added Bot Radar button to Gatekeeper Roster modal header.
+- Cleaned up Roster modal for focused chief and token auditing.
+- Direct one-click Bot Radar launch from Gatekeeper bot bar.
+- Interactive modal toggle between Roster and Bot Radar.
+- Upgraded web dashboard engine to version 10.2.149.
+- Passed all automated browser and DOM test suites.
+
 ## [3.9.6] - 2026-10-06
 - Added Google Sign-In with official branded authentication button.
 - Removed traditional email and password login form fields.
