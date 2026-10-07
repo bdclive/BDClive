@@ -1,3 +1,13 @@
+## [10.2.151] - 2026-10-07
+- Ported full Whiteout Survival Bot Radar into popup modal.
+- Added dual-compartment active runner and cooldown hold queue.
+- Added Alliance Bot Fleet and Account Login Safety grid.
+- Renders all 17 alliance bot cards with live telemetry.
+- Shows individual bot instance badges and login safety indicators.
+- Live 1-second countdown timer and relative activity stamps.
+- Upgraded web dashboard engine to version 10.2.151.
+- Passed all automated browser and DOM test suites.
+
 ## [10.2.150] - 2026-10-07
 - Restored continuous real-time listeners for live roster database.
 - Connected real-time gift code and alts database listeners.
