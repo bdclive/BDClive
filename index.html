@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BDC LIVE v10.2.150</title>
+    <title>BDC LIVE v10.2.151</title>
     <meta name="description" content="Centralized real-time telemetry, operational statistics, and live streaming dashboard for Brian Diva Cox.">
     <!-- Open Graph & Social Preview Meta Tags -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="BDC LIVE v10.2.150">
+    <meta property="og:title" content="BDC LIVE v10.2.151">
     <meta property="og:description" content="Real-time statistics, streaming telemetry, theater sync, and central command control plane.">
     <meta property="og:image" content="./bdclive_banner.jpg">
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="BDC LIVE v10.2.150">
+    <meta property="twitter:title" content="BDC LIVE v10.2.151">
     <meta property="twitter:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="twitter:image" content="./bdclive_banner.jpg">
     <!-- PWA Manifest & Mobile Web App Meta Tags -->
@@ -126,6 +126,527 @@
             width: 16px;
             text-align: center;
             font-size: 13px;
+        }
+
+        /* ================= BOT OPERATIONS RADAR & FLEET SAFETY MATRIX ================= */
+        :root {
+            --text-muted: #8b949e;
+        }
+
+        .bot-radar-card {
+            background: linear-gradient(135deg, rgba(22, 32, 50, 0.95), rgba(13, 21, 34, 0.98));
+            border-radius: 16px;
+            padding: 18px 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-sizing: border-box;
+            width: 100%;
+            border: 2px solid rgba(100, 116, 139, 0.3);
+        }
+        .bot-radar-card.border-active {
+            border: 2px solid rgba(6, 182, 212, 0.55);
+            box-shadow: 0 0 25px rgba(6, 182, 212, 0.2);
+        }
+        .bot-radar-card.border-cooldown {
+            border: 2px solid rgba(245, 158, 11, 0.55);
+            box-shadow: 0 0 25px rgba(245, 158, 11, 0.2);
+        }
+        .bot-radar-card.border-standby {
+            border: 2px solid rgba(100, 116, 139, 0.4);
+        }
+        .bot-radar-card.border-offline {
+            border: 2px solid rgba(239, 68, 68, 0.6);
+            box-shadow: 0 0 25px rgba(239, 68, 68, 0.25);
+        }
+
+        .bot-radar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .bot-radar-title-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .bot-radar-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: rgba(6, 182, 212, 0.15);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        .bot-radar-title {
+            font-size: 15px;
+            font-weight: 900;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .bot-radar-subtitle {
+            font-size: 11.5px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .bot-radar-server-tag,
+        .bot-radar-status-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 14px;
+            width: 100%;
+        }
+        .bot-radar-mini-box {
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            transition: all 0.25s ease;
+        }
+        .bot-radar-mini-box.is-online {
+            border-color: rgba(16, 185, 129, 0.35);
+            background: rgba(16, 185, 129, 0.06);
+        }
+        .bot-radar-mini-box.is-offline {
+            border-color: rgba(239, 68, 68, 0.35);
+            background: rgba(239, 68, 68, 0.06);
+        }
+        .bot-radar-mini-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            min-width: 0;
+        }
+        .bot-radar-mini-icon {
+            font-size: 15px;
+            line-height: 1;
+        }
+        .bot-radar-mini-label {
+            font-size: 10.5px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+        .bot-radar-mini-val {
+            font-size: 11px;
+            font-weight: 800;
+            white-space: nowrap;
+            padding: 3px 8px;
+            border-radius: 6px;
+            letter-spacing: 0.3px;
+        }
+        .bot-radar-mini-val.is-online {
+            color: #10b981;
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.35);
+        }
+        .bot-radar-mini-val.is-offline {
+            color: #f87171;
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+        }
+
+        .bot-radar-offline-warning-bar {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px dashed rgba(239, 68, 68, 0.5);
+            border-radius: 8px;
+            padding: 8px 12px;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 11.5px;
+            color: #fca5a5;
+            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.15);
+        }
+
+        .bot-radar-dual-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+        .bot-radar-compartment {
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 12px 14px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .bot-radar-compartment.runner-card {
+            border-left: 3px solid #10b981;
+            transition: all 0.3s ease;
+        }
+        .bot-radar-compartment.runner-card.is-offline {
+            border-left: 3px solid #ef4444;
+            background: rgba(30, 15, 20, 0.9);
+            box-shadow: inset 0 0 16px rgba(239, 68, 68, 0.08);
+        }
+        .bot-radar-compartment.runner-card.is-idle {
+            border-left: 3px solid #64748b;
+        }
+        .bot-radar-compartment.cooldown-card {
+            border-left: 3px solid #f59e0b;
+            transition: all 0.3s ease;
+        }
+        .bot-radar-compartment.cooldown-card.is-offline {
+            border-left: 3px solid rgba(239, 68, 68, 0.4);
+            opacity: 0.85;
+        }
+        .bot-radar-comp-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .bot-radar-comp-badge {
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        .bot-radar-comp-badge.runner {
+            color: #34d399;
+        }
+        .bot-radar-comp-badge.runner.is-offline {
+            color: #f87171;
+        }
+        .bot-radar-comp-badge.runner.is-idle {
+            color: #94a3b8;
+        }
+        .bot-radar-comp-badge.cooldown {
+            color: #fbbf24;
+        }
+        .bot-radar-comp-badge.cooldown.is-offline {
+            color: #f87171;
+        }
+        .bot-radar-status-pill {
+            font-size: 9.5px;
+            font-weight: 800;
+            padding: 2px 8px;
+            border-radius: 9999px;
+            letter-spacing: 0.5px;
+        }
+        .bot-radar-status-pill.active {
+            background: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.4);
+        }
+        .bot-radar-status-pill.cooldown {
+            background: rgba(245, 158, 11, 0.2);
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.4);
+        }
+        .bot-radar-status-pill.idle {
+            background: rgba(148, 163, 184, 0.15);
+            color: #94a3b8;
+            border: 1px solid rgba(148, 163, 184, 0.3);
+        }
+        .bot-radar-status-pill.offline {
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.5);
+        }
+        .bot-radar-comp-body {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .bot-radar-comp-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: rgba(16, 185, 129, 0.15);
+            border: 2px solid rgba(16, 185, 129, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+        }
+        .bot-radar-comp-avatar.is-offline {
+            background: rgba(239, 68, 68, 0.15);
+            border: 2px solid rgba(239, 68, 68, 0.5);
+        }
+        .bot-radar-comp-avatar.is-idle {
+            background: rgba(148, 163, 184, 0.12);
+            border: 2px solid rgba(148, 163, 184, 0.35);
+        }
+        .bot-radar-comp-avatar.cd {
+            background: rgba(245, 158, 11, 0.15);
+            border: 2px solid rgba(245, 158, 11, 0.4);
+        }
+        .bot-radar-comp-avatar.cd.is-offline {
+            background: rgba(239, 68, 68, 0.12);
+            border: 2px solid rgba(239, 68, 68, 0.35);
+        }
+        .bot-radar-comp-text {
+            min-width: 0;
+            flex: 1;
+        }
+        .bot-radar-acc-name {
+            font-size: 14px;
+            font-weight: 800;
+            color: #ffffff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .bot-radar-clock {
+            font-size: 14px;
+            font-weight: 900;
+            color: #38bdf8;
+            font-variant-numeric: tabular-nums;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        }
+        .bot-radar-footer-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 10.5px;
+            color: var(--text-muted);
+            margin-top: 10px;
+        }
+        .bot-radar-db-indicator {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #10b981;
+            font-weight: 700;
+        }
+        .bot-radar-pulse-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #10b981;
+            animation: pulse-glow 2s infinite ease-in-out;
+        }
+
+        /* Bot Fleet & Account Login Safety Matrix */
+        .bot-fleet-container {
+            margin-top: 16px;
+            padding-top: 14px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .bot-fleet-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .bot-fleet-title {
+            font-size: 13px;
+            font-weight: 800;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .bot-fleet-summary {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .bot-fleet-summary-pill {
+            font-family: monospace;
+            font-size: 10.5px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .bot-fleet-summary-pill.busy {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            color: #f87171;
+        }
+        .bot-fleet-summary-pill.safe {
+            background: rgba(16, 185, 129, 0.12);
+            border: 1px solid rgba(16, 185, 129, 0.35);
+            color: #34d399;
+        }
+        .bot-fleet-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 8px;
+        }
+        @media (max-width: 640px) {
+            .bot-radar-dual-grid {
+                grid-template-columns: 1fr !important;
+            }
+            .bot-fleet-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+                gap: 6px !important;
+            }
+        }
+        @media (max-width: 480px) {
+            .bot-radar-card {
+                padding: 10px 8px !important;
+            }
+            .bot-radar-server-tag,
+            .bot-radar-status-grid {
+                grid-template-columns: 1fr !important;
+                gap: 6px !important;
+            }
+            .bot-fleet-grid {
+                grid-template-columns: 1fr !important;
+                gap: 5px !important;
+            }
+        }
+        .bot-fleet-item {
+            background: rgba(15, 23, 42, 0.65);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            padding: 6px 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 3px;
+            transition: all 0.2s ease;
+            position: relative;
+            min-width: 0;
+            overflow: hidden;
+        }
+        .bot-fleet-item.occupied {
+            background: rgba(239, 68, 68, 0.08);
+            border: 1px solid rgba(239, 68, 68, 0.5);
+            box-shadow: 0 0 12px rgba(239, 68, 68, 0.15);
+            border-left: 3px solid #ef4444;
+        }
+        .bot-fleet-item.cooldown {
+            background: rgba(245, 158, 11, 0.06);
+            border: 1px solid rgba(245, 158, 11, 0.4);
+            border-left: 3px solid #f59e0b;
+        }
+        .bot-fleet-item.safe {
+            border-left: 3px solid #10b981;
+        }
+        .bot-fleet-item-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            min-width: 0;
+            width: 100%;
+        }
+        .bot-fleet-name-row {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            flex-wrap: nowrap;
+            min-width: 0;
+        }
+        .bot-fleet-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .bot-fleet-dot.safe {
+            background: #10b981;
+            box-shadow: 0 0 6px rgba(16, 185, 129, 0.7);
+        }
+        .bot-fleet-dot.occupied {
+            background: #ef4444;
+            box-shadow: 0 0 8px rgba(239, 68, 68, 0.9);
+            animation: pulseActiveDot 1.4s infinite;
+        }
+        .bot-fleet-dot.cooldown {
+            background: #f59e0b;
+            box-shadow: 0 0 6px rgba(245, 158, 11, 0.7);
+        }
+        .bot-fleet-name {
+            font-size: 11.5px;
+            font-weight: 700;
+            color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex: 1;
+            min-width: 0;
+        }
+        .bot-fleet-inst {
+            font-family: monospace;
+            font-size: 8.5px;
+            color: #38bdf8;
+            background: rgba(56, 189, 248, 0.12);
+            padding: 1px 4px;
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+        .bot-fleet-status-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 4px;
+            min-width: 0;
+        }
+        .bot-fleet-tag {
+            font-size: 9px;
+            font-weight: 700;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .bot-fleet-tag.occupied {
+            color: #f87171;
+            font-weight: 800;
+        }
+        .bot-fleet-tag.cooldown,
+        .bot-fleet-tag.safe {
+            color: #34d399;
+        }
+        .bot-fleet-activity {
+            font-size: 9.5px;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex-shrink: 0;
+            color: var(--text-muted);
+        }
+        .bot-fleet-activity.active {
+            color: #34d399;
+            font-weight: 700;
+        }
+        .bot-fleet-time-icon {
+            font-size: 8px;
+            line-height: 1;
+        }
+        @keyframes pulseActiveDot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.85); }
+        }
+        @keyframes pulse-glow {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.6; }
         }
     </style>
 </head>
@@ -700,13 +1221,13 @@
 
     <!-- ALLIANCE GATEKEEPER BOT OPERATIONS RADAR MODAL -->
     <div id="botRadarModal" class="modal">
-        <div class="modal-content" style="border-color: #00d2ff; max-width: 780px; width: 92%; background: #0d1117; max-height: 88vh; display: flex; flex-direction: column; box-shadow: 0 16px 48px rgba(0,0,0,0.8), 0 0 25px rgba(0, 210, 255, 0.2);">
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #30363d; padding-bottom: 12px; margin-bottom: 12px;">
+        <div class="modal-content" style="border-color: #00d2ff; max-width: 820px; width: 94%; background: #0d1117; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 16px 48px rgba(0,0,0,0.85), 0 0 25px rgba(0, 210, 255, 0.25);">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #30363d; padding-bottom: 12px; margin-bottom: 12px; flex-shrink: 0;">
                 <div style="display: flex; align-items: center; gap: 10px;">
                     <i class="fa-solid fa-satellite-dish" style="font-size: 22px; color: #00d2ff;"></i>
                     <div>
                         <h3 style="margin: 0; color: #ffffff; font-size: 16px; font-weight: 800; letter-spacing: 0.5px;">Alliance Gatekeeper — Bot Radar</h3>
-                        <span style="font-size: 10px; color: #8b949e;">Whiteout Survival State 2089 • Fleet Operations & Telemetry</span>
+                        <span style="font-size: 10.5px; color: #8b949e;">Whiteout Survival State 2089 • Multi-Bot Fleet Operations & Telemetry</span>
                     </div>
                 </div>
                 <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
@@ -720,59 +1241,9 @@
                 </div>
             </div>
 
-            <!-- BOT OPERATIONS RADAR PANEL -->
-            <div id="gk-modal-bot-radar" style="background: linear-gradient(135deg, rgba(13, 17, 23, 0.95) 0%, rgba(22, 27, 34, 0.95) 100%); border: 1px solid rgba(0, 210, 255, 0.25); border-radius: 10px; padding: 14px 16px; display: flex; flex-direction: column; gap: 12px; transition: all 0.3s ease;">
-                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <span style="font-size: 18px;">🤖</span>
-                        <span style="font-size: 13px; font-weight: 800; color: #ffffff; letter-spacing: 0.5px;">FLEET OPERATIONS STATUS</span>
-                        <span id="gk-modal-bot-badge" style="font-size: 10.5px; font-weight: 800; padding: 3px 10px; border-radius: 12px; background: rgba(63, 185, 80, 0.15); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.3);">● STANDBY</span>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <div id="gk-modal-dual-status" style="display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700;">
-                            <span id="gk-modal-cc-tag" style="color: #3fb950; background: rgba(63, 185, 80, 0.1); border: 1px solid rgba(63, 185, 80, 0.25); padding: 3px 8px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px;">🟢 CC: Online</span>
-                            <span id="gk-modal-hub-tag" style="color: #3fb950; background: rgba(63, 185, 80, 0.1); border: 1px solid rgba(63, 185, 80, 0.25); padding: 3px 8px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px;">🟢 Hub: Online</span>
-                            <span id="gk-modal-server-tag" style="color: #3fb950; background: rgba(63, 185, 80, 0.1); border: 1px solid rgba(63, 185, 80, 0.25); padding: 3px 8px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px;">🟢 Server: Online</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Urgent Offline Warning Banner -->
-                <div id="gk-modal-offline-warning" style="display: none; background: rgba(248, 81, 73, 0.15); border: 1px solid rgba(248, 81, 73, 0.45); border-radius: 6px; padding: 9px 14px; font-size: 11.5px; color: #ff7b72; display: flex; justify-content: space-between; align-items: center; gap: 8px;">
-                    <span id="gk-modal-offline-msg"><i class="fa-solid fa-triangle-exclamation"></i> <strong>Bot Server is currently offline</strong> on host machine</span>
-                    <span style="font-weight: 800; color: #f85149; background: rgba(248, 81, 73, 0.25); padding: 2px 8px; border-radius: 4px; font-size: 10px; letter-spacing: 0.5px; white-space: nowrap;">AUTOMATION HALTED</span>
-                </div>
-
-                <!-- Telemetry Details Grid -->
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; font-size: 11px; background: rgba(255,255,255,0.02); padding: 12px 14px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
-                    <div style="background: rgba(0, 210, 255, 0.04); border: 1px solid rgba(0, 210, 255, 0.12); border-radius: 6px; padding: 10px 12px;">
-                        <span style="color: #8b949e; font-size: 10px; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Monitored Account</span>
-                        <div style="display: flex; align-items: center; gap: 6px; margin-top: 4px;">
-                            <div id="gk-modal-bot-account" style="color: #ffffff; font-weight: 800; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Standby / Idle</div>
-                            <span id="gk-modal-bot-count" style="color: #00d2ff; font-weight: 800; font-size: 10px; background: rgba(0, 210, 255, 0.12); border: 1px solid rgba(0, 210, 255, 0.25); padding: 1px 6px; border-radius: 4px; display: none; white-space: nowrap;">11/17</span>
-                        </div>
-                    </div>
-                    <div style="background: rgba(0, 210, 255, 0.04); border: 1px solid rgba(0, 210, 255, 0.12); border-radius: 6px; padding: 10px 12px;">
-                        <span style="color: #8b949e; font-size: 10px; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Current Phase</span>
-                        <div id="gk-modal-bot-stage" style="color: #00d2ff; font-weight: 800; font-size: 13px; margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Standby / Idle</div>
-                    </div>
-                    <div style="background: rgba(188, 149, 255, 0.04); border: 1px solid rgba(188, 149, 255, 0.15); border-radius: 6px; padding: 10px 12px;">
-                        <span id="gk-modal-timer-lbl" style="color: #8b949e; font-size: 10px; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;">Automation Timer</span>
-                        <div id="gk-modal-bot-timer" style="color: #bc95ff; font-family: monospace; font-weight: 800; font-size: 14px; margin-top: 4px;">READY</div>
-                    </div>
-                </div>
-
-                <!-- Radar Telemetry Heartbeat Status Footer -->
-                <div style="display: flex; justify-content: space-between; align-items: center; padding: 4px 6px; font-size: 10.5px; color: #8b949e; border-top: 1px solid rgba(255,255,255,0.06); margin-top: 4px;">
-                    <div style="display: flex; align-items: center; gap: 6px;">
-                        <i class="fa-solid fa-satellite" style="color: #00d2ff;"></i>
-                        <span>Live State 2089 Fleet Telemetry Link</span>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 6px;">
-                        <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #3fb950; box-shadow: 0 0 6px #3fb950;"></span>
-                        <span style="color: #3fb950; font-weight: 700;">Live Realtime Sync</span>
-                    </div>
-                </div>
+            <!-- BOT OPERATIONS RADAR FULL FLEET CONTAINER -->
+            <div id="botRadarModalContent" style="width: 100%; box-sizing: border-box; overflow-y: auto; max-height: calc(88vh - 75px); padding-right: 4px;">
+                <!-- Full Bot Operations Radar & Bot Fleet Safety Grid populated dynamically -->
             </div>
         </div>
     </div>
@@ -2269,14 +2740,53 @@
             broadcastOfflineAlert: null
         };
         window.latestBotTelemetry = latestBotTelemetry;
+        window.latestBotStatus = latestBotTelemetry;
 
         wosDb.ref('bot_status').on('value', (snap) => {
             if (snap.exists()) {
                 const val = snap.val();
                 latestBotTelemetry = { ...latestBotTelemetry, ...val, receivedAt: Date.now() };
                 window.latestBotTelemetry = latestBotTelemetry;
+                window.latestBotStatus = latestBotTelemetry;
+
+                if (val.fleet && Array.isArray(val.fleet) && val.fleet.length > 0) {
+                    const activeAcc = val.activeAccount || val.account || '';
+                    const coolAcc = val.cooldownAccount || '';
+                    if (window.ALLIANCE_BOT_ROSTER && Array.isArray(window.ALLIANCE_BOT_ROSTER)) {
+                        window.ALLIANCE_BOT_ROSTER = window.ALLIANCE_BOT_ROSTER.map(baseBot => {
+                            const liveMatch = val.fleet.find(f => 
+                                (typeof window.matchesAccount === 'function' && window.matchesAccount(baseBot.name, f)) || 
+                                (typeof window.matchesAccount === 'function' && window.matchesAccount(f.name, baseBot)) || 
+                                (f.instance !== undefined && baseBot.instance !== undefined && Number(f.instance) === Number(baseBot.instance))
+                            );
+                            return liveMatch ? { ...baseBot, ...liveMatch, id: baseBot.id, name: baseBot.name, instance: baseBot.instance, inst: baseBot.inst } : baseBot;
+                        });
+                        val.fleet.forEach(f => {
+                            if (typeof window.isAllianceBotOrActive === 'function' && window.isAllianceBotOrActive(f, activeAcc, coolAcc)) {
+                                const exists = window.ALLIANCE_BOT_ROSTER.some(m => 
+                                    (typeof window.matchesAccount === 'function' && window.matchesAccount(m.name, f)) || 
+                                    (m.instance !== undefined && f.instance !== undefined && Number(m.instance) === Number(f.instance))
+                                );
+                                if (!exists) {
+                                    window.ALLIANCE_BOT_ROSTER.push(f);
+                                }
+                            }
+                            if (f && f.name && (f.lastActiveEpoch || f.lastActiveTime) && typeof window.recordBotLastActiveTime === 'function') {
+                                window.recordBotLastActiveTime(f.name, f.lastActiveEpoch, f.lastActiveTime);
+                            }
+                        });
+                    }
+                }
+                const liveActAcc = val.activeAccount || (val.status === 'ACTIVE' ? val.account : '');
+                if (liveActAcc && !val.isOffline && val.serverOnline !== false && val.status !== 'OFFLINE' && typeof window.recordBotLastActiveTime === 'function') {
+                    window.recordBotLastActiveTime(liveActAcc, Math.floor(Date.now() / 1000));
+                }
+
                 if (typeof updateGatekeeperBotTelemetryUI === 'function') {
                     updateGatekeeperBotTelemetryUI();
+                }
+                if (typeof updateBotOperationsRadarDom === 'function') {
+                    updateBotOperationsRadarDom();
                 }
             }
         });
@@ -2284,8 +2794,12 @@
         wosDb.ref('broadcastAlerts/bot_fleet_offline_alert').on('value', (snap) => {
             latestBotTelemetry.broadcastOfflineAlert = snap.exists() ? snap.val() : null;
             window.latestBotTelemetry = latestBotTelemetry;
+            window.latestBotStatus = latestBotTelemetry;
             if (typeof updateGatekeeperBotTelemetryUI === 'function') {
                 updateGatekeeperBotTelemetryUI();
+            }
+            if (typeof updateBotOperationsRadarDom === 'function') {
+                updateBotOperationsRadarDom();
             }
         });
 
@@ -3575,7 +4089,7 @@
             }
         }
 
-        const CURRENT_APP_VERSION = 'v10.2.150';
+        const CURRENT_APP_VERSION = 'v10.2.151';
         window.CURRENT_APP_VERSION = CURRENT_APP_VERSION;
         let isDeployingLive = false;
         let pendingRemoteVersion = null;
@@ -5031,6 +5545,9 @@
             }
 
             updateGatekeeperBotTimerTick();
+            if (typeof updateBotOperationsRadarDom === 'function') {
+                updateBotOperationsRadarDom();
+            }
         }
 
         function getBotFleetCountInfo(data, botName) {
@@ -5278,12 +5795,891 @@
                     mStage.style.color = '#3fb950';
                 }
             }
+
+            // Real-time ticking for Bot Operations Radar clock if rendered
+            const radarClockEl = document.getElementById('bot-radar-clock');
+            const radarCooldownBadgeEl = document.getElementById('bot-radar-cooldown-badge');
+            if (radarClockEl || radarCooldownBadgeEl) {
+                const cdInfo = (typeof window.getBotCooldownInfo === 'function')
+                    ? window.getBotCooldownInfo(data)
+                    : { subText: 'Routine Rotation Rest', isBlackout: false };
+                const hasCooldown = !isAnyOffline && (
+                    ((data.cooldownSecondsLeft !== undefined && data.cooldownSecondsLeft > 0) ||
+                     (data.secondsLeft > 0 && (status === 'COOLDOWN' || status === 'EVENT_BLACKOUT')) ||
+                     Boolean(data.isCooldownRunning) ||
+                     cdInfo.isBlackout)
+                );
+                const cooldownPillText = isAnyOffline ? 'OFFLINE' : (hasCooldown ? '● ON' : '⚪ IDLE');
+                const cooldownPillClass = isAnyOffline ? 'offline' : (hasCooldown ? 'cooldown' : 'idle');
+                if (radarCooldownBadgeEl) {
+                    radarCooldownBadgeEl.textContent = cooldownPillText;
+                    radarCooldownBadgeEl.className = `bot-radar-status-pill ${cooldownPillClass}`;
+                }
+                if (isAnyOffline || !hasCooldown) {
+                    if (radarClockEl) {
+                        radarClockEl.style.display = 'none';
+                        radarClockEl.textContent = '';
+                    }
+                } else {
+                    const totalSecs = (data.cooldownSecondsLeft !== undefined && data.cooldownSecondsLeft !== null) ? data.cooldownSecondsLeft : (data.secondsLeft || 0);
+                    const elapsedSecs = Math.floor((Date.now() - (data.receivedAt || Date.now())) / 1000);
+                    const rem = Math.max(0, totalSecs - elapsedSecs);
+                    const h = Math.floor(rem / 3600).toString().padStart(2, '0');
+                    const m = Math.floor((rem % 3600) / 60).toString().padStart(2, '0');
+                    const s = (rem % 60).toString().padStart(2, '0');
+                    if (radarClockEl) {
+                        radarClockEl.style.display = 'inline-block';
+                        radarClockEl.textContent = `${h}:${m}:${s}`;
+                    }
+                }
+            }
         }
 
         setInterval(updateGatekeeperBotTimerTick, 1000);
         window.updateGatekeeperBotTimerTick = updateGatekeeperBotTimerTick;
         window.updateGatekeeperBotTelemetryUI = updateGatekeeperBotTelemetryUI;
         window.getBotFleetCountInfo = getBotFleetCountInfo;
+
+        // ================= ALLIANCE BOT OPERATIONS RADAR & FLEET SAFETY ENGINE =================
+        window.ALLIANCE_BOT_ROSTER = [
+            { id: 'briandcox', name: 'BrianDCox', instance: 0, inst: 'Inst 0' },
+            { id: 'guardian', name: 'Guardian', instance: 1, inst: 'Inst 1' },
+            { id: 'sentinel', name: 'Sentinel Frost', instance: 2, inst: 'Inst 2' },
+            { id: 'licker', name: 'Licker', instance: 3, inst: 'Inst 3' },
+            { id: 'daddydiva', name: 'Daddydiva', instance: 4, inst: 'Inst 4' },
+            { id: 'fatnugget', name: 'fatnugget', instance: 5, inst: 'Inst 5' },
+            { id: 'creampuff', name: 'creampuff', instance: 6, inst: 'Inst 6' },
+            { id: 'cr3amp13', name: 'cr3amp13', instance: 7, inst: 'Inst 7' },
+            { id: 'juicypeach', name: 'Juicypeach', instance: 8, inst: 'Inst 8' },
+            { id: 'babyboi', name: 'BabyBoi', instance: 9, inst: 'Inst 9' },
+            { id: 'babygirl', name: 'Babygirl', instance: 10, inst: 'Inst 10' },
+            { id: 'bisquick', name: 'BisQuick', instance: 11, inst: 'Inst 11' },
+            { id: 'gingivitis', name: 'Gingivitis', instance: 12, inst: 'Inst 12' },
+            { id: 'bdcfdaddy', name: 'BDCFdaddy', instance: 13, inst: 'Inst 13' },
+            { id: 'shrimp', name: 'Shrimpleprechaun', instance: 14, inst: 'Inst 14' },
+            { id: 'angry', name: 'AngryGermanpapi', instance: 15, inst: 'Inst 15' },
+            { id: 'babyangry', name: 'BabyAngryGerman', instance: 16, inst: 'Inst 16' }
+        ];
+
+        window.escapeHTML = (str) => {
+            if (!str || typeof str !== 'string') return '';
+            return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+        };
+
+        window.getBotLastActiveCache = () => {
+            try {
+                const raw = localStorage.getItem('wos_bot_last_active_cache_v1');
+                return raw ? JSON.parse(raw) : {};
+            } catch (e) {
+                return {};
+            }
+        };
+
+        window.saveBotLastActiveCache = (cache) => {
+            try {
+                localStorage.setItem('wos_bot_last_active_cache_v1', JSON.stringify(cache));
+            } catch (e) {}
+        };
+
+        window.recordBotLastActiveTime = (botIdentifier, epochSecs, timeStr) => {
+            if (!botIdentifier) return;
+            const cleanId = String(botIdentifier).toLowerCase().replace(/[^a-z0-9]/g, '');
+            const cache = window.getBotLastActiveCache();
+            const existing = cache[cleanId] || {};
+            const newEpoch = Number(epochSecs || 0);
+            
+            let finalTime = timeStr || existing.timeStr;
+            if (!finalTime && newEpoch > 0) {
+                const d = new Date(newEpoch * 1000);
+                finalTime = d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+            } else if (!finalTime) {
+                const d = new Date();
+                finalTime = d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+            }
+
+            if (newEpoch >= (existing.epoch || 0) || !existing.epoch) {
+                cache[cleanId] = {
+                    epoch: newEpoch || Math.floor(Date.now() / 1000),
+                    timeStr: finalTime,
+                    updatedAt: Date.now()
+                };
+                window.saveBotLastActiveCache(cache);
+            }
+        };
+
+        window.formatBotRelativeTime = (epochSecs) => {
+            if (!epochSecs || Number(epochSecs) <= 0) return 'Standby';
+            const nowSecs = Math.floor(Date.now() / 1000);
+            const diffSecs = Math.max(0, nowSecs - Number(epochSecs));
+            
+            if (diffSecs < 60) return 'Just now';
+            const mins = Math.floor(diffSecs / 60);
+            if (mins < 60) return `${mins}m ago`;
+            const hours = Math.floor(mins / 60);
+            const remMins = mins % 60;
+            if (hours < 24) {
+                return remMins > 0 ? `${hours}h ${remMins}m ago` : `${hours}h ago`;
+            }
+            const days = Math.floor(hours / 24);
+            return `${days}d ago`;
+        };
+
+        window.formatBotLastActiveHtml = (epochSecs, timeStr, botId) => {
+            const epoch = Number(epochSecs || 0);
+            if (!epoch && !timeStr) {
+                return `<div class="bot-fleet-activity idle" id="bot-fleet-activity-${botId}" title="Last active: Standby"><span class="bot-fleet-time-icon">⏱️</span> <span class="bot-fleet-time-rel">Standby</span></div>`;
+            }
+
+            const nowSecs = Math.floor(Date.now() / 1000);
+            const diffSecs = epoch > 0 ? Math.max(0, nowSecs - epoch) : 0;
+            
+            let rel = '';
+            if (epoch > 0) {
+                if (diffSecs < 60) rel = 'Just now';
+                else if (diffSecs < 3600) rel = `${Math.floor(diffSecs / 60)}m ago`;
+                else if (diffSecs < 86400) {
+                    const h = Math.floor(diffSecs / 3600);
+                    const m = Math.floor((diffSecs % 3600) / 60);
+                    rel = m > 0 ? `${h}h ${m}m ago` : `${h}h ago`;
+                } else {
+                    const d = Math.floor(diffSecs / 86400);
+                    const h = Math.floor((diffSecs % 86400) / 3600);
+                    rel = h > 0 ? `${d}d ${h}h ago` : `${d}d ago`;
+                }
+            }
+
+            if (!rel && timeStr) {
+                rel = timeStr;
+            }
+
+            let clock = timeStr || '';
+            if (!clock && epoch > 0) {
+                const dt = new Date(epoch * 1000);
+                clock = dt.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+            }
+
+            const displayText = rel || 'Standby';
+            const fullTitle = clock ? `Last active: ${clock} (${displayText})` : `Last active: ${displayText}`;
+
+            return `
+                <div class="bot-fleet-activity idle" id="bot-fleet-activity-${botId}" title="${fullTitle}">
+                    <span class="bot-fleet-time-icon">⏱️</span>
+                    <span class="bot-fleet-time-rel">${displayText}</span>
+                </div>
+            `;
+        };
+
+        window.getBotAutomationHealth = (data = window.latestBotTelemetry || window.latestBotStatus || {}) => {
+            const now = Date.now();
+            const status = (data.status || 'OFFLINE').toUpperCase();
+            const ts = Number(data.timestamp || data.receivedAt || 0);
+            const isStale = Boolean(ts > 0 && (now - ts > 60000));
+            const isHeartbeatStale = isStale;
+            
+            const isHubOnline = Boolean(data.bothubOnline !== false && !isStale && ts > 0);
+            const isBlackout = Boolean(status === 'EVENT_BLACKOUT' || (data.stage && /event\s*blackout/i.test(data.stage)));
+            const isServerOnline = Boolean(isHubOnline && data.serverOnline === true && status !== 'OFFLINE');
+            const isOffline = !isHubOnline || (!isServerOnline && !isBlackout);
+            
+            return {
+                status,
+                isStale,
+                isHeartbeatStale,
+                isHubOnline,
+                isServerOnline,
+                isOffline,
+                isBlackout,
+                lastSeenSecs: ts > 0 ? Math.floor((now - ts) / 1000) : null
+            };
+        };
+
+        window.cleanBotRadarName = (name) => {
+            if (!name || typeof name !== 'string') return '';
+            return name.replace(/\s*\(Inst\s*-?\d+\)/gi, '').trim();
+        };
+
+        window.getBotCooldownInfo = (data = window.latestBotTelemetry || window.latestBotStatus || {}) => {
+            const status = (data.status || '').toUpperCase();
+            const rawStage = (data.stage || '').replace(/^[?\s\u{1F6E1}\uFE0F]+/u, '').trim();
+            const rawHold = (data.cooldownHoldText || '').replace(/^[?\s\u{1F6E1}\uFE0F]+/u, '').trim();
+            const rawAcc = (data.account || '').replace(/^[?\s\u{1F6E1}\uFE0F]+/u, '').trim();
+            const rawCdAcc = (data.cooldownAccount || '').replace(/^[?\s\u{1F6E1}\uFE0F]+/u, '').trim();
+
+            const isBlackout = Boolean(status === 'EVENT_BLACKOUT' || /event\s*blackout/i.test(rawStage));
+
+            let eventName = '';
+            if (data.cooldownEvent && typeof data.cooldownEvent === 'string' && data.cooldownEvent.trim()) {
+                eventName = data.cooldownEvent.trim();
+            } else if (data.event && typeof data.event === 'string' && data.event.trim()) {
+                eventName = data.event.trim();
+            } else if (data.eventLabel && typeof data.eventLabel === 'string' && data.eventLabel.trim()) {
+                eventName = data.eventLabel.trim();
+            } else if (data.cooldownReason && typeof data.cooldownReason === 'string' && data.cooldownReason.trim()) {
+                eventName = data.cooldownReason.trim();
+            }
+
+            if (!eventName) {
+                const combined = `${rawStage} ${rawHold} ${rawAcc} ${rawCdAcc}`;
+                const boMatch = rawStage.match(/Event\s*Blackout(?:\s*in\s*Progress)?:\s*([^\(]+(?:\([^\)]+\))?)/i);
+                if (boMatch && boMatch[1] && boMatch[1].trim()) {
+                    eventName = boMatch[1].trim();
+                } else if (/castle\s*battle/i.test(combined)) {
+                    const match = combined.match(/Castle\s*Battle(?:\s*\([^\)]+\))?/i);
+                    eventName = match ? match[0].trim() : 'Castle Battle';
+                } else if (/bear\s*trap/i.test(combined)) {
+                    const match = combined.match(/Bear\s*Trap(?:\s*\([^\)]+\))?/i);
+                    eventName = match ? match[0].trim() : 'Bear Trap';
+                } else if (/foundry/i.test(combined)) {
+                    eventName = 'Foundry Battle';
+                } else if (/sunfire/i.test(combined)) {
+                    eventName = 'Sunfire Castle';
+                } else if (/quiet\s*hours/i.test(combined)) {
+                    eventName = 'Overnight Quiet Hours';
+                } else if (/custom\s*timer/i.test(combined) || /timer\s*adjusted/i.test(combined)) {
+                    eventName = 'Custom Cooldown Timer';
+                }
+            }
+
+            let subText = '';
+            if (eventName) {
+                if (/^event:\s*/i.test(eventName)) {
+                    subText = eventName;
+                } else if (/quiet\s*hours/i.test(eventName)) {
+                    subText = 'Quiet Hours Blackout';
+                } else if (/timer/i.test(eventName)) {
+                    subText = 'Custom Cooldown Timer';
+                } else {
+                    subText = `Event: ${eventName}`;
+                }
+            } else {
+                subText = 'Routine Rotation Rest';
+            }
+
+            let accountDisplay = '';
+            if (isBlackout || /castle\s*battle|bear\s*trap|quiet\s*hours|foundry/i.test(eventName)) {
+                accountDisplay = 'All Bot Accounts';
+            } else if (rawCdAcc && !rawCdAcc.includes('Inst -1') && !/castle|bear|foundry|blackout/i.test(rawCdAcc)) {
+                accountDisplay = window.cleanBotRadarName(rawCdAcc) || 'All Bot Accounts';
+            } else if (status === 'COOLDOWN' && rawAcc && !rawAcc.includes('Inst -1') && !/castle|bear|foundry|blackout/i.test(rawAcc)) {
+                accountDisplay = window.cleanBotRadarName(rawAcc) || 'All Bot Accounts';
+            } else {
+                accountDisplay = 'All Bot Accounts';
+            }
+
+            return {
+                eventName,
+                subText,
+                accountDisplay,
+                isBlackout
+            };
+        };
+
+        window.extractBotInstance = (str) => {
+            if (!str || typeof str !== 'string') return null;
+            const m = str.match(/Inst\s*(-?\d+)/i);
+            return m ? parseInt(m[1], 10) : null;
+        };
+
+        window.matchesAccount = (accStr, b) => {
+            if (!accStr || typeof accStr !== 'string' || !b) return false;
+            const cleanAcc = accStr.replace(/\s*\(Inst\s*-?\d+\)/gi, '').trim().toLowerCase();
+            if (!cleanAcc || cleanAcc === 'none' || cleanAcc === 'standby') return false;
+            const bName = (b.name || '').trim().toLowerCase();
+            const bShort = (b.short || '').trim().toLowerCase();
+            const targetInst = window.extractBotInstance(accStr);
+            if (targetInst !== null && b.instance !== undefined && Number(b.instance) === targetInst) return true;
+            if (bName && (cleanAcc.includes(bName) || bName.includes(cleanAcc))) return true;
+            if (bShort && (cleanAcc.includes(bShort) || bShort.includes(cleanAcc))) return true;
+            if (bName.length >= 5 && cleanAcc.length >= 5 && (bName.startsWith(cleanAcc.slice(0, 6)) || cleanAcc.startsWith(bName.slice(0, 6)))) return true;
+            return false;
+        };
+
+        window.isAllianceBotOrActive = (bot, activeAccount = '', cooldownAccount = '') => {
+            if (!bot) return false;
+            const name = (bot.name || '').trim();
+            const shortName = (bot.short || '').trim();
+            const inst = (bot.instance !== undefined && bot.instance !== null) ? Number(bot.instance) : null;
+
+            if (/^Bot\s*(?:17|18|\d{2,})$/i.test(name)) return false;
+            if (/^Bot\s*\d+$/i.test(name) && inst !== 3) return false;
+            if (inst !== null && inst > 16) return false;
+
+            const rawStatus = (bot.status || '').toUpperCase();
+            if (rawStatus === 'ACTIVE' || rawStatus === 'COOLDOWN') return true;
+            if (window.matchesAccount(activeAccount, bot) || window.matchesAccount(cooldownAccount, bot)) return true;
+
+            if (inst !== null) {
+                return inst >= 0 && inst <= 16;
+            }
+
+            const lower = `${name} ${shortName}`.toLowerCase();
+            const ALLIANCE_KEYWORDS = [
+                'briandcox', 'guardian', 'sentinel', 'licker',
+                'daddydiva', 'fatnugget', 'creampuff', 'cr3amp13', 'juicypeach', 'babyboi', 'babygirl',
+                'bisquick', 'gingivitis', 'bdcfdaddy', 'shrimp',
+                'angrygerman', 'babyangry'
+            ];
+            if (ALLIANCE_KEYWORDS.some(kw => lower.includes(kw))) return true;
+
+            return false;
+        };
+
+        window.getBotFleetSafetyHtml = () => {
+            const data = window.latestBotTelemetry || window.latestBotStatus || {};
+            const health = (typeof window.getBotAutomationHealth === 'function')
+                ? window.getBotAutomationHealth(data)
+                : { isOffline: Boolean(data.serverOnline === false || data.status === 'OFFLINE'), isHubOnline: true, isServerOnline: Boolean(data.serverOnline !== false), isStale: false, status: (data.status || 'STANDBY').toUpperCase() };
+            const isOffline = health.isOffline;
+
+            const status = (data.status || 'STANDBY').toUpperCase();
+            const activeAccount = data.activeAccount || (status === 'ACTIVE' ? (data.account || '') : '');
+            const cooldownAccount = data.cooldownAccount || (status === 'COOLDOWN' ? (data.account || '') : '');
+            const secondsLeft = (data.cooldownSecondsLeft !== undefined && data.cooldownSecondsLeft !== null) ? data.cooldownSecondsLeft : (data.secondsLeft || 0);
+
+            let occupiedCount = 0;
+            let safeCount = 0;
+
+            const masterBase = [
+                { id: 'briandcox', name: 'BrianDCox', instance: 0, inst: 'Inst 0' },
+                { id: 'guardian', name: 'Guardian', instance: 1, inst: 'Inst 1' },
+                { id: 'sentinel', name: 'Sentinel Frost', instance: 2, inst: 'Inst 2' },
+                { id: 'licker', name: 'Licker', instance: 3, inst: 'Inst 3' },
+                { id: 'daddydiva', name: 'Daddydiva', instance: 4, inst: 'Inst 4' },
+                { id: 'fatnugget', name: 'fatnugget', instance: 5, inst: 'Inst 5' },
+                { id: 'creampuff', name: 'creampuff', instance: 6, inst: 'Inst 6' },
+                { id: 'cr3amp13', name: 'cr3amp13', instance: 7, inst: 'Inst 7' },
+                { id: 'juicypeach', name: 'Juicypeach', instance: 8, inst: 'Inst 8' },
+                { id: 'babyboi', name: 'BabyBoi', instance: 9, inst: 'Inst 9' },
+                { id: 'babygirl', name: 'Babygirl', instance: 10, inst: 'Inst 10' },
+                { id: 'bisquick', name: 'BisQuick', instance: 11, inst: 'Inst 11' },
+                { id: 'gingivitis', name: 'Gingivitis', instance: 12, inst: 'Inst 12' },
+                { id: 'bdcfdaddy', name: 'BDCFdaddy', instance: 13, inst: 'Inst 13' },
+                { id: 'shrimp', name: 'Shrimpleprechaun', instance: 14, inst: 'Inst 14' },
+                { id: 'angry', name: 'AngryGermanpapi', instance: 15, inst: 'Inst 15' },
+                { id: 'babyangry', name: 'BabyAngryGerman', instance: 16, inst: 'Inst 16' }
+            ];
+
+            const baseRoster = (window.ALLIANCE_BOT_ROSTER && window.ALLIANCE_BOT_ROSTER.length > 0)
+                ? window.ALLIANCE_BOT_ROSTER
+                : masterBase;
+
+            const telemetryFleet = (data.fleet && Array.isArray(data.fleet) && data.fleet.length > 0) ? data.fleet : [];
+
+            const mergedRoster = baseRoster.map(baseBot => {
+                const liveMatch = telemetryFleet.find(f => 
+                    window.matchesAccount(baseBot.name, f) || 
+                    window.matchesAccount(f.name, baseBot) || 
+                    (f.instance !== undefined && baseBot.instance !== undefined && Number(f.instance) === Number(baseBot.instance))
+                );
+                return liveMatch ? { ...baseBot, ...liveMatch, id: baseBot.id, name: baseBot.name, instance: baseBot.instance, inst: baseBot.inst } : baseBot;
+            });
+
+            telemetryFleet.forEach(f => {
+                if (window.isAllianceBotOrActive(f, activeAccount, cooldownAccount)) {
+                    const exists = mergedRoster.some(m => 
+                        window.matchesAccount(m.name, f) || 
+                        (m.instance !== undefined && f.instance !== undefined && Number(m.instance) === Number(f.instance))
+                    );
+                    if (!exists) {
+                        mergedRoster.push(f);
+                    }
+                }
+            });
+
+            const roster = mergedRoster.filter(b => window.isAllianceBotOrActive(b, activeAccount, cooldownAccount));
+
+            const matchesAccount = window.matchesAccount;
+
+            const cardsHtml = roster.map(bot => {
+                let fleetItem = null;
+                if (data.fleet && Array.isArray(data.fleet)) {
+                    fleetItem = data.fleet.find(f => f === bot || (f.name && bot.name && (f.name.toLowerCase() === bot.name.toLowerCase() || f.name.includes(bot.name) || bot.name.includes(f.name))));
+                } else {
+                    fleetItem = bot;
+                }
+
+                let aliasId = (bot.short || bot.name || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+                if (aliasId.includes('angry') && !aliasId.includes('baby')) aliasId = 'angry';
+                else if (aliasId.includes('babyangry')) aliasId = 'babyangry';
+                else if (aliasId.includes('shrimp')) aliasId = 'shrimp';
+                else if (aliasId.includes('sentinel')) aliasId = 'sentinel';
+                else if (aliasId.includes('bisquick')) aliasId = 'bisquick';
+                const botId = (bot.id && !bot.id.startsWith('bot_')) ? bot.id : (aliasId || bot.id || 'bot');
+
+                const instDisplay = (bot.instance !== undefined && bot.instance !== null)
+                    ? (String(bot.instance).toLowerCase().startsWith('inst') ? String(bot.instance) : `Inst ${bot.instance}`)
+                    : (bot.inst || '');
+
+                const isBotActive = !isOffline && (
+                    (fleetItem && fleetItem.status === 'ACTIVE') ||
+                    (status === 'ACTIVE' && matchesAccount(activeAccount, bot)) ||
+                    (status === 'ACTIVE' && matchesAccount(data.account, bot)) ||
+                    matchesAccount(data.activeAccount, bot)
+                );
+                  
+                const isBotCooldown = !isOffline && !isBotActive && (
+                    (fleetItem && fleetItem.status === 'COOLDOWN') ||
+                    (status === 'COOLDOWN' && (matchesAccount(cooldownAccount, bot) || matchesAccount(data.account, bot))) || 
+                    (matchesAccount(cooldownAccount, bot) && secondsLeft > 0)
+                );
+                
+                let itemClass = 'safe';
+                let badgeTitle = '● IDLE';
+                let actionTag = '✅ Safe to log in';
+                let detail = 'Routines completed • Idle';
+
+                if (isOffline) {
+                    safeCount++;
+                    itemClass = 'safe is-offline';
+                    badgeTitle = '● OFFLINE';
+                    actionTag = '✅ Safe to log in';
+                    detail = health.isStale ? 'Host disconnected (>60s) • Safe to log in' : 'Automation offline • Safe to log in';
+                } else if (isBotActive) {
+                    occupiedCount++;
+                    itemClass = 'occupied';
+                    badgeTitle = '● ACTIVE DUTY';
+                    actionTag = '⛔ DO NOT LOG IN';
+                    detail = fleetItem?.detail || data.activeStage || data.stage || 'Running Wilderness / Daily Tasks';
+                } else if (isBotCooldown) {
+                    safeCount++;
+                    itemClass = 'cooldown';
+                    badgeTitle = '⏳ COOLDOWN';
+                    actionTag = '✅ Safe to log in';
+                    detail = fleetItem?.detail || 'City tab idle • Safe to log in';
+                } else {
+                    safeCount++;
+                }
+
+                let activityHtml = '';
+                if (isBotActive) {
+                    if (typeof window.recordBotLastActiveTime === 'function') {
+                        window.recordBotLastActiveTime(bot.name, Math.floor(Date.now() / 1000));
+                    }
+                    activityHtml = `<div class="bot-fleet-activity active" id="bot-fleet-activity-${botId}"><span class="bot-fleet-activity-pulse">🟢</span> Active Now</div>`;
+                } else {
+                    const cache = (typeof window.getBotLastActiveCache === 'function') ? window.getBotLastActiveCache() : {};
+                    const cleanAlias = (bot.short || bot.name || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+                    const cleanName = (bot.name || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+                    const cached = cache[cleanAlias] || cache[bot.id] || cache[cleanName] || {};
+                    
+                    let lastEpoch = (fleetItem && fleetItem.lastActiveEpoch) ? fleetItem.lastActiveEpoch : (bot.lastActiveEpoch || cached.epoch || 0);
+                    if (lastEpoch <= 0 && isBotCooldown && (data.timestamp || data.receivedAt)) {
+                        lastEpoch = Math.floor((data.timestamp || data.receivedAt) / 1000);
+                    }
+                    let lastTimeStr = (fleetItem && fleetItem.lastActiveTime) ? fleetItem.lastActiveTime : (cached.timeStr || '');
+                    activityHtml = (typeof window.formatBotLastActiveHtml === 'function')
+                        ? window.formatBotLastActiveHtml(lastEpoch, lastTimeStr, botId)
+                        : `<div class="bot-fleet-activity idle" id="bot-fleet-activity-${botId}">⏱️ ${lastTimeStr || 'Standby'}</div>`;
+                }
+
+                return `
+                    <div class="bot-fleet-item ${itemClass}" id="bot-fleet-item-${botId}" data-bot-id="${bot.id || botId}">
+                        <div class="bot-fleet-item-info">
+                            <div class="bot-fleet-name-row">
+                                <span class="bot-fleet-dot ${itemClass}" title="${itemClass}"></span>
+                                <span class="bot-fleet-name" title="${bot.name}">${bot.name}</span>
+                                <span class="bot-fleet-inst">${instDisplay}</span>
+                            </div>
+                            <div class="bot-fleet-status-row">
+                                <span class="bot-fleet-tag ${itemClass}" id="bot-fleet-tag-${botId}">${actionTag}</span>
+                                ${activityHtml}
+                            </div>
+                            <span class="bot-fleet-detail" id="bot-fleet-detail-${botId}" style="display:none;">${detail}</span>
+                            <span id="bot-fleet-badgetext-${botId}" style="display:none;">${badgeTitle}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            return `
+                <div id="bot-fleet-safety-container" class="bot-fleet-container">
+                    <div class="bot-fleet-header">
+                        <div class="bot-fleet-title">
+                            <span>🤖</span>
+                            <span>Alliance Bot Fleet & Account Login Safety</span>
+                        </div>
+                        <div class="bot-fleet-summary">
+                            <div id="bot-fleet-busy-count" class="bot-fleet-summary-pill ${isOffline ? 'offline' : 'busy'}" ${isOffline ? 'style="background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4);"' : ''}>
+                                <span>🔴 ${isOffline ? 'AUTOMATION OFFLINE' : `${occupiedCount} OCCUPIED`}</span>
+                            </div>
+                            <div id="bot-fleet-safe-count" class="bot-fleet-summary-pill safe">
+                                <span>🟢 ${isOffline ? 'ALL SAFE TO LOGIN' : `${safeCount} SAFE TO LOGIN`}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bot-fleet-grid">
+                        ${cardsHtml}
+                    </div>
+                </div>
+            `;
+        };
+
+        window.getBotOperationsRadarHtml = () => {
+            const data = window.latestBotTelemetry || window.latestBotStatus || {};
+            const health = (typeof window.getBotAutomationHealth === 'function')
+                ? window.getBotAutomationHealth(data)
+                : { isOffline: Boolean(data.serverOnline === false || data.status === 'OFFLINE'), isHubOnline: true, isServerOnline: Boolean(data.serverOnline !== false), isStale: false, status: (data.status || 'STANDBY').toUpperCase() };
+            
+            const status = health.status;
+            const isOffline = health.isOffline;
+            const shortTime = data.shortTime || (health.isStale ? 'Stale' : 'Just now');
+            
+            const cdInfo = (typeof window.getBotCooldownInfo === 'function')
+                ? window.getBotCooldownInfo(data)
+                : { eventName: '', subText: 'Routine Rotation Rest', accountDisplay: 'All Bot Accounts', isBlackout: false };
+
+            const hasCooldown = !isOffline && (
+                ((data.cooldownSecondsLeft !== undefined && data.cooldownSecondsLeft > 0) ||
+                 (data.secondsLeft > 0 && (status === 'COOLDOWN' || status === 'EVENT_BLACKOUT')) ||
+                 Boolean(data.isCooldownRunning) ||
+                 cdInfo.isBlackout)
+            );
+            const rawCdAccount = isOffline ? 'None' : (hasCooldown ? cdInfo.accountDisplay : 'None');
+            const cdAccount = (rawCdAccount === 'None' || rawCdAccount === 'All Bot Accounts') ? rawCdAccount : window.cleanBotRadarName(rawCdAccount);
+
+            const isCandidateValid = (acc) => Boolean(
+                acc && 
+                acc.trim() !== '' && 
+                !acc.includes('Standby') && 
+                !acc.includes('Rotation Queue') &&
+                acc.toLowerCase() !== 'none'
+            );
+
+            const candidateActive = isCandidateValid(data.activeAccount)
+                ? data.activeAccount
+                : ((status === 'ACTIVE' && isCandidateValid(data.account)) ? data.account : '');
+
+            const cleanCandidate = window.cleanBotRadarName(candidateActive);
+            const hasActiveRunner = !isOffline && Boolean(
+                candidateActive &&
+                (status !== 'COOLDOWN') &&
+                (data.isExecutingTasks === true || status === 'ACTIVE') &&
+                (!hasCooldown || (cleanCandidate !== cdAccount && candidateActive !== cdAccount))
+            );
+            const activeRunner = (isOffline || !hasActiveRunner) ? 'None' : cleanCandidate;
+            const runnerPillText = isOffline ? 'OFFLINE' : (hasActiveRunner ? '● IN PROGRESS' : '⚪ IDLE');
+
+            const isActive = hasActiveRunner;
+            const isCooldown = hasCooldown;
+            
+            const cardBorderClass = isOffline ? 'bot-radar-card border-offline' : (isActive ? 'bot-radar-card border-active' : (isCooldown ? 'bot-radar-card border-cooldown' : 'bot-radar-card border-standby'));
+
+            const hubOnline = health.isHubOnline;
+            const serverOnline = health.isServerOnline;
+            const serverBoxClass = serverOnline ? 'is-online' : 'is-offline';
+            const serverValClass = serverOnline ? 'is-online' : 'is-offline';
+            const serverValText = serverOnline ? '🟢 Online' : '🔴 Offline';
+
+            const dualTagHtml = `
+                <div id="bot-radar-dual-tag" class="bot-radar-server-tag bot-radar-status-grid">
+                    <div id="bot-radar-hub-box" class="bot-radar-mini-box ${hubOnline ? 'is-online' : 'is-offline'}">
+                        <div class="bot-radar-mini-header">
+                            <span class="bot-radar-mini-icon">🖥️</span>
+                            <span class="bot-radar-mini-label">WOS Bot Hub</span>
+                        </div>
+                        <div id="bot-radar-hub-val" class="bot-radar-mini-val ${hubOnline ? 'is-online' : 'is-offline'}">
+                            ${hubOnline ? '🟢 Online' : '🔴 Offline'}
+                        </div>
+                    </div>
+                    <div id="bot-radar-server-box" class="bot-radar-mini-box ${serverBoxClass}">
+                        <div class="bot-radar-mini-header">
+                            <span class="bot-radar-mini-icon">⚡</span>
+                            <span class="bot-radar-mini-label">Bot Server</span>
+                        </div>
+                        <div id="bot-radar-server-val" class="bot-radar-mini-val ${serverValClass}">
+                            ${serverValText}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            let warningMsg = 'Bot Server is currently offline on host machine';
+            let warningAction = 'AUTOMATION HALTED';
+            if (health.isStale) {
+                warningMsg = 'Host machine is offline or stopped reporting (>60s)';
+                warningAction = 'DISCONNECTED';
+            } else if (!health.isHubOnline && !health.isServerOnline) {
+                warningMsg = 'Both WOS Bot Hub and Bot Server are closed on host';
+                warningAction = 'OFFLINE';
+            }
+
+            const offlineWarningHtml = isOffline ? `
+                <div id="bot-radar-offline-alert" class="bot-radar-offline-warning-bar">
+                    <span>⚠️ ${warningMsg}</span>
+                    <span style="font-weight:bold; color:#ef4444;">${warningAction}</span>
+                </div>
+            ` : `<div id="bot-radar-offline-alert" style="display:none;"></div>`;
+
+            let timerText = '';
+            if (isOffline) {
+                timerText = '';
+            } else if (hasCooldown) {
+                const totalSecs = (data.cooldownSecondsLeft !== undefined && data.cooldownSecondsLeft !== null) ? data.cooldownSecondsLeft : (data.secondsLeft || 0);
+                const elapsedSecs = Math.floor((Date.now() - (data.receivedAt || Date.now())) / 1000);
+                const rem = Math.max(0, totalSecs - elapsedSecs);
+                const h = Math.floor(rem / 3600).toString().padStart(2, '0');
+                const m = Math.floor((rem % 3600) / 60).toString().padStart(2, '0');
+                const s = (rem % 60).toString().padStart(2, '0');
+                timerText = `${h}:${m}:${s}`;
+            }
+
+            const cooldownPillText = isOffline ? 'OFFLINE' : (hasCooldown ? '● ON' : '⚪ IDLE');
+            const cooldownPillClass = isOffline ? 'offline' : (hasCooldown ? 'cooldown' : 'idle');
+
+            return `
+                <div id="bot-operations-radar" class="${cardBorderClass}" style="max-width: 780px; margin: 0 auto 10px auto;">
+                    <div class="bot-radar-header">
+                        <div class="bot-radar-title-group">
+                            <div class="bot-radar-icon">🤖</div>
+                            <div>
+                                <div class="bot-radar-title">
+                                    BOT OPERATIONS RADAR
+                                    <span id="bot-radar-badge-el" style="display:none;"></span>
+                                </div>
+                                <div class="bot-radar-subtitle">Live telemetry reported directly from automation host</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    ${dualTagHtml}
+
+                    ${offlineWarningHtml}
+
+                    <!-- DUAL COMPARTMENTS: Active Runner vs Cooldown Hold Queue -->
+                    <div class="bot-radar-dual-grid">
+                        <!-- Compartment 1: Live Active Runner -->
+                        <div id="bot-radar-runner-compartment" class="bot-radar-compartment runner-card ${isOffline ? 'is-offline' : (hasActiveRunner ? 'is-active' : 'is-idle')}" style="${(hasActiveRunner || !hasCooldown) ? '' : 'display:none;'}">
+                            <div class="bot-radar-comp-header">
+                                <span id="bot-radar-comp-badge-runner" class="bot-radar-comp-badge runner ${isOffline ? 'is-offline' : (hasActiveRunner ? '' : 'is-idle')}">Active Account</span>
+                                <span id="bot-radar-runner-badge" class="bot-radar-status-pill ${isOffline ? 'offline' : (hasActiveRunner ? 'active' : 'idle')}">${runnerPillText}</span>
+                            </div>
+                            <div class="bot-radar-comp-body">
+                                <div id="bot-radar-runner-avatar" class="bot-radar-comp-avatar ${isOffline ? 'is-offline' : (hasActiveRunner ? '' : 'is-idle')}">🤖</div>
+                                <div class="bot-radar-comp-text">
+                                    <div id="bot-radar-account-val" class="bot-radar-acc-name">${window.escapeHTML(activeRunner)}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Compartment 2: Cooldown Hold Queue -->
+                        <div id="bot-radar-cooldown-compartment" class="bot-radar-compartment cooldown-card ${isOffline ? 'is-offline' : ''}" style="${(hasCooldown && !isOffline) ? '' : 'display:none;'}">
+                            <div class="bot-radar-comp-header">
+                                <span id="bot-radar-comp-badge-cooldown" class="bot-radar-comp-badge cooldown ${isOffline ? 'is-offline' : ''}">⏳ COOLDOWN</span>
+                                <div style="display:flex; align-items:center; gap:8px;">
+                                    <span id="bot-radar-clock" class="bot-radar-clock font-mono" style="${hasCooldown ? '' : 'display:none;'}">${timerText}</span>
+                                    <span id="bot-radar-cooldown-badge" class="bot-radar-status-pill ${cooldownPillClass}">${cooldownPillText}</span>
+                                </div>
+                            </div>
+                            <div class="bot-radar-comp-body">
+                                <div id="bot-radar-cooldown-avatar" class="bot-radar-comp-avatar cd ${isOffline ? 'is-offline' : ''}">⏳</div>
+                                <div class="bot-radar-comp-text">
+                                    <div id="bot-radar-cooldown-val" class="bot-radar-acc-name">${window.escapeHTML(cdAccount)}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bot-radar-footer-row" style="margin-top: 14px;">
+                        <span id="bot-radar-last-updated">Last broadcast: ${shortTime}</span>
+                        <span class="bot-radar-db-indicator">
+                            <span class="bot-radar-pulse-dot"></span>
+                            Firebase Realtime Sync
+                        </span>
+                    </div>
+
+                    ${window.getBotFleetSafetyHtml ? window.getBotFleetSafetyHtml() : ''}
+                </div>
+            `;
+        };
+
+        window.updateBotOperationsRadarDom = () => {
+            const container = document.getElementById('botRadarModalContent');
+            if (!container) return;
+
+            const radarEl = document.getElementById('bot-operations-radar');
+            if (!radarEl) {
+                container.innerHTML = window.getBotOperationsRadarHtml();
+                return;
+            }
+            
+            const data = window.latestBotTelemetry || window.latestBotStatus || {};
+            const health = (typeof window.getBotAutomationHealth === 'function')
+                ? window.getBotAutomationHealth(data)
+                : { isOffline: Boolean(data.serverOnline === false || data.status === 'OFFLINE'), isHubOnline: true, isServerOnline: Boolean(data.serverOnline !== false), isStale: false, status: (data.status || 'STANDBY').toUpperCase() };
+            
+            const status = health.status;
+            const isOffline = health.isOffline;
+            const shortTime = data.shortTime || (health.isStale ? 'Stale' : 'Just now');
+            
+            const cdInfo = (typeof window.getBotCooldownInfo === 'function')
+                ? window.getBotCooldownInfo(data)
+                : { eventName: '', subText: 'Routine Rotation Rest', accountDisplay: 'All Bot Accounts', isBlackout: false };
+
+            const hasCooldown = !isOffline && (
+                ((data.cooldownSecondsLeft !== undefined && data.cooldownSecondsLeft > 0) ||
+                 (data.secondsLeft > 0 && (status === 'COOLDOWN' || status === 'EVENT_BLACKOUT')) ||
+                 Boolean(data.isCooldownRunning) ||
+                 cdInfo.isBlackout)
+            );
+            const rawCdAccount = isOffline ? 'None' : (hasCooldown ? cdInfo.accountDisplay : 'None');
+            const cdAccount = (rawCdAccount === 'None' || rawCdAccount === 'All Bot Accounts') ? rawCdAccount : window.cleanBotRadarName(rawCdAccount);
+
+            const isCandidateValid = (acc) => Boolean(
+                acc && 
+                acc.trim() !== '' && 
+                !acc.includes('Standby') && 
+                !acc.includes('Rotation Queue') &&
+                acc.toLowerCase() !== 'none'
+            );
+
+            const candidateActive = isCandidateValid(data.activeAccount)
+                ? data.activeAccount
+                : ((status === 'ACTIVE' && isCandidateValid(data.account)) ? data.account : '');
+
+            const cleanCandidate = window.cleanBotRadarName(candidateActive);
+            const hasActiveRunner = !isOffline && Boolean(
+                candidateActive &&
+                (status !== 'COOLDOWN') &&
+                (data.isExecutingTasks === true || status === 'ACTIVE') &&
+                (!hasCooldown || (cleanCandidate !== cdAccount && candidateActive !== cdAccount))
+            );
+            const activeRunner = (isOffline || !hasActiveRunner) ? 'None' : cleanCandidate;
+            const runnerPillText = isOffline ? 'OFFLINE' : (hasActiveRunner ? '● IN PROGRESS' : '⚪ IDLE');
+
+            const isActive = hasActiveRunner;
+            const isCooldown = hasCooldown;
+            
+            radarEl.className = isOffline ? 'bot-radar-card border-offline' : (isActive ? 'bot-radar-card border-active' : (isCooldown ? 'bot-radar-card border-cooldown' : 'bot-radar-card border-standby'));
+            
+            const dualTagEl = document.getElementById('bot-radar-dual-tag');
+            if (dualTagEl) {
+                const hubOnline = health.isHubOnline;
+                const serverOnline = health.isServerOnline;
+                const serverBoxClass = serverOnline ? 'is-online' : 'is-offline';
+                const serverValClass = serverOnline ? 'is-online' : 'is-offline';
+                const serverValText = serverOnline ? '🟢 Online' : '🔴 Offline';
+                dualTagEl.innerHTML = `
+                    <div id="bot-radar-hub-box" class="bot-radar-mini-box ${hubOnline ? 'is-online' : 'is-offline'}">
+                        <div class="bot-radar-mini-header">
+                            <span class="bot-radar-mini-icon">🖥️</span>
+                            <span class="bot-radar-mini-label">WOS Bot Hub</span>
+                        </div>
+                        <div id="bot-radar-hub-val" class="bot-radar-mini-val ${hubOnline ? 'is-online' : 'is-offline'}">
+                            ${hubOnline ? '🟢 Online' : '🔴 Offline'}
+                        </div>
+                    </div>
+                    <div id="bot-radar-server-box" class="bot-radar-mini-box ${serverBoxClass}">
+                        <div class="bot-radar-mini-header">
+                            <span class="bot-radar-mini-icon">⚡</span>
+                            <span class="bot-radar-mini-label">Bot Server</span>
+                        </div>
+                        <div id="bot-radar-server-val" class="bot-radar-mini-val ${serverValClass}">
+                            ${serverValText}
+                        </div>
+                    </div>
+                `;
+            }
+
+            const alertEl = document.getElementById('bot-radar-offline-alert');
+            if (alertEl) {
+                if (isOffline) {
+                    let warningMsg = 'Bot Server is currently offline on host machine';
+                    let warningAction = 'AUTOMATION HALTED';
+                    if (health.isStale) {
+                        warningMsg = 'Host machine is offline or stopped reporting (>60s)';
+                        warningAction = 'DISCONNECTED';
+                    } else if (!health.isHubOnline && !health.isServerOnline) {
+                        warningMsg = 'Both WOS Bot Hub and Bot Server are closed on host';
+                        warningAction = 'OFFLINE';
+                    }
+                    alertEl.className = 'bot-radar-offline-warning-bar';
+                    alertEl.style.display = 'flex';
+                    alertEl.innerHTML = `<span>⚠️ ${warningMsg}</span><span style="font-weight:bold; color:#ef4444;">${warningAction}</span>`;
+                } else {
+                    alertEl.style.display = 'none';
+                    alertEl.innerHTML = '';
+                }
+            }
+
+            const accValEl = document.getElementById('bot-radar-account-val');
+            if (accValEl) accValEl.textContent = activeRunner;
+
+            const showRunner = hasActiveRunner || !hasCooldown;
+            const showCooldown = hasCooldown && !isOffline;
+
+            const runnerCompEl = document.getElementById('bot-radar-runner-compartment');
+            if (runnerCompEl) {
+                runnerCompEl.className = `bot-radar-compartment runner-card ${isOffline ? 'is-offline' : (hasActiveRunner ? 'is-active' : 'is-idle')}`;
+                runnerCompEl.style.display = showRunner ? '' : 'none';
+            }
+
+            const runnerBadgeTitleEl = document.getElementById('bot-radar-comp-badge-runner');
+            if (runnerBadgeTitleEl) {
+                runnerBadgeTitleEl.className = `bot-radar-comp-badge runner ${isOffline ? 'is-offline' : (hasActiveRunner ? '' : 'is-idle')}`;
+                runnerBadgeTitleEl.textContent = 'Active Account';
+            }
+
+            const runnerAvatarEl = document.getElementById('bot-radar-runner-avatar');
+            if (runnerAvatarEl) {
+                runnerAvatarEl.className = `bot-radar-comp-avatar ${isOffline ? 'is-offline' : (hasActiveRunner ? '' : 'is-idle')}`;
+            }
+
+            const runnerBadgeEl = document.getElementById('bot-radar-runner-badge');
+            if (runnerBadgeEl) {
+                runnerBadgeEl.className = `bot-radar-status-pill ${isOffline ? 'offline' : (hasActiveRunner ? 'active' : 'idle')}`;
+                runnerBadgeEl.textContent = runnerPillText;
+            }
+
+            const cdCompEl = document.getElementById('bot-radar-cooldown-compartment');
+            if (cdCompEl) {
+                cdCompEl.className = `bot-radar-compartment cooldown-card ${isOffline ? 'is-offline' : ''}`;
+                cdCompEl.style.display = showCooldown ? '' : 'none';
+            }
+
+            const cdValEl = document.getElementById('bot-radar-cooldown-val');
+            if (cdValEl) cdValEl.textContent = cdAccount;
+
+            const clockEl = document.getElementById('bot-radar-clock');
+            const cooldownBadgeEl = document.getElementById('bot-radar-cooldown-badge');
+            const cooldownPillText = isOffline ? 'OFFLINE' : (hasCooldown ? '● ON' : '⚪ IDLE');
+            const cooldownPillClass = isOffline ? 'offline' : (hasCooldown ? 'cooldown' : 'idle');
+
+            if (cooldownBadgeEl) {
+                cooldownBadgeEl.className = `bot-radar-status-pill ${cooldownPillClass}`;
+                cooldownBadgeEl.textContent = cooldownPillText;
+            }
+
+            if (isOffline) {
+                if (clockEl) {
+                    clockEl.style.display = 'none';
+                    clockEl.textContent = '';
+                }
+            } else if (hasCooldown) {
+                const totalSecs = (data.cooldownSecondsLeft !== undefined && data.cooldownSecondsLeft !== null) ? data.cooldownSecondsLeft : (data.secondsLeft || 0);
+                const elapsedSecs = Math.floor((Date.now() - (data.receivedAt || Date.now())) / 1000);
+                const rem = Math.max(0, totalSecs - elapsedSecs);
+                const h = Math.floor(rem / 3600).toString().padStart(2, '0');
+                const m = Math.floor((rem % 3600) / 60).toString().padStart(2, '0');
+                const s = (rem % 60).toString().padStart(2, '0');
+                if (clockEl) {
+                    clockEl.style.display = 'inline-block';
+                    clockEl.textContent = `${h}:${m}:${s}`;
+                }
+            } else {
+                if (clockEl) {
+                    clockEl.style.display = 'none';
+                    clockEl.textContent = '';
+                }
+            }
+
+            const lastUpEl = document.getElementById('bot-radar-last-updated');
+            if (lastUpEl) lastUpEl.textContent = `Last broadcast: ${shortTime}`;
+
+            const fleetContainer = document.getElementById('bot-fleet-safety-container');
+            if (fleetContainer && typeof window.getBotFleetSafetyHtml === 'function') {
+                fleetContainer.outerHTML = window.getBotFleetSafetyHtml();
+            }
+        };
 
         function filterGatekeeperRoster(tab) {
             currentGkFilter = tab;
@@ -6789,6 +8185,13 @@
             if (gkM) gkM.style.display = "none";
             const brM = document.getElementById('botRadarModal');
             if (brM) brM.style.display = "block";
+            const container = document.getElementById('botRadarModalContent');
+            if (container && (!container.innerHTML.trim() || !document.getElementById('bot-operations-radar'))) {
+                container.innerHTML = window.getBotOperationsRadarHtml();
+            }
+            if (typeof updateBotOperationsRadarDom === 'function') {
+                updateBotOperationsRadarDom();
+            }
             if (typeof updateGatekeeperBotTelemetryUI === 'function') {
                 updateGatekeeperBotTelemetryUI();
             }
