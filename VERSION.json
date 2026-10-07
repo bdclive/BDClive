@@ -1,6 +1,6 @@
 {
   "name": "BDC Ecosystem Master Version Registry",
-  "lastUpdated": "2026-10-01T03:08:00-07:00",
+  "lastUpdated": "2026-10-07T15:20:00-07:00",
   "components": {
     "bdc_central_command_desktop": "1.1.28",
     "daemons": {
@@ -14,9 +14,10 @@
       "cliFile": "Threads_Bridge/threads_bridge_cli_v1.0.59_(terminal).py"
     },
     "bdclive_web_dashboard": {
-      "version": "10.2.148",
+      "version": "10.2.149",
       "repository": "https://github.com/bdclive/BDClive",
       "latestChanges": [
+        "v10.2.149: Dedicated Bot Radar popup and Gatekeeper action button",
         "v10.2.148: Added bot fleet progress counter badge to Gatekeeper box",
         "v10.2.147: Ironclad auto-reload loop breaker and session cooldown guard",
         "v10.2.146: Realtime Database bandwidth optimization, shallow reads, zero redundant streams",
@@ -68,5 +69,5 @@
       ]
     }
   },
-  "version": "1.0.79"
+  "version": "1.0.80"
 }
