@@ -14,9 +14,10 @@
       "cliFile": "Threads_Bridge/threads_bridge_cli_v1.0.59_(terminal).py"
     },
     "bdclive_web_dashboard": {
-      "version": "10.2.149",
+      "version": "10.2.150",
       "repository": "https://github.com/bdclive/BDClive",
       "latestChanges": [
+        "v10.2.150: Restored real-time Gatekeeper roster and token health sync",
         "v10.2.149: Dedicated Bot Radar popup and Gatekeeper action button",
         "v10.2.148: Added bot fleet progress counter badge to Gatekeeper box",
         "v10.2.147: Ironclad auto-reload loop breaker and session cooldown guard",

@@ -1,3 +1,12 @@
+## [10.2.150] - 2026-10-07
+- Restored continuous real-time listeners for live roster database.
+- Connected real-time gift code and alts database listeners.
+- Restored live token status badges and expiry countdowns.
+- Unified Gatekeeper metrics calculation with Central Command counters.
+- Updated modal and dashboard to refresh on tab focus.
+- Upgraded web dashboard engine to version 10.2.150.
+- Passed all automated browser and DOM test suites.
+
 ## [10.2.149] - 2026-10-07
 - Added dedicated Bot Radar popup modal for fleet operations.
 - Added Bot Radar button to Gatekeeper Roster modal header.
