@@ -1,3 +1,13 @@
+## [10.2.152] - 2026-10-11
+- Sandboxed timer iframe to block top navigation blanking redirects.
+- Added persistent dark styling to html and body elements.
+- Implemented global error boundary and unhandled rejection watchdogs.
+- Throttled bot radar DOM mutations to eliminate memory thrashing.
+- Cached bot active times to stop excessive disk writes.
+- Safeguarded auto refresh engine against local and invalid URLs.
+- Upgraded web dashboard engine to version 10.2.152.
+- Passed all automated browser and DOM test suites.
+
 ## [10.2.151] - 2026-10-07
 - Ported full Whiteout Survival Bot Radar into popup modal.
 - Added dual-compartment active runner and cooldown hold queue.
