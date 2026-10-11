@@ -1,6 +1,6 @@
 {
   "name": "BDC Ecosystem Master Version Registry",
-  "lastUpdated": "2026-10-07T15:20:00-07:00",
+  "lastUpdated": "2026-10-11T05:20:00-07:00",
   "components": {
     "bdc_central_command_desktop": "1.1.28",
     "daemons": {
@@ -14,9 +14,10 @@
       "cliFile": "Threads_Bridge/threads_bridge_cli_v1.0.59_(terminal).py"
     },
     "bdclive_web_dashboard": {
-      "version": "10.2.151",
+      "version": "10.2.152",
       "repository": "https://github.com/bdclive/BDClive",
       "latestChanges": [
+        "v10.2.152: Fixed white screen crash on long-running dashboard uptime",
         "v10.2.151: Ported full Whiteout Survival bot fleet radar and login safety grid",
         "v10.2.150: Restored real-time Gatekeeper roster and token health sync",
         "v10.2.149: Dedicated Bot Radar popup and Gatekeeper action button",

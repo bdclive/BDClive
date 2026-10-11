@@ -1,17 +1,17 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="background-color: #070a10 !important; color: #ffffff !important;">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BDC LIVE v10.2.151</title>
+    <title>BDC LIVE v10.2.152</title>
     <meta name="description" content="Centralized real-time telemetry, operational statistics, and live streaming dashboard for Brian Diva Cox.">
     <!-- Open Graph & Social Preview Meta Tags -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="BDC LIVE v10.2.151">
+    <meta property="og:title" content="BDC LIVE v10.2.152">
     <meta property="og:description" content="Real-time statistics, streaming telemetry, theater sync, and central command control plane.">
     <meta property="og:image" content="./bdclive_banner.jpg">
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="BDC LIVE v10.2.151">
+    <meta property="twitter:title" content="BDC LIVE v10.2.152">
     <meta property="twitter:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="twitter:image" content="./bdclive_banner.jpg">
     <!-- PWA Manifest & Mobile Web App Meta Tags -->
@@ -38,7 +38,8 @@
             --yt-red: #FF0000; --tt-cyan: #00f2ea; --ig-vivid: #ff5c8d; --meta-blue: #58a6ff;
             --tasks-blue: #4285F4; --purple-glow: rgba(145, 70, 255, 0.25);
         }
-        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: radial-gradient(circle at top center, #110d24 0%, #070a10 65%, #05070b 100%); color: var(--text-main); display: flex; flex-direction: column; align-items: center; padding: 0 15px 20px 15px; margin: 0; min-height: 100vh; overflow-x: hidden; }
+        html { background-color: #070a10 !important; }
+        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: radial-gradient(circle at top center, #110d24 0%, #070a10 65%, #05070b 100%) !important; background-color: #070a10 !important; color: var(--text-main); display: flex; flex-direction: column; align-items: center; padding: 0 15px 20px 15px; margin: 0; min-height: 100vh; overflow-x: hidden; }
         
         /* Master Cyber-Glass Outer Frame */
         .master-command-deck {
@@ -652,7 +653,7 @@
 </head>
 <body>
     <div class="master-command-deck">
-        <div class="timer-stage"><iframe src="https://board.multitimer.net/view/?q=6z0n8w08m0"></iframe></div>
+        <div class="timer-stage"><iframe src="https://board.multitimer.net/view/?q=6z0n8w08m0" sandbox="allow-scripts allow-same-origin allow-forms" loading="lazy"></iframe></div>
         <div class="counter-grid">
         
         <!-- UPDATED TALES DETECTED BOX -->
@@ -1774,6 +1775,18 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
     <script>
+        // Global Error Boundary & Anti-Blank Watchdog
+        window.addEventListener('error', function(event) {
+            console.error('[BDCLive Global Error Boundary]', event.error || event.message);
+            // Ensure background remains dark even if an unhandled render fails
+            if (document.documentElement) document.documentElement.style.backgroundColor = '#070a10';
+            if (document.body) document.body.style.backgroundColor = '#070a10';
+        });
+
+        window.addEventListener('unhandledrejection', function(event) {
+            console.warn('[BDCLive Unhandled Promise Rejection]', event.reason);
+        });
+
         // Main App Connectors
         const sConf = {apiKey: atob("QUl6YVN5QXZ4ZktnX3NwUE52RTJ3Y1QtdlRsOFlUUXU0TDN0Xzd3"), authDomain: "livecounters-8eaa8.firebaseapp.com", projectId: "livecounters-8eaa8", databaseURL: "https://livecounters-8eaa8-default-rtdb.firebaseio.com/", appId: "1:386919719539:web:c60c0d185c3d7e97ecc006" };
         const vConf = {apiKey: ["AIzaSyCokXnEtbo", "NuUIASBMz2ZzS0GuchemoJYI"].join(""), authDomain: "lbbb-webcounter.firebaseapp.com", projectId: "lbbb-webcounter", databaseURL: "https://lbbb-webcounter-default-rtdb.firebaseio.com/", appId: "1:217634980859:web:49ef2b0aa7fe7d0bb1415e" };
@@ -4089,7 +4102,7 @@
             }
         }
 
-        const CURRENT_APP_VERSION = 'v10.2.151';
+        const CURRENT_APP_VERSION = 'v10.2.152';
         window.CURRENT_APP_VERSION = CURRENT_APP_VERSION;
         let isDeployingLive = false;
         let pendingRemoteVersion = null;
@@ -4210,10 +4223,19 @@
                 console.warn("Cache purge error:", e);
             }
 
-            // Cache-busting hard reload with timestamp query param
-            const url = new URL(window.location.href);
-            url.searchParams.set('t', Date.now());
-            window.location.href = url.toString();
+            // Cache-busting hard reload with safe URL check
+            try {
+                if (window.location.protocol === 'file:') {
+                    window.location.reload();
+                } else {
+                    const url = new URL(window.location.href);
+                    url.searchParams.set('t', Date.now());
+                    window.location.href = url.toString();
+                }
+            } catch(navErr) {
+                console.warn("Navigation reload fallback:", navErr);
+                window.location.reload();
+            }
         }
 
         function parseSemver(vStr) {
@@ -5866,16 +5888,26 @@
             return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
         };
 
+        window._botLastActiveMemCache = null;
         window.getBotLastActiveCache = () => {
+            if (window._botLastActiveMemCache) return window._botLastActiveMemCache;
             try {
                 const raw = localStorage.getItem('wos_bot_last_active_cache_v1');
-                return raw ? JSON.parse(raw) : {};
+                window._botLastActiveMemCache = raw ? JSON.parse(raw) : {};
+                return window._botLastActiveMemCache;
             } catch (e) {
-                return {};
+                window._botLastActiveMemCache = {};
+                return window._botLastActiveMemCache;
             }
         };
 
+        window._lastBotActiveDiskSave = 0;
         window.saveBotLastActiveCache = (cache) => {
+            window._botLastActiveMemCache = cache;
+            const now = Date.now();
+            // Throttle disk writes to at most once every 30 seconds
+            if (now - window._lastBotActiveDiskSave < 30000) return;
+            window._lastBotActiveDiskSave = now;
             try {
                 localStorage.setItem('wos_bot_last_active_cache_v1', JSON.stringify(cache));
             } catch (e) {}
@@ -5888,6 +5920,11 @@
             const existing = cache[cleanId] || {};
             const newEpoch = Number(epochSecs || 0);
             
+            // If already recorded within the last 60 seconds, skip
+            if (existing.epoch && (newEpoch - existing.epoch < 60) && (newEpoch >= existing.epoch)) {
+                return;
+            }
+
             let finalTime = timeStr || existing.timeStr;
             if (!finalTime && newEpoch > 0) {
                 const d = new Date(newEpoch * 1000);
@@ -6492,7 +6529,16 @@
             `;
         };
 
-        window.updateBotOperationsRadarDom = () => {
+        window.lastRenderedBotTelemetryTs = 0;
+        window.lastRenderedFleetHtml = '';
+
+        window.updateBotOperationsRadarDom = (forceFleet = false) => {
+            const modal = document.getElementById('botRadarModal');
+            if (!modal || modal.style.display === 'none' || modal.style.display === '') {
+                // Modal is not visible, skip heavy DOM mutations
+                return;
+            }
+
             const container = document.getElementById('botRadarModalContent');
             if (!container) return;
 
@@ -6676,8 +6722,16 @@
             if (lastUpEl) lastUpEl.textContent = `Last broadcast: ${shortTime}`;
 
             const fleetContainer = document.getElementById('bot-fleet-safety-container');
+            const currentDataTs = data.timestamp || data.receivedAt || 0;
             if (fleetContainer && typeof window.getBotFleetSafetyHtml === 'function') {
-                fleetContainer.outerHTML = window.getBotFleetSafetyHtml();
+                if (forceFleet || !window.lastRenderedBotTelemetryTs || currentDataTs !== window.lastRenderedBotTelemetryTs) {
+                    const newHtml = window.getBotFleetSafetyHtml();
+                    if (newHtml !== window.lastRenderedFleetHtml) {
+                        fleetContainer.outerHTML = newHtml;
+                        window.lastRenderedFleetHtml = newHtml;
+                    }
+                    window.lastRenderedBotTelemetryTs = currentDataTs;
+                }
             }
         };
 
