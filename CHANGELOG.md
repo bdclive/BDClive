@@ -1,3 +1,13 @@
+## [10.2.154] - 2026-10-14
+- Moved all ticket descriptions and notes inside detail popup.
+- Removed all raw message snippets from table cells.
+- Removed inline resolution notes from all table views.
+- Rendered clean FontAwesome Note button in details column.
+- Updated card deck view with clean Note popup button.
+- Unified ticket detail popups across all support desk pages.
+- Upgraded web dashboard engine to version 10.2.154.
+- Passed all automated browser and DOM test suites.
+
 ## [10.2.153] - 2026-10-14
 - Added clean Note label under Ticket Alerts details column.
 - Added full message popup modal for ticket descriptions.

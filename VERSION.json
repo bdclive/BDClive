@@ -1,6 +1,6 @@
 {
   "name": "BDC Ecosystem Master Version Registry",
-  "lastUpdated": "2026-10-14T03:55:00-07:00",
+  "lastUpdated": "2026-10-14T04:18:00-07:00",
   "components": {
     "bdc_central_command_desktop": "1.1.28",
     "daemons": {
@@ -14,9 +14,10 @@
       "cliFile": "Threads_Bridge/threads_bridge_cli_v1.0.59_(terminal).py"
     },
     "bdclive_web_dashboard": {
-      "version": "10.2.153",
+      "version": "10.2.154",
       "repository": "https://github.com/bdclive/BDClive",
       "latestChanges": [
+        "v10.2.154: Moved all details and resolution notes cleanly inside popup",
         "v10.2.153: Added Note label and clean popup to Ticket Alerts details",
         "v10.2.152: Fixed white screen crash on long-running dashboard uptime",
         "v10.2.151: Ported full Whiteout Survival bot fleet radar and login safety grid",

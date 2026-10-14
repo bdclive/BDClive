@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BDC LIVE v10.2.153</title>
+    <title>BDC LIVE v10.2.154</title>
     <meta name="description" content="Centralized real-time telemetry, operational statistics, and live streaming dashboard for Brian Diva Cox.">
     <!-- Open Graph & Social Preview Meta Tags -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="BDC LIVE v10.2.153">
+    <meta property="og:title" content="BDC LIVE v10.2.154">
     <meta property="og:description" content="Real-time statistics, streaming telemetry, theater sync, and central command control plane.">
     <meta property="og:image" content="./bdclive_banner.jpg">
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="BDC LIVE v10.2.153">
+    <meta property="twitter:title" content="BDC LIVE v10.2.154">
     <meta property="twitter:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="twitter:image" content="./bdclive_banner.jpg">
     <!-- PWA Manifest & Mobile Web App Meta Tags -->
@@ -1256,7 +1256,7 @@
                 <div style="display: flex; align-items: center; gap: 12px;">
                     <i class="fa-solid fa-ticket" style="font-size: 24px; color: #ff7b00;"></i>
                     <div>
-                        <h3 style="margin: 0; color: #ffffff; font-size: 18px; font-weight: 800; letter-spacing: 0.5px;">Ticket Alerts System — Support Desk <span style="font-family: monospace; font-size: 12px; color: var(--accent-cyan); background: #1f293d; padding: 2px 7px; border-radius: 6px; border: 1px solid #303e5c;">v10.2.110</span></h3>
+                        <h3 style="margin: 0; color: #ffffff; font-size: 18px; font-weight: 800; letter-spacing: 0.5px;">Ticket Alerts System — Support Desk <span style="font-family: monospace; font-size: 12px; color: var(--accent-cyan); background: #1f293d; padding: 2px 7px; border-radius: 6px; border: 1px solid #303e5c;">v10.2.154</span></h3>
                         <span style="font-size: 12px; color: #8b949e;">Whiteout Survival & Central Command • Live Audio & Push Alerts</span>
                     </div>
                 </div>
@@ -1485,7 +1485,7 @@
             <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid #30363d; padding-bottom: 14px; margin-bottom: 14px;">
                 <div style="display: flex; align-items: center; gap: 10px;">
                     <div style="width: 38px; height: 38px; border-radius: 10px; background: rgba(255, 94, 0, 0.15); border: 1px solid rgba(255, 94, 0, 0.4); display: flex; align-items: center; justify-content: center; font-size: 19px; color: #ff7b00; flex-shrink: 0;">
-                        📝
+                        <i class="fa-solid fa-file-lines"></i>
                     </div>
                     <div>
                         <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 3px;">
@@ -4163,7 +4163,7 @@
             }
         }
 
-        const CURRENT_APP_VERSION = 'v10.2.153';
+        const CURRENT_APP_VERSION = 'v10.2.154';
         window.CURRENT_APP_VERSION = CURRENT_APP_VERSION;
         let isDeployingLive = false;
         let pendingRemoteVersion = null;
@@ -7485,8 +7485,9 @@
 
             // Resolution Note Section
             if (resWrapper && resText) {
-                if (t.resolutionNote && String(t.resolutionNote).trim()) {
-                    resText.textContent = t.resolutionNote;
+                const resNote = (t.resolutionNote || t.note || t.notes || '').toString().trim();
+                if (resNote) {
+                    resText.textContent = resNote;
                     resWrapper.style.display = 'block';
                 } else {
                     resWrapper.style.display = 'none';
@@ -7788,15 +7789,12 @@
                     dateStr = d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 }
 
-                const fullDesc = String(t.description || '').trim();
-                const descSnippet = fullDesc ? (fullDesc.length > 70 ? fullDesc.slice(0, 70) + '...' : fullDesc) : '--';
-                const hasDetailedMsg = Boolean(fullDesc && fullDesc !== '--');
-                const noteLabelHtml = `<button onclick="openTicketMessageDetailModal('${t.id}')" style="background: rgba(0, 210, 255, 0.12); color: var(--accent-cyan, #00d2ff); border: 1px solid rgba(0, 210, 255, 0.35); padding: 3px 8px; border-radius: 5px; font-size: 11px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: all 0.2s ease; margin-bottom: 5px;" title="Click to pop full message and details">
-                    <span>📝 Note</span>
+                const noteBtnHtml = `<button onclick="openTicketMessageDetailModal('${t.id}')" style="background: rgba(0, 210, 255, 0.12); color: var(--accent-cyan, #00d2ff); border: 1px solid rgba(0, 210, 255, 0.35); padding: 5px 12px; border-radius: 6px; font-size: 12px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s ease;" title="Click to view full message and notes">
+                    <i class="fa-solid fa-file-lines" style="font-size: 11.5px;"></i>
+                    <span>Note</span>
                     <i class="fa-solid fa-up-right-from-square" style="font-size: 9.5px; opacity: 0.85;"></i>
                 </button>`;
 
-                const resNoteHtml = t.resolutionNote ? `<div onclick="openTicketMessageDetailModal('${t.id}')" style="background: rgba(63, 185, 80, 0.12); color: #3fb950; border: 1px dashed rgba(63, 185, 80, 0.35); padding: 3px 8px; border-radius: 5px; font-size: 11.5px; margin-top: 5px; line-height: 1.4; cursor: pointer;" title="Click to view full note & ticket">📝 Note: ${t.resolutionNote}</div>` : '';
                 const bgRow = idx % 2 === 0 ? 'background: #0d1117;' : 'background: #161b22;';
                 const isChecked = selectedModalTicketIds.has(t.id) ? 'checked' : '';
 
@@ -7822,14 +7820,8 @@
                         </div>
                         <div style="font-family: 'JetBrains Mono', monospace; font-size: 11.5px; margin-top: 3px;">${senderGidHtml}</div>
                     </td>
-                    <td style="padding: 12px 10px; color: #e2e8f0; font-size: 13px; line-height: 1.5; max-width: 320px; word-break: break-word;">
-                        <div style="display: flex; align-items: center; justify-content: space-between; gap: 6px;">
-                            ${noteLabelHtml}
-                        </div>
-                        <div onclick="openTicketMessageDetailModal('${t.id}')" style="cursor: pointer; color: #c9d1d9;" title="Click to view full message">
-                            ${descSnippet}
-                        </div>
-                        ${resNoteHtml}
+                    <td style="padding: 12px 10px; vertical-align: middle;">
+                        ${noteBtnHtml}
                     </td>
                     <td style="padding: 12px 10px; color: #8b949e; font-size: 11.5px; white-space: nowrap;">${dateStr}</td>
                     <td style="padding: 12px 14px; text-align: right; white-space: nowrap;">
@@ -7861,21 +7853,22 @@
                 let priorityBadge = (t.priority === 'urgent' || t.type === 'bug') ? `<span style="background: rgba(248, 81, 73, 0.18); color: #f85149; border: 1px solid rgba(248, 81, 73, 0.45); padding: 2px 6px; border-radius: 5px; font-weight: 900; font-size: 10.5px; margin-left: 5px;">URGENT</span>` : '';
                 const senderName = (t.submittedBy && t.submittedBy.name) ? t.submittedBy.name : (t.author || 'Alliance Member');
                 const rawGid = (t.submittedBy && t.submittedBy.gameId) || '';
-                const fullDesc = String(t.description || '').trim();
-                const descSnippet = fullDesc ? (fullDesc.length > 90 ? fullDesc.slice(0, 90) + '...' : fullDesc) : '--';
-                const resNoteHtml = t.resolutionNote ? `<div onclick="openTicketMessageDetailModal('${t.id}')" style="background: rgba(63, 185, 80, 0.12); color: #3fb950; border: 1px dashed rgba(63, 185, 80, 0.35); padding: 3px 8px; border-radius: 5px; font-size: 11.5px; margin-top: 5px; line-height: 1.4; cursor: pointer;">📝 Note: ${t.resolutionNote}</div>` : '';
+                const categoryStr = t.category || (t.type === 'feature' ? 'Feature Request' : (t.type === 'bug' ? 'Bug Report' : 'General Support'));
 
                 return `<div style="background: #161b22; border: 1px solid #30363d; border-radius: 10px; padding: 14px; display: flex; flex-direction: column; justify-content: space-between;">
                     <div>
                         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
                             <div>${statusBadge}${priorityBadge}</div>
-                            <button onclick="openTicketMessageDetailModal('${t.id}')" style="background: rgba(0, 210, 255, 0.12); color: var(--accent-cyan, #00d2ff); border: 1px solid rgba(0, 210, 255, 0.35); padding: 2px 7px; border-radius: 5px; font-size: 10.5px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 3px;" title="Click to pop full message">
-                                📝 Note
+                            <span style="font-size: 11px; font-weight: 700; color: #8b949e;">${categoryStr}</span>
+                        </div>
+                        <h4 style="font-size: 15px; font-weight: 800; color: #ff9f43; margin-bottom: 12px; line-height: 1.3;">${t.title || 'Untitled Ticket'}</h4>
+                        <div style="margin-bottom: 10px;">
+                            <button onclick="openTicketMessageDetailModal('${t.id}')" style="background: rgba(0, 210, 255, 0.12); color: var(--accent-cyan, #00d2ff); border: 1px solid rgba(0, 210, 255, 0.35); padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s ease; width: 100%;" title="Click to view full message and notes">
+                                <i class="fa-solid fa-file-lines" style="font-size: 11.5px;"></i>
+                                <span>Note</span>
+                                <i class="fa-solid fa-up-right-from-square" style="font-size: 9.5px; opacity: 0.85;"></i>
                             </button>
                         </div>
-                        <h4 style="font-size: 15px; font-weight: 800; color: #ff9f43; margin-bottom: 6px; line-height: 1.3;">${t.title || 'Untitled Ticket'}</h4>
-                        <p onclick="openTicketMessageDetailModal('${t.id}')" style="font-size: 13px; color: #e2e8f0; line-height: 1.4; margin-bottom: 8px; cursor: pointer;" title="Click to read full message">${descSnippet}</p>
-                        ${resNoteHtml}
                     </div>
                     <div style="border-top: 1px solid #21262d; padding-top: 10px; margin-top: 10px; display: flex; justify-content: space-between; align-items: center;">
                         <div style="font-size: 12px; color: #8b949e;">
