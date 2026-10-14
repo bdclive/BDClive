@@ -1,3 +1,13 @@
+## [10.2.153] - 2026-10-14
+- Added clean Note label under Ticket Alerts details column.
+- Added full message popup modal for ticket descriptions.
+- Compacted long messages with concise text preview snippets.
+- Mirrored wosBDC clean note popup and readability UX.
+- Integrated ticket resolution notes into the detail view.
+- Added escape key and overlay click modal dismissal.
+- Upgraded web dashboard engine to version 10.2.153.
+- Passed all automated browser and DOM test suites.
+
 ## [10.2.152] - 2026-10-11
 - Sandboxed timer iframe to block top navigation blanking redirects.
 - Added persistent dark styling to html and body elements.
