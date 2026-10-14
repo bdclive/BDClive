@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BDC LIVE v10.2.152</title>
+    <title>BDC LIVE v10.2.153</title>
     <meta name="description" content="Centralized real-time telemetry, operational statistics, and live streaming dashboard for Brian Diva Cox.">
     <!-- Open Graph & Social Preview Meta Tags -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="BDC LIVE v10.2.152">
+    <meta property="og:title" content="BDC LIVE v10.2.153">
     <meta property="og:description" content="Real-time statistics, streaming telemetry, theater sync, and central command control plane.">
     <meta property="og:image" content="./bdclive_banner.jpg">
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="BDC LIVE v10.2.152">
+    <meta property="twitter:title" content="BDC LIVE v10.2.153">
     <meta property="twitter:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="twitter:image" content="./bdclive_banner.jpg">
     <!-- PWA Manifest & Mobile Web App Meta Tags -->
@@ -1478,6 +1478,66 @@
         </div>
     </div>
 
+    <!-- TICKET MESSAGE DETAIL MODAL (WOSBDC STYLE POPUP) -->
+    <div id="ticketMessageDetailModal" class="modal" style="z-index: 100002;">
+        <div class="modal-content" style="border-color: #ff5e00; max-width: 650px; width: 92%; background: #0d1117; max-height: 88vh; display: flex; flex-direction: column; box-shadow: 0 20px 50px rgba(0,0,0,0.9), 0 0 35px rgba(255, 94, 0, 0.3); font-size: 14px; border-radius: 14px; padding: 22px;">
+            <!-- Modal Header -->
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid #30363d; padding-bottom: 14px; margin-bottom: 14px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <div style="width: 38px; height: 38px; border-radius: 10px; background: rgba(255, 94, 0, 0.15); border: 1px solid rgba(255, 94, 0, 0.4); display: flex; align-items: center; justify-content: center; font-size: 19px; color: #ff7b00; flex-shrink: 0;">
+                        📝
+                    </div>
+                    <div>
+                        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 3px;">
+                            <span id="ticket-detail-category-badge" style="background: rgba(163, 113, 247, 0.18); color: #bc95ff; border: 1px solid rgba(163, 113, 247, 0.4); padding: 2px 8px; border-radius: 5px; font-weight: 800; font-size: 11px;">Category</span>
+                            <span id="ticket-detail-status-badge"></span>
+                        </div>
+                        <h3 id="ticket-detail-title" style="margin: 0; color: #ff9f43; font-size: 16px; font-weight: 800; line-height: 1.35;">Ticket Title</h3>
+                    </div>
+                </div>
+                <span class="close-modal" onclick="closeTicketMessageDetailModal()" style="font-size: 26px; cursor: pointer; color: #8b949e; line-height: 1;">&times;</span>
+            </div>
+
+            <!-- Submitter & Meta Information Bar -->
+            <div style="background: rgba(22, 27, 34, 0.7); border: 1px solid #21262d; border-radius: 8px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 8px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <i class="fa-solid fa-user-circle" style="color: #ff9f43; font-size: 16px;"></i>
+                    <span id="ticket-detail-author" style="font-weight: 700; color: #ffffff; font-size: 13.5px;">Author</span>
+                    <span id="ticket-detail-gid-wrapper" style="margin-left: 4px;"></span>
+                </div>
+                <div id="ticket-detail-date" style="color: #8b949e; font-size: 12px; font-weight: 600;">Date</div>
+            </div>
+
+            <!-- Full Message Body -->
+            <div style="margin-bottom: 14px; flex: 1; overflow-y: auto; max-height: 48vh;">
+                <label style="display: block; font-size: 11px; text-transform: uppercase; color: #8b949e; font-weight: 800; letter-spacing: 0.5px; margin-bottom: 6px;">
+                    <i class="fa-regular fa-comment-dots" style="color: #ff7b00;"></i> Full Details & Message:
+                </label>
+                <div id="ticket-detail-body" style="background: #161b22; border: 1px solid #30363d; border-radius: 10px; padding: 14px 16px; font-size: 13.5px; line-height: 1.6; color: #e2e8f0; white-space: pre-wrap; word-break: break-word; min-height: 90px; user-select: text;">
+                </div>
+                
+                <!-- Resolution Note Section (Visible if present) -->
+                <div id="ticket-detail-resnote-wrapper" style="display: none; margin-top: 12px; background: rgba(63, 185, 80, 0.08); border: 1px dashed rgba(63, 185, 80, 0.4); border-radius: 10px; padding: 12px 14px;">
+                    <div style="display: flex; align-items: center; gap: 6px; color: #3fb950; font-size: 11.5px; font-weight: 800; text-transform: uppercase; margin-bottom: 4px;">
+                        <i class="fa-solid fa-circle-check"></i> Resolution Note / Outcome
+                    </div>
+                    <div id="ticket-detail-resnote-text" style="color: #a7f3d0; font-size: 13px; line-height: 1.5; white-space: pre-wrap; word-break: break-word;">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer Actions -->
+            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #21262d; padding-top: 14px; margin-top: 4px;">
+                <div id="ticket-detail-action-buttons" style="display: flex; gap: 8px;">
+                    <!-- Dynamically populated or default close -->
+                </div>
+                <button type="button" onclick="closeTicketMessageDetailModal()" style="background: #21262d; border: 1px solid #30363d; color: #c9d1d9; padding: 8px 18px; border-radius: 7px; font-weight: 700; cursor: pointer; font-size: 12.5px; transition: all 0.2s ease;">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- PLATFORM COUNTER HEALTH & AUDIT MODAL -->
     <div id="counterAuditModal" class="modal">
         <div class="modal-content" style="border-color: #f1e05a; max-width: 840px; width: 92%; background: #0d1117; max-height: 88vh; display: flex; flex-direction: column; box-shadow: 0 16px 48px rgba(0,0,0,0.8), 0 0 25px rgba(241, 224, 90, 0.2);">
@@ -2734,6 +2794,7 @@
         // WOS Alliance & Community Ticket Alerts Real-Time Listeners
         wosDb.ref("community_feedback").on("value", s => {
             rawTicketAlerts = s.val() || {};
+            window.rawTicketAlerts = rawTicketAlerts;
             computeAndRenderTicketAlerts();
         });
 
@@ -4102,7 +4163,7 @@
             }
         }
 
-        const CURRENT_APP_VERSION = 'v10.2.152';
+        const CURRENT_APP_VERSION = 'v10.2.153';
         window.CURRENT_APP_VERSION = CURRENT_APP_VERSION;
         let isDeployingLive = false;
         let pendingRemoteVersion = null;
@@ -4168,7 +4229,7 @@
         }
 
         function isAnyModalOpen() {
-            const modalIds = ['ticketAlertsModal', 'gatekeeperModal', 'githubModal', 'counterAuditModal', 'courtModal', 'theaterModal', 'ticketModal'];
+            const modalIds = ['ticketAlertsModal', 'ticketMessageDetailModal', 'gatekeeperModal', 'botRadarModal', 'githubModal', 'counterAuditModal', 'courtModal', 'theaterModal', 'ticketModal'];
             for (const id of modalIds) {
                 const el = document.getElementById(id);
                 if (el && el.style.display && el.style.display !== 'none') {
@@ -7360,6 +7421,101 @@
             document.getElementById('ticketAlertsModal').style.display = 'none';
         }
 
+        function openTicketMessageDetailModal(ticketId) {
+            const tickets = window.rawTicketAlerts || rawTicketAlerts || {};
+            const t = tickets[ticketId];
+            if (!t) return;
+
+            const modal = document.getElementById('ticketMessageDetailModal');
+            if (!modal) return;
+
+            const titleEl = document.getElementById('ticket-detail-title');
+            const catBadge = document.getElementById('ticket-detail-category-badge');
+            const statusBadge = document.getElementById('ticket-detail-status-badge');
+            const authorEl = document.getElementById('ticket-detail-author');
+            const gidWrapper = document.getElementById('ticket-detail-gid-wrapper');
+            const dateEl = document.getElementById('ticket-detail-date');
+            const bodyEl = document.getElementById('ticket-detail-body');
+            const resWrapper = document.getElementById('ticket-detail-resnote-wrapper');
+            const resText = document.getElementById('ticket-detail-resnote-text');
+            const actionBtns = document.getElementById('ticket-detail-action-buttons');
+
+            // Category & Title
+            const categoryStr = t.category || (t.type === 'feature' ? 'Feature Request' : (t.type === 'bug' ? 'Bug Report' : 'General Support'));
+            if (titleEl) titleEl.textContent = t.title || 'Untitled Ticket';
+            if (catBadge) catBadge.textContent = categoryStr;
+
+            // Status Badge
+            const st = (t.status || 'pending').toLowerCase();
+            if (statusBadge) {
+                if (st === 'pending' || st === 'open' || st === 'new') {
+                    statusBadge.innerHTML = `<span style="background: rgba(255, 94, 0, 0.18); color: #ff7b00; border: 1px solid rgba(255, 94, 0, 0.4); padding: 2px 7px; border-radius: 5px; font-weight: 800; font-size: 11px;">● New</span>`;
+                } else if (st === 'in-progress' || st === 'investigating') {
+                    statusBadge.innerHTML = `<span style="background: rgba(88, 166, 255, 0.18); color: #58a6ff; border: 1px solid rgba(88, 166, 255, 0.4); padding: 2px 7px; border-radius: 5px; font-weight: 800; font-size: 11px;">⚡ Working</span>`;
+                } else {
+                    statusBadge.innerHTML = `<span style="background: rgba(63, 185, 80, 0.18); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.4); padding: 2px 7px; border-radius: 5px; font-weight: 800; font-size: 11px;">✓ Closed</span>`;
+                }
+            }
+
+            // Submitter & Meta
+            const senderName = (t.submittedBy && t.submittedBy.name) ? t.submittedBy.name : (t.author || 'Alliance Member');
+            if (authorEl) authorEl.textContent = senderName;
+
+            const rawGid = (t.submittedBy && t.submittedBy.gameId) || '';
+            if (gidWrapper) {
+                if (rawGid) {
+                    gidWrapper.innerHTML = `<span onclick="copyGameId('${rawGid}')" style="cursor: pointer; color: var(--accent-cyan); font-family: monospace; font-size: 12px; font-weight: 700; background: rgba(0, 210, 255, 0.1); padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(0, 210, 255, 0.25);" title="Click to copy ID">ID: ${rawGid} <i class="fa-regular fa-copy" style="font-size: 10px;"></i></span>`;
+                } else {
+                    gidWrapper.innerHTML = '';
+                }
+            }
+
+            const createdTime = t.createdAt || t.timestamp;
+            let dateStr = 'Recent';
+            if (createdTime) {
+                const d = typeof createdTime === 'number' ? new Date(createdTime) : new Date(createdTime);
+                dateStr = d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            }
+            if (dateEl) dateEl.textContent = dateStr;
+
+            // Full Body Message
+            if (bodyEl) {
+                bodyEl.textContent = t.description || 'No detailed message was provided for this ticket.';
+            }
+
+            // Resolution Note Section
+            if (resWrapper && resText) {
+                if (t.resolutionNote && String(t.resolutionNote).trim()) {
+                    resText.textContent = t.resolutionNote;
+                    resWrapper.style.display = 'block';
+                } else {
+                    resWrapper.style.display = 'none';
+                    resText.textContent = '';
+                }
+            }
+
+            // Actions in Detail Modal
+            if (actionBtns) {
+                let btnsHtml = '';
+                if (st !== 'resolved') {
+                    btnsHtml += `<button onclick="closeTicketMessageDetailModal(); openModalResolveDialog('${ticketId}', '${(t.title||'').replace(/'/g, "\\'")}')" style="background: rgba(63, 185, 80, 0.18); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.4); padding: 7px 14px; border-radius: 7px; font-size: 12.5px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">✓ Resolve Ticket</button>`;
+                }
+                if (st === 'pending' || st === 'open' || st === 'new') {
+                    btnsHtml += `<button onclick="updateTicketStatus('${ticketId}', 'in-progress'); closeTicketMessageDetailModal();" style="background: rgba(88, 166, 255, 0.18); color: #58a6ff; border: 1px solid rgba(88, 166, 255, 0.4); padding: 7px 14px; border-radius: 7px; font-size: 12.5px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">⚡ In-Progress</button>`;
+                }
+                actionBtns.innerHTML = btnsHtml;
+            }
+
+            modal.style.display = 'block';
+        }
+
+        function closeTicketMessageDetailModal() {
+            const modal = document.getElementById('ticketMessageDetailModal');
+            if (modal) modal.style.display = 'none';
+        }
+        window.openTicketMessageDetailModal = openTicketMessageDetailModal;
+        window.closeTicketMessageDetailModal = closeTicketMessageDetailModal;
+
         function setModalTicketViewMode(mode) {
             currentModalViewMode = mode;
             const tblBtn = document.getElementById('ticket-modal-view-table-btn');
@@ -7538,7 +7694,7 @@
         }
 
         function renderTicketAlertsTable() {
-            const tickets = rawTicketAlerts || {};
+            const tickets = window.rawTicketAlerts || rawTicketAlerts || {};
             const ticketList = Object.entries(tickets).map(([id, t]) => ({ id, ...t }));
             const searchVal = (document.getElementById('ticket-search-input')?.value || '').toLowerCase().trim();
 
@@ -7632,7 +7788,15 @@
                     dateStr = d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 }
 
-                const resNoteHtml = t.resolutionNote ? `<div style="background: rgba(63, 185, 80, 0.12); color: #3fb950; border: 1px dashed rgba(63, 185, 80, 0.35); padding: 3px 8px; border-radius: 5px; font-size: 11.5px; margin-top: 5px; line-height: 1.4;">📝 Note: ${t.resolutionNote}</div>` : '';
+                const fullDesc = String(t.description || '').trim();
+                const descSnippet = fullDesc ? (fullDesc.length > 70 ? fullDesc.slice(0, 70) + '...' : fullDesc) : '--';
+                const hasDetailedMsg = Boolean(fullDesc && fullDesc !== '--');
+                const noteLabelHtml = `<button onclick="openTicketMessageDetailModal('${t.id}')" style="background: rgba(0, 210, 255, 0.12); color: var(--accent-cyan, #00d2ff); border: 1px solid rgba(0, 210, 255, 0.35); padding: 3px 8px; border-radius: 5px; font-size: 11px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: all 0.2s ease; margin-bottom: 5px;" title="Click to pop full message and details">
+                    <span>📝 Note</span>
+                    <i class="fa-solid fa-up-right-from-square" style="font-size: 9.5px; opacity: 0.85;"></i>
+                </button>`;
+
+                const resNoteHtml = t.resolutionNote ? `<div onclick="openTicketMessageDetailModal('${t.id}')" style="background: rgba(63, 185, 80, 0.12); color: #3fb950; border: 1px dashed rgba(63, 185, 80, 0.35); padding: 3px 8px; border-radius: 5px; font-size: 11.5px; margin-top: 5px; line-height: 1.4; cursor: pointer;" title="Click to view full note & ticket">📝 Note: ${t.resolutionNote}</div>` : '';
                 const bgRow = idx % 2 === 0 ? 'background: #0d1117;' : 'background: #161b22;';
                 const isChecked = selectedModalTicketIds.has(t.id) ? 'checked' : '';
 
@@ -7659,7 +7823,12 @@
                         <div style="font-family: 'JetBrains Mono', monospace; font-size: 11.5px; margin-top: 3px;">${senderGidHtml}</div>
                     </td>
                     <td style="padding: 12px 10px; color: #e2e8f0; font-size: 13px; line-height: 1.5; max-width: 320px; word-break: break-word;">
-                        ${t.description || '--'}
+                        <div style="display: flex; align-items: center; justify-content: space-between; gap: 6px;">
+                            ${noteLabelHtml}
+                        </div>
+                        <div onclick="openTicketMessageDetailModal('${t.id}')" style="cursor: pointer; color: #c9d1d9;" title="Click to view full message">
+                            ${descSnippet}
+                        </div>
                         ${resNoteHtml}
                     </td>
                     <td style="padding: 12px 10px; color: #8b949e; font-size: 11.5px; white-space: nowrap;">${dateStr}</td>
@@ -7692,16 +7861,20 @@
                 let priorityBadge = (t.priority === 'urgent' || t.type === 'bug') ? `<span style="background: rgba(248, 81, 73, 0.18); color: #f85149; border: 1px solid rgba(248, 81, 73, 0.45); padding: 2px 6px; border-radius: 5px; font-weight: 900; font-size: 10.5px; margin-left: 5px;">URGENT</span>` : '';
                 const senderName = (t.submittedBy && t.submittedBy.name) ? t.submittedBy.name : (t.author || 'Alliance Member');
                 const rawGid = (t.submittedBy && t.submittedBy.gameId) || '';
-                const resNoteHtml = t.resolutionNote ? `<div style="background: rgba(63, 185, 80, 0.12); color: #3fb950; border: 1px dashed rgba(63, 185, 80, 0.35); padding: 3px 8px; border-radius: 5px; font-size: 11.5px; margin-top: 5px; line-height: 1.4;">📝 Note: ${t.resolutionNote}</div>` : '';
+                const fullDesc = String(t.description || '').trim();
+                const descSnippet = fullDesc ? (fullDesc.length > 90 ? fullDesc.slice(0, 90) + '...' : fullDesc) : '--';
+                const resNoteHtml = t.resolutionNote ? `<div onclick="openTicketMessageDetailModal('${t.id}')" style="background: rgba(63, 185, 80, 0.12); color: #3fb950; border: 1px dashed rgba(63, 185, 80, 0.35); padding: 3px 8px; border-radius: 5px; font-size: 11.5px; margin-top: 5px; line-height: 1.4; cursor: pointer;">📝 Note: ${t.resolutionNote}</div>` : '';
 
                 return `<div style="background: #161b22; border: 1px solid #30363d; border-radius: 10px; padding: 14px; display: flex; flex-direction: column; justify-content: space-between;">
                     <div>
                         <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
                             <div>${statusBadge}${priorityBadge}</div>
-                            <span style="font-size: 11px; font-weight: 700; color: #8b949e;">${t.category || 'General'}</span>
+                            <button onclick="openTicketMessageDetailModal('${t.id}')" style="background: rgba(0, 210, 255, 0.12); color: var(--accent-cyan, #00d2ff); border: 1px solid rgba(0, 210, 255, 0.35); padding: 2px 7px; border-radius: 5px; font-size: 10.5px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 3px;" title="Click to pop full message">
+                                📝 Note
+                            </button>
                         </div>
                         <h4 style="font-size: 15px; font-weight: 800; color: #ff9f43; margin-bottom: 6px; line-height: 1.3;">${t.title || 'Untitled Ticket'}</h4>
-                        <p style="font-size: 13px; color: #e2e8f0; line-height: 1.4; margin-bottom: 8px;">${t.description || '--'}</p>
+                        <p onclick="openTicketMessageDetailModal('${t.id}')" style="font-size: 13px; color: #e2e8f0; line-height: 1.4; margin-bottom: 8px; cursor: pointer;" title="Click to read full message">${descSnippet}</p>
                         ${resNoteHtml}
                     </div>
                     <div style="border-top: 1px solid #21262d; padding-top: 10px; margin-top: 10px; display: flex; justify-content: space-between; align-items: center;">
@@ -8364,6 +8537,7 @@
             const thM = document.getElementById('theaterModal');
             const tbM = document.getElementById('tasksBreakdownModal');
             const flM = document.getElementById('followerActivityLogModal');
+            const tmdM = document.getElementById('ticketMessageDetailModal');
             if (e.target === gkM) closeGatekeeperModal();
             if (e.target === brM) closeBotRadarModal();
             if (e.target === tkM) closeTicketAlertsModal();
@@ -8373,6 +8547,7 @@
             if (e.target === thM) closeTheater();
             if (e.target === tbM) closeTasksBreakdownModal();
             if (e.target === flM) closeFollowerActivityLogModal();
+            if (e.target === tmdM) closeTicketMessageDetailModal();
 
             // Auto close options dropdown if clicking outside
             const optBtn = document.getElementById('grand-options-btn');
@@ -8385,6 +8560,7 @@
         // Global Escape Key Listener for Modals
         window.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
+                closeTicketMessageDetailModal();
                 closeGatekeeperModal();
                 closeBotRadarModal();
                 closeTicketAlertsModal();
