@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BDC LIVE v10.2.155</title>
+    <title>BDC LIVE v10.2.156</title>
     <meta name="description" content="Centralized real-time telemetry, operational statistics, and live streaming dashboard for Brian Diva Cox.">
     <!-- Open Graph & Social Preview Meta Tags -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="BDC LIVE v10.2.155">
+    <meta property="og:title" content="BDC LIVE v10.2.156">
     <meta property="og:description" content="Real-time statistics, streaming telemetry, theater sync, and central command control plane.">
     <meta property="og:image" content="./bdclive_banner.jpg">
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="BDC LIVE v10.2.155">
+    <meta property="twitter:title" content="BDC LIVE v10.2.156">
     <meta property="twitter:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="twitter:image" content="./bdclive_banner.jpg">
     <!-- PWA Manifest & Mobile Web App Meta Tags -->
@@ -982,13 +982,30 @@
             </div>
         </div>
 
-        <div class="counter-item" id="court-box" onclick="openCourt()" style="grid-area: 2 / 4;">
+        <div class="counter-item" id="court-box" onclick="openCourt()" style="grid-area: 2 / 4; position: relative;">
             <div class="court-wrapper">
-                <iframe id="court-player" class="court-iframe" src="https://video.ibm.com/embed/23891775?showtitle=false&volume=0&autoplay=0"></iframe>
-                <div style="position: absolute; top: 10px; left: 15px; z-index: 60; text-shadow: 2px 2px 4px #000;">
-                    <h4 style="margin: 0; font-size: 14px; color: #fff;">Court Stream</h4>
+                <iframe id="court-player" class="court-iframe" src="https://video.ibm.com/embed/23891775?showtitle=false&volume=0&autoplay=1" allow="autoplay; fullscreen"></iframe>
+                
+                <!-- Court Stream Top Overlay Header -->
+                <div style="position: absolute; top: 8px; left: 12px; right: 12px; z-index: 60; display: flex; justify-content: space-between; align-items: center; pointer-events: none;">
+                    <div style="display: flex; align-items: center; gap: 6px; text-shadow: 2px 2px 4px #000;">
+                        <span style="display: inline-block; width: 7px; height: 7px; background: #ff7b00; border-radius: 50%; box-shadow: 0 0 6px #ff7b00; animation: flashAnimation 1.5s infinite alternate;"></span>
+                        <h4 style="margin: 0; font-size: 13px; font-weight: 800; color: #fff; letter-spacing: 0.3px;">Court Stream</h4>
+                    </div>
+                    
+                    <div style="display: flex; align-items: center; gap: 6px; pointer-events: auto;">
+                        <!-- In-Box Audio Toggle Button -->
+                        <button id="court-audio-btn" onclick="event.stopPropagation(); toggleCourtAudio();" style="background: rgba(0, 0, 0, 0.7); color: #8b949e; border: 1px solid rgba(255, 255, 255, 0.25); backdrop-filter: blur(4px); padding: 2px 7px; border-radius: 6px; font-size: 10px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: all 0.2s ease;" title="Toggle court audio directly inside this box">
+                            <i id="court-audio-icon" class="fa-solid fa-volume-xmark" style="font-size: 10px;"></i>
+                            <span id="court-audio-label">Muted</span>
+                        </button>
+                        
+                        <!-- Expand to Fullscreen Modal Button -->
+                        <button onclick="event.stopPropagation(); openCourt();" style="background: rgba(0, 0, 0, 0.7); color: #c9d1d9; border: 1px solid rgba(255, 255, 255, 0.25); backdrop-filter: blur(4px); padding: 2px 6px; border-radius: 6px; font-size: 10px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; transition: all 0.2s ease;" title="Expand feed to large theater view">
+                            <i class="fa-solid fa-expand"></i>
+                        </button>
+                    </div>
                 </div>
-                <i class="fa-solid fa-expand" style="position: absolute; top: 12px; right: 15px; color: rgba(255,255,255,0.6); z-index: 60;"></i>
             </div>
         </div>
 
@@ -1102,7 +1119,7 @@
         <div class="modal-content">
             <span class="close-modal" onclick="closeCourt()">×</span>
             <h3 style="margin-top: 0; color: var(--plex-orange);">Live Court Feed</h3>
-            <iframe id="modal-player" width="100%" height="500" src="" frameborder="0" allowfullscreen></iframe>
+            <iframe id="modal-player" width="100%" height="500" src="" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
         </div>
     </div>
 
@@ -1256,7 +1273,7 @@
                 <div style="display: flex; align-items: center; gap: 12px;">
                     <i class="fa-solid fa-ticket" style="font-size: 24px; color: #ff7b00;"></i>
                     <div>
-                        <h3 style="margin: 0; color: #ffffff; font-size: 18px; font-weight: 800; letter-spacing: 0.5px;">Ticket Alerts System — Support Desk <span style="font-family: monospace; font-size: 12px; color: var(--accent-cyan); background: #1f293d; padding: 2px 7px; border-radius: 6px; border: 1px solid #303e5c;">v10.2.155</span></h3>
+                        <h3 style="margin: 0; color: #ffffff; font-size: 18px; font-weight: 800; letter-spacing: 0.5px;">Ticket Alerts System — Support Desk <span style="font-family: monospace; font-size: 12px; color: var(--accent-cyan); background: #1f293d; padding: 2px 7px; border-radius: 6px; border: 1px solid #303e5c;">v10.2.156</span></h3>
                         <span style="font-size: 12px; color: #8b949e;">Whiteout Survival & Central Command • Live Audio & Push Alerts</span>
                     </div>
                 </div>
@@ -4220,7 +4237,7 @@
             }
         }
 
-        const CURRENT_APP_VERSION = 'v10.2.155';
+        const CURRENT_APP_VERSION = 'v10.2.156';
         window.CURRENT_APP_VERSION = CURRENT_APP_VERSION;
         let isDeployingLive = false;
         let pendingRemoteVersion = null;
@@ -8491,16 +8508,63 @@
         window.closeGatekeeperModal = closeGatekeeperModal;
         window.openBotRadarModal = openBotRadarModal;
         window.closeBotRadarModal = closeBotRadarModal;
+        let isCourtMuted = true;
+
+        function updateCourtAudioUI(unmuted) {
+            const btn = document.getElementById('court-audio-btn');
+            const icon = document.getElementById('court-audio-icon');
+            const label = document.getElementById('court-audio-label');
+            if (!btn || !icon || !label) return;
+
+            if (unmuted) {
+                btn.style.background = 'rgba(35, 134, 54, 0.55)';
+                btn.style.color = '#3fb950';
+                btn.style.borderColor = '#2ea043';
+                icon.className = 'fa-solid fa-volume-high';
+                label.innerText = 'Audio ON';
+                btn.title = 'Click to mute court audio';
+            } else {
+                btn.style.background = 'rgba(0, 0, 0, 0.7)';
+                btn.style.color = '#8b949e';
+                btn.style.borderColor = 'rgba(255, 255, 255, 0.25)';
+                icon.className = 'fa-solid fa-volume-xmark';
+                label.innerText = 'Muted';
+                btn.title = 'Click to unmute court audio';
+            }
+        }
+
+        function toggleCourtAudio() {
+            isCourtMuted = !isCourtMuted;
+            const iframe = document.getElementById('court-player');
+            if (iframe) {
+                const vol = isCourtMuted ? 0 : 100;
+                iframe.src = `https://video.ibm.com/embed/23891775?showtitle=false&volume=${vol}&autoplay=1`;
+            }
+            updateCourtAudioUI(!isCourtMuted);
+            return !isCourtMuted;
+        }
+        window.toggleCourtAudio = toggleCourtAudio;
+
         function openCourt() { 
             try { sessionStorage.setItem('active_modal_id', 'courtModal'); } catch(e) {}
+            // If in-box audio was active, mute in-box feed to prevent double audio echo with modal player
+            if (!isCourtMuted) {
+                const courtIframe = document.getElementById('court-player');
+                if (courtIframe) courtIframe.src = "https://video.ibm.com/embed/23891775?showtitle=false&volume=0&autoplay=1";
+                updateCourtAudioUI(false);
+                isCourtMuted = true;
+            }
             document.getElementById('modal-player').src = "https://video.ibm.com/embed/23891775?autoplay=1"; 
             document.getElementById('courtModal').style.display = "block"; 
         }
+        window.openCourt = openCourt;
+
         function closeCourt() { 
             try { sessionStorage.removeItem('active_modal_id'); } catch(e) {}
             document.getElementById('modal-player').src = ""; 
             document.getElementById('courtModal').style.display = "none"; 
         }
+        window.closeCourt = closeCourt;
         function openTheater() { 
             try { sessionStorage.setItem('active_modal_id', 'theaterModal'); } catch(e) {}
             document.getElementById('theater-player').src = "https://docs.google.com/spreadsheets/d/1NEMy5X5leBqlVs9nxNwY2ynusLgyjmymekFk4avzUv0/edit?gid=428404608&rm=minimal"; 

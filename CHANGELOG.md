@@ -1,3 +1,12 @@
+## [10.2.156] - 2026-10-16
+- Added in-box audio toggle button to Court Stream box.
+- Enabled 1-click dynamic audio unmuting directly inside feed.
+- Added autoplay and fullscreen permission directives to stream iframes.
+- Automated audio muting when opening fullscreen modal view.
+- Protected in-box audio controls with click propagation isolation.
+- Upgraded web dashboard engine to version 10.2.156.
+- Passed all automated browser and DOM test suites.
+
 ## [10.2.155] - 2026-10-16
 - Fixed upcoming movie attendance number in Brian's Theater box.
 - Synced live RSVP counts dynamically from schedule array.
