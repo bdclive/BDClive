@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BDC LIVE v10.2.154</title>
+    <title>BDC LIVE v10.2.155</title>
     <meta name="description" content="Centralized real-time telemetry, operational statistics, and live streaming dashboard for Brian Diva Cox.">
     <!-- Open Graph & Social Preview Meta Tags -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="BDC LIVE v10.2.154">
+    <meta property="og:title" content="BDC LIVE v10.2.155">
     <meta property="og:description" content="Real-time statistics, streaming telemetry, theater sync, and central command control plane.">
     <meta property="og:image" content="./bdclive_banner.jpg">
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="BDC LIVE v10.2.154">
+    <meta property="twitter:title" content="BDC LIVE v10.2.155">
     <meta property="twitter:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="twitter:image" content="./bdclive_banner.jpg">
     <!-- PWA Manifest & Mobile Web App Meta Tags -->
@@ -1256,7 +1256,7 @@
                 <div style="display: flex; align-items: center; gap: 12px;">
                     <i class="fa-solid fa-ticket" style="font-size: 24px; color: #ff7b00;"></i>
                     <div>
-                        <h3 style="margin: 0; color: #ffffff; font-size: 18px; font-weight: 800; letter-spacing: 0.5px;">Ticket Alerts System — Support Desk <span style="font-family: monospace; font-size: 12px; color: var(--accent-cyan); background: #1f293d; padding: 2px 7px; border-radius: 6px; border: 1px solid #303e5c;">v10.2.154</span></h3>
+                        <h3 style="margin: 0; color: #ffffff; font-size: 18px; font-weight: 800; letter-spacing: 0.5px;">Ticket Alerts System — Support Desk <span style="font-family: monospace; font-size: 12px; color: var(--accent-cyan); background: #1f293d; padding: 2px 7px; border-radius: 6px; border: 1px solid #303e5c;">v10.2.155</span></h3>
                         <span style="font-size: 12px; color: #8b949e;">Whiteout Survival & Central Command • Live Audio & Push Alerts</span>
                     </div>
                 </div>
@@ -3195,7 +3195,10 @@
                 }
             }
             
-            if(d.discordRsvp !== undefined) document.getElementById('m-rsvp').innerText = fNum(d.discordRsvp);
+            if (d.discordRsvp !== undefined && (typeof THEATER_STATE === 'undefined' || THEATER_STATE.upcomingRsvp === undefined)) {
+                const rsvpEl = document.getElementById('m-rsvp');
+                if (rsvpEl) rsvpEl.innerText = fNum(d.discordRsvp);
+            }
             
             // Alliance Gatekeeper Live Sync (Central Command / Primary Ecosystem Data)
             if (d.gatekeeperCounters) {
@@ -3691,7 +3694,9 @@
             showEndTime: null,
             nextTitle: "Masters of the Universe",
             nextTime: null,
-            targetShowDate: null
+            targetShowDate: null,
+            upcomingRsvp: undefined,
+            schedule: []
         };
 
         function processTheaterSync(m, source) {
@@ -3713,11 +3718,9 @@
                 document.getElementById('tv-count').innerText = fNum(THEATER_STATE.tvCount);
             }
             
-            // RSVPs can arrive from Central Command via sDb or directly via theaterDb
-            if (m.rsvpCount !== undefined) {
-                document.getElementById('m-rsvp').innerText = fNum(m.rsvpCount);
-            } else if (m.discordRsvp !== undefined) {
-                document.getElementById('m-rsvp').innerText = fNum(m.discordRsvp);
+            // Maintain live schedule array for per-movie RSVP resolution
+            if (Array.isArray(m.schedule)) {
+                THEATER_STATE.schedule = m.schedule;
             }
 
             const now = new Date();
@@ -3832,6 +3835,40 @@
             THEATER_STATE.targetShowDate = nextShowDate;
             THEATER_STATE.nextTime = m.nextTime || (nextShowDate ? nextShowDate.getTime() : null);
 
+            // Dynamic per-movie RSVP resolution: accurately sync attendance number for the upcoming movie
+            const resolveUpcomingRsvp = (movieTitle, candidateItem) => {
+                if (candidateItem && candidateItem.rsvpCount !== undefined && !isNaN(Number(candidateItem.rsvpCount))) {
+                    return Number(candidateItem.rsvpCount);
+                }
+                const targetClean = cleanTitle(movieTitle).toLowerCase();
+                const list = (THEATER_STATE.schedule && THEATER_STATE.schedule.length > 0)
+                    ? THEATER_STATE.schedule
+                    : (Array.isArray(m.schedule) ? m.schedule : []);
+                if (targetClean && list.length > 0) {
+                    const match = list.find(it => {
+                        if (!it || !it.title) return false;
+                        const itClean = cleanTitle(it.title).toLowerCase();
+                        return itClean === targetClean || itClean.includes(targetClean) || targetClean.includes(itClean);
+                    });
+                    if (match && match.rsvpCount !== undefined && !isNaN(Number(match.rsvpCount))) {
+                        return Number(match.rsvpCount);
+                    }
+                }
+                if (m.rsvpCount !== undefined && !isNaN(Number(m.rsvpCount))) {
+                    return Number(m.rsvpCount);
+                }
+                if (m.discordRsvp !== undefined && !isNaN(Number(m.discordRsvp))) {
+                    return Number(m.discordRsvp);
+                }
+                return 0;
+            };
+
+            THEATER_STATE.upcomingRsvp = resolveUpcomingRsvp(nextMovie, scheduleNext);
+            const rsvpEl = document.getElementById('m-rsvp');
+            if (rsvpEl && THEATER_STATE.upcomingRsvp !== undefined) {
+                rsvpEl.innerText = fNum(THEATER_STATE.upcomingRsvp);
+            }
+
             renderTheaterHeartbeat();
         }
 
@@ -3906,6 +3943,26 @@
 
             // 2. Render Up Next & Countdown Ticker
             nextTitleEl.innerText = displayNextTitle;
+
+            // 3. Keep Upcoming Movie Attendance / RSVP count synchronized with active Up Next feature
+            const rsvpEl = document.getElementById('m-rsvp');
+            if (rsvpEl) {
+                let currentRsvp = THEATER_STATE.upcomingRsvp;
+                if (displayNextTitle && displayNextTitle !== THEATER_STATE.nextTitle && THEATER_STATE.schedule && THEATER_STATE.schedule.length > 0) {
+                    const dispClean = cleanTitle(displayNextTitle).toLowerCase();
+                    const match = THEATER_STATE.schedule.find(it => {
+                        if (!it || !it.title) return false;
+                        const itClean = cleanTitle(it.title).toLowerCase();
+                        return itClean === dispClean || itClean.includes(dispClean) || dispClean.includes(itClean);
+                    });
+                    if (match && match.rsvpCount !== undefined && !isNaN(Number(match.rsvpCount))) {
+                        currentRsvp = Number(match.rsvpCount);
+                    }
+                }
+                if (currentRsvp !== undefined) {
+                    rsvpEl.innerText = fNum(currentRsvp);
+                }
+            }
 
             if (displayTargetShow) {
                 const secsLeft = Math.floor((displayTargetShow - now) / 1000);
@@ -4163,7 +4220,7 @@
             }
         }
 
-        const CURRENT_APP_VERSION = 'v10.2.154';
+        const CURRENT_APP_VERSION = 'v10.2.155';
         window.CURRENT_APP_VERSION = CURRENT_APP_VERSION;
         let isDeployingLive = false;
         let pendingRemoteVersion = null;

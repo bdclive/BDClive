@@ -1,3 +1,12 @@
+## [10.2.155] - 2026-10-16
+- Fixed upcoming movie attendance number in Brian's Theater box.
+- Synced live RSVP counts dynamically from schedule array.
+- Matched upcoming feature titles with live attendance records.
+- Guarded attendance count against stale central command overwrites.
+- Updated theater heartbeat loop to keep attendance synchronized.
+- Upgraded web dashboard engine to version 10.2.155.
+- Passed all automated browser and DOM test suites.
+
 ## [10.2.154] - 2026-10-14
 - Moved all ticket descriptions and notes inside detail popup.
 - Removed all raw message snippets from table cells.
