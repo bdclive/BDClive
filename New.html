@@ -2650,8 +2650,9 @@
         });
 
         let currentTasksDatabaseSnapshot = null;
-        sDb.ref('tasks').on('value', (s) => {
-            const t = s.val(); if (!t) return;
+
+        function renderTaskCounts(t) {
+            if (!t) return;
             currentTasksDatabaseSnapshot = t; 
             
             const safeNum = (val) => { const n = parseInt(val, 10); return isNaN(n) ? 0 : n; };
@@ -2674,15 +2675,22 @@
             updateMetricAndFlash('task-k6', 'task_bdcf', cBDCF, false, true);
             updateMetricAndFlash('task-k7', 'task_wos', cWOS, false, true);
 
-            if (!lastTasksSyncTimestamp) {
+            if (t.lastUpdated) {
+                lastTasksSyncTimestamp = Number(t.lastUpdated);
+            } else if (!lastTasksSyncTimestamp) {
                 lastTasksSyncTimestamp = Date.now();
-                updateTasksSyncAgeUI();
             }
+            updateTasksSyncAgeUI();
 
             const tModal = document.getElementById('tasksBreakdownModal');
             if (tModal && tModal.style.display === 'block') {
                 renderTasksBreakdownTable();
             }
+        }
+        window.renderTaskCounts = renderTaskCounts;
+
+        sDb.ref('tasks').on('value', (s) => {
+            renderTaskCounts(s.val());
         });
 
         // Real-Time GitHub Pipeline Stream Listener (Zero-latency WebSocket pushes)
@@ -2872,7 +2880,10 @@
                         const localData = await localResp.json();
                         if (localData && localData.success) {
                             synced = true;
-                            lastTasksSyncTimestamp = Date.now();
+                            if (localData.counts && typeof renderTaskCounts === 'function') {
+                                renderTaskCounts(localData.counts);
+                            }
+                            lastTasksSyncTimestamp = (localData.counts && localData.counts.lastUpdated) ? Number(localData.counts.lastUpdated) : Date.now();
                             updateTasksSyncAgeUI();
                             flashFollowerPulse('task-k1', 'gain', '#38bdf8', 'Synced Just Now');
                         }
@@ -2889,7 +2900,7 @@
                         if (typeof renderTaskCounts === 'function') {
                             renderTaskCounts(val);
                         }
-                        lastTasksSyncTimestamp = Date.now();
+                        lastTasksSyncTimestamp = (val && val.lastUpdated) ? Number(val.lastUpdated) : Date.now();
                         updateTasksSyncAgeUI();
                     }
                 }
@@ -3578,7 +3589,7 @@
             }
         }
 
-        const CURRENT_APP_VERSION = 'v10.2.148';
+        const CURRENT_APP_VERSION = 'v10.2.157';
         window.CURRENT_APP_VERSION = CURRENT_APP_VERSION;
         let isDeployingLive = false;
         let pendingRemoteVersion = null;

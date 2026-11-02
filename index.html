@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BDC LIVE v10.2.156</title>
+    <title>BDC LIVE v10.2.157</title>
     <meta name="description" content="Centralized real-time telemetry, operational statistics, and live streaming dashboard for Brian Diva Cox.">
     <!-- Open Graph & Social Preview Meta Tags -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="BDC LIVE v10.2.156">
+    <meta property="og:title" content="BDC LIVE v10.2.157">
     <meta property="og:description" content="Real-time statistics, streaming telemetry, theater sync, and central command control plane.">
     <meta property="og:image" content="./bdclive_banner.jpg">
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="BDC LIVE v10.2.156">
+    <meta property="twitter:title" content="BDC LIVE v10.2.157">
     <meta property="twitter:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="twitter:image" content="./bdclive_banner.jpg">
     <!-- PWA Manifest & Mobile Web App Meta Tags -->
@@ -1273,7 +1273,7 @@
                 <div style="display: flex; align-items: center; gap: 12px;">
                     <i class="fa-solid fa-ticket" style="font-size: 24px; color: #ff7b00;"></i>
                     <div>
-                        <h3 style="margin: 0; color: #ffffff; font-size: 18px; font-weight: 800; letter-spacing: 0.5px;">Ticket Alerts System — Support Desk <span style="font-family: monospace; font-size: 12px; color: var(--accent-cyan); background: #1f293d; padding: 2px 7px; border-radius: 6px; border: 1px solid #303e5c;">v10.2.156</span></h3>
+                        <h3 style="margin: 0; color: #ffffff; font-size: 18px; font-weight: 800; letter-spacing: 0.5px;">Ticket Alerts System — Support Desk <span style="font-family: monospace; font-size: 12px; color: var(--accent-cyan); background: #1f293d; padding: 2px 7px; border-radius: 6px; border: 1px solid #303e5c;">v10.2.157</span></h3>
                         <span style="font-size: 12px; color: #8b949e;">Whiteout Survival & Central Command • Live Audio & Push Alerts</span>
                     </div>
                 </div>
@@ -3255,8 +3255,9 @@
         });
 
         let currentTasksDatabaseSnapshot = null;
-        sDb.ref('tasks').on('value', (s) => {
-            const t = s.val(); if (!t) return;
+
+        function renderTaskCounts(t) {
+            if (!t) return;
             currentTasksDatabaseSnapshot = t; 
             
             const safeNum = (val) => { const n = parseInt(val, 10); return isNaN(n) ? 0 : n; };
@@ -3279,15 +3280,22 @@
             updateMetricAndFlash('task-k6', 'task_bdcf', cBDCF, false, true);
             updateMetricAndFlash('task-k7', 'task_wos', cWOS, false, true);
 
-            if (!lastTasksSyncTimestamp) {
+            if (t.lastUpdated) {
+                lastTasksSyncTimestamp = Number(t.lastUpdated);
+            } else if (!lastTasksSyncTimestamp) {
                 lastTasksSyncTimestamp = Date.now();
-                updateTasksSyncAgeUI();
             }
+            updateTasksSyncAgeUI();
 
             const tModal = document.getElementById('tasksBreakdownModal');
             if (tModal && tModal.style.display === 'block') {
                 renderTasksBreakdownTable();
             }
+        }
+        window.renderTaskCounts = renderTaskCounts;
+
+        sDb.ref('tasks').on('value', (s) => {
+            renderTaskCounts(s.val());
         });
 
         // Real-Time GitHub Pipeline Stream Listener (Zero-latency WebSocket pushes)
@@ -3477,7 +3485,10 @@
                         const localData = await localResp.json();
                         if (localData && localData.success) {
                             synced = true;
-                            lastTasksSyncTimestamp = Date.now();
+                            if (localData.counts && typeof renderTaskCounts === 'function') {
+                                renderTaskCounts(localData.counts);
+                            }
+                            lastTasksSyncTimestamp = (localData.counts && localData.counts.lastUpdated) ? Number(localData.counts.lastUpdated) : Date.now();
                             updateTasksSyncAgeUI();
                             flashFollowerPulse('task-k1', 'gain', '#38bdf8', 'Synced Just Now');
                         }
@@ -3494,7 +3505,7 @@
                         if (typeof renderTaskCounts === 'function') {
                             renderTaskCounts(val);
                         }
-                        lastTasksSyncTimestamp = Date.now();
+                        lastTasksSyncTimestamp = (val && val.lastUpdated) ? Number(val.lastUpdated) : Date.now();
                         updateTasksSyncAgeUI();
                     }
                 }
@@ -4237,7 +4248,7 @@
             }
         }
 
-        const CURRENT_APP_VERSION = 'v10.2.156';
+        const CURRENT_APP_VERSION = 'v10.2.157';
         window.CURRENT_APP_VERSION = CURRENT_APP_VERSION;
         let isDeployingLive = false;
         let pendingRemoteVersion = null;
