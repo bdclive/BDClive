@@ -1,3 +1,13 @@
+## [10.2.157] - 2026-11-01
+- Fixed Google Tasks live sync engine and real-time updates.
+- Defined global task counts renderer across all dashboard pages.
+- Connected local daemon sync directly to dashboard task widgets.
+- Added automatic OAuth token refresh for Google Tasks API.
+- Recorded task list IDs for 1-click Google Tasks workspace.
+- Added Google Tasks background daemon watchdog to Central Command.
+- Upgraded web dashboard engine to version 10.2.157.
+- Passed all automated browser and DOM test suites.
+
 ## [10.2.156] - 2026-10-16
 - Added in-box audio toggle button to Court Stream box.
 - Enabled 1-click dynamic audio unmuting directly inside feed.

@@ -14,9 +14,10 @@
       "cliFile": "Threads_Bridge/threads_bridge_cli_v1.0.59_(terminal).py"
     },
     "bdclive_web_dashboard": {
-      "version": "10.2.156",
+      "version": "10.2.157",
       "repository": "https://github.com/bdclive/BDClive",
       "latestChanges": [
+        "v10.2.157: Fixed Google Tasks box live sync engine and real-time updates",
         "v10.2.156: Added in-box court stream audio toggle and autoplay permissions",
         "v10.2.155: Fixed Brian's Theater upcoming movie attendance number sync",
         "v10.2.154: Moved all details and resolution notes cleanly inside popup",
