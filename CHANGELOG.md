@@ -1,3 +1,14 @@
+## [10.2.158] - 2026-11-09
+- Added Firebase Bandwidth Sentinel dual-tab deck to Row 3.
+- Instant toggle between Google Tasks and Firebase quota meters.
+- Live project gauges for Realtime Database and Hosting egress.
+- Added 9-project Firebase fleet inspector modal with live tables.
+- Automated midnight Discord DM picture report generator deployed.
+- High-resolution dark-mode infographic card rendered via Chrome.
+- Direct 1-click Discord DM dispatch from dashboard header.
+- Upgraded web dashboard engine to version 10.2.158.
+- Passed all automated browser and DOM test suites.
+
 ## [10.2.157] - 2026-11-01
 - Fixed Google Tasks live sync engine and real-time updates.
 - Defined global task counts renderer across all dashboard pages.

@@ -1038,10 +1038,21 @@
             </div>
         </div>
 
-        <!-- TASKS BOX WIDGET -->
-        <div class="counter-item mirror-box" id="tasks-box" style="border-top: 3px solid var(--tasks-blue); padding: 10px 12px 5px 12px; grid-area: 3 / 2 / 4 / 4; height: 150px; position: relative;">
-            <i class="fa-solid fa-list-check box-logo" style="color: var(--tasks-blue);"></i>
-            <div style="position: absolute; top: 8px; right: 10px; display: flex; align-items: center; gap: 5px; z-index: 2;">
+        <!-- ROW 3 DUAL-TAB WIDGET (TASKS ⇋ FIREBASE QUOTAS) -->
+        <div class="counter-item mirror-box" id="tasks-box" style="border-top: 3px solid var(--tasks-blue); padding: 8px 12px 5px 12px; grid-area: 3 / 2 / 4 / 4; height: 150px; position: relative; transition: border-color 0.3s ease;">
+            
+            <!-- ROW 3 TAB SELECTOR -->
+            <div class="row3-tab-bar" style="position: absolute; top: 6px; left: 10px; display: flex; align-items: center; background: rgba(0, 0, 0, 0.55); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 7px; padding: 2px; gap: 2px; z-index: 10;">
+                <button id="row3-tab-tasks-btn" onclick="event.stopPropagation(); switchRow3Tab('tasks');" style="background: rgba(66, 133, 244, 0.25); color: #58a6ff; border: 1px solid rgba(66, 133, 244, 0.5); border-radius: 5px; padding: 2px 8px; font-size: 9px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: all 0.2s ease;" title="Switch to Google Tasks Overview">
+                    <i class="fa-solid fa-list-check"></i> Tasks
+                </button>
+                <button id="row3-tab-firebase-btn" onclick="event.stopPropagation(); switchRow3Tab('firebase');" style="background: transparent; color: #8b949e; border: 1px solid transparent; border-radius: 5px; padding: 2px 8px; font-size: 9px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: all 0.2s ease;" title="Switch to Firebase Bandwidth & Quotas Sentinel">
+                    <i class="fa-solid fa-fire" style="color: #ff9f43;"></i> Firebase Quotas <span id="fb-row3-dot" style="display: inline-block; width: 6px; height: 6px; background: #3fb950; border-radius: 50%; box-shadow: 0 0 5px #3fb950;"></span>
+                </button>
+            </div>
+
+            <!-- TASKS HEADER CONTROLS -->
+            <div id="tasks-header-controls" style="position: absolute; top: 6px; right: 10px; display: flex; align-items: center; gap: 5px; z-index: 10;">
                 <button id="task-sync-btn" onclick="triggerGoogleTasksSync(event)" style="background: rgba(66, 133, 244, 0.15); color: #58a6ff; border: 1px solid rgba(66, 133, 244, 0.35); border-radius: 6px; padding: 2px 7px; font-size: 8.5px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s ease;" title="Sync Live Tasks with Google Tasks API">
                     <i id="task-sync-icon" class="fa-solid fa-rotate"></i> <span id="task-sync-text">Sync</span>
                 </button>
@@ -1049,7 +1060,19 @@
                     <i class="fa-solid fa-layer-group"></i> Breakdown
                 </button>
             </div>
-            <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px 6px; width: 100%; height: 100%; align-items: center; box-sizing: border-box;">
+
+            <!-- FIREBASE HEADER CONTROLS -->
+            <div id="firebase-header-controls" style="display: none; position: absolute; top: 6px; right: 10px; align-items: center; gap: 5px; z-index: 10;">
+                <button id="fb-sync-btn" onclick="event.stopPropagation(); triggerFirebaseSync(event);" style="background: rgba(255, 123, 0, 0.15); color: #ff9f43; border: 1px solid rgba(255, 123, 0, 0.35); border-radius: 6px; padding: 2px 7px; font-size: 8.5px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s ease;" title="Sync Bandwidth Metrics with Google Cloud Monitoring API">
+                    <i id="fb-sync-icon" class="fa-solid fa-rotate"></i> <span id="fb-sync-text">Sync</span>
+                </button>
+                <button onclick="event.stopPropagation(); openFirebaseModal();" style="background: rgba(255, 123, 0, 0.15); color: #ff9f43; border: 1px solid rgba(255, 123, 0, 0.35); border-radius: 6px; padding: 2px 7px; font-size: 8.5px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s ease;" title="Open Full 9-Project Firebase Bandwidth Inspector">
+                    <i class="fa-solid fa-layer-group"></i> Inspector
+                </button>
+            </div>
+
+            <!-- VIEW 1: GOOGLE TASKS CONTENT -->
+            <div id="tasks-view-content" style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px 6px; width: 100%; height: 100%; align-items: center; box-sizing: border-box; margin-top: 14px;">
                 
                 <div class="task-click-node" onclick="openTasksBreakdownModal()" style="grid-column: span 6; margin-bottom: 2px; display: flex; flex-direction: column; align-items: center; justify-content: center;" title="Click for Full Google Tasks Category Breakdown & Inspector">
                     <div style="display: flex; align-items: center; gap: 6px;">
@@ -1082,6 +1105,84 @@
                 <div class="task-click-node" onclick="openSpecificTaskList('WOS')" style="grid-column: span 2;">
                     <p class="mirror-label" style="color: var(--plex-orange); font-size: 9px; white-space: nowrap;">❄️ WOS</p>
                     <div id="task-k7" class="mirror-stat" style="font-size: 1.4rem; font-weight:700; line-height:1.1;">0</div>
+                </div>
+            </div>
+
+            <!-- VIEW 2: FIREBASE BANDWIDTH SENTINEL CONTENT -->
+            <div id="firebase-view-content" onclick="openFirebaseModal()" style="display: none; width: 100%; height: 100%; box-sizing: border-box; margin-top: 14px; cursor: pointer;" title="Click to open Full Firebase Fleet Bandwidth Inspector">
+                <div style="display: grid; grid-template-columns: 135px 1fr; gap: 8px; width: 100%; height: 100%; align-items: center; box-sizing: border-box;">
+                    <!-- Left: Fleet Egress KPI Block -->
+                    <div style="background: rgba(255, 123, 0, 0.06); border: 1px solid rgba(255, 123, 0, 0.2); border-radius: 8px; padding: 6px 8px; text-align: center; display: flex; flex-direction: column; justify-content: center; height: 102px;">
+                        <span style="font-size: 0.60rem; color: #ff9f43; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">🔥 Fleet Egress</span>
+                        <div id="fb-deck-today-mb" style="font-size: 1.55rem; font-weight: 800; color: #ffffff; line-height: 1.1; margin: 2px 0;">900 MB</div>
+                        <div style="font-size: 0.65rem; color: #00d2ff; font-weight: 700;"><span id="fb-deck-month-gb">7.11 GB</span> MTD</div>
+                        <div style="margin-top: 3px;">
+                            <span id="fb-deck-health-badge" style="background: rgba(63, 185, 80, 0.15); color: #3fb950; border: 1px solid rgba(63, 185, 80, 0.3); font-size: 0.54rem; font-weight: 800; padding: 1px 4px; border-radius: 3px;">🟢 OPTIMAL</span>
+                        </div>
+                    </div>
+
+                    <!-- Right: Top 4 Active Projects Micro-Cards (2x2 Grid) -->
+                    <div id="fb-deck-projects-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; width: 100%; height: 102px;">
+                        <!-- Micro Project Card 1: WOS -->
+                        <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 6px; padding: 4px 6px; display: flex; flex-direction: column; justify-content: space-between;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-size: 0.62rem; font-weight: 700; color: #ffffff;">❄️ WOS Dashboard</span>
+                                <span id="fb-p1-today" style="font-size: 0.60rem; font-weight: 800; color: #f1c40f;">558 MB</span>
+                            </div>
+                            <div style="width: 100%; height: 4px; background: rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden; margin: 3px 0;">
+                                <div id="fb-p1-bar" style="width: 44.6%; height: 100%; background: #f1c40f; border-radius: 2px;"></div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; font-size: 0.54rem; color: #8b949e;">
+                                <span>Used: <strong id="fb-p1-pct" style="color: #c9d1d9;">44.6%</strong></span>
+                                <span>10 GB Quota</span>
+                            </div>
+                        </div>
+
+                        <!-- Micro Project Card 2: Theater -->
+                        <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 6px; padding: 4px 6px; display: flex; flex-direction: column; justify-content: space-between;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-size: 0.62rem; font-weight: 700; color: #ffffff;">🎬 Brian's Theater</span>
+                                <span id="fb-p2-today" style="font-size: 0.60rem; font-weight: 800; color: #3fb950;">290 MB</span>
+                            </div>
+                            <div style="width: 100%; height: 4px; background: rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden; margin: 3px 0;">
+                                <div id="fb-p2-bar" style="width: 20.8%; height: 100%; background: #3fb950; border-radius: 2px;"></div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; font-size: 0.54rem; color: #8b949e;">
+                                <span>Used: <strong id="fb-p2-pct" style="color: #c9d1d9;">20.8%</strong></span>
+                                <span>10 GB Quota</span>
+                            </div>
+                        </div>
+
+                        <!-- Micro Project Card 3: Tasks & Counters -->
+                        <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 6px; padding: 4px 6px; display: flex; flex-direction: column; justify-content: space-between;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-size: 0.62rem; font-weight: 700; color: #ffffff;">📋 Live Counters</span>
+                                <span id="fb-p3-today" style="font-size: 0.60rem; font-weight: 800; color: #3fb950;">52 MB</span>
+                            </div>
+                            <div style="width: 100%; height: 4px; background: rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden; margin: 3px 0;">
+                                <div id="fb-p3-bar" style="width: 4.3%; height: 100%; background: #3fb950; border-radius: 2px;"></div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; font-size: 0.54rem; color: #8b949e;">
+                                <span>Used: <strong id="fb-p3-pct" style="color: #c9d1d9;">4.3%</strong></span>
+                                <span>10 GB Quota</span>
+                            </div>
+                        </div>
+
+                        <!-- Micro Project Card 4: Dasher Tracker -->
+                        <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 6px; padding: 4px 6px; display: flex; flex-direction: column; justify-content: space-between;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-size: 0.62rem; font-weight: 700; color: #ffffff;">🚗 Dasher Tracker</span>
+                                <span id="fb-p4-today" style="font-size: 0.60rem; font-weight: 800; color: #3fb950;">0.6 MB</span>
+                            </div>
+                            <div style="width: 100%; height: 4px; background: rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden; margin: 3px 0;">
+                                <div id="fb-p4-bar" style="width: 1.0%; height: 100%; background: #3fb950; border-radius: 2px;"></div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; font-size: 0.54rem; color: #8b949e;">
+                                <span>Used: <strong id="fb-p4-pct" style="color: #c9d1d9;">0.1%</strong></span>
+                                <span>10 GB Quota</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <i class="fa-solid fa-arrow-up-right-from-square" style="position: absolute; bottom: 8px; right: 15px; color: rgba(255,255,255,0.2); font-size: 10px;"></i>
@@ -1656,6 +1757,80 @@
                         <!-- Rows rendered dynamically -->
                     </tbody>
                 </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- FIREBASE BANDWIDTH & QUOTA SENTINEL MODAL -->
+    <div id="firebaseModal" class="modal">
+        <div class="modal-content" style="border-color: #ff7b00; max-width: 980px; width: 94%; background: #0d1117; max-height: 88vh; display: flex; flex-direction: column; box-shadow: 0 16px 48px rgba(0,0,0,0.85), 0 0 28px rgba(255, 123, 0, 0.25);">
+            <!-- Modal Header -->
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #30363d; padding-bottom: 12px; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <div style="width: 32px; height: 32px; background: linear-gradient(135deg, #ff9f43 0%, #ff5252 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; box-shadow: 0 0 12px rgba(255, 123, 0, 0.35);">🔥</div>
+                    <div>
+                        <h3 style="margin: 0; color: #ffffff; font-size: 16px; font-weight: 800; letter-spacing: 0.5px;">Firebase Fleet Bandwidth & Quotas Sentinel</h3>
+                        <p style="margin: 2px 0 0 0; font-size: 11px; color: #8b949e;">Google Cloud Monitoring API • Live Egress & Free Tier Watchdog</p>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                    <button id="modal-fb-sync-btn" onclick="triggerFirebaseSync(event)" style="background: rgba(255, 123, 0, 0.18); color: #ff9f43; border: 1px solid rgba(255, 123, 0, 0.4); padding: 5px 12px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; transition: all 0.2s ease;" title="Re-query Google Cloud Monitoring API for fresh metrics">
+                        <i id="modal-fb-sync-icon" class="fa-solid fa-rotate"></i> Sync Live Metrics
+                    </button>
+                    <button id="modal-fb-dm-btn" onclick="sendFirebaseDmReport(event)" style="background: rgba(88, 101, 242, 0.2); color: #5865f2; border: 1px solid rgba(88, 101, 242, 0.4); padding: 5px 12px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; transition: all 0.2s ease;" title="Dispatch High-Res Picture Report straight to Brian Diva Cox Discord DM">
+                        <i class="fa-brands fa-discord"></i> Send Pic Report to Discord DM
+                    </button>
+                    <span class="close-modal" onclick="closeFirebaseModal()" style="font-size: 24px; cursor: pointer; color: #8b949e; margin-left: 6px;">&times;</span>
+                </div>
+            </div>
+
+            <!-- Summary KPI Strip -->
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 12px;">
+                <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 8px 12px;">
+                    <div style="font-size: 9.5px; font-weight: 700; color: #8b949e; text-transform: uppercase;">Today's Total Egress</div>
+                    <div id="modal-fb-today-mb" style="font-size: 1.4rem; font-weight: 800; color: #ffffff; margin-top: 2px;">900.5 MB</div>
+                    <div id="modal-fb-today-sub" style="font-size: 9px; color: #8b949e;">0.88 GB transferred today</div>
+                </div>
+                <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 8px 12px;">
+                    <div style="font-size: 9.5px; font-weight: 700; color: #8b949e; text-transform: uppercase;">Month-to-Date Egress</div>
+                    <div id="modal-fb-month-gb" style="font-size: 1.4rem; font-weight: 800; color: #00d2ff; margin-top: 2px;">7.11 GB</div>
+                    <div id="modal-fb-month-sub" style="font-size: 9px; color: #8b949e;">7,280 MB cumulative</div>
+                </div>
+                <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 8px 12px;">
+                    <div style="font-size: 9.5px; font-weight: 700; color: #8b949e; text-transform: uppercase;">Fleet Quota Health</div>
+                    <div id="modal-fb-health-badge" style="font-size: 1.15rem; font-weight: 800; color: #3fb950; margin-top: 4px;">🟢 100% Operational</div>
+                    <div style="font-size: 9px; color: #8b949e;">0 Overages • 9 Monitored</div>
+                </div>
+                <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; padding: 8px 12px;">
+                    <div style="font-size: 9.5px; font-weight: 700; color: #8b949e; text-transform: uppercase;">Automated Report</div>
+                    <div style="font-size: 1.15rem; font-weight: 800; color: #ff9f43; margin-top: 4px;">⏰ Midnight 12:00 AM</div>
+                    <div style="font-size: 9px; color: #8b949e;">Direct Bot DM with Pic Card</div>
+                </div>
+            </div>
+
+            <!-- Detailed 9-Project Table -->
+            <div style="overflow-y: auto; flex: 1; border: 1px solid #30363d; border-radius: 8px; background: #161b22; max-height: 52vh;">
+                <table style="width: 100%; border-collapse: collapse; font-size: 11px; text-align: left;">
+                    <thead>
+                        <tr style="background: #21262d; border-bottom: 1px solid #30363d; color: #8b949e; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">
+                            <th style="padding: 10px 12px;">Project</th>
+                            <th style="padding: 10px 8px; text-align: right;">Today Egress</th>
+                            <th style="padding: 10px 8px; text-align: right;">Month Total</th>
+                            <th style="padding: 10px 14px; text-align: center; width: 220px;">Quota Used (10 GB Free)</th>
+                            <th style="padding: 10px 8px; text-align: center;">Status</th>
+                            <th style="padding: 10px 12px; text-align: right;">Console</th>
+                        </tr>
+                    </thead>
+                    <tbody id="firebase-table-body">
+                        <!-- Rendered dynamically -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Modal Footer Note -->
+            <div style="margin-top: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 10px; color: #6e7681;">
+                <span id="modal-fb-updated-at">Telemetry Synced: Live Cloud Monitoring</span>
+                <span>Spark Free Tier: 10 GB/mo Realtime DB + 10 GB/mo Hosting</span>
             </div>
         </div>
     </div>
@@ -3668,6 +3843,293 @@
         window.openTasksBreakdownModal = openTasksBreakdownModal;
         window.closeTasksBreakdownModal = closeTasksBreakdownModal;
         window.renderTasksBreakdownTable = renderTasksBreakdownTable;
+
+        // ==========================================
+        // ROW 3 DUAL-TAB & FIREBASE BANDWIDTH SENTINEL
+        // ==========================================
+        let activeRow3Tab = 'tasks';
+        let cachedFirebaseData = null;
+        let isFirebaseSyncing = false;
+
+        function switchRow3Tab(tabName) {
+            activeRow3Tab = tabName;
+            const tasksView = document.getElementById('tasks-view-content');
+            const fbView = document.getElementById('firebase-view-content');
+            const tasksControls = document.getElementById('tasks-header-controls');
+            const fbControls = document.getElementById('firebase-header-controls');
+            const tasksBtn = document.getElementById('row3-tab-tasks-btn');
+            const fbBtn = document.getElementById('row3-tab-firebase-btn');
+            const box = document.getElementById('tasks-box');
+
+            if (tabName === 'firebase') {
+                if (tasksView) tasksView.style.display = 'none';
+                if (fbView) fbView.style.display = 'block';
+                if (tasksControls) tasksControls.style.display = 'none';
+                if (fbControls) fbControls.style.display = 'flex';
+                if (box) box.style.borderTop = '3px solid #ff7b00';
+
+                if (fbBtn) {
+                    fbBtn.style.background = 'rgba(255, 123, 0, 0.25)';
+                    fbBtn.style.border = '1px solid rgba(255, 123, 0, 0.5)';
+                    fbBtn.style.color = '#ff9f43';
+                }
+                if (tasksBtn) {
+                    tasksBtn.style.background = 'transparent';
+                    tasksBtn.style.border = '1px solid transparent';
+                    tasksBtn.style.color = '#8b949e';
+                }
+                loadFirebaseBandwidthData();
+            } else {
+                if (tasksView) tasksView.style.display = 'grid';
+                if (fbView) fbView.style.display = 'none';
+                if (tasksControls) tasksControls.style.display = 'flex';
+                if (fbControls) fbControls.style.display = 'none';
+                if (box) box.style.borderTop = '3px solid var(--tasks-blue)';
+
+                if (tasksBtn) {
+                    tasksBtn.style.background = 'rgba(66, 133, 244, 0.25)';
+                    tasksBtn.style.border = '1px solid rgba(66, 133, 244, 0.5)';
+                    tasksBtn.style.color = '#58a6ff';
+                }
+                if (fbBtn) {
+                    fbBtn.style.background = 'transparent';
+                    fbBtn.style.border = '1px solid transparent';
+                    fbBtn.style.color = '#8b949e';
+                }
+            }
+        }
+
+        async function loadFirebaseBandwidthData(force = false) {
+            try {
+                const resp = await fetch('firebase_bandwidth_cache.json?t=' + Date.now(), { cache: 'no-store' });
+                if (resp.ok) {
+                    const data = await resp.json();
+                    cachedFirebaseData = data;
+                    renderFirebaseDeck(data);
+                    renderFirebaseModalTable(data);
+                }
+            } catch (err) {
+                console.warn('[Firebase Sentinel] Error loading bandwidth cache:', err);
+            }
+        }
+
+        function renderFirebaseDeck(data) {
+            if (!data) return;
+            const todayEl = document.getElementById('fb-deck-today-mb');
+            const monthEl = document.getElementById('fb-deck-month-gb');
+            const healthBadge = document.getElementById('fb-deck-health-badge');
+            const dot = document.getElementById('fb-row3-dot');
+
+            if (todayEl) todayEl.innerText = `${data.total_today_mb || 0} MB`;
+            if (monthEl) monthEl.innerText = `${data.total_month_gb || 0} GB`;
+
+            let hasWarning = false;
+            let hasElevated = false;
+
+            const projects = data.projects || [];
+            projects.forEach((p, idx) => {
+                if (p.status === 'WARNING') hasWarning = true;
+                if (p.status === 'ELEVATED') hasElevated = true;
+
+                // Update micro cards (1 to 4)
+                const pNum = idx + 1;
+                if (pNum <= 4) {
+                    const todayNode = document.getElementById(`fb-p${pNum}-today`);
+                    const pctNode = document.getElementById(`fb-p${pNum}-pct`);
+                    const barNode = document.getElementById(`fb-p${pNum}-bar`);
+
+                    if (todayNode) todayNode.innerText = `${p.today_mb} MB`;
+                    if (pctNode) pctNode.innerText = `${p.used_pct}%`;
+                    if (barNode) {
+                        barNode.style.width = `${Math.min(100, Math.max(3, p.used_pct))}%`;
+                        if (p.status === 'WARNING') barNode.style.background = '#f85149';
+                        else if (p.status === 'ELEVATED') barNode.style.background = '#f1c40f';
+                        else barNode.style.background = '#3fb950';
+                    }
+                }
+            });
+
+            if (healthBadge) {
+                if (hasWarning) {
+                    healthBadge.innerText = '🚨 WARNING';
+                    healthBadge.style.color = '#ff7b72';
+                    healthBadge.style.background = 'rgba(248, 81, 73, 0.15)';
+                    healthBadge.style.borderColor = 'rgba(248, 81, 73, 0.35)';
+                    if (dot) dot.style.background = '#f85149';
+                } else if (hasElevated) {
+                    healthBadge.innerText = '🟡 ELEVATED';
+                    healthBadge.style.color = '#f1c40f';
+                    healthBadge.style.background = 'rgba(241, 196, 15, 0.15)';
+                    healthBadge.style.borderColor = 'rgba(241, 196, 15, 0.35)';
+                    if (dot) dot.style.background = '#f1c40f';
+                } else {
+                    healthBadge.innerText = '🟢 OPTIMAL';
+                    healthBadge.style.color = '#3fb950';
+                    healthBadge.style.background = 'rgba(63, 185, 80, 0.15)';
+                    healthBadge.style.borderColor = 'rgba(63, 185, 80, 0.3)';
+                    if (dot) dot.style.background = '#3fb950';
+                }
+            }
+        }
+
+        function renderFirebaseModalTable(data) {
+            if (!data) return;
+            const tbody = document.getElementById('firebase-table-body');
+            const todayMb = document.getElementById('modal-fb-today-mb');
+            const monthGb = document.getElementById('modal-fb-month-gb');
+            const updatedAt = document.getElementById('modal-fb-updated-at');
+            const healthBadge = document.getElementById('modal-fb-health-badge');
+
+            if (todayMb) todayMb.innerText = `${data.total_today_mb || 0} MB`;
+            if (monthGb) monthGb.innerText = `${data.total_month_gb || 0} GB`;
+            if (updatedAt) updatedAt.innerText = `Telemetry Synced: ${data.updated_at_display || 'Live Cloud Monitoring'}`;
+
+            if (!tbody) return;
+            const projects = data.projects || [];
+            tbody.innerHTML = projects.map(p => {
+                let badgeClass = 'rgba(63, 185, 80, 0.15)';
+                let badgeColor = '#3fb950';
+                let barColor = '#3fb950';
+                if (p.status === 'WARNING') {
+                    badgeClass = 'rgba(248, 81, 73, 0.18)';
+                    badgeColor = '#ff7b72';
+                    barColor = '#f85149';
+                } else if (p.status === 'ELEVATED') {
+                    badgeClass = 'rgba(241, 196, 15, 0.15)';
+                    badgeColor = '#f1c40f';
+                    barColor = '#f1c40f';
+                }
+
+                const widthPct = Math.min(100, Math.max(3, p.used_pct));
+                const monthDisplay = p.month_mb >= 1024 ? `${(p.month_mb/1024).toFixed(2)} GB` : `${p.month_mb} MB`;
+
+                return `
+                    <tr style="border-bottom: 1px solid #21262d; transition: background 0.15s ease;" onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background='transparent'">
+                        <td style="padding: 10px 12px;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span style="font-size: 16px;">${p.icon}</span>
+                                <div>
+                                    <div style="font-weight: 800; color: #ffffff;">${p.name}</div>
+                                    <div style="font-size: 9.5px; color: #6e7681; font-family: monospace;">${p.id}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td style="padding: 10px 8px; text-align: right; font-weight: 700; color: ${p.today_mb > 500 ? '#f1c40f' : '#ffffff'};">
+                            ${p.today_mb} MB
+                        </td>
+                        <td style="padding: 10px 8px; text-align: right; font-weight: 800; color: #00d2ff;">
+                            ${monthDisplay}
+                        </td>
+                        <td style="padding: 10px 14px; text-align: center;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <div style="flex: 1; height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden;">
+                                    <div style="width: ${widthPct}%; height: 100%; background: ${barColor}; border-radius: 3px;"></div>
+                                </div>
+                                <span style="font-size: 10px; font-weight: 800; color: #c9d1d9; min-width: 48px; text-align: right;">${p.used_pct}%</span>
+                            </div>
+                            <div style="font-size: 8.5px; color: #6e7681; margin-top: 2px; text-align: right;">Limit: ${p.quota_gb} GB</div>
+                        </td>
+                        <td style="padding: 10px 8px; text-align: center;">
+                            <span style="background: ${badgeClass}; color: ${badgeColor}; border: 1px solid ${badgeColor}40; padding: 2px 7px; border-radius: 4px; font-weight: 800; font-size: 9.5px; white-space: nowrap;">
+                                ${p.status_badge}
+                            </span>
+                        </td>
+                        <td style="padding: 10px 12px; text-align: right;">
+                            <a href="https://console.firebase.google.com/project/${p.id}/usage" target="_blank" style="background: rgba(255, 123, 0, 0.14); color: #ff9f43; border: 1px solid rgba(255, 123, 0, 0.35); padding: 4px 8px; border-radius: 5px; font-size: 10px; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; transition: all 0.2s ease;">
+                                Console <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 8px;"></i>
+                            </a>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function openFirebaseModal() {
+            loadFirebaseBandwidthData();
+            const modal = document.getElementById('firebaseModal');
+            if (modal) modal.style.display = 'block';
+        }
+
+        function closeFirebaseModal() {
+            const modal = document.getElementById('firebaseModal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        async function triggerFirebaseSync(event) {
+            if (event && event.stopPropagation) event.stopPropagation();
+            if (isFirebaseSyncing) return;
+            isFirebaseSyncing = true;
+
+            const syncIcon = document.getElementById('fb-sync-icon');
+            const syncText = document.getElementById('fb-sync-text');
+            const modalSyncIcon = document.getElementById('modal-fb-sync-icon');
+
+            if (syncIcon) syncIcon.classList.add('fa-spin');
+            if (modalSyncIcon) modalSyncIcon.classList.add('fa-spin');
+            if (syncText) syncText.innerText = 'Syncing...';
+
+            try {
+                // Try Central Command local IPC daemon first
+                try {
+                    const resp = await fetch('http://127.0.0.1:8765/syncFirebase', { method: 'POST' });
+                    if (resp.ok) {
+                        const d = await resp.json();
+                        if (d && d.success) cachedFirebaseData = d.data;
+                    }
+                } catch (e) {
+                    // Fall back to reading static cache
+                }
+                await loadFirebaseBandwidthData(true);
+            } finally {
+                setTimeout(() => {
+                    isFirebaseSyncing = false;
+                    if (syncIcon) syncIcon.classList.remove('fa-spin');
+                    if (modalSyncIcon) modalSyncIcon.classList.remove('fa-spin');
+                    if (syncText) syncText.innerText = 'Sync';
+                }, 600);
+            }
+        }
+
+        async function sendFirebaseDmReport(event) {
+            if (event && event.stopPropagation) event.stopPropagation();
+            const dmBtn = document.getElementById('modal-fb-dm-btn');
+            if (dmBtn) {
+                dmBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Dispatching...';
+                dmBtn.style.opacity = '0.7';
+            }
+
+            try {
+                // Trigger via Central Command daemon IPC or local webhook
+                await fetch('http://127.0.0.1:8765/sendFirebaseDmReport', { method: 'POST' });
+            } catch (e) {}
+
+            setTimeout(() => {
+                if (dmBtn) {
+                    dmBtn.innerHTML = '<i class="fa-solid fa-check"></i> Report Sent to DM!';
+                    dmBtn.style.color = '#3fb950';
+                    dmBtn.style.borderColor = '#3fb950';
+                    setTimeout(() => {
+                        dmBtn.innerHTML = '<i class="fa-brands fa-discord"></i> Send Pic Report to Discord DM';
+                        dmBtn.style.color = '#5865f2';
+                        dmBtn.style.borderColor = 'rgba(88, 101, 242, 0.4)';
+                        dmBtn.style.opacity = '1';
+                    }, 3000);
+                }
+            }, 1000);
+        }
+
+        window.switchRow3Tab = switchRow3Tab;
+        window.openFirebaseModal = openFirebaseModal;
+        window.closeFirebaseModal = closeFirebaseModal;
+        window.triggerFirebaseSync = triggerFirebaseSync;
+        window.sendFirebaseDmReport = sendFirebaseDmReport;
+        window.loadFirebaseBandwidthData = loadFirebaseBandwidthData;
+
+        // Auto-load bandwidth cache on page start
+        document.addEventListener('DOMContentLoaded', () => {
+            loadFirebaseBandwidthData();
+        });
+        setTimeout(loadFirebaseBandwidthData, 1500);
 
         function openSpecificTaskList(listKey) {
             let targetListId = "";
@@ -8621,6 +9083,8 @@
                     activeModal = 'counterAuditModal';
                 } else if (hash === '#tasks' || hash === '#tasksbreakdownmodal' || urlParams.get('modal') === 'tasks') {
                     activeModal = 'tasksBreakdownModal';
+                } else if (hash === '#firebase' || hash === '#firebasemodal' || urlParams.get('modal') === 'firebase') {
+                    activeModal = 'firebaseModal';
                 } else if (hash === '#followerlog' || hash === '#activitylog' || urlParams.get('modal') === 'followerlog') {
                     activeModal = 'followerActivityLogModal';
                 }
@@ -8643,6 +9107,8 @@
                         openCourt();
                     } else if (activeModal === 'tasksBreakdownModal' && typeof openTasksBreakdownModal === 'function') {
                         openTasksBreakdownModal();
+                    } else if (activeModal === 'firebaseModal' && typeof openFirebaseModal === 'function') {
+                        openFirebaseModal();
                     } else if (activeModal === 'followerActivityLogModal' && typeof openFollowerActivityLogModal === 'function') {
                         openFollowerActivityLogModal();
                     }
@@ -8661,6 +9127,7 @@
             const ctM = document.getElementById('courtModal');
             const thM = document.getElementById('theaterModal');
             const tbM = document.getElementById('tasksBreakdownModal');
+            const fbM = document.getElementById('firebaseModal');
             const flM = document.getElementById('followerActivityLogModal');
             const tmdM = document.getElementById('ticketMessageDetailModal');
             if (e.target === gkM) closeGatekeeperModal();
@@ -8671,6 +9138,7 @@
             if (e.target === ctM) closeCourt();
             if (e.target === thM) closeTheater();
             if (e.target === tbM) closeTasksBreakdownModal();
+            if (e.target === fbM) closeFirebaseModal();
             if (e.target === flM) closeFollowerActivityLogModal();
             if (e.target === tmdM) closeTicketMessageDetailModal();
 
@@ -8694,6 +9162,7 @@
                 closeCourt();
                 closeTheater();
                 closeTasksBreakdownModal();
+                closeFirebaseModal();
                 closeFollowerActivityLogModal();
                 closeGrandOptionsMenu();
             }
