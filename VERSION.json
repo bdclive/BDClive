@@ -1,8 +1,8 @@
 {
   "name": "BDC Ecosystem Master Version Registry",
-  "lastUpdated": "2026-11-09T14:40:00-08:00",
+  "lastUpdated": "2026-11-09T15:30:00-08:00",
   "components": {
-    "bdc_central_command_desktop": "1.1.35",
+    "bdc_central_command_desktop": "1.1.36",
     "daemons": {
       "folder": "Daemons/",
       "counterChecker": "Daemons/counter_checker_daemon.py",
@@ -15,9 +15,10 @@
       "cliFile": "Threads_Bridge/threads_bridge_cli_v1.0.59_(terminal).py"
     },
     "bdclive_web_dashboard": {
-      "version": "10.2.158",
+      "version": "10.2.159",
       "repository": "https://github.com/bdclive/BDClive",
       "latestChanges": [
+        "v10.2.159: Firebase bandwidth quota optimization and adaptive polling backoff",
         "v10.2.158: Added Firebase Bandwidth Sentinel dual-tab deck and inspector modal",
         "v10.2.157: Fixed Google Tasks box live sync engine and real-time updates",
         "v10.2.156: Added in-box court stream audio toggle and autoplay permissions",

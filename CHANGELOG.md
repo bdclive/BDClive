@@ -1,3 +1,11 @@
+## [10.2.159] - 2026-11-09
+- Reduced API queue poll traffic with smart adaptive backoff.
+- Shallow database checks prevent downloading empty request payloads.
+- Calibrated Discord Gatekeeper report to 15-minute sync interval.
+- Reduced Ticket Alert Communicator background polling frequency.
+- Upgraded Central Command desktop suite to version 1.1.36.
+- Prevented monthly Firebase database quota overage and lockouts.
+
 ## [10.2.158] - 2026-11-09
 - Added Firebase Bandwidth Sentinel dual-tab deck to Row 3.
 - Instant toggle between Google Tasks and Firebase quota meters.
