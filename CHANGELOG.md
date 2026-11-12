@@ -1,3 +1,11 @@
+## [10.2.160] - 2026-11-12
+- Connected real-time Firebase RTDB telemetry to bandwidth deck.
+- Instant WebSocket updates without manual page refreshes.
+- Added live cloud endpoint fetch with static cache fallback.
+- Fixed outdated bandwidth metrics on hosted web dashboard.
+- Upgraded web dashboard engine to version 10.2.160.
+- Passed all automated headless browser test suites.
+
 ## [10.2.159] - 2026-11-09
 - Reduced API queue poll traffic with smart adaptive backoff.
 - Shallow database checks prevent downloading empty request payloads.

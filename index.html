@@ -3900,6 +3900,24 @@
         }
 
         async function loadFirebaseBandwidthData(force = false) {
+            // 1. Fetch live telemetry from central livecounters RTDB cloud endpoint first
+            try {
+                const liveUrl = 'https://livecounters-8eaa8-default-rtdb.firebaseio.com/telemetry/firebase_bandwidth.json?t=' + Date.now();
+                const resp = await fetch(liveUrl, { cache: 'no-store' });
+                if (resp.ok) {
+                    const data = await resp.json();
+                    if (data && data.projects) {
+                        cachedFirebaseData = data;
+                        renderFirebaseDeck(data);
+                        renderFirebaseModalTable(data);
+                        return;
+                    }
+                }
+            } catch (liveErr) {
+                console.warn('[Firebase Sentinel] Live RTDB fetch error, falling back to local cache:', liveErr);
+            }
+
+            // 2. Graceful fallback to static cache file
             try {
                 const resp = await fetch('firebase_bandwidth_cache.json?t=' + Date.now(), { cache: 'no-store' });
                 if (resp.ok) {
@@ -4130,6 +4148,22 @@
             loadFirebaseBandwidthData();
         });
         setTimeout(loadFirebaseBandwidthData, 1500);
+
+        // Real-Time Live WebSocket Listener for Firebase Bandwidth Telemetry
+        try {
+            if (typeof sDb !== 'undefined') {
+                sDb.ref("telemetry/firebase_bandwidth").on("value", (snapshot) => {
+                    const data = snapshot.val();
+                    if (data && data.projects) {
+                        cachedFirebaseData = data;
+                        renderFirebaseDeck(data);
+                        renderFirebaseModalTable(data);
+                    }
+                });
+            }
+        } catch (e) {
+            console.warn('[Firebase Sentinel] RTDB listener error:', e);
+        }
 
         function openSpecificTaskList(listKey) {
             let targetListId = "";
