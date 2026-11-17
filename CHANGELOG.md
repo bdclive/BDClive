@@ -1,3 +1,12 @@
+## [1.1.41] - 2026-11-17
+- Deduplicated theater telemetry pushes to eliminate redundant database writes.
+- Targeted official schedule endpoint to stop full database downloads.
+- Cached theater sync responses to reduce polling bandwidth drain.
+- Throttled Gatekeeper Discord sync to 15-minute background intervals.
+- Cached gift code history to eliminate repetitive downloads.
+- Purged abandoned debug dump from Brian's Theater database.
+- Upgraded BDC Central Command suite to version 1.1.41.
+
 ## [10.2.160] - 2026-11-12
 - Connected real-time Firebase RTDB telemetry to bandwidth deck.
 - Instant WebSocket updates without manual page refreshes.

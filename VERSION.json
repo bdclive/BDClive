@@ -1,10 +1,11 @@
 {
   "name": "BDC Ecosystem Master Version Registry",
-  "lastUpdated": "2026-11-12T02:20:00-08:00",
+  "lastUpdated": "2026-11-17T06:36:00-08:00",
   "components": {
-    "bdc_central_command_desktop": "1.1.36",
+    "bdc_central_command_desktop": "1.1.41",
     "daemons": {
       "folder": "Daemons/",
+      "watchdog": "Daemons/bdc_watchdog_daemon.py",
       "counterChecker": "Daemons/counter_checker_daemon.py",
       "googleTasksSync": "Daemons/google_tasks_sync_daemon.py",
       "firebaseMidnight": "Daemons/firebase_midnight_daemon.py"
@@ -81,5 +82,5 @@
       ]
     }
   },
-  "version": "1.0.81"
+  "version": "1.0.82"
 }
