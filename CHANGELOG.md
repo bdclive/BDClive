@@ -1,3 +1,8 @@
+## [1.1.42] - 2026-11-17
+- Added atomic Windows mutex preventing duplicate Central Command windows.
+- Fixed daemon restart script race condition with Watchdog service.
+- Upgraded BDC Central Command suite to version 1.1.42.
+
 ## [1.1.41] - 2026-11-17
 - Deduplicated theater telemetry pushes to eliminate redundant database writes.
 - Targeted official schedule endpoint to stop full database downloads.
