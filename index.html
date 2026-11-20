@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BDC LIVE v10.2.157</title>
+    <title>BDC LIVE v10.2.161</title>
     <meta name="description" content="Centralized real-time telemetry, operational statistics, and live streaming dashboard for Brian Diva Cox.">
     <!-- Open Graph & Social Preview Meta Tags -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="BDC LIVE v10.2.157">
+    <meta property="og:title" content="BDC LIVE v10.2.161">
     <meta property="og:description" content="Real-time statistics, streaming telemetry, theater sync, and central command control plane.">
     <meta property="og:image" content="./bdclive_banner.jpg">
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="BDC LIVE v10.2.157">
+    <meta property="twitter:title" content="BDC LIVE v10.2.161">
     <meta property="twitter:description" content="Real-time statistics, streaming telemetry, theater sync, and multi-platform command center.">
     <meta property="twitter:image" content="./bdclive_banner.jpg">
     <!-- PWA Manifest & Mobile Web App Meta Tags -->
@@ -1374,7 +1374,7 @@
                 <div style="display: flex; align-items: center; gap: 12px;">
                     <i class="fa-solid fa-ticket" style="font-size: 24px; color: #ff7b00;"></i>
                     <div>
-                        <h3 style="margin: 0; color: #ffffff; font-size: 18px; font-weight: 800; letter-spacing: 0.5px;">Ticket Alerts System — Support Desk <span style="font-family: monospace; font-size: 12px; color: var(--accent-cyan); background: #1f293d; padding: 2px 7px; border-radius: 6px; border: 1px solid #303e5c;">v10.2.157</span></h3>
+                        <h3 style="margin: 0; color: #ffffff; font-size: 18px; font-weight: 800; letter-spacing: 0.5px;">Ticket Alerts System — Support Desk <span style="font-family: monospace; font-size: 12px; color: var(--accent-cyan); background: #1f293d; padding: 2px 7px; border-radius: 6px; border: 1px solid #303e5c;">v10.2.161</span></h3>
                         <span style="font-size: 12px; color: #8b949e;">Whiteout Survival & Central Command • Live Audio & Push Alerts</span>
                     </div>
                 </div>
@@ -4744,7 +4744,7 @@
             }
         }
 
-        const CURRENT_APP_VERSION = 'v10.2.157';
+        const CURRENT_APP_VERSION = 'v10.2.161';
         window.CURRENT_APP_VERSION = CURRENT_APP_VERSION;
         let isDeployingLive = false;
         let pendingRemoteVersion = null;
@@ -5979,61 +5979,131 @@
         }
 
         // ================= GATEKEEPER BOT HUB & SERVER TELEMETRY & ALERT ENGINE =================
-        function updateGatekeeperBotTelemetryUI() {
-            const data = (typeof window !== 'undefined' && window.latestBotTelemetry) ? window.latestBotTelemetry : (latestBotTelemetry || {});
+        function evaluateBotSystemPolicy(data = (typeof window !== 'undefined' && window.latestBotTelemetry) ? window.latestBotTelemetry : (latestBotTelemetry || {})) {
             const status = String(data.status || 'STANDBY').toUpperCase();
             const stage = String(data.stage || '');
             const stageLower = stage.toLowerCase();
-
-            // Central Command Status Detection
             const now = Date.now();
-            const ageMs = Math.max(0, now - lastCentralCommandHeartbeat);
-            const ageMinutes = ageMs / 60000;
-            const isCcOffline = (!navigator.onLine || !isFirebaseConnected || !isCentralCommandExplicitOnline || (lastCentralCommandHeartbeat > 0 && ageMinutes > 1.5));
 
-            // Hub Status Detection: explicit boolean or shutdown stage detection
-            const isHubOffline = (data.bothubOnline === false) || stageLower.includes('bot hub pro offline');
-            
-            // Server Status Detection: explicit boolean, OFFLINE status, termination stage, or broadcast offline alert
-            const isServerOffline = (data.serverOnline === false) || (data.gnbotsOnline === false) || (status === 'OFFLINE') || stageLower.includes('bot server closed') || stageLower.includes('bot server terminated') || Boolean(data.broadcastOfflineAlert);
+            // 1. Central Command Health
+            const ccAgeMinutes = Math.max(0, now - lastCentralCommandHeartbeat) / 60000;
+            const isCcOffline = (!navigator.onLine || !isFirebaseConnected || !isCentralCommandExplicitOnline || (lastCentralCommandHeartbeat > 0 && ccAgeMinutes > 1.5));
+
+            // 2. Bot Hub Pro Health (explicit offline flag, shutdown stage, or >120s stale heartbeat)
+            const hbTs = Number(data.timestamp || data.receivedAt || 0);
+            const isHubStale = Boolean(hbTs > 0 && (now - hbTs > 120000));
+            const isHubOffline = (data.bothubOnline === false) || stageLower.includes('bot hub pro offline') || isHubStale;
+
+            // 3. Explicit Server Termination / Crash signals
+            const isExplicitServerClosed = (status === 'OFFLINE') || stageLower.includes('bot server closed') || stageLower.includes('bot server terminated') || Boolean(data.broadcastOfflineAlert);
+
+            // 4. Cooldown / Blackout Policy: GnBots intentionally parked while Hub & CC remain online
+            const hasCooldownSignal = (
+                status === 'COOLDOWN' ||
+                status === 'EVENT_BLACKOUT' ||
+                Boolean(data.isCooldownRunning) ||
+                stageLower.includes('cooldown') ||
+                stageLower.includes('rotation rest') ||
+                stageLower.includes('gnbots parked') ||
+                stageLower.includes('event blackout')
+            );
+            const isCooldownParked = !isCcOffline && !isHubOffline && !isExplicitServerClosed && hasCooldownSignal;
+
+            // 5. True Bot Server Offline (app closed or crashed outside of an intentional cooldown/blackout)
+            const rawServerDown = (data.serverOnline === false) || (data.gnbotsOnline === false) || isExplicitServerClosed;
+            const isServerOffline = rawServerDown && !isCooldownParked;
 
             const isAnyOffline = isHubOffline || isServerOffline || isCcOffline;
             const isActive = !isAnyOffline && status === 'ACTIVE';
-            const isCooldown = !isAnyOffline && status === 'COOLDOWN';
+            const isCooldown = !isAnyOffline && (status === 'COOLDOWN' || status === 'EVENT_BLACKOUT' || isCooldownParked);
 
-            // --- Widget Card DOM (#gatekeeper-box) ---
-            const ccPill = document.getElementById('gk-cc-pill');
-            const hubPill = document.getElementById('gk-hub-pill');
-            const srvPill = document.getElementById('gk-server-pill');
+            // Live ticking cooldown countdown
+            const initialSecs = Number(data.cooldownSecondsLeft ?? data.secondsLeft ?? 0);
+            const elapsedSecs = Math.max(0, Math.floor((now - (data.receivedAt || now)) / 1000));
+            const remainingSecs = Math.max(0, initialSecs - elapsedSecs);
+            const h = Math.floor(remainingSecs / 3600).toString().padStart(2, '0');
+            const m = Math.floor((remainingSecs % 3600) / 60).toString().padStart(2, '0');
+            const s = (remainingSecs % 60).toString().padStart(2, '0');
+            const cooldownTimerStr = (remainingSecs > 0 || initialSecs > 0) ? `${h}:${m}:${s}` : (data.cooldownHoldText || 'Resting');
+
+            return {
+                status,
+                stage,
+                stageLower,
+                isCcOffline,
+                isHubOffline,
+                isHubStale,
+                isCooldownParked,
+                isServerOffline,
+                isAnyOffline,
+                isActive,
+                isCooldown,
+                initialSecs,
+                remainingSecs,
+                cooldownTimerStr
+            };
+        }
+        window.evaluateBotSystemPolicy = evaluateBotSystemPolicy;
+
+        function renderGatekeeperStatusBanner(policy) {
             const alertBox = document.getElementById('gk-offline-alert');
             const alertText = document.getElementById('gk-offline-alert-text');
-            const stageChip = document.getElementById('gk-bot-stage-chip');
             const gkBox = document.getElementById('gatekeeper-box');
+            if (!alertBox || !alertText) return;
 
-            if (alertBox && alertText) {
-                if (isAnyOffline) {
-                    alertBox.style.display = 'block';
-                    if (isCcOffline && isHubOffline && isServerOffline) {
-                        alertText.innerText = 'CC, HUB & SERVER OFFLINE';
-                    } else if (isCcOffline && isServerOffline) {
-                        alertText.innerText = 'CENTRAL COMMAND & SERVER OFFLINE';
-                    } else if (isCcOffline && isHubOffline) {
-                        alertText.innerText = 'CENTRAL COMMAND & HUB OFFLINE';
-                    } else if (isCcOffline) {
-                        alertText.innerText = 'BDC CENTRAL COMMAND OFFLINE';
-                    } else if (isHubOffline && isServerOffline) {
-                        alertText.innerText = 'HUB & SERVER OFFLINE';
-                    } else if (isServerOffline) {
-                        alertText.innerText = 'BOT SERVER OFFLINE';
-                    } else {
-                        alertText.innerText = 'BOT HUB PRO OFFLINE';
-                    }
-                    if (gkBox) gkBox.style.borderTopColor = '#f85149';
+            const { isAnyOffline, isCcOffline, isHubOffline, isServerOffline, isCooldown, cooldownTimerStr, status } = policy;
+
+            if (isAnyOffline) {
+                alertBox.style.display = 'block';
+                alertBox.style.background = 'rgba(248, 81, 73, 0.16)';
+                alertBox.style.borderColor = 'rgba(248, 81, 73, 0.45)';
+                alertBox.style.color = '#ff7b72';
+                const iconEl = alertBox.querySelector('i');
+                if (iconEl) iconEl.className = 'fa-solid fa-triangle-exclamation';
+
+                if (isCcOffline && isHubOffline && isServerOffline) {
+                    alertText.innerText = 'CC, HUB & SERVER OFFLINE';
+                } else if (isCcOffline && isServerOffline) {
+                    alertText.innerText = 'CENTRAL COMMAND & SERVER OFFLINE';
+                } else if (isCcOffline && isHubOffline) {
+                    alertText.innerText = 'CENTRAL COMMAND & HUB OFFLINE';
+                } else if (isCcOffline) {
+                    alertText.innerText = 'BDC CENTRAL COMMAND OFFLINE';
+                } else if (isHubOffline && isServerOffline) {
+                    alertText.innerText = 'HUB & SERVER OFFLINE';
+                } else if (isServerOffline) {
+                    alertText.innerText = 'BOT SERVER OFFLINE';
                 } else {
-                    alertBox.style.display = 'none';
-                    if (gkBox) gkBox.style.borderTopColor = '#00d2ff';
+                    alertText.innerText = 'BOT HUB PRO OFFLINE';
                 }
+                if (gkBox) gkBox.style.borderTopColor = '#f85149';
+            } else if (isCooldown) {
+                alertBox.style.display = 'block';
+                alertBox.style.background = 'rgba(251, 191, 36, 0.14)';
+                alertBox.style.borderColor = 'rgba(251, 191, 36, 0.45)';
+                alertBox.style.color = '#fbbf24';
+                const iconEl = alertBox.querySelector('i');
+                if (iconEl) iconEl.className = 'fa-solid fa-hourglass-half';
+                const prefix = status === 'EVENT_BLACKOUT' ? 'EVENT BLACKOUT' : 'COOLDOWN';
+                alertText.innerText = `${prefix}: ${cooldownTimerStr}`;
+                if (gkBox) gkBox.style.borderTopColor = '#fbbf24';
+            } else {
+                alertBox.style.display = 'none';
+                if (gkBox) gkBox.style.borderTopColor = '#00d2ff';
             }
+        }
+
+        function updateGatekeeperBotTelemetryUI() {
+            const data = (typeof window !== 'undefined' && window.latestBotTelemetry) ? window.latestBotTelemetry : (latestBotTelemetry || {});
+            const policy = evaluateBotSystemPolicy(data);
+            const { isCcOffline, isHubOffline, isCooldownParked, isServerOffline, isAnyOffline, isActive, isCooldown } = policy;
+
+            // --- Widget Card DOM (#gatekeeper-box) ---
+            const hubPill = document.getElementById('gk-hub-pill');
+            const srvPill = document.getElementById('gk-server-pill');
+            const stageChip = document.getElementById('gk-bot-stage-chip');
+
+            renderGatekeeperStatusBanner(policy);
 
             if (hubPill) {
                 if (isHubOffline) {
@@ -6058,6 +6128,12 @@
                     srvPill.style.borderColor = 'rgba(248, 81, 73, 0.45)';
                     srvPill.innerHTML = '<i class="fa-solid fa-circle" style="font-size: 4px; color: #f85149;"></i> Srv: Off';
                     srvPill.title = 'Bot Server (GnBots): OFFLINE';
+                } else if (isCooldownParked) {
+                    srvPill.style.background = 'rgba(251, 191, 36, 0.16)';
+                    srvPill.style.color = '#fbbf24';
+                    srvPill.style.borderColor = 'rgba(251, 191, 36, 0.4)';
+                    srvPill.innerHTML = '<i class="fa-solid fa-hourglass-half" style="font-size: 5px; color: #fbbf24;"></i> Srv: Rest';
+                    srvPill.title = 'Bot Server (GnBots): Parked for Cooldown Rest';
                 } else {
                     srvPill.style.background = 'rgba(63, 185, 80, 0.15)';
                     srvPill.style.color = '#3fb950';
@@ -6169,6 +6245,11 @@
                     mSrvTag.style.background = 'rgba(248, 81, 73, 0.12)';
                     mSrvTag.style.borderColor = 'rgba(248, 81, 73, 0.3)';
                     mSrvTag.innerHTML = '🔴 Server: Offline';
+                } else if (isCooldownParked) {
+                    mSrvTag.style.color = '#fbbf24';
+                    mSrvTag.style.background = 'rgba(251, 191, 36, 0.12)';
+                    mSrvTag.style.borderColor = 'rgba(251, 191, 36, 0.35)';
+                    mSrvTag.innerHTML = '⏳ Server: Cooldown';
                 } else {
                     mSrvTag.style.color = '#3fb950';
                     mSrvTag.style.background = 'rgba(63, 185, 80, 0.1)';
@@ -6252,18 +6333,10 @@
             const stageChip = document.getElementById('gk-bot-stage-chip');
 
             const data = (typeof window !== 'undefined' && window.latestBotTelemetry) ? window.latestBotTelemetry : (latestBotTelemetry || {});
-            const status = String(data.status || 'STANDBY').toUpperCase();
-            const stage = String(data.stage || '');
-            const stageLower = stage.toLowerCase();
+            const policy = evaluateBotSystemPolicy(data);
+            const { status, isCcOffline, isServerOffline, isAnyOffline, isCooldown, cooldownTimerStr } = policy;
 
-            // Central Command Status Detection
-            const now = Date.now();
-            const ageMs = Math.max(0, now - lastCentralCommandHeartbeat);
-            const ageMinutes = ageMs / 60000;
-            const isCcOffline = (!navigator.onLine || !isFirebaseConnected || !isCentralCommandExplicitOnline || (lastCentralCommandHeartbeat > 0 && ageMinutes > 1.5));
-            const isHubOffline = (data.bothubOnline === false) || stageLower.includes('bot hub pro offline');
-            const isServerOffline = (data.serverOnline === false) || (data.gnbotsOnline === false) || (status === 'OFFLINE') || stageLower.includes('bot server closed') || stageLower.includes('bot server terminated') || Boolean(data.broadcastOfflineAlert);
-            const isAnyOffline = isHubOffline || isServerOffline || isCcOffline;
+            renderGatekeeperStatusBanner(policy);
 
             if (isAnyOffline) {
                 const offReason = isCcOffline ? 'CC Offline' : (isServerOffline ? 'Server Halted' : 'Hub Offline');
@@ -6294,16 +6367,9 @@
                     mStage.innerText = 'Automation Halted';
                     mStage.style.color = '#f85149';
                 }
-            } else if (status === 'COOLDOWN') {
+            } else if (isCooldown) {
                 const botName = data.cooldownAccount || data.account || 'Fleet Bot';
-                const initialSecs = Number(data.cooldownSecondsLeft ?? data.secondsLeft ?? 0);
-                const elapsedSecs = Math.max(0, Math.floor((Date.now() - (data.receivedAt || Date.now())) / 1000));
-                const remaining = Math.max(0, initialSecs - elapsedSecs);
-
-                const h = Math.floor(remaining / 3600).toString().padStart(2, '0');
-                const m = Math.floor((remaining % 3600) / 60).toString().padStart(2, '0');
-                const s = (remaining % 60).toString().padStart(2, '0');
-                const timerStr = (remaining > 0 || initialSecs > 0) ? `${h}:${m}:${s}` : (data.cooldownHoldText || 'Resting');
+                const timerStr = cooldownTimerStr;
 
                 const countInfo = getBotFleetCountInfo(data, botName);
 
@@ -6650,22 +6716,21 @@
 
         window.getBotAutomationHealth = (data = window.latestBotTelemetry || window.latestBotStatus || {}) => {
             const now = Date.now();
-            const status = (data.status || 'OFFLINE').toUpperCase();
             const ts = Number(data.timestamp || data.receivedAt || 0);
-            const isStale = Boolean(ts > 0 && (now - ts > 60000));
-            const isHeartbeatStale = isStale;
-            
-            const isHubOnline = Boolean(data.bothubOnline !== false && !isStale && ts > 0);
-            const isBlackout = Boolean(status === 'EVENT_BLACKOUT' || (data.stage && /event\s*blackout/i.test(data.stage)));
-            const isServerOnline = Boolean(isHubOnline && data.serverOnline === true && status !== 'OFFLINE');
-            const isOffline = !isHubOnline || (!isServerOnline && !isBlackout);
+            const policy = evaluateBotSystemPolicy(data);
+            const isStale = policy.isHubStale;
+            const isHubOnline = !policy.isHubOffline;
+            const isBlackout = Boolean(policy.status === 'EVENT_BLACKOUT' || (data.stage && /event\s*blackout/i.test(data.stage)));
+            const isServerOnline = Boolean(isHubOnline && data.serverOnline === true && policy.status !== 'OFFLINE');
+            const isOffline = policy.isAnyOffline;
             
             return {
-                status,
+                status: policy.status,
                 isStale,
-                isHeartbeatStale,
+                isHeartbeatStale: isStale,
                 isHubOnline,
                 isServerOnline,
+                isCooldownParked: policy.isCooldownParked,
                 isOffline,
                 isBlackout,
                 lastSeenSecs: ts > 0 ? Math.floor((now - ts) / 1000) : null
@@ -7045,9 +7110,10 @@
 
             const hubOnline = health.isHubOnline;
             const serverOnline = health.isServerOnline;
-            const serverBoxClass = serverOnline ? 'is-online' : 'is-offline';
-            const serverValClass = serverOnline ? 'is-online' : 'is-offline';
-            const serverValText = serverOnline ? '🟢 Online' : '🔴 Offline';
+            const isParked = Boolean(health.isCooldownParked);
+            const serverBoxClass = serverOnline ? 'is-online' : (isParked ? 'is-cooldown' : 'is-offline');
+            const serverValClass = serverOnline ? 'is-online' : (isParked ? 'is-cooldown' : 'is-offline');
+            const serverValText = serverOnline ? '🟢 Online' : (isParked ? '⏳ Cooldown' : '🔴 Offline');
 
             const dualTagHtml = `
                 <div id="bot-radar-dual-tag" class="bot-radar-server-tag bot-radar-status-grid">
@@ -7243,9 +7309,10 @@
             if (dualTagEl) {
                 const hubOnline = health.isHubOnline;
                 const serverOnline = health.isServerOnline;
-                const serverBoxClass = serverOnline ? 'is-online' : 'is-offline';
-                const serverValClass = serverOnline ? 'is-online' : 'is-offline';
-                const serverValText = serverOnline ? '🟢 Online' : '🔴 Offline';
+                const isParked = Boolean(health.isCooldownParked);
+                const serverBoxClass = serverOnline ? 'is-online' : (isParked ? 'is-cooldown' : 'is-offline');
+                const serverValClass = serverOnline ? 'is-online' : (isParked ? 'is-cooldown' : 'is-offline');
+                const serverValText = serverOnline ? '🟢 Online' : (isParked ? '⏳ Cooldown' : '🔴 Offline');
                 dualTagEl.innerHTML = `
                     <div id="bot-radar-hub-box" class="bot-radar-mini-box ${hubOnline ? 'is-online' : 'is-offline'}">
                         <div class="bot-radar-mini-header">

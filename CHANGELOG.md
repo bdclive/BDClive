@@ -1,3 +1,11 @@
+## [10.2.161] - 2026-11-20
+- Added policy distinguishing bot cooldowns from true server crashes.
+- Replaced offline banner with live amber cooldown countdown timer.
+- Updated Gatekeeper server pill to show resting cooldown state.
+- Synced Bot Operations Radar with parked cooldown server status.
+- Upgraded web dashboard engine to version 10.2.161.
+- Passed all automated headless Chrome test suites.
+
 ## [1.1.42] - 2026-11-17
 - Added atomic Windows mutex preventing duplicate Central Command windows.
 - Fixed daemon restart script race condition with Watchdog service.
